@@ -60,6 +60,10 @@ local settings = {
         colorState = "danger",
         outline = true
       }
+    },{
+      componentType = "progressBar",
+      label = true,
+      value = 50,
     }}
   }, {
     componentType = "card",
