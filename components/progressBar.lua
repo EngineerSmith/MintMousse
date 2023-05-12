@@ -6,31 +6,14 @@ local defaultTheme = {
 
 return function(settings, helper)
 
-  if type(settings.min) ~= "number" then
-    settings.min = 0
+  if type(settings.percentage) ~= "number" then
+    settings.percentage = 0
   end
-  if type(settings.max) ~= "number" then
-    settings.max = 100
+  if settings.percentage < 0 then settings.percentage = 0 end
+  if settings.percentage > 100 then settings.percentage = 100 end
+  if settings.label and not settings.percentageLabel then
+    settings.percentageLabel = tostring(math.floor(settings.percentage*1000)/1000).."%"
   end
-  if type(settings.value) ~= "number" then
-    settings.value = 0
-  end
-
-  if settings.min > settings.max then
-    settings.min = settings.max
-  end
-  if settings.max < settings.min then
-    settings.max = settings.min
-  end
-
-  if settings.value < settings.min then
-    settings.value = settings.min
-  end
-  if settings.value > settings.max then
-    settings.value = settings.max
-  end
-
-  settings.percentage = math.floor((settings.min + settings.value) / (settings.max - settings.min)*100)
 
   -- theme
   if not settings.theme then

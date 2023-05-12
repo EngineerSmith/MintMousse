@@ -62,8 +62,9 @@ local settings = {
       }
     },{
       componentType = "progressBar",
-      label = true,
-      value = 50,
+      percentage = 50.789,
+      label = false,
+      percentageLabel = "Hello world"
     }}
   }, {
     componentType = "card",
@@ -73,12 +74,11 @@ local settings = {
       text = "Well... well... well... give up now!\n\tI am on a new line!<p>TEXT</p>",
       subtext = "Oopie whoopie was 5 minutes ago",
       child = {
-        componentType = "buttonGroup",
-        buttons = {"First", "Second", "Third"},
-        theme = {
-          colorState = "danger",
-          outline = true
-        }
+        componentType = "stackedProgressBar",
+        bars = {
+          10,10,10,10,10,10,10,10,10,10
+        },
+        label = true,
       }
     },
     size = 2
