@@ -27,8 +27,8 @@ for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
   end
 end
 
-local htmlTbl = {
-  title = "Console",
+local settings = {
+  title = "MintMousse",
   dashboard = {{
     componentType = "list",
     title = "Players",
@@ -56,7 +56,7 @@ local htmlTbl = {
     imgTop = "file.jpg",
     body = {
       title = "How to win at the game",
-      text = "Well... well... wel.. give up now!\nI am on a new line!<p>TEXT</p>",
+      text = "Well... well... well... give up now!\nI am on a new line!<p>TEXT</p>",
       subtext = "Oopie whoopie"
     },
     size = 2
@@ -68,10 +68,7 @@ local htmlTbl = {
   }}
 }
 
--- todo write helper for images to encode
--- todo write helper to convert new line to <br> tag, similar for tab and other escaped characters
-
-for _, component in ipairs(htmlTbl.dashboard) do
+for _, component in ipairs(settings.dashboard) do
   local componentType = components[component.componentType]
   if not componentType then
     error("Could not find component: " .. tostring(component.componentType))
@@ -82,7 +79,7 @@ for _, component in ipairs(htmlTbl.dashboard) do
   component.render = lustache:render(componentType.template, component)
 end
 
-local htmlPage = lustache:render(love.filesystem.read(dirPATH .. "index.html"), htmlTbl)
+local htmlPage = lustache:render(love.filesystem.read(dirPATH .. "index.html"), settings)
 
 love.filesystem.write("temp.html", htmlPage)
 
