@@ -1,16 +1,16 @@
 <div class="grid-item grid-item-{{#size}}{{size}}{{/size}}{{^size}}1{{/size}}">
   <div class="card">
     {{#imgTop}}
-    <img class="card-img-top" src="{{imgTop}}">
+    <img class="card-img-top" src="data:image/{{imgTop}}">
     {{/imgTop}}
     {{#imgOverlay}}
-    <img class="card-img" src="{{imgOverlay}}">
+    <img class="card-img" src="data:image/{{imgOverlay}}">
     <div class="card-img-overlay">
     {{/imgOverlay}}
     {{#imgLeft}}
     <div class="row g-0">
     <div class="col-md-4">
-    <img class="img-fluid rounded-start" src="{{imgLeft}}">
+    <img class="img-fluid rounded-start" src="data:image/{{imgLeft}}">
     </div>
     <div class="col-md-8">
     {{/imgLeft}}
@@ -21,20 +21,20 @@
     {{#body}}
     <div class="card-body">
     {{#body.title}}
-    <h5 class="card-title">{{body.title}}</h5>
+    <h5 class="card-title">{{&body.title}}</h5>
     {{/body.title}}
     {{#body.text}}
-    <p class="card-text">{{body.text}}</p>
+    <p class="card-text">{{&body.text}}</p>
     {{/body.text}}
     {{#body.subtext}}
-    <p class="card-text"><small class="text-body-secondary">{{body.subtext}}</small></p>
+    <p class="card-text"><small class="text-body-secondary">{{&body.subtext}}</small></p>
     {{/body.subtext}}
     </div>
     {{/body}}
     {{#imgRight}}
     </div>
     <div class="col-md-4">
-    <img class="img-fluid rounded-end" src="{{imgRight}}">
+    <img class="img-fluid rounded-end" src="data:image/{{imgRight}}">
     </div>
     </div>
     {{/imgRight}}
@@ -45,7 +45,7 @@
     </div>
     {{/imgOverlay}}
     {{#imgBottom}}
-    <img class="card-img-bottom" src="{{imgBottom}}">
+    <img class="card-img-bottom" src="data:image/{{imgBottom}}">
     {{/imgBottom}}
     </div>
   </div>
