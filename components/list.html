@@ -1,4 +1,4 @@
-<div class="grid-item grid-item-{{#size}}{{size}}{{/size}}{{^size}}1{{/size}}">
+<div class="grid-item {{#size}}grid-item-{{size}}{{/size}}">
   <div class="card">
     {{#title}}
     <div class="card-header">
@@ -7,7 +7,8 @@
     {{/title}}
     <ul class="list-group list-group-flush">
       {{#items}}
-      <li class="list-group-item">{{.}}</li>
+      {{#render}}{{&render}}{{/render}}
+      {{^render}}<li class="list-group-item">{{&.}}</li>{{/render}}
       {{/items}}
     </ul>
     {{#footer}}

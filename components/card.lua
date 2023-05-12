@@ -28,4 +28,6 @@ return function(settings, helper)
       body.subtext = helper.formatText(body.subtext)
     end
   end
+  -- child to render
+  return settings.body.child
 end

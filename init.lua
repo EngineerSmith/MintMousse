@@ -50,14 +50,21 @@ local settings = {
   }, {
     componentType = "list",
     title = "Players",
-    items = {"James Boo", "Steve", "Lily", "Kate", "Jay"}
+    items = {"James Boo", "Steve", "Lily", "Kate", {
+      componentType = "button",
+      text = "Jay",
+    }}
   }, {
     componentType = "card",
     imgTop = "file.jpg",
     body = {
       title = "How to win at the game",
-      text = "Well... well... well... give up now!\nI am on a new line!<p>TEXT</p>",
-      subtext = "Oopie whoopie"
+      text = "Well... well... well... give up now!\n\tI am on a new line!<p>TEXT</p>",
+      subtext = "Oopie whoopie was 5 minutes ago",
+      child = {
+        componentType = "button",
+        text = "Press me",
+      }
     },
     size = 2
   }},
@@ -68,16 +75,37 @@ local settings = {
   }}
 }
 
-for _, component in ipairs(settings.dashboard) do
+local renderComponent
+local render
+
+renderComponent = function(component)
   local componentType = components[component.componentType]
-  if not componentType then
-    error("Could not find component: " .. tostring(component.componentType))
-  end
-  if componentType.format then
-    componentType.format(component, helper)
-  end
-  component.render = lustache:render(componentType.template, component)
+    if not componentType then
+      error("Could not find component: " .. tostring(component.componentType))
+    end
+    if componentType.format then
+      local children = componentType.format(component, helper)
+      if children then
+        render(children)
+      end
+    end
+    if component.size then
+      component.size = helper.limitSize(component.size)
+    end
+    component.render = lustache:render(componentType.template, component)
 end
+
+render = function(settings)
+  if settings.componentType then
+    renderComponent(settings)
+    return
+  end
+  for _, component in ipairs(settings) do
+    renderComponent(component)
+  end
+end
+
+render(settings.dashboard)
 
 local htmlPage = lustache:render(love.filesystem.read(dirPATH .. "index.html"), settings)
 

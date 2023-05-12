@@ -1,4 +1,4 @@
-<div class="grid-item grid-item-{{#size}}{{size}}{{/size}}{{^size}}1{{/size}}">
+<div class="grid-item {{#size}}grid-item-{{size}}{{/size}}">
   <div class="card">
     {{#imgTop}}
     <img class="card-img-top" src="data:image/{{imgTop}}">
@@ -26,6 +26,9 @@
     {{#body.text}}
     <p class="card-text">{{&body.text}}</p>
     {{/body.text}}
+    {{#body.child}}
+    {{&body.child.render}}
+    {{/body.child}}
     {{#body.subtext}}
     <p class="card-text"><small class="text-body-secondary">{{&body.subtext}}</small></p>
     {{/body.subtext}}

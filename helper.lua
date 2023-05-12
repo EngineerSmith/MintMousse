@@ -15,7 +15,7 @@ helper.formatImage = function(image)
   error("given image is not a string or image data")
 end
 
-local html_escape_characters = {
+local htmlEscapeCharacters = {
   ["&"] = "&amp;",
   ["<"] = "&lt;",
   [">"] = "&gt;",
@@ -23,18 +23,45 @@ local html_escape_characters = {
   ["'"] = "&#39;",
   ["/"] = "&#x2F;"
 }
-local html_escape_charactersFn = function(s)
-  return html_escape_characters[s]
+local escapeCharactersFn = function(s)
+  return htmlEscapeCharacters[s]
 end
 
 helper.formatText = function(str)
 
-  str = str:gsub('[&<>"\'/]', html_escape_charactersFn)
+  str = str:gsub('[&<>"\'/]', escapeCharactersFn)
 
   str = str:gsub("\n", "<br>")
-  str = str:gsub("\t", "    ")
+  str = str:gsub("\t", "&nbsp;&nbsp;&nbsp;&nbsp;")
 
   return str
+end
+
+helper.limitSize = function(size)
+  return size > 5 and 5 or size < 0 and 1 or size
+end
+
+helper.getColor = function(num)
+  if num == 1 then
+    return "primary"
+  elseif num == 2 then
+    return "secondary"
+  elseif num == 3 then
+    return "success"
+  elseif num == 4 then
+    return "danger"
+  elseif num == 5 then
+    return "warning"
+  elseif num == 6 then
+    return "info"
+  elseif num == 7 then
+    return "light"
+  elseif num == 8 then
+    return "dark"
+  elseif num == 9 then
+    return "link"
+  end
+  return "primary"
 end
 
 return helper
