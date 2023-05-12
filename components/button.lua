@@ -4,9 +4,11 @@ local defaultTheme = {
 }
 
 return function(settings, helper)
+  -- body
   if settings.text then
     settings.text = helper.formatText(settings.text)
   end
+  -- theme
   if not settings.theme then
     settings.theme = defaultTheme
   else

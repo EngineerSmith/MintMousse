@@ -7,8 +7,10 @@
     {{/title}}
     <ul class="list-group list-group-flush">
       {{#items}}
-      {{#render}}{{&render}}{{/render}}
-      {{^render}}<li class="list-group-item">{{&.}}</li>{{/render}}
+      <li class="list-group-item">
+        {{#render}}{{&render}}{{/render}}
+        {{^render}}{{&.}}{{/render}}
+      </li>
       {{/items}}
     </ul>
     {{#footer}}

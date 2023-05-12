@@ -52,7 +52,14 @@ local settings = {
     title = "Players",
     items = {"James Boo", "Steve", "Lily", "Kate", {
       componentType = "button",
-      text = "Jay",
+      text = "Jay"
+    }, {
+      componentType = "buttonGroup",
+      buttons = {"First", "Second", "Third"},
+      theme = {
+        colorState = "danger",
+        outline = true
+      }
     }}
   }, {
     componentType = "card",
@@ -62,8 +69,12 @@ local settings = {
       text = "Well... well... well... give up now!\n\tI am on a new line!<p>TEXT</p>",
       subtext = "Oopie whoopie was 5 minutes ago",
       child = {
-        componentType = "button",
-        text = "Press me",
+        componentType = "buttonGroup",
+        buttons = {"First", "Second", "Third"},
+        theme = {
+          colorState = "danger",
+          outline = true
+        }
       }
     },
     size = 2
@@ -80,19 +91,19 @@ local render
 
 renderComponent = function(component)
   local componentType = components[component.componentType]
-    if not componentType then
-      error("Could not find component: " .. tostring(component.componentType))
+  if not componentType then
+    error("Could not find component: " .. tostring(component.componentType))
+  end
+  if componentType.format then
+    local children = componentType.format(component, helper)
+    if children then
+      render(children)
     end
-    if componentType.format then
-      local children = componentType.format(component, helper)
-      if children then
-        render(children)
-      end
-    end
-    if component.size then
-      component.size = helper.limitSize(component.size)
-    end
-    component.render = lustache:render(componentType.template, component)
+  end
+  if component.size then
+    component.size = helper.limitSize(component.size)
+  end
+  component.render = lustache:render(componentType.template, component)
 end
 
 render = function(settings)
