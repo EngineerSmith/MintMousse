@@ -1,0 +1,19 @@
+<div class="grid-item grid-item-{{#size}}{{size}}{{/size}}{{^size}}1{{/size}}">
+  <div class="card">
+    {{#title}}
+    <div class="card-header">
+      <strong>{{title}}</strong>
+    </div>
+    {{/title}}
+    <ul class="list-group list-group-flush">
+      {{#items}}
+      <li class="list-group-item">{{.}}</li>
+      {{/items}}
+    </ul>
+    {{#footer}}
+    <div class="card-footer">
+      <strong>{{footer}}</strong>
+    </div>
+    {{/footer}}
+  </div>
+</div>
