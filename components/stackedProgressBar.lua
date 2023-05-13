@@ -1,5 +1,5 @@
 local defaultTheme = {
-  colorStates = {"primary", "success", "info", "danger", "warning", "secondary", "dark", "light"},
+  colorStates = {"primary", "success", "danger", "secondary"},
   striped = true,
   animated = true
 }
@@ -16,7 +16,7 @@ return function(settings, helper)
       end
     end
 
-    if type(theme.colorStates) ~= "table" or #theme.colorStates < 1 then
+    if type(theme.colorStates) ~= "table" or #theme.colorStates == 0 then
       theme.colorStates = defaultTheme.colorStates
     end
 

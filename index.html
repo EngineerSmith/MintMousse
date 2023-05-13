@@ -25,11 +25,11 @@
     }
 
     .grid-item-4 {
-      width: 100%;
+      width: 99%;
     }
 
     .grid-item-5 {
-      width: 100%;
+      width: 99%;
     }
 
     .gutter-sizer {
@@ -102,6 +102,10 @@
           </ul>
         </div>
       </div>
+      <span class="navbar-text">
+        <h5 class="m-0"><span class="badge text-bg-success">Connected</span></h5>
+        <!-- <h5 class="m-0"><span class="badge text-bg-danger">Disconnected</span></h5> -->
+      </span>
     </div>
   </nav>
 
@@ -112,9 +116,9 @@
         data-masonry='{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}'>
         <div class="grid-sizer"></div>
         <div class="gutter-sizer"></div>
-{{#dashboard}}
-{{&render}}
-{{/dashboard}}
+        {{#dashboard}}
+        {{&render}}
+        {{/dashboard}}
       </div>
     </div>
     {{#tabs}}

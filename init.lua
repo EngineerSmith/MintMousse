@@ -30,6 +30,17 @@ end
 local settings = {
   title = "MintMousse",
   dashboard = {{
+    componentType = "card",
+    size = 5,
+    body = {
+      child = {
+        componentType = "progressBar",
+        percentage = 50.789,
+        label = false,
+        percentageLabel = "Hello world"
+      }
+    }
+  }, {
     componentType = "list",
     title = "Players",
     items = {"James Boo", "Steve", "Lily", "Kate", "Jay"},
@@ -60,25 +71,33 @@ local settings = {
         colorState = "danger",
         outline = true
       }
-    },{
+    }, {
       componentType = "progressBar",
       percentage = 50.789,
       label = false,
       percentageLabel = "Hello world"
+    }, {
+      componentType = "accordion",
+      alwaysOpen = true,
+      items = {{
+        title = "#1",
+        text = "Hello world"
+      }, {
+        title = "#2",
+        text = "Hello world 2"
+      }}
     }}
   }, {
     componentType = "card",
-    imgTop = "file.jpg",
+    imgTop = "file.png",
     body = {
       title = "How to win at the game",
       text = "Well... well... well... give up now!\n\tI am on a new line!<p>TEXT</p>",
       subtext = "Oopie whoopie was 5 minutes ago",
       child = {
         componentType = "stackedProgressBar",
-        bars = {
-          10,10,10,10,10,10,10,10,10,10
-        },
-        label = true,
+        bars = {10, 10, 10, 10, 10, 10, 10},
+        label = true
       }
     },
     size = 2
@@ -93,31 +112,37 @@ local settings = {
 local renderComponent
 local render
 
-renderComponent = function(component)
+renderComponent = function(component, id)
   local componentType = components[component.componentType]
   if not componentType then
     error("Could not find component: " .. tostring(component.componentType))
   end
+
+  component.id = id
+  id = id + 1
+
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
-      render(children)
+      id = render(children)
     end
   end
   if component.size then
     component.size = helper.limitSize(component.size)
   end
   component.render = lustache:render(componentType.template, component)
+  return id
 end
 
-render = function(settings)
+render = function(settings, id)
+  id = id or 0
   if settings.componentType then
-    renderComponent(settings)
-    return
+    return renderComponent(settings, id)
   end
   for _, component in ipairs(settings) do
-    renderComponent(component)
+    id = renderComponent(component, id)
   end
+  return id
 end
 
 render(settings.dashboard)
