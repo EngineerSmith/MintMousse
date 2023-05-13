@@ -68,7 +68,7 @@ local settings = {
       componentType = "buttonGroup",
       buttons = {"First", "Second", "Third"},
       theme = {
-        colorState = "danger",
+        colorState = "primary",
         outline = true
       }
     }, {
@@ -145,7 +145,7 @@ render = function(settings, id)
   return id
 end
 
-render(settings.dashboard)
+render(settings.dashboard) --todo remember id needs to be used across tabs
 
 local htmlPage = lustache:render(love.filesystem.read(dirPATH .. "index.html"), settings)
 
