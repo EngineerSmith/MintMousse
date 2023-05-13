@@ -124,7 +124,7 @@ renderComponent = function(component, id)
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
-      id = render(children)
+      id = render(children, id)
     end
   end
   if component.size then

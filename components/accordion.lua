@@ -6,7 +6,7 @@ return function(settings, helper)
   for i, item in ipairs(settings.items) do
 
     if not item.id then
-      item.id = tostring(settings.id) .. tostring(i)
+      item.id = tostring(settings.id) .. ":" .. tostring(i)
     end
 
     if type(item.title) == "string" then
