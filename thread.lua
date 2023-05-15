@@ -292,8 +292,8 @@ local _id, javascript = console.render(website.dashboard) -- todo remember to us
 
 website.javascript = table.concat(javascript, "\r\n")
 
-
--- Generate 404 page
+-- todo automate error page creation
+-- Generate 404 page 
 local http404PageTbl = {
   title = website.title,
   error = "404",
@@ -303,6 +303,17 @@ local http404PageTbl = {
 console.render(http404PageTbl.dashboard)
 httpResponse["404"] = httpResponse["404"] .. lustache:render(console.index, http404PageTbl)
 http404PageTbl = nil
+
+-- Generate 500 page
+local http500PageTbl = {
+  title = website.title,
+  error = "500",
+  dashboard = require(PATH .. "500")
+}
+
+console.render(http500PageTbl)
+httpResponse["500"] = httpResponse["500"] .. lustache:render(console.index, http500PageTbl)#
+http500PageTbl = nil
 
 -- 
 
