@@ -297,7 +297,7 @@ website.javascript = table.concat(javascript, "\r\n")
 local http404PageTbl = {
   title = website.title,
   error = "404",
-  dashboard = require(PATH .. "404")
+  dashboard = require(PATH .. "http.404")
 }
 
 console.render(http404PageTbl.dashboard)
@@ -308,11 +308,11 @@ http404PageTbl = nil
 local http500PageTbl = {
   title = website.title,
   error = "500",
-  dashboard = require(PATH .. "500")
+  dashboard = require(PATH .. "http.500")
 }
 
 console.render(http500PageTbl)
-httpResponse["500"] = httpResponse["500"] .. lustache:render(console.index, http500PageTbl)#
+httpResponse["500"] = httpResponse["500"] .. lustache:render(console.index, http500PageTbl)
 http500PageTbl = nil
 
 -- 
