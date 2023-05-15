@@ -15,18 +15,32 @@ local console = {
   connections = {}
 }
 
+local httpMethod = {
+  ["event"] = function(request)
+    if request.method == "POST" and request.parsedBody then
+      console.out(enum["event"], request.parsedBody["event"], request.parsedBody["variable"])
+      return "200"
+    end
+  end
+}
+
 local componentPath = dirPATH .. "components"
 local components = {}
 for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
   local path = componentPath .. "/" .. item
   if love.filesystem.getInfo(path, "file") then
     local name, extension = item:match("^(.+)%..-$"), item:match("^.+%.(.+)$"):lower()
-    if extension == "html" then
+    if extension == "html" then -- html
       if not components[name] then
         components[name] = {}
       end
       components[name].template = love.filesystem.read(path)
-    elseif extension == "lua" then
+    elseif extension == "js" then -- javascript
+      if not components[name] then
+        components[name] = {}
+      end
+      components[name].javascript = love.filesystem.read(path)
+    elseif extension == "lua" then -- lua
       if not components[name] then
         components[name] = {}
       end
@@ -74,6 +88,7 @@ console.startServer = function(host, port, backupPort)
 
   local address, port = console.server:getsockname()
   if address and port then
+    address = address == "0.0.0.0" and "127.0.0.1" or address
     local fullAdress = "http://" .. address .. ":" .. port
     console.out(enum["log.info"], "Started webserver at:", fullAdress)
   elseif port then
@@ -142,6 +157,15 @@ console.parseURL = function(url)
   return parsedURL
 end
 
+local bodyPattern = "([^&]-)=([^&^#]*)"
+console.parseBody = function(body)
+  local parsedBody = {}
+  for key, value in body:gmatch(bodyPattern) do
+    parsedBody[helper.unformatText(key)] = helper.unformatText(value)
+  end
+  return parsedBody
+end
+
 -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_request_messages
 local requestMethodPattern = "(%S*)%s*(%S*)%s*(%S*)"
 local requestHeaderPattern = "(.-):%s*(.*)$"
@@ -165,17 +189,31 @@ console.parseRequest = function(client)
   if request.headers["Content-Length"] then
     local length = tonumber(request.headers["Content-Length"])
     if length then
-      request.content = console.receive(client, length)
+      request.body = console.receive(client, length)
     end
   end
+  -- body
+  if request.body then
+    request.parsedBody = console.parseBody(request.body)
+  end
+  --
   return request
 end
 
 console.handleRequest = function(request)
-  if request.parsedURL.path ~= "index" then
-    return httpResponse["404"]
+  local path = request.parsedURL.path
+  if httpMethod[path] then
+    local response, data = httpMethod[path](request)
+    if response then
+      return httpResponse[response] .. (data or "")
+    end
   end
-  return httpResponse["200"] .. lustache:render(console.index, website)
+  if path == "index" then
+    console.out("HERE", "200")
+    return httpResponse["200"] .. lustache:render(console.index, website)
+  end
+  console.out("HERE", "404")
+  return httpResponse["404"]
 end
 
 console.connection = function(client)
@@ -202,7 +240,7 @@ console.send = function(client, data)
   end
 end
 
-console.renderComponent = function(component, id)
+console.renderComponent = function(component, id, javascript)
   local componentType = components[component.componentType]
   if not componentType then
     error("Could not find component: " .. tostring(component.componentType))
@@ -211,28 +249,34 @@ console.renderComponent = function(component, id)
   component.id = id
   id = id + 1
 
+  if componentType.javascript and not javascript[component.componentType] then
+    javascript[component.componentType] = true
+    table.insert(javascript, componentType.javascript)
+  end
+
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
-      id = console.render(children, id)
+      id = console.render(children, id, javascript)
     end
   end
   if component.size then
     component.size = helper.limitSize(component.size)
   end
   component.render = lustache:render(componentType.template, component)
-  return id
+  return id, javascript
 end
 
-console.render = function(settings, id)
+console.render = function(settings, id, javascript)
   id = id or 0
+  javascript = javascript or {}
   if settings.componentType then
-    return console.renderComponent(settings, id)
+    return console.renderComponent(settings, id, javascript)
   end
   for _, component in ipairs(settings) do
-    id = console.renderComponent(component, id)
+    id = console.renderComponent(component, id, javascript)
   end
-  return id
+  return id, javascript
 end
 
 -- preprocessing
@@ -244,7 +288,10 @@ if settings.whitelist then
 end
 
 -- generate dashboard
-console.render(website.dashboard)
+local _id, javascript = console.render(website.dashboard) -- todo remember to use id for tags renders
+
+website.javascript = table.concat(javascript, "\r\n")
+
 
 -- Generate 404 page
 local http404PageTbl = {

@@ -3,4 +3,5 @@ return {
   ["log.warn"]    = "w",
   ["log.error"]   = "e",
   ["request"]     = "r",
+  ["event"]       = "v"
 }

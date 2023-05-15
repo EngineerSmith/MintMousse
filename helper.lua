@@ -21,8 +21,9 @@ local htmlEscapeCharacters = {
   [">"] = "&gt;",
   ['"'] = "&quot;",
   ["'"] = "&#39;",
-  ["/"] = "&#x2F;"
+  ["/"] = "&#x2F;",
 }
+
 local escapeCharactersFn = function(s)
   return htmlEscapeCharacters[s]
 end
@@ -36,6 +37,13 @@ helper.formatText = function(str)
   str = str:gsub("  ", "&nbsp;&nbsp;")
 
   return str
+end
+
+local escapeCharactersFn = function(s)
+  return string.char(tonumber(s, 16))
+end
+helper.unformatText = function(str)
+  return str:gsub("%+", " "):gsub("[%%%$](..)", escapeCharactersFn)
 end
 
 helper.limitSize = function(size)

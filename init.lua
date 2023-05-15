@@ -17,27 +17,12 @@ local settings = {
   }, {
     componentType = "list",
     title = "Players",
-    items = {"James Boo", "Steve", "Lily", "Kate", "Jay"},
-    size = 3
-  }, {
-    componentType = "list",
-    title = "Players",
-    items = {"James Boo", "Steve", "Lily", "Kate", "Jay"},
-    size = 2
-  }, {
-    componentType = "list",
-    title = "Players",
-    items = {"James Boo", "Steve", "Lily", "Kate", "Jay"}
-  }, {
-    componentType = "list",
-    title = "Players",
-    items = {"James Boo", "Steve", "Lily", "Kate", "Jay"}
-  }, {
-    componentType = "list",
-    title = "Players",
+    size = 2,
     items = {"James Boo", "Steve", "Lily", "Kate", {
       componentType = "button",
-      text = "Jay"
+      text = "Hello world",
+      event = "bar",
+      variable = "hi I am James",
     }, {
       componentType = "buttonGroup",
       buttons = {"First", "Second", "Third"},
@@ -77,9 +62,11 @@ local settings = {
     size = 2
   }},
   tabs = {{
-    name = "Chat"
+    name = "Chat",
+    connection = "open"
   }, {
-    name = "Logs"
+    name = "Logs",
+    connection = "open"
   }}
 }
 
