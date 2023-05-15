@@ -1,32 +1,6 @@
 local PATH = ... .. "."
 local dirPATH = PATH:gsub("%.", "/")
 
-local lustache = require(PATH .. "libs.lustache")
-local helper = require(PATH .. "helper")
-
-local componentPath = dirPATH .. "components"
-
-local components = {}
-for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
-  local path = componentPath .. "/" .. item
-  if love.filesystem.getInfo(path, "file") then
-    local name, extension = item:match("^(.+)%..-$"), item:match("^.+%.(.+)$"):lower()
-    if extension == "html" then
-      if not components[name] then
-        components[name] = {}
-      end
-      components[name].template = love.filesystem.read(path)
-    elseif extension == "lua" then
-      if not components[name] then
-        components[name] = {}
-      end
-      components[name].format = require((componentPath .. "." .. name):gsub("[\\/]", "."))
-    end
-  else
-    print(item, "is not a file")
-  end
-end
-
 local settings = {
   title = "MintMousse",
   dashboard = {{
@@ -109,52 +83,19 @@ local settings = {
   }}
 }
 
-local renderComponent
-local render
-
-renderComponent = function(component, id)
-  local componentType = components[component.componentType]
-  if not componentType then
-    error("Could not find component: " .. tostring(component.componentType))
-  end
-
-  component.id = id
-  id = id + 1
-
-  if componentType.format then
-    local children = componentType.format(component, helper)
-    if children then
-      id = render(children, id)
-    end
-  end
-  if component.size then
-    component.size = helper.limitSize(component.size)
-  end
-  component.render = lustache:render(componentType.template, component)
-  return id
-end
-
-render = function(settings, id)
-  id = id or 0
-  if settings.componentType then
-    return renderComponent(settings, id)
-  end
-  for _, component in ipairs(settings) do
-    id = renderComponent(component, id)
-  end
-  return id
-end
-
 local consoleSettings = {
   host = "*",
   port = 80,
-  backupPort = 0, -- 0 lets system pick
-  whitelist = {"127.0.0.1"},
+  backupPort = 0, -- 0 lets system pick as a backup
+  whitelist = {"127.0.0.1"}
 }
 
-render(settings.dashboard) -- todo remember id needs to be used across tabs
+local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
-local htmlPage = lustache:render(love.filesystem.read(dirPATH .. "index.html"), settings)
+thread:start(PATH, dirPATH, consoleSettings, settings, "foo", "bar")
 
-love.filesystem.write("temp.html", htmlPage)
+love.handlers["bar"] = function(...)
+  print(...)
+end
 
+return thread
