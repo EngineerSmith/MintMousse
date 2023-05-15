@@ -33,6 +33,7 @@ helper.formatText = function(str)
 
   str = str:gsub("\n", "<br>")
   str = str:gsub("\t", "&nbsp;&nbsp;&nbsp;&nbsp;")
+  str = str:gsub("  ", "&nbsp;&nbsp;")
 
   return str
 end

@@ -4,7 +4,7 @@ local dirPATH = PATH:gsub("%.", "/")
 local lustache = require(PATH .. "libs.lustache")
 local helper = require(PATH .. "helper")
 
-local componentPath = dirPATH .. "/components"
+local componentPath = dirPATH .. "components"
 
 local components = {}
 for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
@@ -145,7 +145,14 @@ render = function(settings, id)
   return id
 end
 
-render(settings.dashboard) --todo remember id needs to be used across tabs
+local consoleSettings = {
+  host = "*",
+  port = 80,
+  backupPort = 0, -- 0 lets system pick
+  whitelist = {"127.0.0.1"},
+}
+
+render(settings.dashboard) -- todo remember id needs to be used across tabs
 
 local htmlPage = lustache:render(love.filesystem.read(dirPATH .. "index.html"), settings)
 
