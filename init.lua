@@ -7,6 +7,7 @@ local mintMousse = { }
 
 mintMousse.start = function(consoleSettings, settings)
   thread:start(PATH, dirPATH, consoleSettings, settings, "foo", "bar")
+  return -- todo settings with metatable set
 end
 
 love.handlers["bar"] = function(...)
