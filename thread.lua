@@ -1,4 +1,5 @@
 local PATH, dirPATH, settings, website, channelInName, channelOutName = ...
+local componentPath = dirPATH .. "components"
 
 require("love.event")
 local socket = require("socket")
@@ -24,27 +25,42 @@ local httpMethod = {
   end
 }
 
-local componentPath = dirPATH .. "components"
+local getFileNameExtension = function(file)
+  return file:match("^(.+)%..-$"), file:match("^.+%.(.+)$"):lower()
+end
+
+local fileHandle = {
+  ["html"] = function(path, name, components)
+    components[name].template = love.filesystem.read(path)
+  end,
+  ["js"] = function(path, name, components)
+    if not components[name].javascript then
+      components[name].javascript = love.filesystem.read(path)
+    end
+  end,
+  ["lua"] = function(path, name, components)
+    local chunk = require((componentPath .. "." .. name):gsub("[\\/]", "."))
+    if type(chunk) == "function" then
+      components[name].format = chunk
+    elseif type(chunk) == "table" then
+      components[name].format = chunk.format
+      if type(chunk.javascriptRequirement) == "table" then
+        components[name].javascriptRequirement = chunk.javascriptRequirement
+      end
+    end
+  end
+}
+
 local components = {}
 for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
   local path = componentPath .. "/" .. item
   if love.filesystem.getInfo(path, "file") then
-    local name, extension = item:match("^(.+)%..-$"), item:match("^.+%.(.+)$"):lower()
-    if extension == "html" then -- html
-      if not components[name] then
-        components[name] = {}
-      end
-      components[name].template = love.filesystem.read(path)
-    elseif extension == "js" then -- javascript
-      if not components[name] then
-        components[name] = {}
-      end
-      components[name].javascript = love.filesystem.read(path)
-    elseif extension == "lua" then -- lua
-      if not components[name] then
-        components[name] = {}
-      end
-      components[name].format = require((componentPath .. "." .. name):gsub("[\\/]", "."))
+    local name, extension = getFileNameExtension(item)
+    if not components[name] then components[name] = { } end
+    if fileHandle[extension] then
+      fileHandle[extension](path, name, components)
+    else
+      console.out(enum["log.warn"], item, "does not have a supported extension", extension)
     end
   else
     console.out(enum["log.warn"], item, "is not a file")
@@ -253,7 +269,15 @@ console.renderComponent = function(component, id, javascript)
     javascript[component.componentType] = true
     table.insert(javascript, componentType.javascript)
   end
-
+  if componentType.javascriptRequirement then
+    for _, requirement in ipairs(componentType.javascriptRequirement) do
+      if not javascript[requirement] and components[requirement].javascript then
+        javascript[requirement] = true
+        table.insert(javascript, components[requirement].javascript)
+      end
+    end
+  end
+  
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then

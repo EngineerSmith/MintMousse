@@ -1,5 +1,6 @@
-<div class="btn-group-vertical d-flex" role="group" id="{{id}}">
+<div class="btn-group{{#vertical}}-vertical{{/vertical}} d-flex" role="group" id="{{id}}">
   {{#buttons}}
-  <button type="button" class="btn btn{{#theme.outline}}-outline{{/theme.outline}}-{{theme.colorState}}">{{text}}</button>
+  <button type="button" class="btn btn{{#theme.outline}}-outline{{/theme.outline}}-{{theme.colorState}}"{{#event}}
+    event="{{event}}" onclick="buttonPressed(this)"{{/event}}{{#variable}} variable="{{variable}}"{{/variable}}>{{text}}</button>
   {{/buttons}}
 </div>
