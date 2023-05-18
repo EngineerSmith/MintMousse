@@ -1,5 +1,6 @@
 local PATH, dirPATH, settings, website, channelInName, channelOutName = ...
 local componentPath = dirPATH .. "components"
+local httpErrorDirectory = "httpErrorPages"
 
 require("love.event")
 local socket = require("socket")
@@ -20,6 +21,11 @@ local httpMethod = {
   ["event"] = function(request)
     if request.method == "POST" and request.parsedBody then
       console.out(enum["event"], request.parsedBody["event"], request.parsedBody["variable"])
+      return "200"
+    end
+  end,
+  ["alive"] = function(request)
+    if request.method == "GET" then
       return "200"
     end
   end
@@ -56,7 +62,9 @@ for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
   local path = componentPath .. "/" .. item
   if love.filesystem.getInfo(path, "file") then
     local name, extension = getFileNameExtension(item)
-    if not components[name] then components[name] = { } end
+    if not components[name] then
+      components[name] = {}
+    end
     if fileHandle[extension] then
       fileHandle[extension](path, name, components)
     else
@@ -219,16 +227,19 @@ end
 console.handleRequest = function(request)
   local path = request.parsedURL.path
   if httpMethod[path] then
-    local response, data = httpMethod[path](request)
+    local status, response, data = pcall(httpMethod[path], request)
+    if status then
+      console.log(enum["log.error"], "Error occurred while trying to call for", path, ". Error message:", response)
+      response = "500"
+      data = nil
+    end
     if response then
       return httpResponse[response] .. (data or "")
     end
   end
   if path == "index" then
-    console.out("HERE", "200")
     return httpResponse["200"] .. lustache:render(console.index, website)
   end
-  console.out("HERE", "404")
   return httpResponse["404"]
 end
 
@@ -262,8 +273,10 @@ console.renderComponent = function(component, id, javascript)
     error("Could not find component: " .. tostring(component.componentType))
   end
 
-  component.id = id
-  id = id + 1
+  if not component.id then
+    component.id = id
+    id = id + 1
+  end
 
   if componentType.javascript and not javascript[component.componentType] then
     javascript[component.componentType] = true
@@ -277,7 +290,7 @@ console.renderComponent = function(component, id, javascript)
       end
     end
   end
-  
+
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
@@ -291,8 +304,9 @@ console.renderComponent = function(component, id, javascript)
   return id, javascript
 end
 
+local globalID = 0
 console.render = function(settings, id, javascript)
-  id = id or 0
+  id = id or globalID
   javascript = javascript or {}
   if settings.componentType then
     return console.renderComponent(settings, id, javascript)
@@ -303,7 +317,7 @@ console.render = function(settings, id, javascript)
   return id, javascript
 end
 
--- preprocessing
+-- == preprocessing ==
 
 if settings.whitelist then
   for index, allowedAddress in ipairs(settings.whitelist) do
@@ -311,35 +325,38 @@ if settings.whitelist then
   end
 end
 
--- generate dashboard
-local _id, javascript = console.render(website.dashboard) -- todo remember to use id for tags renders
-
+-- generate website
+local javascript = {}
+for _, tab in ipairs(website.tabs) do
+  if type(tab.components) == "table" then
+    globalID = console.render(tab.components, nil, javascript)
+  end
+end
 website.javascript = table.concat(javascript, "\r\n")
 
--- todo automate error page creation
--- Generate 404 page 
-local http404PageTbl = {
-  title = website.title,
-  error = "404",
-  dashboard = require(PATH .. "http.404")
-}
+-- Generate error pages
+local errorPagePath = dirPATH .. httpErrorDirectory
+for _, file in ipairs(lfs.getDirectoryItems(errorPagePath)) do
+  local name, extension = getFileNameExtension(file)
+  if extension == "lua" then
+    if not httpResponse[name] then
+      error("Make sure to remember to add the errorPage to http.lua")
+    end
+    local pageTbl = {
+      title = website.title,
+      error = name,
+      tabs = {{
+        name = "Error " .. name,
+        active = true,
+        components = require(PATH .. httpErrorDirectory .. "." .. name)
+      }}
+    }
+    _, pageTbl.javascript = console.render(pageTbl, 0)
+    httpResponse[name] = httpResponse[name] .. lustache:render(console.index, pageTbl)
+  end
+end
 
-console.render(http404PageTbl.dashboard)
-httpResponse["404"] = httpResponse["404"] .. lustache:render(console.index, http404PageTbl)
-http404PageTbl = nil
-
--- Generate 500 page
-local http500PageTbl = {
-  title = website.title,
-  error = "500",
-  dashboard = require(PATH .. "http.500")
-}
-
-console.render(http500PageTbl)
-httpResponse["500"] = httpResponse["500"] .. lustache:render(console.index, http500PageTbl)
-http500PageTbl = nil
-
--- 
+-- == Main loop ==
 
 console.startServer(settings.host, settings.port, settings.backupPort)
 

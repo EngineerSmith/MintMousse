@@ -1,7 +1,7 @@
-return {
-  ["log.info"]    = "i",
-  ["log.warn"]    = "w",
-  ["log.error"]   = "e",
-  ["request"]     = "r",
-  ["event"]       = "v"
+return { --todo remove enum system and replace with documention 
+  ["log.info"]    = "info",
+  ["log.warn"]    = "warn",
+  ["log.error"]   = "erro",
+  ["request"]     = "rqst",
+  ["event"]       = "evnt",
 }

@@ -93,21 +93,15 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <ul class="nav nav-underline" role="tablist">
+            {{#tabs}}
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab"
-                data-bs-target="#dashboard-tab-pane" type="button" role="tab" aria-controls="dashboard-tab-pane"
-                aria-selected="true">
-                Dashboard
-                <!-- <span class="badge rounded-pill bg-primary"> -- tab notification
+              <button class="nav-link{{#active}} active{{/active}}" id="{{id}}-tab" data-bs-toggle="tab" data-bs-target="#{{id}}-tab-pane"
+                type="button" role="tab" aria-controls="{{id}}-tab-pane" aria-selected="false">{{name}}
+               <!-- <span class="badge rounded-pill bg-primary"> -- tab notification
                   99+
                   <span class="visually-hidden">unread messages</span>
                 </span> -->
               </button>
-            </li>
-            {{#tabs}}
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="{{name}}-tab" data-bs-toggle="tab" data-bs-target="#{{name}}-tab-pane"
-                type="button" role="tab" aria-controls="{{name}}-tab-pane" aria-selected="false">{{name}}</button>
             </li>
             {{/tabs}}
           </ul>
@@ -121,21 +115,16 @@
   </nav>
 
   <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade container mt-2 show active" id="dashboard-tab-pane" role="tabpanel"
-      aria-labelledby="dashboard-tab" tabindex="0">
+    {{#tabs}}
+    <div class="tab-pane fade container mt-2{{#active}} show active{{/active}}" id="{{id}}-tab-pane" role="tabpanel" aria-labelledby="{{id}}-tab" tabindex="0">
       <div class="grid"
         data-masonry='{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}'>
         <div class="grid-sizer"></div>
         <div class="gutter-sizer"></div>
-        {{#dashboard}}
+        {{#components}}
         {{&render}}
-        {{/dashboard}}
+        {{/components}}
       </div>
-    </div>
-    {{#tabs}}
-    <div class="tab-pane fade container mt-2" id="{{name}}-tab-pane" role="tabpanel" aria-labelledby="{{name}}-tab"
-      tabindex="0">
-      ... insert tab here ...
     </div>
     {{/tabs}}
   </div>
