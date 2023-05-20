@@ -1,5 +1,5 @@
 return {{
-  componentType = "card",
+  type = "card",
   size = 2,
   body = {
     title = "404 Not Found",

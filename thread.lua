@@ -28,7 +28,13 @@ local httpMethod = {
     if request.method == "GET" then
       return "200"
     end
-  end
+  end,
+  ["update"] = function(request)
+    if request.method == "GET" then
+      local json = "{}"
+      return "200header", json, "Content-Type: application/json"
+    end
+  end,
 }
 
 local getFileNameExtension = function(file)
@@ -37,11 +43,11 @@ end
 
 local fileHandle = {
   ["html"] = function(path, name, components)
-    components[name].template = love.filesystem.read(path)
+    components[name].template = lfs.read(path)
   end,
   ["js"] = function(path, name, components)
     if not components[name].javascript then
-      components[name].javascript = love.filesystem.read(path)
+      components[name].javascript = lfs.read(path)
     end
   end,
   ["lua"] = function(path, name, components)
@@ -50,17 +56,14 @@ local fileHandle = {
       components[name].format = chunk
     elseif type(chunk) == "table" then
       components[name].format = chunk.format
-      if type(chunk.javascriptRequirement) == "table" then
-        components[name].javascriptRequirement = chunk.javascriptRequirement
-      end
     end
   end
 }
 
 local components = {}
-for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
+for _, item in ipairs(lfs.getDirectoryItems(componentPath)) do
   local path = componentPath .. "/" .. item
-  if love.filesystem.getInfo(path, "file") then
+  if lfs.getInfo(path, "file") then
     local name, extension = getFileNameExtension(item)
     if not components[name] then
       components[name] = {}
@@ -72,6 +75,13 @@ for _, item in ipairs(love.filesystem.getDirectoryItems(componentPath)) do
     end
   else
     console.out(enum["log.warn"], item, "is not a file")
+  end
+end
+
+website.javascript = ""
+for _, component in ipairs(components) do
+  if component.javascript then
+    website.javascript = website.javascript .. component.javascript .. "\n\r"
   end
 end
 
@@ -104,7 +114,7 @@ console.startServer = function(host, port, backupPort)
     end
   end
 
-  console.server:settimeout(.2)
+  console.server:settimeout(0)
   -- local success, errMsg = console.server:listen(10)
   -- if not success then
   --   console.out(enum["log.warn"], "Could not set listen backlog. Reason:", errMsg)
@@ -227,14 +237,14 @@ end
 console.handleRequest = function(request)
   local path = request.parsedURL.path
   if httpMethod[path] then
-    local status, response, data = pcall(httpMethod[path], request)
-    if status then
-      console.log(enum["log.error"], "Error occurred while trying to call for", path, ". Error message:", response)
+    local status, response, data, headers = pcall(httpMethod[path], request)
+    if not status then
+      console.out(enum["log.error"], "Error occurred while trying to call for", path, ". Error message:", response)
       response = "500"
       data = nil
     end
     if response then
-      return httpResponse[response] .. (data or "")
+      return httpResponse[response] .. (headers and headers .. "\r\n\r\n" or "") .. (data or "")
     end
   end
   if path == "index" then
@@ -267,10 +277,10 @@ console.send = function(client, data)
   end
 end
 
-console.renderComponent = function(component, id, javascript)
-  local componentType = components[component.componentType]
+console.renderComponent = function(component, id)
+  local componentType = components[component.type]
   if not componentType then
-    error("Could not find component: " .. tostring(component.componentType))
+    error("Could not find component: " .. tostring(component.type)) --todo add checks to init.lua
   end
 
   if not component.id then
@@ -278,43 +288,29 @@ console.renderComponent = function(component, id, javascript)
     id = id + 1
   end
 
-  if componentType.javascript and not javascript[component.componentType] then
-    javascript[component.componentType] = true
-    table.insert(javascript, componentType.javascript)
-  end
-  if componentType.javascriptRequirement then
-    for _, requirement in ipairs(componentType.javascriptRequirement) do
-      if not javascript[requirement] and components[requirement].javascript then
-        javascript[requirement] = true
-        table.insert(javascript, components[requirement].javascript)
-      end
-    end
-  end
-
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
-      id = console.render(children, id, javascript)
+      id = console.render(children, id)
     end
   end
   if component.size then
     component.size = helper.limitSize(component.size)
   end
   component.render = lustache:render(componentType.template, component)
-  return id, javascript
+  return id
 end
 
 local globalID = 0
-console.render = function(settings, id, javascript)
+console.render = function(settings, id)
   id = id or globalID
-  javascript = javascript or {}
-  if settings.componentType then
-    return console.renderComponent(settings, id, javascript)
+  if settings.type then
+    return console.renderComponent(settings, id)
   end
   for _, component in ipairs(settings) do
-    id = console.renderComponent(component, id, javascript)
+    id = console.renderComponent(component, id)
   end
-  return id, javascript
+  return id
 end
 
 -- == preprocessing ==
@@ -345,13 +341,14 @@ for _, file in ipairs(lfs.getDirectoryItems(errorPagePath)) do
     local pageTbl = {
       title = website.title,
       error = name,
+      javascript = website.javascript,
       tabs = {{
         name = "Error " .. name,
         active = true,
         components = require(PATH .. httpErrorDirectory .. "." .. name)
       }}
     }
-    _, pageTbl.javascript = console.render(pageTbl, 0)
+    console.render(pageTbl.tabs[1].components, 0)
     httpResponse[name] = httpResponse[name] .. lustache:render(console.index, pageTbl)
   end
 end
@@ -365,7 +362,7 @@ while not quit do
   -- webserver handling
   local client, errMsg = console.server:accept()
   if client then
-    client:settimeout(.1)
+    client:settimeout(0)
     local address = client:getsockname()
     if console.isWhitelisted(address) then
       local connection = coroutine.wrap(function()
@@ -386,9 +383,9 @@ while not quit do
     end
   end
   -- thread handling
-  local var = console.channel:pop()
-  local limit, count = 50, 0
-  while var and count < limit do
+  -- local var = console.channel:pop()
+  -- local limit, count = 50, 0
+  -- while var and count < limit do
 
-  end
+  -- end
 end

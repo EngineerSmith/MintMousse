@@ -40,7 +40,7 @@ return function(settings, helper)
         bar.percentageLabel = tostring(math.floor(bar.percentage*1000)/1000).."%"
       end
       settings.bars[i] = bar
-    else
+    elseif type(bar) == "table" then
       if bar.percentage < 0 then bar.percentage = 0 end
       if bar.percentage > 100 then bar.percentage = 100 end
       if settings.label and not bar.percentageLabel then

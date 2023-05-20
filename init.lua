@@ -8,6 +8,10 @@ local thread = love.thread.newThread(dirPATH .. "thread.lua")
 local mintMousse = {}
 
 mintMousse.start = function(settings, website) -- todo add settings validation
+  
+  if type(settings.pollInterval) ~= "number" then
+    settings.pollInterval = 1000
+  end
 
   if type(website.tabs) ~= "table" or #website.tabs < 1 then
     error("Requires at least one tab!")
@@ -22,6 +26,8 @@ mintMousse.start = function(settings, website) -- todo add settings validation
   if not active then
     website.tabs[1].active = true
   end
+
+  website.pollInterval = settings.pollInterval
 
   thread:start(PATH, dirPATH, settings, website, "foo", "bar") -- todo better events/channel names
 

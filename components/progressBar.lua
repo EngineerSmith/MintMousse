@@ -6,6 +6,8 @@ local defaultTheme = {
 
 return function(settings, helper)
 
+  settings.updateLabel = false
+
   if type(settings.percentage) ~= "number" then
     settings.percentage = 0
   end
@@ -13,6 +15,7 @@ return function(settings, helper)
   if settings.percentage > 100 then settings.percentage = 100 end
   if settings.label and not settings.percentageLabel then
     settings.percentageLabel = tostring(math.floor(settings.percentage*1000)/1000).."%"
+    settings.updateLabel = true
   end
 
   -- theme
