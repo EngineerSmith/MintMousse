@@ -1,22 +1,18 @@
 <div class="grid-item {{#size}}grid-item-{{size}}{{/size}}">
   <div class="card" id="{{id}}">
     {{#title}}
-    <div class="card-header">
-      <strong>{{title}}</strong>
-    </div>
+    <div class="card-header"><strong>{{title}}</strong></div>
     {{/title}}
     <ul class="list-group list-group-flush">
       {{#items}}
-      <li class="list-group-item">
-        {{#render}}{{&render}}{{/render}}
-        {{^render}}{{&.}}{{/render}}
-      </li>
+      <li class="list-group-item">{{!
+      }}{{#render}}{{&render}}{{/render}}{{!
+      }}{{^render}}{{&.}}{{/render}}{{!
+      }}</li>
       {{/items}}
     </ul>
     {{#footer}}
-    <div class="card-footer">
-      <strong>{{footer}}</strong>
-    </div>
+    <div class="card-footer"><strong>{{footer}}</strong></div>
     {{/footer}}
   </div>
 </div>
