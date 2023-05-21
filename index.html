@@ -84,13 +84,17 @@
   function aliveRequest(){
     const request = new XMLHttpRequest();
     request.open("GET", "alive", true);
-    if (request.onreadystatechange == XMLHttpRequest.DONE) {
-      const status = request.status;
-      if (status === 0 || (status >= 200 && status < 400)) {
-        console.log("Reconnected! Reloading...");
-        location.reload(); //todo recover website without reloading? what if it's a different project?
-      } //                        alive could return project name or a session id; or a new index.html
+    request.onreadystatechange = () => {
+      if (request.readyState == XMLHttpRequest.DONE) {
+        const status = request.status;
+        if (status >= 200 && status < 400) {
+          console.log("Reconnected! Reloading...", status);
+          location.reload(); //todo recover website without reloading? what if it's a different project?
+        } //                        alive could return project name or a session id; or a new index.html
+      }
     }
+    request.onerror = () => { }
+    request.send();
   }
 
   function updateRequest(){
@@ -106,16 +110,22 @@
         } else {
           console.log("Something went wrong from update, status returned:", status);
           window.clearInterval(interval);
-          interval = window.setInterval(aliveRequest, pollInterval);
+          window.setInterval(aliveRequest, pollInterval);
           document.getElementById("connected").classList.add("visually-hidden");
           document.getElementById("disconnected").classList.remove("visually-hidden");
         }
       }
     }
+    request.onerror = () => {
+      window.clearInterval(interval);
+      window.setInterval(aliveRequest, pollInterval);
+      document.getElementById("connected").classList.add("visually-hidden");
+      document.getElementById("disconnected").classList.remove("visually-hidden");
+    }
     request.send();
   }
 
-  invterval = window.setInterval(updateRequest, pollInterval);
+  interval = window.setInterval(updateRequest, pollInterval);
 
 
 {{&javascript}}
