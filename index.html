@@ -87,9 +87,9 @@
     if (request.onreadystatechange == XMLHttpRequest.DONE) {
       const status = request.status;
       if (status === 0 || (status >= 200 && status < 400)) {
-        console.log("Reconnected!");
+        console.log("Reconnected! Reloading...");
         location.reload(); //todo recover website without reloading? what if it's a different project?
-      } //                        alive could return project name or a session id
+      } //                        alive could return project name or a session id; or a new index.html
     }
   }
 
@@ -106,7 +106,7 @@
         } else {
           console.log("Something went wrong from update, status returned:", status);
           window.clearInterval(interval);
-          window.setInterval(aliveRequest, pollInterval);
+          interval = window.setInterval(aliveRequest, pollInterval);
           document.getElementById("connected").classList.add("visually-hidden");
           document.getElementById("disconnected").classList.remove("visually-hidden");
         }
