@@ -21,19 +21,25 @@ local httpMethod = {
   ["event"] = function(request)
     if request.method == "POST" and request.parsedBody then
       console.out(enum["event"], request.parsedBody["event"], request.parsedBody["variable"])
-      return "200"
+      return "202"
     end
+    if request.method ~= "POST" then
+      return "405"
+    end
+    return "402"
   end,
   ["alive"] = function(request)
     if request.method == "GET" then
-      return "200"
+      return "202"
     end
+    return "405"
   end,
   ["update"] = function(request)
     if request.method == "GET" then
       local json = "{}"
       return "200header", json, "Content-Type: application/json"
     end
+    return "405"
   end,
 }
 

@@ -78,24 +78,44 @@
     integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous"
     async></script>
   <script type="text/javascript">
+  const pollInterval = {{pollInterval}};
+  var interval;
 
-  window.setInterval(function(){
+  function aliveRequest(){
+    const request = new XMLHttpRequest();
+    request.open("GET", "alive", true);
+    if (request.onreadystatechange == XMLHttpRequest.DONE) {
+      const status = request.status;
+      if (status === 0 || (status >= 200 && status < 400)) {
+        console.log("Reconnected!");
+        location.reload(); //todo recover website without reloading? what if it's a different project?
+      } //                        alive could return project name or a session id
+    }
+  }
+
+  function updateRequest(){
     const request = new XMLHttpRequest();
     request.open("GET", "update", true);
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
-        const status = request.status
+        const status = request.status;
         if (status === 0 || (status >= 200 && status < 400)) {
           // request completed
-          console.log(request.responseText);
+          console.log(request.responseText); 
+          // todo process update
         } else {
-          // todo uh oh
-          console.log("Something went wrong from update, status returned:", status)
+          console.log("Something went wrong from update, status returned:", status);
+          window.clearInterval(interval);
+          window.setInterval(aliveRequest, pollInterval);
+          document.getElementById("connected").classList.add("visually-hidden");
+          document.getElementById("disconnected").classList.remove("visually-hidden");
         }
       }
     }
     request.send();
-  }, {{pollInterval}});
+  }
+
+  invterval = window.setInterval(updateRequest, pollInterval);
 
 
 {{&javascript}}
@@ -126,8 +146,8 @@
         </div>
       </div>
       <span class="navbar-text">
-        <h5 class="m-0"><span class="badge text-bg-success">Connected</span></h5>
-        <!-- <h5 class="m-0"><span class="badge text-bg-danger">Disconnected</span></h5> -->
+        <h5 class="m-0" id="connected"><span class="badge text-bg-success">Connected</span></h5>
+        <h5 class="m-0 visually-hidden" id="disconnected"><span class="badge text-bg-danger">Disconnected</span></h5>
       </span>
     </div>
   </nav>
