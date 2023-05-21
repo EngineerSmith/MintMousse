@@ -99,7 +99,7 @@ local processJavascriptFunctions = function(script)
 end
 
 website.javascript = ""
-for _, component in ipairs(components) do
+for _, component in pairs(components) do
   if component.javascript then
     component.updateFunctions = processJavascriptFunctions(component.javascript)
     website.javascript = website.javascript .. component.javascript .. "\n\r"
@@ -345,7 +345,6 @@ for _, tab in ipairs(website.tabs) do
     globalID = console.render(tab.components, nil, javascript)
   end
 end
-website.javascript = table.concat(javascript, "\r\n")
 
 -- Generate error pages
 local errorPagePath = dirPATH .. httpErrorDirectory

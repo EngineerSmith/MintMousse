@@ -1,4 +1,4 @@
-function buttonPressed(button) {
+function buttonPressed(button) { 
   var request = new XMLHttpRequest();
   request.open("POST", "/event", true);
   var body = "event=" + encodeURIComponent(button.getAttribute("event"));
