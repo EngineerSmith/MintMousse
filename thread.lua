@@ -78,9 +78,24 @@ for _, item in ipairs(lfs.getDirectoryItems(componentPath)) do
   end
 end
 
+local updateFunctionPattern = "\nfunction%s+update_(%S+)%("
+local updateFunctionPatternStart = "^function%s+update_(%S+)%("
+local processJavascriptFunctions = function(script)
+  local updateFunctions = { }
+  for variable in script:gmatch(updateFunctionPattern) do
+    updateFunctions[variable] = true
+  end
+  local _,_, variable = script:find(updateFunctionPatternStart)
+  if variable then
+    updateFunctions[variable] = true
+  end
+  return #updateFunctions > 0 and updateFunctions or nil
+end
+
 website.javascript = ""
 for _, component in ipairs(components) do
   if component.javascript then
+    component.updateFunctions = processJavascriptFunctions(component.javascript)
     website.javascript = website.javascript .. component.javascript .. "\n\r"
   end
 end
