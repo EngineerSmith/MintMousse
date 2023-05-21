@@ -15,7 +15,9 @@
     .grid-item-2 { width: 49%; }
     .grid-item-3 { width: 74%; }
     .grid-item-4 { width: 99%; }
-    .grid-item-5 { width: 99%; } .gutter-sizer { width: 1%; }
+    .grid-item-5 { width: 99%; }
+    
+    .gutter-sizer { width: 1%; }
 
     @media screen and (min-width: 768px) {
       .grid-sizer,
@@ -52,8 +54,8 @@
         const status = request.status;
         if (status >= 200 && status < 400) {
           console.log("Reconnected! Reloading...", status);
-          location.reload(); //todo recover website without reloading? what if it's a different project?
-        } //                        alive could return project name or a session id; or a new index.html
+          location.reload(); {{! todo recover website without reloading? what if it's a different project? }}
+        }{{!                          alive could return project name or a session id }}
       }
     }
     request.onerror = () => { }
@@ -66,10 +68,9 @@
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
         const status = request.status;
-        if (status === 0 || (status >= 200 && status < 400)) {
-          // request completed
+        if (status === 0 || (status >= 200 && status < 400)) { // request completed
           console.log(request.responseText); 
-          // todo process update
+          {{! todo process update }}
         } else {
           console.log("Something went wrong from update, status returned:", status);
           window.clearInterval(interval);
@@ -90,7 +91,6 @@
 
   interval = window.setInterval(updateRequest, pollInterval);
 
-
 {{&javascript}}
   </script>
 
@@ -108,10 +108,7 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link{{#active}} active{{/active}}" id="{{id}}-tab" data-bs-toggle="tab" data-bs-target="#{{id}}-tab-pane"
                 type="button" role="tab" aria-controls="{{id}}-tab-pane" aria-selected="false">{{name}}
-               <!-- <span class="badge rounded-pill bg-primary"> -- tab notification
-                  99+
-                  <span class="visually-hidden">unread messages</span>
-                </span> -->
+               <span class="badge rounded-pill bg-primary visually-hidden">99+</span> {{! todo }}
               </button>
             </li>
             {{/tabs}}
