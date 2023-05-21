@@ -115,10 +115,6 @@ console.startServer = function(host, port, backupPort)
   end
 
   console.server:settimeout(0)
-  -- local success, errMsg = console.server:listen(10)
-  -- if not success then
-  --   console.out(enum["log.warn"], "Could not set listen backlog. Reason:", errMsg)
-  -- end
 
   local address, port = console.server:getsockname()
   if address and port then
@@ -256,11 +252,11 @@ end
 console.connection = function(client)
   local request = console.parseRequest(client)
   local reply = console.handleRequest(request)
-  console.send(client, reply)
+  console.sendReply(client, reply)
   client:close()
 end
 
-console.send = function(client, data)
+console.sendReply = function(client, data)
   local i, size = 1, #data
   while i < size do
     local j, errMsg, k = client:send(data, i) -- bad variable names, but the docs are hell
@@ -374,7 +370,7 @@ while not quit do
       client:close()
     end
   elseif errMsg ~= "timeout" then
-    console.out(enum["log.warning"], "Error occurred while accepting a connection:", errMsg)
+    console.out(enum["log.warn"], "Error occurred while accepting a connection:", errMsg)
   end
   -- Handle connections
   for connection in pairs(console.connections) do
