@@ -1,12 +1,12 @@
 return function(settings, helper)
-  if settings.items then
+  if settings.children then
     local childComponents = { }
-    for i, item in ipairs(settings.items) do
-      local t = type(item)
+    for i, child in ipairs(settings.children) do
+      local t = type(child)
       if t == "string" then
-        settings.items[i] = helper.formatText(item)
+        settings.children[i] = helper.formatText(child)
       elseif t == "table" then -- assume component
-        table.insert(childComponents, item)
+        table.insert(childComponents, child)
       end
     end
     return childComponents[1] and childComponents or nil

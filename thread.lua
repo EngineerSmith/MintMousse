@@ -294,40 +294,32 @@ console.sendReply = function(client, data)
   end
 end
 
-console.renderComponent = function(component, id)
+console.renderComponent = function(component)
   local componentType = components[component.type]
   if not componentType then
     error("Could not find component: " .. tostring(component.type)) --todo add checks to init.lua
   end
 
-  if not component.id then
-    component.id = id
-    id = id + 1
-  end
-
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
-      id = console.render(children, id)
+      console.render(children)
     end
   end
   if component.size then
     component.size = helper.limitSize(component.size)
   end
   component.render = lustache:render(componentType.template, component)
-  return id
 end
 
-local globalID = 0
-console.render = function(settings, id)
-  id = id or globalID
+console.render = function(settings)
   if settings.type then
-    return console.renderComponent(settings, id)
+    console.renderComponent(settings)
+  else
+    for _, component in ipairs(settings) do
+      console.renderComponent(component)
+    end
   end
-  for _, component in ipairs(settings) do
-    id = console.renderComponent(component, id)
-  end
-  return id
 end
 
 -- == preprocessing ==
@@ -339,10 +331,9 @@ if settings.whitelist then
 end
 
 -- generate website
-local javascript = {}
 for _, tab in ipairs(website.tabs) do
   if type(tab.components) == "table" then
-    globalID = console.render(tab.components, nil, javascript)
+    console.render(tab.components)
   end
 end
 

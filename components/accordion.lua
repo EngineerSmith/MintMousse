@@ -1,22 +1,24 @@
 return function(settings, helper)
-  if type(settings.items) ~= "table" then
-    error("Items must be a table")
+  if type(settings.children) ~= "table" then
+    error("Children must be a table")
   end
+  
+  -- todo set children components that need rendered, to be rendered
 
-  for i, item in ipairs(settings.items) do
+  for i, child in ipairs(settings.children) do
 
-    if not item.id then
-      item.id = tostring(settings.id) .. ":" .. tostring(i)
+    if not child.id then
+      child.id = tostring(settings.id) .. ":" .. tostring(i)
     end
 
-    if type(item.title) == "string" then
-      item.title = helper.formatText(item.title)
+    if type(child.title) == "string" then
+      child.title = helper.formatText(child.title)
     end
-    if type(item.text) == "string" then
-      item.text = helper.formatText(item.text)
+    if type(child.text) == "string" then
+      child.text = helper.formatText(child.text)
     end
 
     -- inherited values
-    item.parentID = settings.id
+    child.parentID = settings.id
   end
 end

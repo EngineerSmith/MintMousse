@@ -20,8 +20,8 @@
     <div class="card-body">
     {{#body.title}}<h5 class="card-title">{{&body.title}}</h5>
     {{/body.title}}{{#body.text}}<p class="card-text">{{&body.text}}</p>
-    {{/body.text}}{{#body.child}}{{&body.child.render}}
-    {{/body.child}}{{#body.subtext}}<p class="card-text"><small class="text-body-secondary">{{&body.subtext}}</small></p>
+    {{/body.text}}{{#children}}{{&children.render}}{{^children.render}}{{&render}}{{/children.render}}
+    {{/children}}{{#body.subtext}}<p class="card-text"><small class="text-body-secondary">{{&body.subtext}}</small></p>
     {{/body.subtext}}  </div>
     {{/body}}{{!
   }}{{#imgRight}}

@@ -28,6 +28,9 @@ return function(settings, helper)
       body.subtext = helper.formatText(body.subtext)
     end
   end
+  if settings.children and not settings.body then
+    settings.body = { children = settings.children }
+  end
   -- child to render
-  return settings.body.child
+  return settings.children
 end

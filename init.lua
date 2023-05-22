@@ -5,6 +5,31 @@ local controller = require(PATH .. "controller")
 
 local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
+local globalID = 0
+local setID -- function set later
+
+local formatComponent = function(component, id)
+  if component.type then
+    component.id = id
+    id = id + 1
+  end
+  if component.children then
+    id = setID(component.children, id)
+  end
+  return id
+end
+
+setID = function(settings, id)
+  id = id or globalID
+  if settings.type then
+    return formatComponent(settings, id)
+  end
+  for _, component in ipairs(settings) do
+    id = formatComponent(component, id)
+  end
+  return id
+end
+
 local mintMousse = {}
 
 mintMousse.start = function(settings, website) -- todo add settings validation
@@ -16,12 +41,16 @@ mintMousse.start = function(settings, website) -- todo add settings validation
   if type(website.tabs) ~= "table" or #website.tabs < 1 then
     error("Requires at least one tab!")
   end
+
   local active = false
   for index, tab in ipairs(website.tabs) do
     if tab.active then
       active = true
     end
     tab.id = tab.name .. index
+    if tab.components then
+      globalID = setID(tab.components)
+    end
   end
   if not active then
     website.tabs[1].active = true
