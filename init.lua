@@ -1,7 +1,9 @@
 local PATH = ... .. "."
 local dirPATH = PATH:gsub("%.", "/")
+local componentPath = dirPATH .. "components"
 
 local controller = require(PATH .. "controller")
+local javascript = require(PATH .. "javascript")
 
 local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
@@ -29,6 +31,8 @@ setID = function(settings, id)
   end
   return id
 end
+
+local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(componentPath))
 
 local mintMousse = {}
 
@@ -60,7 +64,7 @@ mintMousse.start = function(settings, website) -- todo add settings validation
 
   thread:start(PATH, dirPATH, settings, website, "foo", "bar") -- todo better events/channel names
 
-  return controller(website)
+  return controller(website, jsUpdateFunctions)
 end
 
 love.handlers["bar"] = function(...)
