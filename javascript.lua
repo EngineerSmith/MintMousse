@@ -27,15 +27,17 @@ local updateFunctionPatternStart = "^" .. updateFunctionPattern
 local updateFunctionPatternNewLine = "\n" .. updateFunctionPattern
 
 javascript.processJavascriptFunctions = function(script)
-  local updateFunctions = {}
+  local updateFunctions, touched = {}, false
   local _, _, variable = script:find(updateFunctionPatternStart)
   if variable then
     updateFunctions[variable] = true
+    touched = true
   end
   for variable in script:gmatch(updateFunctionPatternNewLine) do
     updateFunctions[variable] = true
+    touched = true
   end
-  return #updateFunctions > 0 and updateFunctions or nil
+  return touched and updateFunctions or nil
 end
 
 javascript.getUpdateFunctions = function(scripts)

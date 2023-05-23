@@ -380,10 +380,10 @@ while not quit do
       webserver.connections[connection] = nil
     end
   end
-  -- thread handling
-  -- local var = webserver.channel:pop()
-  -- local limit, count = 50, 0
-  -- while var and count < limit do
-
-  -- end
+ -- thread handling
+  local var = webserver.channel:pop()
+  local limit, count = 50, 0
+  while var and count < limit do
+    
+  end
 end

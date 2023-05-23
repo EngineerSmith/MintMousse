@@ -2,6 +2,8 @@ local PATH = ... .. "."
 local dirPATH = PATH:gsub("%.", "/")
 local componentPath = dirPATH .. "components"
 
+local channelIn = "MintMousse"
+
 local controller = require(PATH .. "controller")
 local javascript = require(PATH .. "javascript")
 local svg = require(PATH .. "svg")
@@ -123,12 +125,12 @@ mintMousse.start = function(settings, website) -- todo add settings validation
 
   website.pollInterval = settings.pollInterval
 
-  thread:start(PATH, dirPATH, settings, website, "foo", "bar") -- todo better events/channel names
+  thread:start(PATH, dirPATH, settings, website, channelIn, "mintMousse") -- todo better events/channel names
 
-  return controller(website, jsUpdateFunctions)
+  return controller(website, jsUpdateFunctions, love.thread.getChannel(channelIn))
 end
 
-love.handlers["bar"] = function(...)
+love.handlers["mintMousse"] = function(...)
   print(...)
 end
 
