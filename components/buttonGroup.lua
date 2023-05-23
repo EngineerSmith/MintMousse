@@ -19,6 +19,8 @@ return function(settings, helper)
       theme.colorState = helper.getColor(theme.colorState)
     end
   end
+  --
+  settings.vertical = true
   -- buttons
   for i, button in ipairs(settings.buttons) do
     if type(button) == "string" then
@@ -26,6 +28,7 @@ return function(settings, helper)
         text = helper.formatText(button),
         theme = settings.theme
       }
+      settings.buttons[i].variable = settings.buttons[i].text
     else
       if button.text then
         button.text = helper.formatText(button.text)

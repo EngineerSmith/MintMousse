@@ -34,7 +34,6 @@ local createComponentsMeta = function(components)
     end, -- todo
   }
 
-
   return setmetatable(componentsController, componentsMeta)
 end
 
@@ -47,7 +46,6 @@ local createTabMeta = function(tab)
       
     end
   }
-
 
   local tabController = {
     notify = function()
@@ -95,4 +93,5 @@ end
  2.2) Add functions to add or remove createComponentsMeta
  2.2.1) Insert new components between old ones, at the start or end.
  2.2.2) Remove components from any part of the list
+
 ]]

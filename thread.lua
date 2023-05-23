@@ -3,6 +3,7 @@ local componentPath = dirPATH .. "components"
 local httpErrorDirectory = "httpErrorPages"
 
 require("love.event")
+require("love.window")
 local socket = require("socket")
 
 local lt, le, lfs = love.thread, love.event, love.filesystem
@@ -314,6 +315,11 @@ if settings.whitelist then
     console.addToWhitelist(allowedAddress)
   end
 end
+
+if not website.icon then
+  website.icon = love.window.getIcon()
+end
+website.icon = helper.formatImage(website.icon)
 
 -- generate website
 for _, tab in ipairs(website.tabs) do
