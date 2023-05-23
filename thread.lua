@@ -14,15 +14,16 @@ local httpResponse = require(PATH .. "http")
 local helper = require(PATH .. "helper")
 local javascript = require(PATH .. "javascript")
 
-local console = {
+local webserver = {
   index = lfs.read(dirPATH .. "index.html"),
+  svgIcon = lfs.read(dirPATH .. "icon.svg"),
   connections = {}
 }
 
 local httpMethod = {
   ["event"] = function(request)
     if request.method == "POST" and request.parsedBody then
-      console.out(enum["event"], request.parsedBody["event"], request.parsedBody["variable"])
+      webserver.out(enum["event"], request.parsedBody["event"], request.parsedBody["variable"])
       return "202"
     end
     if request.method ~= "POST" then
@@ -77,10 +78,10 @@ for _, item in ipairs(lfs.getDirectoryItems(componentPath)) do
     if fileHandle[extension] then
       fileHandle[extension](path, name, components)
     else
-      console.out(enum["log.warn"], item, "does not have a supported extension", extension)
+      webserver.out(enum["log.warn"], item, "does not have a supported extension", extension)
     end
   else
-    console.out(enum["log.warn"], item, "is not a file")
+    webserver.out(enum["log.warn"], item, "is not a file")
   end
 end
 
@@ -92,52 +93,52 @@ for _, component in pairs(components) do
   end
 end
 
-console.channel = lt.getChannel(channelInName)
-console.out = function(enum, ...)
+webserver.channel = lt.getChannel(channelInName)
+webserver.out = function(enum, ...)
   le.push(channelOutName, enum, ...)
 end
 
 local oldError = error
 error = function(...)
-  console.out(enum["log.error"], ...)
-  console.cleanup()
+  webserver.out(enum["log.error"], ...)
+  webserver.cleanup()
   oldError(table.concat({...}))
 end
 
-console.startServer = function(host, port, backupPort)
-  if console.server then
-    console.cleanup()
+webserver.startServer = function(host, port, backupPort)
+  if webserver.server then
+    webserver.cleanup()
   end
 
   local errMsg
-  console.server, errMsg = socket.bind(host, port or 80)
-  if not console.server then
+  webserver.server, errMsg = socket.bind(host, port or 80)
+  if not webserver.server then
     if backupPort then
-      console.out(enum["log.warn"], "Webserver could not be started. Attempting to start again. Reason:", errMsg)
-      console.server, errMsg = socket.bind(host, backupPort)
+      webserver.out(enum["log.warn"], "Webserver could not be started. Attempting to start again. Reason:", errMsg)
+      webserver.server, errMsg = socket.bind(host, backupPort)
     end
-    if not console.server then
-      error("Webserver could not be started. Aborting console thread. Reason:", errMsg)
+    if not webserver.server then
+      error("Webserver could not be started. Aborting webserver thread. Reason:", errMsg)
     end
   end
 
-  console.server:settimeout(0)
+  webserver.server:settimeout(0)
 
-  local address, port = console.server:getsockname()
+  local address, port = webserver.server:getsockname()
   if address and port then
     address = address == "0.0.0.0" and "127.0.0.1" or address
     local fullAdress = "http://" .. address .. ":" .. port
-    console.out(enum["log.info"], "Started webserver at:", fullAdress)
+    webserver.out(enum["log.info"], "Started webserver at:", fullAdress)
   elseif port then
-    console.out(enum["log.info"], "Started webserver on port:", port)
+    webserver.out(enum["log.info"], "Started webserver on port:", port)
   else
-    console.out(enum["log.info"], "Started webserver, but was unable to get address.")
+    webserver.out(enum["log.info"], "Started webserver, but was unable to get address.")
   end
 end
 
-console.cleanup = function()
-  if console.server then
-    console.server:close()
+webserver.cleanup = function()
+  if webserver.server then
+    webserver.server:close()
   end
 end
 
@@ -149,18 +150,18 @@ local replaceCharactersFn = function(s)
   end
 end
 
-console.addToWhitelist = function(address)
-  if not console.whitelist then
-    console.whitelist = {}
+webserver.addToWhitelist = function(address)
+  if not webserver.whitelist then
+    webserver.whitelist = {}
   end
-  table.insert(console.whitelist, "^" .. address:gsub("[%.%*]", replaceCharactersFn) .. "$")
+  table.insert(webserver.whitelist, "^" .. address:gsub("[%.%*]", replaceCharactersFn) .. "$")
 end
 
-console.isWhitelisted = function(address)
-  if not console.whitelist then
+webserver.isWhitelisted = function(address)
+  if not webserver.whitelist then
     return true
   end
-  for _, allowedAddress in ipairs(console.whitelist) do
+  for _, allowedAddress in ipairs(webserver.whitelist) do
     if address:match(allowedAddress) then
       return true
     end
@@ -168,7 +169,7 @@ console.isWhitelisted = function(address)
   return false
 end
 
-console.receive = function(client, pattern, prefix)
+webserver.receive = function(client, pattern, prefix)
   while true do
     local data, errMsg = client:receive(pattern, prefix)
     if not data then
@@ -181,7 +182,7 @@ end
 
 local pathPattern = "/([^%?]*)%??(.*)"
 local variablePattern = "([^?^&]-)=([^&^#]*)"
-console.parseURL = function(url)
+webserver.parseURL = function(url)
   local parsedURL = {
     values = {}
   }
@@ -195,7 +196,7 @@ console.parseURL = function(url)
 end
 
 local bodyPattern = "([^&]-)=([^&^#]*)"
-console.parseBody = function(body)
+webserver.parseBody = function(body)
   local parsedBody = {}
   for key, value in body:gmatch(bodyPattern) do
     parsedBody[helper.unformatText(key)] = helper.unformatText(value)
@@ -206,17 +207,17 @@ end
 -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_request_messages
 local requestMethodPattern = "(%S*)%s*(%S*)%s*(%S*)"
 local requestHeaderPattern = "(.-):%s*(.*)$"
-console.parseRequest = function(client)
+webserver.parseRequest = function(client)
   local request = {
     socket = client,
     headers = {}
   }
-  local data = console.receive(client, "*l")
+  local data = webserver.receive(client, "*l")
   request.method, request.url, request.protocol = data:match(requestMethodPattern) -- GET /images/logo.png HTTP/1.1
-  request.parsedURL = console.parseURL(request.url)
+  request.parsedURL = webserver.parseURL(request.url)
   -- headers
   while true do
-    local data = console.receive(client, "*l")
+    local data = webserver.receive(client, "*l")
     if not data or data == "" then
       break
     end
@@ -226,23 +227,23 @@ console.parseRequest = function(client)
   if request.headers["Content-Length"] then
     local length = tonumber(request.headers["Content-Length"])
     if length then
-      request.body = console.receive(client, length)
+      request.body = webserver.receive(client, length)
     end
   end
   -- body
   if request.body then
-    request.parsedBody = console.parseBody(request.body)
+    request.parsedBody = webserver.parseBody(request.body)
   end
   --
   return request
 end
 
-console.handleRequest = function(request)
+webserver.handleRequest = function(request)
   local path = request.parsedURL.path
   if httpMethod[path] then
     local status, response, data, headers = pcall(httpMethod[path], request)
     if not status then
-      console.out(enum["log.error"], "Error occurred while trying to call for", path, ". Error message:", response)
+      webserver.out(enum["log.error"], "Error occurred while trying to call for", path, ". Error message:", response)
       response = "500"
       data = nil
     end
@@ -251,19 +252,19 @@ console.handleRequest = function(request)
     end
   end
   if path == "index" then
-    return httpResponse["200"] .. lustache:render(console.index, website)
+    return httpResponse["200"] .. lustache:render(webserver.index, website)
   end
   return httpResponse["404"]
 end
 
-console.connection = function(client)
-  local request = console.parseRequest(client)
-  local reply = console.handleRequest(request)
-  console.sendReply(client, reply)
+webserver.connection = function(client)
+  local request = webserver.parseRequest(client)
+  local reply = webserver.handleRequest(request)
+  webserver.sendReply(client, reply)
   client:close()
 end
 
-console.sendReply = function(client, data)
+webserver.sendReply = function(client, data)
   local i, size = 1, #data
   while i < size do
     local j, errMsg, k = client:send(data, i) -- bad variable names, but the docs are hell
@@ -280,7 +281,7 @@ console.sendReply = function(client, data)
   end
 end
 
-console.renderComponent = function(component)
+webserver.renderComponent = function(component)
   local componentType = components[component.type]
   if not componentType then
     error("Could not find component: " .. tostring(component.type)) --todo add checks to init.lua
@@ -289,7 +290,7 @@ console.renderComponent = function(component)
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
-      console.render(children)
+      webserver.render(children)
     end
   end
   if component.size then
@@ -298,12 +299,12 @@ console.renderComponent = function(component)
   component.render = lustache:render(componentType.template, component)
 end
 
-console.render = function(settings)
+webserver.render = function(settings)
   if settings.type then
-    console.renderComponent(settings)
+    webserver.renderComponent(settings)
   else
     for _, component in ipairs(settings) do
-      console.renderComponent(component)
+      webserver.renderComponent(component)
     end
   end
 end
@@ -312,19 +313,18 @@ end
 
 if settings.whitelist then
   for index, allowedAddress in ipairs(settings.whitelist) do
-    console.addToWhitelist(allowedAddress)
+    webserver.addToWhitelist(allowedAddress)
   end
 end
 
-if not website.icon then
-  website.icon = love.window.getIcon()
+if type(website.icon)  == "table" then
+  website.icon = lustache:render(webserver.svgIcon , website.icon)
 end
-website.icon = helper.formatImage(website.icon)
 
 -- generate website
 for _, tab in ipairs(website.tabs) do
   if type(tab.components) == "table" then
-    console.render(tab.components)
+    webserver.render(tab.components)
   end
 end
 
@@ -346,42 +346,42 @@ for _, file in ipairs(lfs.getDirectoryItems(errorPagePath)) do
         components = require(PATH .. httpErrorDirectory .. "." .. name)
       }}
     }
-    console.render(pageTbl.tabs[1].components, 0)
-    httpResponse[name] = httpResponse[name] .. lustache:render(console.index, pageTbl)
+    webserver.render(pageTbl.tabs[1].components, 0)
+    httpResponse[name] = httpResponse[name] .. lustache:render(webserver.index, pageTbl)
   end
 end
 
 -- == Main loop ==
 
-console.startServer(settings.host, settings.port, settings.backupPort)
+webserver.startServer(settings.host, settings.port, settings.backupPort)
 
 local quit = false
 while not quit do
   -- webserver handling
-  local client, errMsg = console.server:accept()
+  local client, errMsg = webserver.server:accept()
   if client then
     client:settimeout(0)
     local address = client:getsockname()
-    if console.isWhitelisted(address) then
+    if webserver.isWhitelisted(address) then
       local connection = coroutine.wrap(function()
-        console.connection(client)
+        webserver.connection(client)
       end)
-      console.connections[connection] = true
+      webserver.connections[connection] = true
     else
-      console.out(enum["log.warn"], "Non-whitelisted connection attempt from:", address)
+      webserver.out(enum["log.warn"], "Non-whitelisted connection attempt from:", address)
       client:close()
     end
   elseif errMsg ~= "timeout" then
-    console.out(enum["log.warn"], "Error occurred while accepting a connection:", errMsg)
+    webserver.out(enum["log.warn"], "Error occurred while accepting a connection:", errMsg)
   end
   -- Handle connections
-  for connection in pairs(console.connections) do
+  for connection in pairs(webserver.connections) do
     if connection() == nil then
-      console.connections[connection] = nil
+      webserver.connections[connection] = nil
     end
   end
   -- thread handling
-  -- local var = console.channel:pop()
+  -- local var = webserver.channel:pop()
   -- local limit, count = 50, 0
   -- while var and count < limit do
 

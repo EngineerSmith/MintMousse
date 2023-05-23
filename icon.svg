@@ -1,0 +1,14 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'>{{!
+ }}<{{#rect}}rect width='100%' height='100%'{{/rect}}{{!           rect
+ }}{{#circle}}circle cx='50%' cy='50%' r='50%'{{/circle}}{{!       circle
+ }}{{#insideColor}} fill='{{insideColor}}'{{/insideColor}}{{!      insideColor
+ }}{{#outsideColor}} stroke='{{outsideColor}}'{{/outsideColor}}{{! outsideColor
+ }}{{#rounded}} rx='5'{{/rounded}}{{!                              rounded
+ }}{{#easterEgg}}><animate{{!                                      easterEgg Anim1
+    }}{{#rect}} attributeName='rx' values='5;9;7;5;'{{/rect}}{{!
+  }}{{#circle}} attributeName='r'  values='50%;40%;50%;'{{/circle}}{{!
+  }} dur='2s' repeatCount='indefinite'/>{{!
+}}{{#rect}}</rect>{{/rect}}{{#circle}}</circle>{{/circle}}{{/easterEgg}}{{^easterEgg}}/>{{/easterEgg}}{{!
+ }}{{#emoji}}<text x='-1' y='15.5'>{{emoji}}{{#easterEgg}}{{!                                                               emoji
+ }}<animate id='a' attributeName='y' values='15.5;14;15.5' dur='1s' begin='1s;a.end+3s'/>{{/easterEgg}}</text>{{/emoji}}{{! easterEgg Anim2
+}}</svg>
