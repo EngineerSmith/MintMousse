@@ -157,6 +157,11 @@ x1.1.2) Push update to the thread
  4.2) Maybes: toast updates; AppleCake support;
  5) Custom support for message styles using lustache? e.g. how I did logging in mintlilac
  5.1) Reconsider adding css classes instead of intenting styling within elements like in mintlilac
+ 6) Add time since...
+ 6.1) Add time since last update on connected hover
+ 6.2) Add time since last connected on disconnect hover
+ 6.3) Add option to add timestamp that js updates
+ 6.3.1) e.g. "X was 5 minutes ago", "X was 10 hours ago", "X was 4 days ago"
 
  Considerations: Continuous tcp connection? 
   Benefits: Easily push updates to live data (might keep a tcp connect open for certain components + warn users of this drawback + could add support for non-continous tcp connections)
