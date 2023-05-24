@@ -140,9 +140,9 @@ end
  TODO list
 
  1) Handle update to components
- 1.1) Add handling on main thread to update components
- 1.1.1) Find a system that works well with metatables
- 1.1.2) Push update to the thread
+x1.1) Add handling on main thread to update components
+x1.1.1) Find a system that works well with metatables
+x1.1.2) Push update to the thread
  1.2) Add handling on thread to update components
  1.2.1) accept incoming update from the main thread
  1.2.2) Re-render components so they can be ready for new index request

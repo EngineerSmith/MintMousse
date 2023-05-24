@@ -142,36 +142,38 @@ local processTabs = function(tabs, ...)
 end
 
 return function(website, ...)
-
-  local idTable = {}
-
+  -- build controller
   local controller = {
-    getById = function(id)
-      return idTable[id]
-    end,
+    idTable = { },
     insert = function()
       error()
     end, -- todo
     remove = function()
       error()
-    end -- todo
+    end, -- todo
   }
+  
+  controller.getById = function(id)
+    return controller.idTable[id]
+  end
 
   controller.update = function(id, key, value)
     local component = controller.getById(id)
     assert(component, "Invalid id given: "..tostring(id))
     component[key] = value
   end
-
+  
+  -- processing 
   if type(website.icon) == "table" then
     controller.icon = basicLockTable(website.icon)
   end
   local tabs
   if type(website.tabs) == "table" then
-    tabs = processTabs(website.tabs, idTable, ...)
+    tabs = processTabs(website.tabs, controller.idTable, ...)
   end
-
-  local controllerMeta = {
+  
+  --
+  return setmetatable(controller, {
     __newindex = function(_, key)
       indexError(key)
     end,
@@ -181,21 +183,19 @@ return function(website, ...)
       end
       return rawget(controller, key) or rawget(website, key)
     end
-  }
-
-  return setmetatable(controller, controllerMeta)
+  })
 end
 --[[
  TODO list
 
- 1) metatables
+x1) metatables
 x1.1) Metatable when change should error, or push update to webserver thread to reflect the change
- 1.2) Only change variables with an update function
+x1.2) Only change variables with an update function
  2) Controller functions
- 2.1) Make it easy to update a field without going down a long list of tables
- 2.1.1) e.g. website.tabs[1].components[1].children[2].progress = 5  NO (but keep support for it)
- 2.1.2) controller.updateVariable(id, variableName, newValue) YES
- 2.2) Add functions to add or remove createComponentsMeta
+x2.1) Make it easy to update a field without going down a long list of tables
+x2.1.1) e.g. website.tabs[1].components[1].children[2].progress = 5  NO (but keep support for it)
+x2.1.2) controller.updateVariable(id, variableName, newValue) YES
+ 2.2) Add functions to add or remove
  2.2.1) Insert new components between old ones, at the start or end.
  2.2.2) Remove components from any part of the list
 
