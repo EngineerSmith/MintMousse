@@ -19,10 +19,14 @@ end
 
 local processComponents -- function, defined later
 
-local processComponent = function(component, jsUpdateFunctions, channelIn)
+local processComponent = function(component, idTable, jsUpdateFunctions, channelIn)
+  if type(component) ~= "table" then
+    return component
+  end
+
   local children
   if component.children then
-    children = processComponents(component.children, jsUpdateFunctions, channelIn)
+    children = processComponents(component.children, idTable, jsUpdateFunctions, channelIn)
   end
 
   local newindex
@@ -49,8 +53,18 @@ local processComponent = function(component, jsUpdateFunctions, channelIn)
       indexError(key)
     end
   end
+  
+  local componentTbl = {}
+  if children then
+    componentTbl.insert = function()
+      error()
+    end
+    componentTbl.remove = function()
+      error()
+    end
+  end
 
-  return setmetatable({}, {
+  return setmetatable(componentTbl, {
     __newindex = newindex,
     __index = function(_, key)
       if key == "children" then
@@ -61,16 +75,22 @@ local processComponent = function(component, jsUpdateFunctions, channelIn)
   })
 end
 
-processComponents = function(components, ...)
+processComponents = function(components, idTable, ...)
   -- flat component
   if components.type then
-    return processComponent(components, ...)
+    idTable[components.id] =  processComponent(components, idTable, ...)
+    return idTable[components.id]
   end
   -- multiple components
   local newComponents = {}
   for index, component in ipairs(components) do
-    newComponents[index] = processComponent(component, ...)
+    local component = processComponent(component, idTable, ...)
+    newComponents[index] = component
+    if type(component) == "table" and component.id then
+      idTable[component.id] = component
+    end
   end
+  
   return setmetatable({}, {
     __newindex = function(_, key)
       indexError(key)
@@ -123,12 +143,11 @@ end
 
 return function(website, ...)
 
+  local idTable = {}
+
   local controller = {
     getById = function(id)
-      error()
-    end,
-    update = function()
-      error()
+      return idTable[id]
     end,
     insert = function()
       error()
@@ -138,12 +157,18 @@ return function(website, ...)
     end -- todo
   }
 
+  controller.update = function(id, key, value)
+    local component = controller.getById(id)
+    assert(component, "Invalid id given: "..tostring(id))
+    component[key] = value
+  end
+
   if type(website.icon) == "table" then
     controller.icon = basicLockTable(website.icon)
   end
   local tabs
   if type(website.tabs) == "table" then
-    tabs = processTabs(website.tabs, ...)
+    tabs = processTabs(website.tabs, idTable, ...)
   end
 
   local controllerMeta = {
@@ -154,7 +179,7 @@ return function(website, ...)
       if key == "tabs" then
         return tabs
       end
-      return rawget(website, key)
+      return rawget(controller, key) or rawget(website, key)
     end
   }
 
@@ -164,7 +189,7 @@ end
  TODO list
 
  1) metatables
- 1.1) Metatable when change should error, or push update to webserver thread to reflect the change
+x1.1) Metatable when change should error, or push update to webserver thread to reflect the change
  1.2) Only change variables with an update function
  2) Controller functions
  2.1) Make it easy to update a field without going down a long list of tables

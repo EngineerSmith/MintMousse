@@ -2,7 +2,7 @@ local PATH = ... .. "."
 local dirPATH = PATH:gsub("%.", "/")
 local componentPath = dirPATH .. "components"
 
-local channelIn = "MintMousse"
+local channelInOut = "MintMousse"
 
 local controller = require(PATH .. "controller")
 local javascript = require(PATH .. "javascript")
@@ -15,8 +15,10 @@ local setID -- function set later
 
 local formatComponent = function(component, id)
   if component.type then
-    component.id = id
-    id = id + 1
+    if not component.id then
+      component.id = id
+      id = id + 1
+    end
   end
   if component.children then
     id = setID(component.children, id)
@@ -125,12 +127,12 @@ mintMousse.start = function(settings, website) -- todo add settings validation
 
   website.pollInterval = settings.pollInterval
 
-  thread:start(PATH, dirPATH, settings, website, channelIn, "mintMousse") -- todo better events/channel names
+  thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut) -- todo better events/channel names
 
-  return controller(website, jsUpdateFunctions, love.thread.getChannel(channelIn))
+  return controller(website, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 end
 
-love.handlers["mintMousse"] = function(...)
+love.handlers[channelInOut] = function(...)
   print(...)
 end
 

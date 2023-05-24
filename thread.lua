@@ -384,6 +384,8 @@ while not quit do
   local var = webserver.channel:pop()
   local limit, count = 50, 0
   while var and count < limit do
-    
+    -- todo
+    var = webserver.channel:pop()
+    count = count + 1
   end
 end
