@@ -39,7 +39,7 @@ local processComponent = function(component, idTable, jsUpdateFunctions, channel
           if type(previous) ~= type(value) then
             typeError(type(previous), type(value))
           else
-            print("SET", key, "TO", value)
+            --print("SET", key, "TO", value)
             rawset(component, key, value)
             channelIn:push({component.id, key, value}) -- todo make faster
           end
@@ -162,7 +162,7 @@ return function(website, ...)
     assert(component, "Invalid id given: "..tostring(id))
     component[key] = value
   end
-  
+
   -- processing 
   if type(website.icon) == "table" then
     controller.icon = basicLockTable(website.icon)

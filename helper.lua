@@ -22,7 +22,6 @@ local htmlEscapeCharacters = {
   ['"'] = "&quot;",
   ["'"] = "&#39;",
   ["/"] = "&#x2F;",
-  ["#"] = "%23",
 }
 
 local escapeCharactersFn = function(s)
@@ -31,7 +30,7 @@ end
 
 helper.formatText = function(str)
 
-  str = str:gsub('[&<>"\'/#]', escapeCharactersFn)
+  str = str:gsub('[&<>"\'/]', escapeCharactersFn)
 
   str = str:gsub("\n", "<br>")
   str = str:gsub("\t", "&nbsp;&nbsp;&nbsp;&nbsp;")

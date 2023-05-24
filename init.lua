@@ -18,6 +18,9 @@ local formatComponent = function(component, id)
     if not component.id then
       component.id = id
       id = id + 1
+    elseif type(component.id) == "string" then
+      -- todo allow for certain punctuation characters e.g. [ . _ , ; ] (not ' or " )
+      assert(not component.id:find("%W"), "You can't use non-alphanumeric characters in an id (This is to avoid html issues)")
     end
   end
   if component.children then
