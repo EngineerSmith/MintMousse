@@ -42,7 +42,6 @@ end
 
 local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(componentPath))
 
-
 local formatIcon = function(icon)
   if type(icon) == "string" then
     if icon:find("%.svg$") then
@@ -131,7 +130,7 @@ mintMousse.start = function(settings, website) -- todo add settings validation
 
   website.pollInterval = settings.pollInterval
 
-  thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut) -- todo better events/channel names
+  thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut)
 
   return controller(website, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 end
@@ -145,14 +144,6 @@ end
 --[[
  TODO list
 
- 1) Handle update to components
-x1.1) Add handling on main thread to update components
-x1.1.1) Find a system that works well with metatables
-x1.1.2) Push update to the thread
- 1.2) Add handling on thread to update components
- 1.2.1) accept incoming update from the main thread
- 1.2.2) Re-render components so they can be ready for new index request
- 1.2.4) Add handling for webpage to request updates (Should they just request the render of the component and replace it?)
  2) Complete all todo comments
  3) Add component factories to make it easier to make a website than creating a massive table (but keep option for table for more control)
  4) Add futher component concepts

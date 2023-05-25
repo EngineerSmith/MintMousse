@@ -6,10 +6,7 @@ return function(settings, helper)
   -- todo set children components that need rendered, to be rendered
 
   for i, child in ipairs(settings.children) do
-
-    if not child.id then
-      child.id = tostring(settings.id) .. ":" .. tostring(i)
-    end
+    child.id = tostring(settings.id) .. ":" .. tostring(i)
 
     if type(child.title) == "string" then
       child.title = helper.formatText(child.title)

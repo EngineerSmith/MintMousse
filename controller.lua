@@ -187,9 +187,6 @@ end
 --[[
  TODO list
 
-x1) metatables
-x1.1) Metatable when change should error, or push update to webserver thread to reflect the change
-x1.2) Only change variables with an update function
  2) Controller functions
 x2.1) Make it easy to update a field without going down a long list of tables
 x2.1.1) e.g. website.tabs[1].components[1].children[2].progress = 5  NO (but keep support for it)
@@ -197,5 +194,5 @@ x2.1.2) controller.updateVariable(id, variableName, newValue) YES
  2.2) Add functions to add or remove
  2.2.1) Insert new components between old ones, at the start or end.
  2.2.2) Remove components from any part of the list
-
+ 2.2.3) Update webpage with these changes
 ]]

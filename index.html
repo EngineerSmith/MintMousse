@@ -57,8 +57,7 @@
         const status = request.status;
         if (status >= 200 && status < 400) {
           console.log("Reconnected! Reloading..."+status);
-          location.reload(); {{! todo recover website without reloading? what if it's a different project? }}
-        } else { {{!                          alive could return project name or a session id }}
+        } else {
           if (time > pollInterval * 10) {
             time = pollInterval * 9;
           }
