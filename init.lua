@@ -137,7 +137,9 @@ mintMousse.start = function(settings, website) -- todo add settings validation
 end
 
 love.handlers[channelInOut] = function(...)
-  print(...)
+  if love[channelInOut] then
+    love[channelInOut](...)
+  end
 end
 
 --[[

@@ -75,9 +75,13 @@
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
         const status = request.status;
-        if (status === 0 || (status >= 200 && status < 400)) { // request completed
-          {{! todo process update }}
+        if (status === 200) {
           const jsonResponse = JSON.parse(request.responseText);
+          if (jsonResponse.updateTime < updateTime) {
+            return; // outdated reply
+          }
+          updateTime = jsonResponse.updateTime;
+
           const updates = jsonResponse.updates;
           for (let i = 0; i < updates.length; i++) {
             const update = updates[i];
