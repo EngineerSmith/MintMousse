@@ -22,18 +22,18 @@ javascript.readScripts = function(path)
   return scripts
 end
 
-local updateFunctionPattern = "function%s+update_(%S+)%("
-local updateFunctionPatternStart = "^" .. updateFunctionPattern
-local updateFunctionPatternNewLine = "\n" .. updateFunctionPattern
+local updateFunctionPattern_11 = "^function%s+" -- string start match
+local updateFunctionPattern_12 = "\nfunction%s+" -- new line match
+local updateFunctionPattern_2 = "_update_(%S+)%(" -- <type>_update_(variable)
 
-javascript.processJavascriptFunctions = function(script)
+javascript.processJavascriptFunctions = function(type, script)
   local updateFunctions, touched = {}, false
-  local _, _, variable = script:find(updateFunctionPatternStart)
+  local _, _, variable = script:find(updateFunctionPattern_11..type..updateFunctionPattern_2)
   if variable then
     updateFunctions[variable] = true
     touched = true
   end
-  for variable in script:gmatch(updateFunctionPatternNewLine) do
+  for variable in script:gmatch(updateFunctionPattern_12..type..updateFunctionPattern_2) do
     updateFunctions[variable] = true
     touched = true
   end
@@ -42,8 +42,8 @@ end
 
 javascript.getUpdateFunctions = function(scripts)
   local updateFunctions = {}
-  for index, script in pairs(scripts) do
-    updateFunctions[index] = javascript.processJavascriptFunctions(script)
+  for type, script in pairs(scripts) do
+    updateFunctions[type] = javascript.processJavascriptFunctions(type, script)
   end
   return updateFunctions
 end

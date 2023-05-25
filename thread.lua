@@ -9,6 +9,8 @@ local socket = require("socket")
 local lt, le, lfs = love.thread, love.event, love.filesystem
 
 local lustache = require(PATH .. "libs.lustache")
+local json = require(PATH .. "libs.json")
+
 local enum = require(PATH .. "enum")
 local httpResponse = require(PATH .. "http")
 local helper = require(PATH .. "helper")
@@ -42,12 +44,23 @@ local httpMethod = {
   end,
   ["update"] = function(request)
     if request.method == "GET" then
-      local json = "{}"
-      return "200header", json, "Content-Type: application/json"
+      local lastUpdateTime = tonumber(request.parsedURL.values["updateTime"])
+      if not lastUpdateTime then
+        return "422"
+      end
+      local json = webserver.getUpdatePayload("json", lastUpdateTime)
+      if json then
+        return "200header", json, "Content-Type: application/json"
+      end
+      return "204" -- processed successfully, but no update
     end
     return "405"
   end
 }
+
+local getUnixTime = function()
+  return os.time(os.date("!*t"))
+end
 
 local getFileNameExtension = function(file)
   return file:match("^(.+)%..-$"), file:match("^.+%.(.+)$"):lower()
@@ -89,9 +102,9 @@ for _, item in ipairs(lfs.getDirectoryItems(componentPath)) do
 end
 
 website.javascript = ""
-for _, component in pairs(components) do
+for type, component in pairs(components) do
   if component.javascript then
-    component.updateFunctions = javascript.processJavascriptFunctions(component.javascript)
+    component.updateFunctions = javascript.processJavascriptFunctions(type, component.javascript)
     website.javascript = website.javascript .. component.javascript .. "\n\r"
   end
 end
@@ -101,11 +114,27 @@ webserver.out = function(enum, ...)
   le.push(channelOutName, enum, ...)
 end
 
+local _concat
+_concat = function(a, b, ...)
+  if b then
+    return _concat(b, ...)
+  end
+  return a
+end
+
 local oldError = error
 error = function(...)
-  webserver.out(enum["log.error"], ...)
+  local info, name = debug.getinfo(2, "fnS")
+  if info then
+    if info.name then
+      name = info.name
+    elseif info.func then -- Attempt to create a name from memory address
+      name = tostring(info.func):sub(10)
+    end
+  end
+  webserver.out(enum["log.error"], name, ...)
   webserver.cleanup()
-  oldError(table.concat({...}))
+  oldError(_concat(name, ...))
 end
 
 webserver.startServer = function(host, port, backupPort)
@@ -255,8 +284,7 @@ webserver.handleRequest = function(request)
     end
   end
   if path == "index" then
-    website.time = os.time(os.date("!*t"))
-    webserver.out(website.tabs[1].components[1].render)
+    website.time = getUnixTime()
     return httpResponse["200header"] .. "Content-Type: text/html\r\n\r\n" .. lustache:render(webserver.index, website)
   end
   return httpResponse["404"]
@@ -328,7 +356,7 @@ webserver.generateIDTable = function(components, idTable, parent)
   if type(components) ~= "table" then
     return
   end
-  
+
   if components.type then
     generateIDTable_processComponent(components, idTable, parent)
   else
@@ -341,7 +369,10 @@ webserver.generateIDTable = function(components, idTable, parent)
 end
 
 webserver.processUpdate = function(updateInformation, time)
+  -- Parameters
   local id, key, value = updateInformation[1], updateInformation[2], updateInformation[3]
+  local component = webserver.idTable[id]
+
   -- add new value to update table
   local updateIndexyKey = id .. ":" .. key
   local updateID = webserver.updateIndexes[updateIndexyKey]
@@ -349,19 +380,18 @@ webserver.processUpdate = function(updateInformation, time)
     table.insert(webserver.updates, {
       timeUpdated = time,
       componentID = id,
-      key = key,
+      func = component.type .. "_update_"..key,
       value = value
     })
     webserver.updateIndexes[updateIndexyKey] = #webserver.updates
   else
-    local updateTable = webserver.updateIndexes
+    local updateTable = webserver.updates[updateID]
     updateTable.timeUpdated = time
     updateTable.value = value
   end
   -- update value in website for newly requested site
-  local component = webserver.idTable[id]
   if not component then
-    webserver.out(enum["log.warn"], "ID does not exist within own idTable: "..tostring(id))
+    webserver.out(enum["log.warn"], "ID does not exist within own idTable: " .. tostring(id))
     return
   end
   component[key] = value
@@ -372,6 +402,28 @@ webserver.processUpdate = function(updateInformation, time)
     component = component._parent
   end
   webserver.renderComponent(component)
+end
+
+webserver.getUpdatePayload = function(type, lastUpdateTime)
+  if not (type == "json") then
+    return error("Cannot return type " .. tostring(type) .. " update payload")
+  end
+
+  local updatesToSend = { }
+  for _, update in ipairs(webserver.updates) do
+    if update.timeUpdated > lastUpdateTime then
+      table.insert(updatesToSend, {update.func, update.componentID, update.value})
+    end
+  end
+  if #updatesToSend == 0 then
+    return nil
+  end
+  updatesToSend = { updateTime = getUnixTime(), updates = updatesToSend}
+
+  if type == "json" then
+    return json.encode(updatesToSend)
+  end
+  error("CANNOT HIT; TELL A PROGRAMMER TO UPDATE FIRST LINE OF FUNCTION")
 end
 
 -- == preprocessing ==
@@ -438,7 +490,7 @@ while not quit do
       webserver.out(enum["log.warn"], "Non-whitelisted connection attempt from:", address)
       client:close()
     end
-  elseif errMsg ~= "timeout" then
+  elseif errMsg ~= "timeout" and errMsg ~= "closed" then
     webserver.out(enum["log.warn"], "Error occurred while accepting a connection:", errMsg)
   end
   -- Handle connections

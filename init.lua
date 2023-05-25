@@ -42,6 +42,7 @@ end
 
 local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(componentPath))
 
+
 local formatIcon = function(icon)
   if type(icon) == "string" then
     if icon:find("%.svg$") then

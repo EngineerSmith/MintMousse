@@ -1,7 +1,7 @@
-function update_percentage(id, json) {
-  var progressBar = document.getElementById(id).firstChild;
-  progressBar.style.width = json.percentage;
+function progressBar_update_percentage(element, value) {
+  var progressBar = element.getElementsByTagName("div")[0];
+  progressBar.style['width'] = value+"%";
   if (progressBar.dataset.updateLabel) {
-    progressBar.textContent = json.percentage;
+    progressBar.textContent = value+"%";
   }
 }

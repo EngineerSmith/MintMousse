@@ -44,6 +44,7 @@
     integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous"
     async></script>
   <script type="text/javascript">
+  var updateTime = {{time}};
   const pollInterval = {{pollInterval}};
   var interval;
 
@@ -70,13 +71,21 @@
 
   function updateRequest(){
     const request = new XMLHttpRequest();
-    request.open("GET", "update", true);
+    request.open("GET", "update?updateTime="+updateTime, true);
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
         const status = request.status;
         if (status === 0 || (status >= 200 && status < 400)) { // request completed
-          console.log(request.responseText); 
           {{! todo process update }}
+          const jsonResponse = JSON.parse(request.responseText);
+          const updates = jsonResponse.updates;
+          for (let i = 0; i < updates.length; i++) {
+            const update = updates[i];
+            const fn = window[update[0]];
+            if (typeof(fn) === 'function') {
+              fn(document.getElementById(update[1]), update[2]);
+            }
+          }
         }
       }
     }
