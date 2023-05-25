@@ -47,16 +47,22 @@
   const pollInterval = {{pollInterval}};
   var interval;
 
-  function aliveRequest(){
+  var aliveRequest;
+  aliveRequest = function(time){
     const request = new XMLHttpRequest();
     request.open("GET", "alive", true);
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
         const status = request.status;
         if (status >= 200 && status < 400) {
-          console.log("Reconnected! Reloading...", status);
+          console.log("Reconnected! Reloading..."+status);
           location.reload(); {{! todo recover website without reloading? what if it's a different project? }}
-        }{{!                          alive could return project name or a session id }}
+        } else { {{!                          alive could return project name or a session id }}
+          if (time > pollInterval * 10) {
+            time = pollInterval * 9;
+          }
+          setTimeout(aliveRequest, time + pollInterval, time);
+        }
       }
     }
     request.send();
@@ -71,18 +77,12 @@
         if (status === 0 || (status >= 200 && status < 400)) { // request completed
           console.log(request.responseText); 
           {{! todo process update }}
-        } else {
-          console.log("Something went wrong from update, status returned:", status);
-          window.clearInterval(interval);
-          window.setInterval(aliveRequest, pollInterval);
-          document.getElementById("connected").classList.add("visually-hidden");
-          document.getElementById("disconnected").classList.remove("visually-hidden");
         }
       }
     }
     request.onerror = () => {
       window.clearInterval(interval);
-      window.setInterval(aliveRequest, pollInterval);
+      aliveRequest(0);
       document.getElementById("connected").classList.add("visually-hidden");
       document.getElementById("disconnected").classList.remove("visually-hidden");
     }

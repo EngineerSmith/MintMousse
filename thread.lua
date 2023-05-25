@@ -17,7 +17,10 @@ local javascript = require(PATH .. "javascript")
 local webserver = {
   index = lfs.read(dirPATH .. "index.html"),
   svgIcon = lfs.read(dirPATH .. "icon.svg"),
-  connections = {}
+  connections = {},
+  updates = {},
+  updateIndexes = {},
+  idTable = {}
 }
 
 local httpMethod = {
@@ -43,7 +46,7 @@ local httpMethod = {
       return "200header", json, "Content-Type: application/json"
     end
     return "405"
-  end,
+  end
 }
 
 local getFileNameExtension = function(file)
@@ -252,7 +255,9 @@ webserver.handleRequest = function(request)
     end
   end
   if path == "index" then
-    return httpResponse["200"] .. lustache:render(webserver.index, website)
+    website.time = os.time(os.date("!*t"))
+    webserver.out(website.tabs[1].components[1].render)
+    return httpResponse["200header"] .. "Content-Type: text/html\r\n\r\n" .. lustache:render(webserver.index, website)
   end
   return httpResponse["404"]
 end
@@ -284,7 +289,7 @@ end
 webserver.renderComponent = function(component)
   local componentType = components[component.type]
   if not componentType then
-    error("Could not find component: " .. tostring(component.type)) --todo add checks to init.lua
+    error("Could not find component: " .. tostring(component.type)) -- todo add checks to init.lua
   end
 
   if componentType.format then
@@ -309,6 +314,66 @@ webserver.render = function(settings)
   end
 end
 
+local generateIDTable_processComponent = function(component, idTable, parent)
+  if component.id then
+    component._parent = parent
+    idTable[component.id] = component
+  end
+  if component.children then
+    webserver.generateIDTable(component.children, idTable, component)
+  end
+end
+
+webserver.generateIDTable = function(components, idTable, parent)
+  if type(components) ~= "table" then
+    return
+  end
+  
+  if components.type then
+    generateIDTable_processComponent(components, idTable, parent)
+  else
+    for _, component in ipairs(components) do
+      if type(component) == "table" then
+        generateIDTable_processComponent(component, idTable, parent)
+      end
+    end
+  end
+end
+
+webserver.processUpdate = function(updateInformation, time)
+  local id, key, value = updateInformation[1], updateInformation[2], updateInformation[3]
+  -- add new value to update table
+  local updateIndexyKey = id .. ":" .. key
+  local updateID = webserver.updateIndexes[updateIndexyKey]
+  if not updateID then
+    table.insert(webserver.updates, {
+      timeUpdated = time,
+      componentID = id,
+      key = key,
+      value = value
+    })
+    webserver.updateIndexes[updateIndexyKey] = #webserver.updates
+  else
+    local updateTable = webserver.updateIndexes
+    updateTable.timeUpdated = time
+    updateTable.value = value
+  end
+  -- update value in website for newly requested site
+  local component = webserver.idTable[id]
+  if not component then
+    webserver.out(enum["log.warn"], "ID does not exist within own idTable: "..tostring(id))
+    return
+  end
+  component[key] = value
+  while true do
+    if not component._parent then
+      break
+    end
+    component = component._parent
+  end
+  webserver.renderComponent(component)
+end
+
 -- == preprocessing ==
 
 if settings.whitelist then
@@ -317,14 +382,16 @@ if settings.whitelist then
   end
 end
 
-if type(website.icon)  == "table" then
-  website.icon = lustache:render(webserver.svgIcon , website.icon)
+if type(website.icon) == "table" then
+  website.icon = lustache:render(webserver.svgIcon, website.icon)
 end
 
--- generate website
 for _, tab in ipairs(website.tabs) do
   if type(tab.components) == "table" then
+    -- generate website tab
     webserver.render(tab.components)
+    -- generate id table to access tables
+    webserver.generateIDTable(tab.components, webserver.idTable)
   end
 end
 
@@ -380,11 +447,11 @@ while not quit do
       webserver.connections[connection] = nil
     end
   end
- -- thread handling
+  -- thread handling
   local var = webserver.channel:pop()
   local limit, count = 50, 0
   while var and count < limit do
-    -- todo
+    webserver.processUpdate(var, var.time)
     var = webserver.channel:pop()
     count = count + 1
   end

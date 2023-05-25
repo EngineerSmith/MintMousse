@@ -39,9 +39,8 @@ local processComponent = function(component, idTable, jsUpdateFunctions, channel
           if type(previous) ~= type(value) then
             typeError(type(previous), type(value))
           else
-            --print("SET", key, "TO", value)
             rawset(component, key, value)
-            channelIn:push({component.id, key, value}) -- todo make faster
+            channelIn:push({component.id, key, value, time = os.time(os.date("!*t"))}) -- todo make faster
           end
         end
       else
