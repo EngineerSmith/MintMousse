@@ -148,9 +148,13 @@ mintMousse.start = function(settings, website) -- todo add settings validation
   return controller(website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 end
 
-love.handlers[channelInOut] = function(...)
-  if love[channelInOut] then
-    love[channelInOut](...)
+love.handlers[channelInOut] = function(enum, ...)
+  if enum == "event" then
+    if love[channelInOut] then
+      love[channelInOut](...)
+    end
+  else
+    print(enum, ...)
   end
 end
 

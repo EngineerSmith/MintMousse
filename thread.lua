@@ -12,7 +12,6 @@ local lt, le, lfs = love.thread, love.event, love.filesystem
 local lustache = require(PATH .. "libs.lustache")
 local json = require(PATH .. "libs.json")
 
-local enum = require(PATH .. "enum")
 local httpResponse = require(PATH .. "http")
 local helper = require(PATH .. "helper")
 local javascript = require(PATH .. "javascript")
@@ -29,7 +28,7 @@ local webserver = {
 local httpMethod = {
   ["event"] = function(request)
     if request.method == "POST" and request.parsedBody then
-      webserver.out(enum["event"], request.parsedBody["event"], request.parsedBody["variable"])
+      webserver.out("event", request.parsedBody["event"], request.parsedBody["variable"])
       return "202"
     end
     if request.method ~= "POST" then
@@ -95,10 +94,10 @@ for _, item in ipairs(lfs.getDirectoryItems(componentPath)) do
     if fileHandle[extension] then
       fileHandle[extension](path, name, components)
     else
-      webserver.out(enum["log.warn"], item, "does not have a supported extension", extension)
+      webserver.out("warning", item, "does not have a supported extension", extension)
     end
   else
-    webserver.out(enum["log.warn"], item, "is not a file")
+    webserver.out("warning", item, "is not a file")
   end
 end
 
@@ -152,7 +151,7 @@ error = function(...)
       name = tostring(info.func):sub(10)
     end
   end
-  webserver.out(enum["log.error"], name, ...)
+  webserver.out("error", name, ...)
   webserver.cleanup()
   oldError(_concat(name, ...))
 end
@@ -166,7 +165,7 @@ webserver.startServer = function(host, port, backupPort)
   webserver.server, errMsg = socket.bind(host, port or 80)
   if not webserver.server then
     if backupPort then
-      webserver.out(enum["log.warn"], "Webserver could not be started. Attempting to start again. Reason:", errMsg)
+      webserver.out("warning", "Webserver could not be started. Attempting to start again. Reason:", errMsg)
       webserver.server, errMsg = socket.bind(host, backupPort)
     end
     if not webserver.server then
@@ -180,11 +179,11 @@ webserver.startServer = function(host, port, backupPort)
   if address and port then
     address = address == "0.0.0.0" and "127.0.0.1" or address
     local fullAdress = "http://" .. address .. ":" .. port
-    webserver.out(enum["log.info"], "Started webserver at:", fullAdress)
+    webserver.out("info", "Started webserver at:", fullAdress)
   elseif port then
-    webserver.out(enum["log.info"], "Started webserver on port:", port)
+    webserver.out("info", "Started webserver on port:", port)
   else
-    webserver.out(enum["log.info"], "Started webserver, but was unable to get address.")
+    webserver.out("info", "Started webserver, but was unable to get address.")
   end
 end
 
@@ -295,7 +294,7 @@ webserver.handleRequest = function(request)
   if httpMethod[path] then
     local status, response, data, headers = pcall(httpMethod[path], request)
     if not status then
-      webserver.out(enum["log.error"], "Error occurred while trying to call for", path, ". Error message:", response)
+      webserver.out("error", "Error occurred while trying to call for", path, ". Error message:", response)
       response = "500"
       data = nil
     end
@@ -411,7 +410,7 @@ webserver.processUpdate = function(updateInformation, time)
   end
   -- update value in website for newly requested site
   if not component then
-    webserver.out(enum["log.warn"], "ID does not exist within own idTable: " .. tostring(id))
+    webserver.out("warning", "ID does not exist within own idTable: " .. tostring(id))
     return
   end
   component[key] = value
@@ -510,11 +509,11 @@ while not quit do
       end)
       webserver.connections[connection] = true
     else
-      webserver.out(enum["log.warn"], "Non-whitelisted connection attempt from:", address)
+      webserver.out("warning", "Non-whitelisted connection attempt from:", address)
       client:close()
     end
   elseif errMsg ~= "timeout" and errMsg ~= "closed" then
-    webserver.out(enum["log.warn"], "Error occurred while accepting a connection:", errMsg)
+    webserver.out("warning", "Error occurred while accepting a connection:", errMsg)
   end
   -- Handle connections
   for connection in pairs(webserver.connections) do
