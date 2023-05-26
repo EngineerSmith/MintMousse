@@ -1,9 +1,10 @@
-local PATH, dirPATH, settings, website, channelInName, channelOutName = ...
+local PATH, dirPATH, settings, website, channelInName, channelOutName, channelDictionary = ...
 local componentPath = dirPATH .. "components"
 local httpErrorDirectory = "httpErrorPages"
 
 require("love.event")
 require("love.window")
+require("love.timer")
 local socket = require("socket")
 
 local lt, le, lfs = love.thread, love.event, love.filesystem
@@ -58,8 +59,8 @@ local httpMethod = {
   end
 }
 
-local getUnixTime = function()
-  return os.time(os.date("!*t"))
+local getTime = function()
+  return love.timer.getTime()
 end
 
 local getFileNameExtension = function(file)
@@ -104,8 +105,27 @@ end
 website.javascript = ""
 for type, component in pairs(components) do
   if component.javascript then
-    component.updateFunctions = javascript.processJavascriptFunctions(type, component.javascript)
+    -- component.updateFunctions = javascript.processJavascriptFunctions(type, component.javascript)
     website.javascript = website.javascript .. component.javascript .. "\n\r"
+  end
+end
+
+do
+  local dictionary = lt.getChannel(channelDictionary):peek()
+  if dictionary then
+    dictionary = {
+      dict = dictionary
+    }
+
+    local buffer = require("string.buffer").new(dictionary)
+
+    webserver.decode = function(value)
+      return buffer:set(value):decode()
+    end
+  else
+    webserver.decode = function(Value)
+      return value
+    end
   end
 end
 
@@ -284,7 +304,7 @@ webserver.handleRequest = function(request)
     end
   end
   if path == "index" then
-    website.time = getUnixTime()
+    website.time = getTime()
     return httpResponse["200header"] .. "Content-Type: text/html\r\n\r\n" .. lustache:render(webserver.index, website)
   end
   return httpResponse["404"]
@@ -380,7 +400,7 @@ webserver.processUpdate = function(updateInformation, time)
     table.insert(webserver.updates, {
       timeUpdated = time,
       componentID = id,
-      func = component.type .. "_update_"..key,
+      func = component.type .. "_update_" .. key,
       value = value
     })
     webserver.updateIndexes[updateIndexyKey] = #webserver.updates
@@ -409,7 +429,7 @@ webserver.getUpdatePayload = function(type, lastUpdateTime)
     return error("Cannot return type " .. tostring(type) .. " update payload")
   end
 
-  local updatesToSend = { }
+  local updatesToSend = {}
   for _, update in ipairs(webserver.updates) do
     if update.timeUpdated > lastUpdateTime then
       table.insert(updatesToSend, {update.func, update.componentID, update.value})
@@ -418,7 +438,10 @@ webserver.getUpdatePayload = function(type, lastUpdateTime)
   if #updatesToSend == 0 then
     return nil
   end
-  updatesToSend = { updateTime = getUnixTime(), updates = updatesToSend}
+  updatesToSend = {
+    updateTime = getTime(),
+    updates = updatesToSend
+  }
 
   if type == "json" then
     return json.encode(updatesToSend)
@@ -503,7 +526,8 @@ while not quit do
   local var = webserver.channel:pop()
   local limit, count = 50, 0
   while var and count < limit do
-    webserver.processUpdate(var, var.time)
+    var = webserver.decode(var)
+    webserver.processUpdate(var, getTime())
     var = webserver.channel:pop()
     count = count + 1
   end

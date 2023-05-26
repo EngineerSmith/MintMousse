@@ -47,6 +47,7 @@
   var updateTime = {{time}};
   const pollInterval = {{pollInterval}};
   var interval;
+  var reloading = false;
 
   var aliveRequest;
   aliveRequest = function(time){
@@ -57,6 +58,10 @@
         const status = request.status;
         if (status >= 200 && status < 400) {
           console.log("Reconnected! Reloading..."+status);
+          if (!reloading) {
+            location.reload();
+            reloading = true;
+          }
         } else {
           if (time > pollInterval * 10) {
             time = pollInterval * 9;

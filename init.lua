@@ -3,6 +3,7 @@ local dirPATH = PATH:gsub("%.", "/")
 local componentPath = dirPATH .. "components"
 
 local channelInOut = "MintMousse"
+local channelDictionary = "MintMousseDictionary"
 
 local controller = require(PATH .. "controller")
 local javascript = require(PATH .. "javascript")
@@ -20,7 +21,8 @@ local formatComponent = function(component, id)
       id = id + 1
     elseif type(component.id) == "string" then
       -- todo allow for certain punctuation characters e.g. [ . _ , ; ] (not ' or " )
-      assert(not component.id:find("%W"), "You can't use non-alphanumeric characters in an id (This is to avoid html issues)")
+      assert(not component.id:find("%W"),
+        "You can't use non-alphanumeric characters in an id (This is to avoid html issues)")
     end
   end
   if component.children then
@@ -73,21 +75,21 @@ local formatIcon = function(icon)
   local count
   if type(icon.color) == "string" then
     icon.color, count = icon.color:gsub("^#", "%%23")
-    assert(svg.color[icon.color] or count ~= 0, icon.color.." is not a valid color")
+    assert(svg.color[icon.color] or count ~= 0, icon.color .. " is not a valid color")
   else
     icon.color = nil
   end
-    -- inside
+  -- inside
   if type(icon.insideColor) == "string" then
     icon.insideColor, count = icon.insideColor:gsub("^#", "%%23")
-    assert(svg.color[icon.insideColor] or count ~= 0, icon.insideColor.." is not a valid color")
+    assert(svg.color[icon.insideColor] or count ~= 0, icon.insideColor .. " is not a valid color")
   else
     icon.insideColor = icon.color
   end
-    -- outside
+  -- outside
   if type(icon.outsideColor) == "string" then
     icon.outsideColor, count = icon.outsideColor:gsub("^#", "%%23")
-    assert(svg.color[icon.outsideColor] or count ~= 0, icon.outsideColor.." is not a valid color")
+    assert(svg.color[icon.outsideColor] or count ~= 0, icon.outsideColor .. " is not a valid color")
   else
     icon.outsideColor = icon.color
   end
@@ -103,12 +105,23 @@ mintMousse.start = function(settings, website) -- todo add settings validation
     settings.pollInterval = 1000
   end
 
+  -- preprocessing
+  local dictionaryChannel = love.thread.getChannel(channelDictionary)
+
+  local dictionary = {}
+  for type, variables in pairs(jsUpdateFunctions) do
+    table.insert(dictionary, type)
+    for variable in pairs(variables) do
+      table.insert(dictionary, variable)
+    end
+  end
+  dictionaryChannel:push(dictionary)
   -- website
-    -- icon
+  -- icon
   if website.icon then
     website.icon = formatIcon(website.icon)
   end
-    -- tabs
+  -- tabs
 
   if type(website.tabs) ~= "table" or #website.tabs < 1 then
     error("Requires at least one tab!")
@@ -130,9 +143,9 @@ mintMousse.start = function(settings, website) -- todo add settings validation
 
   website.pollInterval = settings.pollInterval
 
-  thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut)
+  thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut, channelDictionary)
 
-  return controller(website, jsUpdateFunctions, love.thread.getChannel(channelInOut))
+  return controller(website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 end
 
 love.handlers[channelInOut] = function(...)

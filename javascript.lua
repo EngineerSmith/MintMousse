@@ -28,12 +28,12 @@ local updateFunctionPattern_2 = "_update_(%S+)%(" -- <type>_update_(variable)
 
 javascript.processJavascriptFunctions = function(type, script)
   local updateFunctions, touched = {}, false
-  local _, _, variable = script:find(updateFunctionPattern_11..type..updateFunctionPattern_2)
+  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_2)
   if variable then
     updateFunctions[variable] = true
     touched = true
   end
-  for variable in script:gmatch(updateFunctionPattern_12..type..updateFunctionPattern_2) do
+  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_2) do
     updateFunctions[variable] = true
     touched = true
   end
