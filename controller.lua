@@ -113,7 +113,7 @@ local processTab = function(tab, ...)
   local tabController = {
     notify = function()
       error()
-    end -- todo toast; check main todo list
+    end -- todo toast; check main list
   }
 
   local components

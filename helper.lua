@@ -5,12 +5,21 @@ helper.formatImage = function(image)
     if love.filesystem.getInfo(image, "file") then
       local extension = image:match("^.+%.(.+)$"):lower()
       return extension .. ";base64," .. love.data.encode("string", "base64", love.filesystem.read(image))
+    elseif image:find("^.PNG") then
+      return "png;base64,"..love.data.encode("string", "base64", image)
     else
-      error(tostring(image) .. " isn't a file, or could not be found") --todo assume it's already encoded png?
+      error(tostring(image) .. " isn't a file, could not be found, or recognised as string of an png")
+    end
+  end
+  if not image:typeOf("ImageData") and image:typeOf("Data") then
+    local err, imageData = pcall(love.image.newImageData, image)
+    if not err then
+      image = imageData
     end
   end
   if image:typeOf("ImageData") then
     return "png;base64," .. love.data.encode("string", "base64", image:encode("png"))
+    
   end
   error("given image is not a string or image data")
 end

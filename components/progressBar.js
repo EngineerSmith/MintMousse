@@ -9,5 +9,5 @@ function progressBar_update_percentage(element, value) {
 function progressBar_update_percentageLabel(element, value) {
   var progressBar = element.childNodes[1];
   progressBar.textContent = value;
-  progressBar.dataset.updateLabel = "false";
+  progressBar.dataset.updateLabel = value ? "false" : progressBar.dataset.updateLabelOrigin;
 }

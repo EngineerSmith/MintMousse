@@ -3,19 +3,26 @@ return function(settings, helper)
     error("Children must be a table")
   end
   
-  -- todo set children components that need rendered, to be rendered
+  local componentChildren = { }
 
   for i, child in ipairs(settings.children) do
-    child.id = tostring(settings.id) .. ":" .. tostring(i)
-
+    if child.type and not child.text then
+      table.insert(componentChildren, child)
+    else
+      child.id = tostring(settings.id) .. ":" .. tostring(i)
+    end
+    
     if type(child.title) == "string" then
       child.title = helper.formatText(child.title)
     end
-    if type(child.text) == "string" then
+    
+    if not child.type and type(child.text) == "string" then
       child.text = helper.formatText(child.text)
     end
 
     -- inherited values
     child.parentID = settings.id
   end
+
+  return #componentChildren ~= 0 and componentChildren or nil
 end

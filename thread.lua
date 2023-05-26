@@ -336,7 +336,7 @@ end
 webserver.renderComponent = function(component)
   local componentType = components[component.type]
   if not componentType then
-    error("Could not find component: " .. tostring(component.type)) -- todo add checks to init.lua
+    error("Could not find component: " .. tostring(component.type))
   end
 
   if componentType.format then

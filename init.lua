@@ -11,27 +11,40 @@ local svg = require(PATH .. "svg")
 
 local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
+local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(componentPath))
+
 local globalID = 0
-local setID -- function set later
+local setIDValidate -- function set later
 
 local formatComponent = function(component, id)
   if component.type then
+    local dir = componentPath.."/"..component.type
+    if not love.filesystem.getInfo(dir..".html", "file") or not love.filesystem.getInfo(dir..".lua", "file") then
+      error("Component type: "..tostring(component.type).." does not exist: "..tostring(dir))
+    end
     if not component.id then
       component.id = id
       id = id + 1
     elseif type(component.id) == "string" then
-      -- todo allow for certain punctuation characters e.g. [ . _ , ; ] (not ' or " )
-      assert(not component.id:find("%W"),
-        "You can't use non-alphanumeric characters in an id (This is to avoid html issues)")
+      local failed
+      for capture in component.id:gmatch("(%W)") do
+        if not capture:find("[%._,;:@]") then -- if not found; fail
+          failed = capture
+          break
+        end
+      end
+      if failed then
+        error("You can only use alphanumeric and . _ , : ; @ characters for the id. Not: " .. tostring(failed))
+      end
     end
   end
   if component.children then
-    id = setID(component.children, id)
+    id = setIDValidate(component.children, id)
   end
   return id
 end
 
-setID = function(settings, id)
+setIDValidate = function(settings, id)
   id = id or globalID
   if settings.type then
     return formatComponent(settings, id)
@@ -41,8 +54,6 @@ setID = function(settings, id)
   end
   return id
 end
-
-local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(componentPath))
 
 local formatIcon = function(icon)
   if type(icon) == "string" then
@@ -97,13 +108,60 @@ local formatIcon = function(icon)
   return icon
 end
 
-local mintMousse = {}
+local settings_host_allowedStr = "*, 0.0.0.0, localhost, or 127.0.0.1"
+local settings_hostAllowed = {
+  ["*"] = true,
+  ["0.0.0.0"] = true,
+  ["localhost"] = true,
+  ["127.0.0.1"] = true
+}
 
-mintMousse.start = function(settings, website) -- todo add settings validation
+local validateSettings = function(settings)
+  local error = function(errMsg)
+    error("MintMousse settings: " .. errMsg or error("MintMousse settings: Tell a programmer you reached here."))
+  end
 
+  -- host
+  if type(settings.host) ~= "string" then
+    settings.host = "127.0.0.1"
+  end
+  if not settings_hostAllowed[settings.host] then
+    error("Host must be " .. settings_host_allowedStr)
+  end
+
+  -- port
+  if type(settings.port) ~= "number" then
+    error("Port must be type number")
+  end
+  if settings.port < 0 or settings.port > 65535 then
+    error("Port must be in the range of 0-65535")
+  end
+  if settings.backupPort then
+    if type(settings.backupPort) ~= "number" then
+      error("Backup Port must be type number")
+    end
+    if settings.backupPort < 0 or settings.backupPort > 65535 then
+      error("Backup Port must be in the range of 0-65535")
+    end
+    if settings.backupPort == settings.port then
+      error("Backup Port must be a different value to Port")
+    end
+  end
+
+  -- poll interval
   if type(settings.pollInterval) ~= "number" then
     settings.pollInterval = 1000
   end
+  if settings.pollInterval < 100 then
+    error("Poll Interval must be greater than or equal to 100ms (500ms is recommended lowest value)")
+  end
+end
+
+local mintMousse = {}
+
+mintMousse.start = function(settings, website)
+
+  validateSettings(settings)
 
   -- preprocessing
   local dictionaryChannel = love.thread.getChannel(channelDictionary)
@@ -134,7 +192,7 @@ mintMousse.start = function(settings, website) -- todo add settings validation
     end
     tab.id = tab.name .. index
     if tab.components then
-      globalID = setID(tab.components)
+      globalID = setIDValidate(tab.components)
     end
   end
   if not active then
@@ -150,8 +208,9 @@ end
 
 love.handlers[channelInOut] = function(enum, ...)
   if enum == "event" then
-    if love[channelInOut] then
-      love[channelInOut](...)
+    local event, variable = ...
+    if love[event] then
+      love[event](variable)
     end
   else
     print(enum, ...)
@@ -173,6 +232,9 @@ end
  6.2) Add time since last connected on disconnect hover
  6.3) Add option to add timestamp that js updates
  6.3.1) e.g. "X was 5 minutes ago", "X was 10 hours ago", "X was 4 days ago"
+ 7) Session id
+ 7.1) If session id is different within webpage: force reload
+ 7.1.1) This is to correct the page if the webserver is restarted "too quickly"
 
  Considerations: Continuous tcp connection? 
   Benefits: Easily push updates to live data (might keep a tcp connect open for certain components + warn users of this drawback + could add support for non-continous tcp connections)

@@ -33,6 +33,9 @@ return function(settings, helper)
       if button.text then
         button.text = helper.formatText(button.text)
       end
+      if not button.event then
+        button.event = settings.event
+      end
       -- theme
       if not button.theme then
         button.theme = settings.theme
