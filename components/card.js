@@ -13,7 +13,7 @@ function getSizeClass(element) {
   return null;
 }
 
-// function card_update_size(element, value) {
+// function card_update_size(element, value) { // removed due to being buggy with the grid system, kept for the future
 //   element = element.parentNode;
 //   const sizeClass = getSizeClass(element);
 //   const size = sizeClass ? parseInt(sizeClass.slice(9)) : null;
