@@ -61,27 +61,20 @@ helper.limitSize = function(size)
   return size > 5 and 5 or size < 0 and 1 or size
 end
 
+helper.color = {
+  "primary",
+  "secondary",
+  "success",
+  "danger",
+  "warning",
+  "info",
+  "light",
+  "dark",
+  "link",
+}
+
 helper.getColor = function(num)
-  if num == 1 then
-    return "primary"
-  elseif num == 2 then
-    return "secondary"
-  elseif num == 3 then
-    return "success"
-  elseif num == 4 then
-    return "danger"
-  elseif num == 5 then
-    return "warning"
-  elseif num == 6 then
-    return "info"
-  elseif num == 7 then
-    return "light"
-  elseif num == 8 then
-    return "dark"
-  elseif num == 9 then
-    return "link"
-  end
-  return "primary"
+  return helper.color[num] or "primary"
 end
 
 return helper

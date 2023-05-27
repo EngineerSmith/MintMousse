@@ -1,22 +1,22 @@
-local defaultTheme = {
+local defaultStyle = {
   colorState = "primary",
   outline = false
 }
 
 return function(settings, helper)
-  -- theme
-  if not settings.theme then
-    settings.theme = defaultTheme
+  -- style
+  if not settings.style then
+    settings.style = defaultStyle
   else
-    local theme = settings.theme
-    for k, v in pairs(defaultTheme) do
-      if not theme[k] then
-        theme[k] = v
+    local style = settings.style
+    for k, v in pairs(defaultStyle) do
+      if not style[k] then
+        style[k] = v
       end
     end
 
-    if type(theme.colorState) == "number" then
-      theme.colorState = helper.getColor(theme.colorState)
+    if type(style.colorState) == "number" then
+      style.colorState = helper.getColor(style.colorState)
     end
   end
   --
@@ -26,7 +26,7 @@ return function(settings, helper)
     if type(button) == "string" then
       settings.buttons[i] = {
         text = helper.formatText(button),
-        theme = settings.theme
+        style = settings.style
       }
       settings.buttons[i].variable = settings.buttons[i].text
     else
@@ -36,17 +36,17 @@ return function(settings, helper)
       if not button.event then
         button.event = settings.event
       end
-      -- theme
-      if not button.theme then
-        button.theme = settings.theme
-      elseif button.theme then
-        for k, v in pairs(settings.theme) do
-          if not button.theme[k] then
-            button.theme[k] = v
+      -- style
+      if not button.style then
+        button.style = settings.style
+      elseif button.style then
+        for k, v in pairs(settings.style) do
+          if not button.style[k] then
+            button.style[k] = v
           end
         end
-        if type(button.theme.colorState) == "number" then
-          button.theme.colorState = helper.getColor(button.theme.colorState)
+        if type(button.style.colorState) == "number" then
+          button.style.colorState = helper.getColor(button.style.colorState)
         end
       end
     end

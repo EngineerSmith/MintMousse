@@ -1,28 +1,28 @@
-local defaultTheme = {
+local defaultStyle = {
   colorStates = {"primary", "success", "danger", "secondary"},
   striped = true,
   animated = true
 }
 
 return function(settings, helper)
-  -- theme
-  if not settings.theme then
-    settings.theme = defaultTheme
+  -- style
+  if not settings.style then
+    settings.style = defaultStyle
   else
-    local theme = settings.theme
-    for k, v in pairs(defaultTheme) do
-      if not theme[k] then
-        theme[k] = v
+    local style = settings.style
+    for k, v in pairs(defaultStyle) do
+      if not style[k] then
+        style[k] = v
       end
     end
 
-    if type(theme.colorStates) ~= "table" or #theme.colorStates == 0 then
-      theme.colorStates = defaultTheme.colorStates
+    if type(style.colorStates) ~= "table" or #style.colorStates == 0 then
+      style.colorStates = defaultStyle.colorStates
     end
 
-    for i, color in ipairs(theme.colorStates) do
+    for i, color in ipairs(style.colorStates) do
       if type(color) == "number" then
-        theme.colorStates[i] = helper.getColor(color)
+        style.colorStates[i] = helper.getColor(color)
       end
     end
   end
@@ -34,7 +34,7 @@ return function(settings, helper)
       if bar > 100 then bar = 100 end
       local bar = {
         percentage = bar,
-        colorState = settings.theme.colorStates[colorIndex]
+        colorState = settings.style.colorStates[colorIndex]
       }
       if settings.label then
         bar.percentageLabel = tostring(math.floor(bar.percentage*1000)/1000).."%"
@@ -49,7 +49,7 @@ return function(settings, helper)
     end
     -- color
     colorIndex = colorIndex + 1
-    if colorIndex > #settings.theme.colorStates then
+    if colorIndex > #settings.style.colorStates then
       colorIndex = 1
     end
   end

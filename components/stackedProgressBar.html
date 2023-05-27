@@ -1,7 +1,7 @@
 <div class="progress-stacked m-1" id="{{id}}">
   {{#bars}}
   <div class="progress" role="progressbar" style="width: {{percentage}}%">
-    <div class="progress-bar{{#theme.striped}} progress-bar-striped{{/theme.striped}}{{#theme.animated}} progress-bar-animated{{/theme.animated}} text-bg-{{colorState}}">{{percentageLabel}}</div>
+    <div class="progress-bar{{#style.striped}} progress-bar-striped{{/style.striped}}{{#style.animated}} progress-bar-animated{{/style.animated}} text-bg-{{colorState}}">{{percentageLabel}}</div>
   </div>
   {{/bars}}
 </div>

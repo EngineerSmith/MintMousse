@@ -1,4 +1,4 @@
-local defaultTheme = {
+local defaultStyle = {
   colorState = "primary",
   striped = true,
   animated = true,
@@ -18,19 +18,19 @@ return function(settings, helper)
     settings.updateLabel = true
   end
 
-  -- theme
-  if not settings.theme then
-    settings.theme = defaultTheme
+  -- style
+  if not settings.style then
+    settings.style = defaultStyle
   else
-    local theme = settings.theme
-    for k, v in pairs(defaultTheme) do
-      if not theme[k] then
-        theme[k] = v
+    local style = settings.style
+    for k, v in pairs(defaultStyle) do
+      if not style[k] then
+        style[k] = v
       end
     end
 
-    if type(theme.colorState) == "number" then
-      theme.colorState = helper.getColor(theme.colorState)
+    if type(style.colorState) == "number" then
+      style.colorState = helper.getColor(style.colorState)
     end
   end
 end

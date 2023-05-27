@@ -75,8 +75,8 @@ local processComponent = function(component, idTable, jsUpdateFunctions, channel
       if key == "children" then
         return children
       end
-      if key == "theme" then
-        return indexError("theme. You cannot edit theme. Request this feature on github issues if you really need it.")
+      if key == "style" then
+        return indexError("style. You cannot edit style. Request this feature on github issues if you really need it.")
       end
       return rawget(component, key)
     end
@@ -157,7 +157,7 @@ return function(website, channelDictionary, ...)
       dict = dictionary
     }
   end
-  buffer = require("string.buffer").new(dictionary)
+  buffer = require("string.buffer").new(dictionary) -- love 11.4 +
 
   -- build controller
   local controller = {
