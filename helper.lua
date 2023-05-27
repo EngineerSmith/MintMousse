@@ -5,6 +5,8 @@ helper.formatImage = function(image)
     if love.filesystem.getInfo(image, "file") then
       local extension = image:match("^.+%.(.+)$"):lower()
       return extension .. ";base64," .. love.data.encode("string", "base64", love.filesystem.read(image))
+    elseif image:find("^.+;based64,") then
+      return image;
     elseif image:find("^.PNG") then
       return "png;base64,"..love.data.encode("string", "base64", image)
     else

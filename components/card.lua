@@ -15,21 +15,15 @@ return function(settings, helper)
   if settings.imgOverlay then
     settings.imgOverlay = helper.formatImage(settings.imgOverlay)
   end
-  -- text
-  if settings.body then
-    local body = settings.body
-    if body.title then
-      body.title = helper.formatText(body.title)
-    end
-    if body.text then
-      body.text = helper.formatText(body.text)
-    end
-    if body.subtext then
-      body.subtext = helper.formatText(body.subtext)
-    end
+  -- body
+  if settings.title then
+    settings.title = helper.formatText(settings.title)
   end
-  if settings.children and not settings.body then
-    settings.body = { children = settings.children }
+  if settings.text then
+    settings.text = helper.formatText(settings.text)
+  end
+  if settings.subtext then
+    settings.subtext = helper.formatText(settings.subtext)
   end
   -- child to render
   return settings.children
