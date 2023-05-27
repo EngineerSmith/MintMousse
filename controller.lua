@@ -75,8 +75,8 @@ local processComponent = function(component, idTable, jsUpdateFunctions, channel
       if key == "children" then
         return children
       end
-      if key == "style" then
-        return indexError("style. You cannot edit style. Request this feature on github issues if you really need it.")
+      if key == "theme" then
+        return indexError("theme. You cannot edit theme. Request this feature on github issues if you really need it.")
       end
       return rawget(component, key)
     end
