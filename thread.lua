@@ -392,6 +392,22 @@ webserver.processUpdate = function(updateInformation, time)
   local id, key, value = updateInformation[1], updateInformation[2], updateInformation[3]
   local component = webserver.idTable[id]
 
+  -- update value in website for newly requested site
+  if not component then
+    webserver.out("warning", "ID does not exist within own idTable: " .. tostring(id))
+    return
+  end
+  component[key] = value
+
+  local toRender = component
+  while true do
+    if not toRender._parent then
+      break
+    end
+    toRender = toRender._parent
+  end
+  webserver.render(toRender)
+
   -- add new value to update table
   local updateIndexyKey = id .. ":" .. key
   local updateID = webserver.updateIndexes[updateIndexyKey]
@@ -400,7 +416,7 @@ webserver.processUpdate = function(updateInformation, time)
       timeUpdated = time,
       componentID = id,
       func = component.type .. "_update_" .. key,
-      value = value
+      value = component[key] -- render could format value, so we use component value instead
     })
     webserver.updateIndexes[updateIndexyKey] = #webserver.updates
   else
@@ -408,19 +424,6 @@ webserver.processUpdate = function(updateInformation, time)
     updateTable.timeUpdated = time
     updateTable.value = value
   end
-  -- update value in website for newly requested site
-  if not component then
-    webserver.out("warning", "ID does not exist within own idTable: " .. tostring(id))
-    return
-  end
-  component[key] = value
-  while true do
-    if not component._parent then
-      break
-    end
-    component = component._parent
-  end
-  webserver.renderComponent(component)
 end
 
 webserver.getUpdatePayload = function(type, lastUpdateTime)

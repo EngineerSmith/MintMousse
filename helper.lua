@@ -21,7 +21,6 @@ helper.formatImage = function(image)
   end
   if image:typeOf("ImageData") then
     return "png;base64," .. love.data.encode("string", "base64", image:encode("png"))
-    
   end
   error("given image is not a string or image data")
 end
