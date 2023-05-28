@@ -3,9 +3,9 @@
   <div class="accordion-item">
     <h2 class="accordion-header">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{id}}"{{!
-      }}aria-expanded="false" aria-controls="{{id}}">{{title}}</button>
+      }}aria-expanded="false" aria-controls="{{id}}" id="{{_idTitle}}">{{title}}</button>
     </h2>
-    <div id="{{id}}" class="accordion-collapse collapse{{#show}} show{{/show}}" {{^alwaysOpen}}data-bs-parent="#{{parentID}}"{{/alwaysOpen}}>
+    <div id="{{id}}" class="accordion-collapse collapse{{#show}} show{{/show}}" data-title={{_idTitle}} {{^alwaysOpen}}data-bs-parent="#{{parentID}}"{{/alwaysOpen}}>
       <div class="accordion-body">{{text}}{{^text}}{{&render}}{{/text}}</div>
     </div>
   </div>

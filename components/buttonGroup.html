@@ -1,6 +1,7 @@
-<div class="btn-group{{#vertical}}-vertical{{/vertical}} d-flex" role="group" id="{{id}}">
-  {{#buttons}}
-  <button type="button" class="btn btn{{#style.outline}}-outline{{/style.outline}}-{{style.colorState}}"{{#event}}{{!
-  }}event="{{&event}}" onclick="buttonPressed(this)"{{/event}}{{#variable}} variable="{{&variable}}"{{/variable}}>{{text}}</button>
-  {{/buttons}}
+<div class="btn-group-vertical d-flex" role="group" id="{{id}}">
+  {{#children}}
+  <button type="button" class="btn btn{{#style.outline}}-outline{{/style.outline}}-{{style.color}}"{{!
+  }} event="{{&event}}{{^event}}{{_event}}{{/event}}" onclick="buttonPressed(this)"{{#variable}} variable="{{&variable}}"{{/variable}}{{!
+}}{{#disabled}} disabled{{/disabled}} id="{{id}}">{{text}}</button>
+  {{/children}}
 </div>

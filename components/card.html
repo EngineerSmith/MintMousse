@@ -1,36 +1,24 @@
 <div class="grid-item {{#size}}grid-item-{{size}}{{/size}}">
-  <div class="card" id="{{id}}">
-    {{#imgTop}}<img class="card-img-top" src="data:image/{{imgTop}}">{{/imgTop}}{{!
-  }}{{#imgOverlay}}
-    <img class="card-img" src="data:image/{{imgOverlay}}">
-    <div class="card-img-overlay">
-    {{/imgOverlay}}{{!
-  }}{{#imgLeft}}
-    <div class="row g-0">
-    <div class="col-md-4">
-    <img class="img-fluid rounded-start" src="data:image/{{imgLeft}}">
-    </div>
-    <div class="col-md-8">
-    {{/imgLeft}}{{!
-  }}{{#imgRight}}
-    <div class="row g-0">
-    <div class="col-md-8">
-    {{/imgRight}}{{!
-  }}<div class="card-body">
-    {{#title}}<h5 class="card-title">{{&title}}</h5>
-    {{/title}}{{#text}}<p class="card-text">{{&text}}</p>
-    {{/text}}{{#children}}{{&children.render}}{{^children.render}}{{&render}}{{/children.render}}
-    {{/children}}{{#subtext}}<p class="card-text"><small class="text-body-secondary">{{&subtext}}</small></p>
-    {{/subtext}}</div>{{!
-  }}{{#imgRight}}
-    </div>
-    <div class="col-md-4">
-    <img class="img-fluid rounded-end" src="data:image/{{imgRight}}">
-    </div>
-    </div>
-    {{/imgRight}}{{!
-  }}{{#imgLeft}}</div>{{/imgLeft}}{{!
-  }}{{#imgOverlay}}</div>{{/imgOverlay}}{{!
-  }}{{#imgBottom}}<img class="card-img-bottom" src="data:image/{{imgBottom}}">{{/imgBottom}}{{!
-}}</div>
+  <div class="card{{#style.color}} text-bg-{{style.color}}{{/style.color}}" id="{{id}}">
+  {{^headerTitle}}<div class="card-header{{^header}} invisible{{/header}}">{{&header}}</div>{{/headerTitle}}{{!
+}}{{#headerTitle}}<h4 class="card-header{{^header}} invisible{{/header}}">{{&header}}</h4>{{/headerTitle}}
+    <img class="card-img-top{{^imgTop}} invisible{{/imgTop}}" src="{{imgTop}}">
+    {{#children}}{{#children.render}}{{!
+    
+    single component
+  }}{{^children._wrapBody}}{{&children.render}}{{/children.wrapBody}}{{!
+  }}{{#children._wrapBody}}<div class="card-body">{{&children.render}}</div>{{/children.wrapBody}}{{/children.render}}{{!
+
+    multiple components
+  }}{{^children.render}}{{!
+  }}{{^_wrapBody}}{{&render}}{{/_wrapBody}}{{!
+  }}{{#_wrapBody}}<div class="card-body">{{&render}}</div>{{/_wrapBody}}{{/children.render}}
+    {{/children}}{{!
+
+  }}<img class="card-img-bottom{{^imgBottom}} invisible{{/imgBottom}}" src="{{imgBottom}}">
+    <div class="card-footer{{^footer}} invisible{{/footer}}">{{!
+  }}{{^footerSubtext}}{{&footer}}{{/footerSubtext}}{{!
+  }}{{#footerSubtext}}<small class="text-body-secondary">{{&footer}}</small>{{/footerSubtext}}{{!
+  }}</div>
+  </div>
 </div>

@@ -1,9 +1,12 @@
 local defaultStyle = {
-  colorState = "primary",
+  color = "primary",
   outline = false
 }
 
 return function(settings, helper)
+  if settings.event then
+    settings._event = settings.event
+  end
   -- style
   if not settings.style then
     settings.style = defaultStyle
@@ -15,26 +18,28 @@ return function(settings, helper)
       end
     end
 
-    if type(style.colorState) == "number" then
-      style.colorState = helper.getColor(style.colorState)
+    if type(style.color) == "number" then
+      style.color = helper.getColor(style.color)
     end
   end
-  --
-  settings.vertical = true
-  -- buttons
-  for i, button in ipairs(settings.buttons) do
+  -- children
+  local id = 0
+  for i, button in ipairs(settings.children) do
     if type(button) == "string" then
-      settings.buttons[i] = {
+      settings.children[i] = {
         text = helper.formatText(button),
-        style = settings.style
+        style = settings.style,
+        id = settings.id .. ":" .. id
       }
-      settings.buttons[i].variable = settings.buttons[i].text
+      id = id + 1
+      settings.children[i].variable = settings.children[i].text
     else
       if button.text then
         button.text = helper.formatText(button.text)
       end
-      if not button.event then
-        button.event = settings.event
+      if not button.id then
+        button.id = settings.id .. ":" .. id
+        id = id + 1
       end
       -- style
       if not button.style then
@@ -45,8 +50,8 @@ return function(settings, helper)
             button.style[k] = v
           end
         end
-        if type(button.style.colorState) == "number" then
-          button.style.colorState = helper.getColor(button.style.colorState)
+        if type(button.style.color) == "number" then
+          button.style.color = helper.getColor(button.style.color)
         end
       end
     end

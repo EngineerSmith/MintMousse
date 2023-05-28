@@ -8,3 +8,23 @@ function buttonPressed(button) {
   }
   request.send(body);
 }
+
+function button_update_disabled(element, value) {
+  if (value) { // ensure bool
+    element.disabled = true;
+  } else {
+    element.disabled = false;
+  }
+}
+
+function button_update_text(element, value) {
+  element.textContent = value;
+}
+
+function button_update_event(element, value) {
+  element.setAttribute("event", value);
+}
+
+function button_update_variable(element, value) {
+  element.setAttribute("variable", value);
+}

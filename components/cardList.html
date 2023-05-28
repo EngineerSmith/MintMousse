@@ -1,0 +1,8 @@
+<ul class="list-group list-group-flush" id="{{id}}">
+  {{#children}}
+  <li class="list-group-item">{{!
+  }}{{#render}}{{&render}}{{/render}}{{!
+  }}{{^render}}{{&.}}{{/render}}{{!
+  }}</li>
+  {{/children}}
+</ul>

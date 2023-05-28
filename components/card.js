@@ -25,32 +25,42 @@ function getSizeClass(element) {
 //     element.classList.add('grid-item-' + value);
 // }
 
-function card_update_title(element, value) {
-  element = element.querySelector('.card-title');
-  if (element)
-    element.textContent = value;
+function setElementVisiblity(element, bool) {
+  if (bool) {
+    element.classList.remove('invisible');
+  } else {
+    element.classList.add('invisible');
+  }
 }
 
-function card_update_text(element, value) {
-  element = element.querySelector('.card-text');
-  if (element)
-    element.textContent = value;
-}
-
-function card_update_subtext(element, value) {
-  element = element.querySelector('.text-body-secondary');
-  if (element)
-    element.textContent = value;
+function setElementImageSrc(element, imageSrc) {
+  if (element) {
+    element.src = imageSrc;
+    setElementVisiblity(element, imageSrc);
+  }
 }
 
 function card_update_imgTop(element, value) {
   element = element.querySelector('.card-img-top');
-  if (element)
-    element.src = "data:image/" + value;
+  setElementImageSrc(element, value);
 }
 
 function card_update_imgBottom(element, value) {
   element = element.querySelector('.card-img-bottom');
-  if (element)
-    element.src = "data:image/" + value;
+  setElementImageSrc(element, value);
+}
+
+function setCardText(textElement, value) {
+  if (textElement) {
+    textElement.textContent = value;
+    setElementVisiblity(element, value);
+  }
+}
+
+function card_update_header(element, value) {
+  setCardText(element.querySelector('.card-header'), value);
+}
+
+function card_update_footer(element, value) {
+  setCardText(element.querySelector('.card-footer'), value);
 }

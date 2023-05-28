@@ -4,11 +4,11 @@ helper.formatImage = function(image)
   if type(image) == "string" then
     if love.filesystem.getInfo(image, "file") then
       local extension = image:match("^.+%.(.+)$"):lower()
-      return extension .. ";base64," .. love.data.encode("string", "base64", love.filesystem.read(image))
-    elseif image:find("^.+;base64,") then
+      return "data:image/" .. extension .. ";base64," .. love.data.encode("string", "base64", love.filesystem.read(image))
+    elseif image:find("^data:image/") then
       return image;
     elseif image:find("^.PNG") then
-      return "png;base64,"..love.data.encode("string", "base64", image)
+      return "data:image/png;base64,"..love.data.encode("string", "base64", image)
     else
       error(tostring(image) .. " isn't a file, could not be found, or recognised as string of an png")
     end
@@ -20,7 +20,7 @@ helper.formatImage = function(image)
     end
   end
   if image:typeOf("ImageData") then
-    return "png;base64," .. love.data.encode("string", "base64", image:encode("png"))
+    return "data:image/png;base64," .. love.data.encode("string", "base64", image:encode("png"))
   end
   error("given image is not a string or image data")
 end

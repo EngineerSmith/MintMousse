@@ -1,5 +1,5 @@
 local defaultStyle = {
-  colorState = "primary",
+  color = "primary",
   striped = true,
   animated = true,
 }
@@ -29,8 +29,8 @@ return function(settings, helper)
       end
     end
 
-    if type(style.colorState) == "number" then
-      style.colorState = helper.getColor(style.colorState)
+    if type(style.color) == "number" then
+      style.color = helper.getColor(style.color)
     end
   end
 end

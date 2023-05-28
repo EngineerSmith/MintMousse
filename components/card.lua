@@ -1,3 +1,7 @@
+local style = {
+  color = nil
+}
+
 return function(settings, helper)
   -- images
   if settings.imgTop then
@@ -6,25 +10,23 @@ return function(settings, helper)
   if settings.imgBottom then
     settings.imgBottom = helper.formatImage(settings.imgBottom)
   end
-  if settings.imgLeft then
-    settings.imgLeft = helper.formatImage(settings.imgLeft)
+  -- Header and Footer
+  if settings.header then
+    settings.header = helper.formatText(settings.header)
   end
-  if settings.imgRight then
-    settings.imgRight = helper.formatImage(settings.imgRight)
+  if settings.footer then
+    settings.footer = helper.formatText(settings.footer)
   end
-  if settings.imgOverlay then
-    settings.imgOverlay = helper.formatImage(settings.imgOverlay)
+
+  -- wrap in body
+  if settings.children then
+    for _, child in ipairs(settings.children) do
+      if type(child.type) == "string" and not child.type:find("^card") then
+        child._wrapBody = true
+      end
+    end
   end
-  -- body
-  if settings.title then
-    settings.title = helper.formatText(settings.title)
-  end
-  if settings.text then
-    settings.text = helper.formatText(settings.text)
-  end
-  if settings.subtext then
-    settings.subtext = helper.formatText(settings.subtext)
-  end
+
   -- child to render
   return settings.children
 end

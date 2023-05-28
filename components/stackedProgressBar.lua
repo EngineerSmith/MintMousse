@@ -1,5 +1,5 @@
 local defaultStyle = {
-  colorStates = {"primary", "success", "danger", "secondary"},
+  colors = {"primary", "success", "danger", "secondary"},
   striped = true,
   animated = true
 }
@@ -16,13 +16,13 @@ return function(settings, helper)
       end
     end
 
-    if type(style.colorStates) ~= "table" or #style.colorStates == 0 then
-      style.colorStates = defaultStyle.colorStates
+    if type(style.colors) ~= "table" or #style.colors == 0 then
+      style.colors = defaultStyle.colors
     end
 
-    for i, color in ipairs(style.colorStates) do
+    for i, color in ipairs(style.colors) do
       if type(color) == "number" then
-        style.colorStates[i] = helper.getColor(color)
+        style.colors[i] = helper.getColor(color)
       end
     end
   end
@@ -30,26 +30,39 @@ return function(settings, helper)
   local colorIndex = 1
   for i, bar in ipairs(settings.bars) do
     if type(bar) == "number" then
-      if bar < 0 then bar = 0 end
-      if bar > 100 then bar = 100 end
-      local bar = {
-        percentage = bar,
-        colorState = settings.style.colorStates[colorIndex]
+      if bar < 0 then
+        bar = 0
+      end
+      if bar > 100 then
+        bar = 100
+      end
+      bar = {
+        percentage = bar
       }
-      if settings.label then
-        bar.percentageLabel = tostring(math.floor(bar.percentage*1000)/1000).."%"
-      end
       settings.bars[i] = bar
-    elseif type(bar) == "table" then
-      if bar.percentage < 0 then bar.percentage = 0 end
-      if bar.percentage > 100 then bar.percentage = 100 end
-      if settings.label and not bar.percentageLabel then
-        bar.percentageLabel = tostring(math.floor(bar.percentage*1000)/1000).."%"
+      if settings.label then
+        bar.percentageLabel = tostring(math.floor(bar.percentage * 1000) / 1000) .. "%"
       end
+    elseif type(bar) == "table" then
+      if bar.percentage < 0 then
+        bar.percentage = 0
+      end
+      if bar.percentage > 100 then
+        bar.percentage = 100
+      end
+      if settings.label and not bar.percentageLabel then
+        bar.percentageLabel = tostring(math.floor(bar.percentage * 1000) / 1000) .. "%"
+      end
+    end
+    if not bar.id then
+      bar.id = settings.id .. ":" .. i
+    end
+    if not bar.color then
+      bar.color = settings.style.colors[colorIndex]
     end
     -- color
     colorIndex = colorIndex + 1
-    if colorIndex > #settings.style.colorStates then
+    if colorIndex > #settings.style.colors then
       colorIndex = 1
     end
   end

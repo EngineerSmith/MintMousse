@@ -389,7 +389,8 @@ end
 
 webserver.processUpdate = function(updateInformation, time)
   -- Parameters
-  local id, key, value = updateInformation[1], updateInformation[2], updateInformation[3]
+  local id, key, value, isChildUpdate = updateInformation[1], updateInformation[2], updateInformation[3],
+    updateInformation[4]
   local component = webserver.idTable[id]
 
   -- update value in website for newly requested site
@@ -409,16 +410,16 @@ webserver.processUpdate = function(updateInformation, time)
   webserver.render(toRender)
 
   -- add new value to update table
-  local updateIndexyKey = id .. ":" .. key
-  local updateID = webserver.updateIndexes[updateIndexyKey]
+  local updateIndexKey = id .. ":" .. key
+  local updateID = webserver.updateIndexes[updateIndexKey]
   if not updateID then
     table.insert(webserver.updates, {
       timeUpdated = time,
       componentID = id,
-      func = component.type .. "_update_" .. key,
+      func = (isChildUpdate or component.type) .. "_update_" .. (isChildUpdate and "child_" or "") .. key,
       value = component[key] -- render could format value, so we use component value instead
     })
-    webserver.updateIndexes[updateIndexyKey] = #webserver.updates
+    webserver.updateIndexes[updateIndexKey] = #webserver.updates
   else
     local updateTable = webserver.updates[updateID]
     updateTable.timeUpdated = time

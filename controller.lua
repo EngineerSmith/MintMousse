@@ -24,29 +24,31 @@ end
 
 local processComponents -- function, defined later
 
-local processComponent = function(component, idTable, jsUpdateFunctions, channelIn)
+local processComponent = function(component, parent, idTable, jsUpdateFunctions, channelIn)
   if type(component) ~= "table" then
     return component
   end
 
   local children
   if component.children then
-    children = processComponents(component.children, idTable, jsUpdateFunctions, channelIn)
+    children = processComponents(component.children, parent, idTable, jsUpdateFunctions, channelIn)
   end
 
   local newindex
   if jsUpdateFunctions[component.type] then
     local jsFuncs = jsUpdateFunctions[component.type]
+    local jsFuncsParent
+    if parent and parent.type then
+      jsFuncsParent = jsUpdateFunctions[parent.type]
+      jsFuncsParent = jsFuncsParent and jsFuncsParent.children or nil
+    end
     newindex = function(_, key, value)
-      if jsFuncs[key] then
+      local isChildUpdate = jsFuncsParent and jsFuncsParent[key]
+      if jsFuncs[key] or isChildUpdate then
         local previous = rawget(component, key)
-        if previous ~= value then
+        if (previous ~= value) then
           rawset(component, key, value)
-          local updateTbl = {
-            component.id,
-            key,
-            value
-          }
+          local updateTbl = {component.id, key, value, isChildUpdate and parent.type or nil}
           channelIn:push(encode(updateTbl))
         end
       else
@@ -83,16 +85,16 @@ local processComponent = function(component, idTable, jsUpdateFunctions, channel
   })
 end
 
-processComponents = function(components, idTable, ...)
+processComponents = function(components, parent, idTable, ...)
   -- flat component
   if components.type then
-    idTable[components.id] = processComponent(components, idTable, ...)
+    idTable[components.id] = processComponent(components, parent, idTable, ...)
     return idTable[components.id]
   end
   -- multiple components
   local newComponents = {}
   for index, component in ipairs(components) do
-    local component = processComponent(component, idTable, ...)
+    local component = processComponent(component, parent, idTable, ...)
     newComponents[index] = component
     if type(component) == "table" and component.id then
       idTable[component.id] = component
@@ -118,7 +120,7 @@ local processTab = function(tab, ...)
 
   local components
   if type(tab.components) == "table" then
-    components = processComponents(tab.components, ...)
+    components = processComponents(tab.components, nil, ...)
   end
 
   return setmetatable(tabController, {
