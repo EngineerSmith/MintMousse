@@ -43,10 +43,8 @@ function setCardText(textElement, value) {
 function card_update_imgTop(element, value) {
   const imgTop = element.querySelector('.card-img-top');
   if (value) {
-    if (imgTop)
-      imgTop.src = value;
-    else {
-      const imgTop = document.createElement("img");
+    if (!imgTop) {
+      imgTop = document.createElement("img");
       imgTop.classList.add("card-img-top");
       imgTop.src = value;
       const header = element.querySelector('.card-header');
@@ -55,6 +53,7 @@ function card_update_imgTop(element, value) {
       else
         element.append(imgTop);
     }
+    imgTop.src = value;
   } else if (imgTop)
     imgTop.remove();
 }
@@ -62,18 +61,16 @@ function card_update_imgTop(element, value) {
 function card_update_imgBottom(element, value) {
   const imgBottom = element.querySelector('.card-img-bottom');
   if (value) {
-    if (imgBottom)
-      imgBottom.src = value;
-    else {
-      const imgBottom = document.createElement("img");
+    if (!imgBottom) {
+      imgBottom = document.createElement("img");
       imgBottom.classList.add("card-img-bottom");
-      imgBottom.src = value;
       const footer = element.querySelector('.card-footer');
       if (footer)
         element.insertBefore(imgBottom, footer);
       else
         element.append(imgBottom);
     }
+    imgBottom.src = value;
   } else if (imgBottom)
     imgBottom.remove();
 }

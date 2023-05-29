@@ -1,22 +1,3 @@
-function setVisible(element) {
-  element.classList.remove('invisible');
-}
-
-function updateBody(cardElement) {
-  // elements within body
-  const titleElement = cardElement.querySelector('.card-title');
-  if (!titleElement.classList.contains('invisible'))
-    return setVisible(cardElement);
-  const textElement = cardElement.querySelector('.card-text');
-  if (!textElement.classList.contains('invisible'))
-    return setVisible(cardElement);
-  const subtextElement = cardElement.querySelector('.text-body-secondary');
-  if (!subtextElement.classList.contains('invisible'))
-    return setVisible(cardElement);
-  //todo check children for visiblity
-  cardElement.classList.add('invisible');
-}
-
 function setCardBodyText(textElement, value, cardElement) {
   if (textElement) {
     textElement.textContent = value;
@@ -25,27 +6,52 @@ function setCardBodyText(textElement, value, cardElement) {
     } else {
       textElement.classList.add('invisible');
     }
-    updateBody(cardElement);
   }
 }
 
 function cardBody_update_title(element, value) {
-  setCardBodyText(element.querySelector('.card-title'), value, element);
+  var titleElement = element.querySelector('.card-title');
+  if (value) {
+    if (!titleElement) {
+      titleElement = document.createElement("h5");
+      titleElement.classList.add("card-title");
+      titleElement.textContent = value;
+      element.prepend(titleElement);
+    }
+    titleElement.textContent = value;
+  } else if (titleElement)
+    titleElement.remove();
 }
 
 function cardBody_update_text(element, value) {
-  setCardBodyText(element.querySelector('.card-text'), value, element);
+  var textElement = element.querySelector('.card-text');
+  if (value) {
+    if (!textElement) {
+      textElement = document.createElement("p");
+      textElement.classList.add("card-text");
+      const titleElement = element.querySelector('.card-title');
+      if (titleElement)
+        element.insertAfter(textElement, titleElement);
+      else
+        element.prepend(textElement);
+    }
+    textElement.textContent = value;
+  } else if (textElement)
+    textElement.remove();
 }
 
 function cardBody_update_subtext(element, value) {
-  const subtextElement = element.querySelector('.text-body-secondary');
-  if (subtextElement) {
-    subtextElement.textContent = value;
-    if (value) {
-      subtextElement.parentNode.classList.remove('invisible');
-    } else {
-      subtextElement.parentNode.classList.add('invisible');
+  var subtextElement = element.querySelector('.text-body-secondary');
+  if (value) {
+    if (!subtextElement) {
+      const textElement = document.createElement("p");
+      textElement.classList.add("card-text");
+      subtextElement = document.createElement("small");
+      subtextElement.classList.add("text-body-secondary");
+      textElement.append(subtextElement);
+      element.append(textElement);
     }
-    updateBody(element);
-  }
+    subtextElement.textContent = value;
+  } else if (subtextElement)
+    subtextElement.parentNode.remove();
 }

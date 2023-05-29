@@ -1,7 +1,7 @@
-<div class="card-body{{#_hideBody}} invisible{{/_hideBody}}" id="{{id}}">
-  <h5 class="card-title{{^title}} invisible{{/title}}">{{&title}}</h5>
-  <p class="card-text{{^text}} invisible{{/text}}">{{&text}}</p>
+<div class="card-body" id="{{id}}">
+  {{#title}}<h5 class="card-title}">{{&title}}</h5>{{/title}}
+  {{#text}}<p class="card-text">{{&text}}</p>{{/text}}
   {{#children}}{{&children.render}}{{^children.render}}{{&render}}{{/children.render}}
   {{/children}}{{!
-}}<p class="card-text{{^subtext}} invisible{{/subtext}}"><small class="text-body-secondary">{{&subtext}}</small></p>
+}}{{#subtext}}<p class="card-text"><small class="text-body-secondary">{{&subtext}}</small></p>{{/subtext}}
 </div>

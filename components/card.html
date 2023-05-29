@@ -1,7 +1,7 @@
 <div class="grid-item {{#size}}grid-item-{{size}}{{/size}}">
   <div class="card{{#style.color}} text-bg-{{style.color}}{{/style.color}}" data-header-title="{{headerTitle}}" data-small-footer="{{footerSubtext}}" id="{{id}}">
   {{#header}}<{{^headerTitle}}div{{/headerTitle}}{{#headerTitle}}h4{{/headerTitle}}{{!
-}} class="card-header">{{&header}}</{{^headerTitle}}div{{/headerTitle}}{{#headerTitle}}h4{{/headerTitle}}{{/header}}{{!
+}} class="card-header">{{&header}}</{{^headerTitle}}div{{/headerTitle}}{{#headerTitle}}h4{{/headerTitle}}>{{/header}}{{!
   }}{{#imgTop}}<img class="card-img-top" src="{{imgTop}}">{{/imgTop}}
     {{#children}}{{#children.render}}{{!
     
