@@ -1,8 +1,8 @@
 <div class="grid-item {{#size}}grid-item-{{size}}{{/size}}">
-  <div class="card{{#style.color}} text-bg-{{style.color}}{{/style.color}}" id="{{id}}">
-  {{^headerTitle}}<div class="card-header{{^header}} invisible{{/header}}">{{&header}}</div>{{/headerTitle}}{{!
-}}{{#headerTitle}}<h4 class="card-header{{^header}} invisible{{/header}}">{{&header}}</h4>{{/headerTitle}}
-    <img class="card-img-top{{^imgTop}} invisible{{/imgTop}}" src="{{imgTop}}">
+  <div class="card{{#style.color}} text-bg-{{style.color}}{{/style.color}}" data-header-title="{{headerTitle}}" data-small-footer="{{footerSubtext}}" id="{{id}}">
+  {{#header}}<{{^headerTitle}}div{{/headerTitle}}{{#headerTitle}}h4{{/headerTitle}}{{!
+}} class="card-header">{{&header}}</{{^headerTitle}}div{{/headerTitle}}{{#headerTitle}}h4{{/headerTitle}}{{/header}}{{!
+  }}{{#imgTop}}<img class="card-img-top" src="{{imgTop}}">{{/imgTop}}
     {{#children}}{{#children.render}}{{!
     
     single component
@@ -15,10 +15,10 @@
   }}{{#_wrapBody}}<div class="card-body">{{&render}}</div>{{/_wrapBody}}{{/children.render}}
     {{/children}}{{!
 
-  }}<img class="card-img-bottom{{^imgBottom}} invisible{{/imgBottom}}" src="{{imgBottom}}">
-    <div class="card-footer{{^footer}} invisible{{/footer}}">{{!
+  }}{{#imgBottom}}<img class="card-img-bottom" src="{{imgBottom}}">{{/imgBottom}}
+    {{#footer}}<div class="card-footer">{{!
   }}{{^footerSubtext}}{{&footer}}{{/footerSubtext}}{{!
   }}{{#footerSubtext}}<small class="text-body-secondary">{{&footer}}</small>{{/footerSubtext}}{{!
-  }}</div>
+  }}</div>{{/footer}}
   </div>
 </div>

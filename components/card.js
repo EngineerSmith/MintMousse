@@ -13,7 +13,7 @@ function getSizeClass(element) {
   return null;
 }
 
-// function card_update_size(element, value) { // removed due to being buggy with the grid system, kept for the future
+// function card_update_size(element, value) { // removed due to being buggy with the grid system, kept for reference
 //   element = element.parentNode;
 //   const sizeClass = getSizeClass(element);
 //   const size = sizeClass ? parseInt(sizeClass.slice(9)) : null;
@@ -33,23 +33,6 @@ function setElementVisiblity(element, bool) {
   }
 }
 
-function setElementImageSrc(element, imageSrc) {
-  if (element) {
-    element.src = imageSrc;
-    setElementVisiblity(element, imageSrc);
-  }
-}
-
-function card_update_imgTop(element, value) {
-  element = element.querySelector('.card-img-top');
-  setElementImageSrc(element, value);
-}
-
-function card_update_imgBottom(element, value) {
-  element = element.querySelector('.card-img-bottom');
-  setElementImageSrc(element, value);
-}
-
 function setCardText(textElement, value) {
   if (textElement) {
     textElement.textContent = value;
@@ -57,10 +40,83 @@ function setCardText(textElement, value) {
   }
 }
 
+function card_update_imgTop(element, value) {
+  const imgTop = element.querySelector('.card-img-top');
+  if (value) {
+    if (imgTop)
+      imgTop.src = value;
+    else {
+      const imgTop = document.createElement("img");
+      imgTop.classList.add("card-img-top");
+      imgTop.src = value;
+      const header = element.querySelector('.card-header');
+      if (header)
+        element.insertAfter(imgTop, header);
+      else
+        element.append(imgTop);
+    }
+  } else if (imgTop)
+    imgTop.remove();
+}
+
+function card_update_imgBottom(element, value) {
+  const imgBottom = element.querySelector('.card-img-bottom');
+  if (value) {
+    if (imgBottom)
+      imgBottom.src = value;
+    else {
+      const imgBottom = document.createElement("img");
+      imgBottom.classList.add("card-img-bottom");
+      imgBottom.src = value;
+      const footer = element.querySelector('.card-footer');
+      if (footer)
+        element.insertBefore(imgBottom, footer);
+      else
+        element.append(imgBottom);
+    }
+  } else if (imgBottom)
+    imgBottom.remove();
+}
+
 function card_update_header(element, value) {
-  setCardText(element.querySelector('.card-header'), value);
+  const header = element.querySelector('.card-header');
+  const isTitle = element.dataset.headerTitle == "true" ? "h4" : "div";
+
+  if (value) {
+    if (header)
+      header.textContent = value;
+    else {
+      const header = document.createElement(isTitle);
+      header.classList.add("card-header");
+      header.textContent = value;
+      element.prepend(header);
+    }
+  } else if (header)
+    header.remove();
 }
 
 function card_update_footer(element, value) {
-  setCardText(element.querySelector('.card-footer'), value);
+  const footer = element.querySelector('.card-footer');
+  const isSmall = element.dataset.smallFooter == "true"
+
+  if (value) {
+    if (footer) {
+      if (isSmall)
+        footer.querySelector('.text-body-secondary').textContent = value;
+      else
+        footer.textContent = value;
+    } else {
+      const footer = document.createElement("div");
+      footer.classList.add("card-footer");
+      if (isSmall) {
+        const small = document.createElement("small");
+        small.classList.add("text-body-secondary");
+        small.textContent = value;
+        footer.append(small);
+      } else
+        footer.textContent = value;
+      element.append(footer);
+    }
+  } else if (footer)
+    footer.remove();
 }

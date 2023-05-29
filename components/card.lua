@@ -17,6 +17,9 @@ return function(settings, helper)
   if settings.footer then
     settings.footer = helper.formatText(settings.footer)
   end
+     -- ensure boolean
+  settings.headerTitle = settings.headerTitle ~= nil
+  settings.footerSubtext = settings.footerSubtext ~= nil
 
   -- wrap in body
   if settings.children then
