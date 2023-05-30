@@ -190,7 +190,7 @@ mintMousse.start = function(settings, website)
     if tab.active then
       active = true
     end
-    tab.id = tab.name .. index
+    tab.id = tab.name:gsub("%s", "_") .. index
     if tab.components then
       globalID = setIDValidate(tab.components)
     end
