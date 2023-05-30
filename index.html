@@ -52,7 +52,7 @@
   var aliveRequest;
   aliveRequest = function(time){
     const request = new XMLHttpRequest();
-    request.open("GET", "alive", true);
+    request.open("GET", "api/alive", true);
     request.timeout = pollInterval;
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
@@ -76,7 +76,7 @@
   var foo;
   function updateRequest(){
     const request = new XMLHttpRequest();
-    request.open("GET", "update?updateTime="+updateTime, true);
+    request.open("GET", "api/update?updateTime="+updateTime, true);
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
         const status = request.status;
@@ -141,8 +141,7 @@
   <div class="tab-content" id="myTabContent">
     {{#tabs}}
     <div class="tab-pane fade container mt-2{{#active}} show active{{/active}}" id="{{id}}-tab-pane" role="tabpanel" aria-labelledby="{{id}}-tab" tabindex="0">
-      <div class="grid"
-        data-masonry='{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}'>
+      <div class="grid" data-masonry='{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}'>
         <div class="grid-sizer"></div>
         <div class="gutter-sizer"></div>
         {{#components}}

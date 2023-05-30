@@ -1,6 +1,6 @@
 function buttonPressed(button) { 
   var request = new XMLHttpRequest();
-  request.open("POST", "/event", true);
+  request.open("POST", "api/event", true);
   var body = "event=" + encodeURIComponent(button.getAttribute("event"));
   var variable = button.getAttribute("variable");
   if (variable != null) {

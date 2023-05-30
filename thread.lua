@@ -26,7 +26,7 @@ local webserver = {
 }
 
 local httpMethod = {
-  ["event"] = function(request)
+  ["api/event"] = function(request)
     if request.method == "POST" and request.parsedBody then
       webserver.out("event", request.parsedBody["event"], request.parsedBody["variable"])
       return "202"
@@ -36,13 +36,13 @@ local httpMethod = {
     end
     return "402"
   end,
-  ["alive"] = function(request)
+  ["api/alive"] = function(request)
     if request.method == "GET" then
       return "202"
     end
     return "405"
   end,
-  ["update"] = function(request)
+  ["api/update"] = function(request)
     if request.method == "GET" then
       local lastUpdateTime = tonumber(request.parsedURL.values["updateTime"])
       if not lastUpdateTime then
@@ -291,6 +291,7 @@ end
 
 webserver.handleRequest = function(request)
   local path = request.parsedURL.path
+  webserver.out("HERE", path)
   if httpMethod[path] then
     local status, response, data, headers = pcall(httpMethod[path], request)
     if not status then
