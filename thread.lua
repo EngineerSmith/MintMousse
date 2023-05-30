@@ -291,7 +291,6 @@ end
 
 webserver.handleRequest = function(request)
   local path = request.parsedURL.path
-  webserver.out("HERE", path)
   if httpMethod[path] then
     local status, response, data, headers = pcall(httpMethod[path], request)
     if not status then
@@ -312,8 +311,12 @@ end
 
 webserver.connection = function(client)
   local request = webserver.parseRequest(client)
-  local reply = webserver.handleRequest(request)
-  webserver.sendReply(client, reply)
+  if request.protocol == "HTTP/1.1" or request.protocol == "HTTP/1.0" then
+    local reply = webserver.handleRequest(request)
+    webserver.sendReply(client, reply)
+  elseif request.protocol and request.protocol:find("HTTP") then
+    webserver.sendReply(client, httpResponse["505"])
+  end
   client:close()
 end
 

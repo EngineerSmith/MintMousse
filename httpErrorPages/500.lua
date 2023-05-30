@@ -1,9 +1,11 @@
 return {{
   type = "card",
   size = 2,
-  body = {
-    title = "500 Internal Server Error",
+  header = "500 Internal Server Error",
+  headerTitle = true,
+  children = {
+    type = "cardBody",
     text = "Issue has been logged.",
--- imgBottom = "500.png",
+  --imgBottom = "500.png"
   }
 }}

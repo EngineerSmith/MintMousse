@@ -8,5 +8,6 @@ return {
   ["404"] = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n",
   ["405"] = "HTTP/1.1 405 Method Not Allowed\r\n\r\n",
   ["422"] = "HTTP/1.1 422 Unprocessable Entity\r\n\r\n",
-  ["500"] = "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html\r\n\r\n"
+  ["500"] = "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html\r\n\r\n",
+  ["505"] = "HTTP/1.1 505 HTTP Version Not Supported\r\n\r\n",
 }
