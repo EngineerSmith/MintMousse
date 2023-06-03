@@ -1,6 +1,5 @@
 local PATH = ... .. "."
 local dirPATH = PATH:gsub("%.", "/")
-local componentPath = dirPATH .. "components"
 
 local channelInOut = "MintMousse"
 local channelDictionary = "MintMousseDictionary"
@@ -11,49 +10,7 @@ local svg = require(PATH .. "svg")
 
 local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
-local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(componentPath))
-
-local globalID = 0
-local setIDValidate -- function set later
-
-local formatComponent = function(component, id)
-  if component.type then
-    local dir = componentPath.."/"..component.type
-    if not love.filesystem.getInfo(dir..".html", "file") or not love.filesystem.getInfo(dir..".lua", "file") then
-      error("Component type: "..tostring(component.type).." does not exist: "..tostring(dir))
-    end
-    if not component.id then
-      component.id = id
-      id = id + 1
-    elseif type(component.id) == "string" then
-      local failed
-      for capture in component.id:gmatch("(%W)") do
-        if not capture:find("[%._,;:@]") then -- if not found; fail
-          failed = capture
-          break
-        end
-      end
-      if failed then
-        error("You can only use alphanumeric and . _ , : ; @ characters for the id. Not: " .. tostring(failed))
-      end
-    end
-  end
-  if component.children then
-    id = setIDValidate(component.children, id)
-  end
-  return id
-end
-
-setIDValidate = function(settings, id)
-  id = id or globalID
-  if settings.type then
-    return formatComponent(settings, id)
-  end
-  for _, component in ipairs(settings) do
-    id = formatComponent(component, id)
-  end
-  return id
-end
+local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(dirPATH .. "components"))
 
 local formatIcon = function(icon)
   if type(icon) == "string" then
@@ -68,7 +25,7 @@ local formatIcon = function(icon)
   if type(icon.emoji) == "string" then
     local len = #icon.emoji
     assert(len == 2 or len == 4,
-      "It is determinded that you haven't given an emoji, raise an issue if you see this on github")
+      "It is determined that you haven't given an emoji, raise an issue if you see this on github")
   else
     error("icon.emoji must be type string")
   end
@@ -166,14 +123,27 @@ mintMousse.start = function(settings, website)
   -- preprocessing
   local dictionaryChannel = love.thread.getChannel(channelDictionary)
 
-  local dictionary = {}
+  local dictionary, lookup = {}, {}
   for type, variables in pairs(jsUpdateFunctions) do
-    table.insert(dictionary, type)
+    if not lookup[type] then
+      table.insert(dictionary, type)
+      lookup[type] = true
+    end
     for variable in pairs(variables) do
-      table.insert(dictionary, variable)
+      if not lookup[variable] then
+        table.insert(dictionary, variable)
+        lookup[variable] = true
+      end
     end
   end
+  table.insert(dictionary, "new")
+  table.insert(dictionary, "remove")
+
+  table.insert(dictionary, "tab")
+  table.insert(dictionary, "component")
+
   dictionaryChannel:push(dictionary)
+  dictionary, lookup = nil, nil
   -- website
   -- icon
   if website.icon then
@@ -191,9 +161,6 @@ mintMousse.start = function(settings, website)
       active = true
     end
     tab.id = tab.name:gsub("%s", "_") .. index
-    if tab.components then
-      globalID = setIDValidate(tab.components)
-    end
   end
   if not active then
     website.tabs[1].active = true
@@ -201,9 +168,11 @@ mintMousse.start = function(settings, website)
 
   website.pollInterval = settings.pollInterval
 
+  local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
+
   thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut, channelDictionary)
 
-  return controller(website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
+  return controller
 end
 
 love.handlers[channelInOut] = function(enum, ...)
@@ -225,11 +194,11 @@ end
 
  2) Complete all todo comments
  3) Add component factories to make it easier to make a website than creating a massive table (but keep option for table for more control)
- 4) Add futher component concepts
- 4.1) 2D graph (line graph, point graph); Status lights (badages + inc. tab update ping); interactive list; crash report; form (text input, etc.); interactive world map;
+ 4) Add further component concepts
+ 4.1) 2D graph (line graph, point graph); Status lights (badges + inc. tab update ping); interactive list; crash report; form (text input, etc.); interactive world map;
  4.2) Maybes: toast updates; AppleCake support;
  5) Custom support for message styles using lustache? e.g. how I did logging in mintlilac
- 5.1) Reconsider adding css classes instead of intenting styling within elements like in mintlilac
+ 5.1) Reconsider adding css classes instead of indenting styling within elements like in mintlilac
  6) Add time since...
  6.1) Add time since last update on connected hover
  6.2) Add time since last connected on disconnect hover
@@ -240,7 +209,7 @@ end
  7.1.1) This is to correct the page if the webserver is restarted "too quickly"
 
  Considerations: Continuous tcp connection? 
-  Benefits: Easily push updates to live data (might keep a tcp connect open for certain components + warn users of this drawback + could add support for non-continous tcp connections)
+  Benefits: Easily push updates to live data (might keep a tcp connect open for certain components + warn users of this drawback + could add support for non-continuous tcp connections)
   Drawback: Keeps a port open; which can limit resources for the system if multiple servers are on one machine and each server is serving 10+ mintmousse it adds up quickly
 ]]
 

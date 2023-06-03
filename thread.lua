@@ -1,5 +1,4 @@
 local PATH, dirPATH, settings, website, channelInName, channelOutName, channelDictionary = ...
-local componentPath = dirPATH .. "components"
 local httpErrorDirectory = "httpErrorPages"
 
 require("love.event")
@@ -22,17 +21,18 @@ local webserver = {
   connections = {},
   updates = {},
   updateIndexes = {},
+  newAspect = {},
   idTable = {}
 }
 
 local httpMethod = {
   ["api/event"] = function(request)
-    if request.method == "POST" and request.parsedBody then
-      webserver.out("event", request.parsedBody["event"], request.parsedBody["variable"])
-      return "202"
-    end
     if request.method ~= "POST" then
       return "405"
+    end
+    if request.parsedBody then
+      webserver.out("event", request.parsedBody["event"], request.parsedBody["variable"])
+      return "202"
     end
     return "402"
   end,
@@ -43,18 +43,18 @@ local httpMethod = {
     return "405"
   end,
   ["api/update"] = function(request)
-    if request.method == "GET" then
-      local lastUpdateTime = tonumber(request.parsedURL.values["updateTime"])
-      if not lastUpdateTime then
-        return "422"
-      end
-      local json = webserver.getUpdatePayload("json", lastUpdateTime)
-      if json then
-        return "200header", json, "Content-Type: application/json"
-      end
-      return "204" -- processed successfully, but no update
+    if request.method ~= "GET" then
+      return "405"
     end
-    return "405"
+    local lastUpdateTime = tonumber(request.parsedURL.values["updateTime"])
+    if not lastUpdateTime then
+      return "422"
+    end
+    local json = webserver.getUpdatePayload("json", lastUpdateTime)
+    if json then
+      return "200header", json, "Content-Type: application/json"
+    end
+    return "204" -- processed successfully, but no update
   end
 }
 
@@ -74,7 +74,7 @@ local fileHandle = {
     components[name].javascript = lfs.read(path)
   end,
   ["lua"] = function(path, name, components)
-    local chunk = require((componentPath .. "." .. name):gsub("[\\/]", "."))
+    local chunk = require((dirPATH .. "components." .. name):gsub("[\\/]", "."))
     if type(chunk) == "function" then
       components[name].format = chunk
     elseif type(chunk) == "table" then
@@ -84,8 +84,8 @@ local fileHandle = {
 }
 
 local components = {}
-for _, item in ipairs(lfs.getDirectoryItems(componentPath)) do
-  local path = componentPath .. "/" .. item
+for _, item in ipairs(lfs.getDirectoryItems(dirPATH .. "components")) do
+  local path = dirPATH .. "components/" .. item
   if lfs.getInfo(path, "file") then
     local name, extension = getFileNameExtension(item)
     if not components[name] then
@@ -122,7 +122,7 @@ do
       return buffer:set(value):decode()
     end
   else
-    webserver.decode = function(Value)
+    webserver.decode = function(value)
       return value
     end
   end
@@ -178,8 +178,8 @@ webserver.startServer = function(host, port, backupPort)
   local address, port = webserver.server:getsockname()
   if address and port then
     address = address == "0.0.0.0" and "127.0.0.1" or address
-    local fullAdress = "http://" .. address .. ":" .. port
-    webserver.out("info", "Started webserver at:", fullAdress)
+    local fullAddress = "http://" .. address .. ":" .. port
+    webserver.out("info", "Started webserver at:", fullAddress)
   elseif port then
     webserver.out("info", "Started webserver on port:", port)
   else
@@ -250,7 +250,7 @@ local bodyPattern = "([^&]-)=([^&^#]*)"
 webserver.parseBody = function(body)
   local parsedBody = {}
   for key, value in body:gmatch(bodyPattern) do
-    parsedBody[helper.unformatText(key)] = helper.unformatText(value)
+    parsedBody[helper.restoreText(key)] = helper.restoreText(value)
   end
   return parsedBody
 end
@@ -442,6 +442,13 @@ webserver.getUpdatePayload = function(type, lastUpdateTime)
       table.insert(updatesToSend, {update.func, update.componentID, update.value})
     end
   end
+
+  for _, aspect in ipairs(webserver.newAspect) do
+    if aspect.timeUpdated > lastUpdateTime then
+      table.insert(updatesToSend, {aspect.func, aspect.id, aspect.name, aspect.value})
+    end
+  end
+
   if #updatesToSend == 0 then
     return nil
   end
@@ -454,6 +461,35 @@ webserver.getUpdatePayload = function(type, lastUpdateTime)
     return json.encode(updatesToSend)
   end
   error("CANNOT HIT; TELL A PROGRAMMER TO UPDATE FIRST LINE OF FUNCTION")
+end
+
+webserver.addNewTab = function(tab, time)
+  if type(tab.components) == "table" then
+    webserver.render(tab.components)
+    webserver.generateIDTable(tab.components, webserver.idTable)
+  end
+  local renders = {}
+  if tab.components then
+    if tab.components.render then
+      table.insert(renders, tab.components.render)
+    else
+      for _, component in ipairs(tab.components) do
+        if component.render then
+          table.insert(renders, component.render);
+        end
+      end
+    end
+  end
+  webserver.out("debug", #renders)
+
+  table.insert(website.tabs, tab)
+  table.insert(webserver.newAspect, {
+    timeUpdated = time,
+    func = "newTab",
+    id = tab.id,
+    name = tab.name,
+    value = #renders ~= 0 and renders or nil
+  })
 end
 
 -- == preprocessing ==
@@ -490,12 +526,12 @@ for _, file in ipairs(lfs.getDirectoryItems(errorPagePath)) do
       error = name,
       javascript = website.javascript,
       tabs = {{
-        name = "Error " .. name,
+        name = "😱 Error " .. name,
         active = true,
         components = require(PATH .. httpErrorDirectory .. "." .. name)
       }}
     }
-    webserver.render(pageTbl.tabs[1].components, 0)
+    webserver.render(pageTbl.tabs[1].components)
     httpResponse[name] = httpResponse[name] .. lustache:render(webserver.index, pageTbl)
   end
 end
@@ -506,7 +542,7 @@ webserver.startServer(settings.host, settings.port, settings.backupPort)
 
 local quit = false
 while not quit do
-  -- webserver handling
+  -- Incoming connection handling
   local client, errMsg = webserver.server:accept()
   if client then
     client:settimeout(0)
@@ -530,12 +566,23 @@ while not quit do
     end
   end
   -- thread handling
-  local var = webserver.channel:pop()
-  local limit, count = 50, 0
-  while var and count < limit do
+  for _ = 0, 50 do -- limit to 50 iterations
+    local var = webserver.channel:pop()
+    if not var then
+      break
+    end
     var = webserver.decode(var)
-    webserver.processUpdate(var, getTime())
-    var = webserver.channel:pop()
-    count = count + 1
+
+    local func = webserver.processUpdate
+    -- new
+    if var.new == "tab" then
+      func = webserver.addNewTab
+      var = var[1];
+      -- remove
+    elseif var.remove == "tab" then
+      func = webserver.removeTab
+      var = var[1];
+    end
+    func(var, getTime())
   end
 end

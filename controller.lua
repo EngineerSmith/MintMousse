@@ -2,6 +2,8 @@ local indexError = function(key)
   error("Cannot add or change this index in this table. Key given: " .. tostring(key))
 end
 
+local dirPATH
+
 local buffer
 local encode = function(value)
   if buffer then
@@ -9,6 +11,48 @@ local encode = function(value)
   else
     return value
   end
+end
+
+local globalID = 0
+local setIDValidate -- function set later
+
+local formatComponent = function(component, id)
+  if component.type then
+    local dir = dirPATH.."components/"..component.type
+    if not love.filesystem.getInfo(dir..".html", "file") or not love.filesystem.getInfo(dir..".lua", "file") then
+      error("Component type: "..tostring(component.type).." does not exist: "..tostring(dir))
+    end
+    if not component.id then
+      component.id = id
+      id = id + 1
+    elseif type(component.id) == "string" then
+      local failed
+      for capture in component.id:gmatch("(%W)") do -- For each non-alphanumeric character
+        if not capture:find("[%._,;:@]") then -- if not found; fail
+          failed = capture
+          break
+        end
+      end
+      if failed then
+        error("You can only use alphanumeric and . _ , : ; @ characters for the id. Not: " .. tostring(failed))
+      end
+    end
+  end
+  if component.children then
+    id = setIDValidate(component.children, id)
+  end
+  return id
+end
+
+setIDValidate = function(settings, id)
+  id = id or globalID
+  if settings.type then
+    return formatComponent(settings, id)
+  end
+  for _, component in ipairs(settings) do
+    id = formatComponent(component, id)
+  end
+  return id
 end
 
 local basicLockTable = function(tbl)
@@ -112,6 +156,11 @@ processComponents = function(components, parent, idTable, ...)
 end
 
 local processTab = function(tab, ...)
+  
+  if type(tab.name) ~= "string" then
+    error("Name must be type string")
+  end
+  
   local tabController = {
     notify = function()
       error()
@@ -120,6 +169,7 @@ local processTab = function(tab, ...)
 
   local components
   if type(tab.components) == "table" then
+    globalID = setIDValidate(tab.components, globalID)
     components = processComponents(tab.components, nil, ...)
   end
 
@@ -148,10 +198,12 @@ local processTabs = function(tabs, ...)
     __index = function(_, key)
       return rawget(newTabs, key)
     end
-  })
+  }), newTabs
 end
 
-return function(website, channelDictionary, ...)
+return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
+  dirPATH = path
+
   -- build buffer
   local dictionary = channelDictionary:peek()
   if dictionary then
@@ -160,37 +212,39 @@ return function(website, channelDictionary, ...)
     }
   end
   buffer = require("string.buffer").new(dictionary) -- love 11.4 +
-
-  -- build controller
+  
   local controller = {
-    idTable = {},
-    insert = function()
-      error()
-    end, -- todo
-    remove = function()
-      error()
-    end -- todo
+    idTable = {}
   }
-
-  controller.getById = function(id)
-    return controller.idTable[id]
-  end
-
-  controller.update = function(id, key, value)
-    local component = controller.getById(id)
-    assert(component, "Invalid id given: " .. tostring(id))
-    component[key] = value
-  end
 
   -- processing 
   if type(website.icon) == "table" then
     controller.icon = basicLockTable(website.icon)
   end
-  local tabs
-  if type(website.tabs) == "table" then
-    tabs = processTabs(website.tabs, controller.idTable, ...)
-  end
 
+  local tabs, rawTabs
+  if type(website.tabs) == "table" then
+    tabs, rawTabs = processTabs(website.tabs, controller.idTable, jsUpdateFunctions, channelIn)
+  end
+  
+  -- build controller
+  controller.getById = function(id)
+    return controller.idTable[id]
+  end
+  
+  controller.update = function(id, key, value)
+    local component = controller.getById(id)
+    assert(component, "Invalid id given: " .. tostring(id))
+    component[key] = value
+  end
+  
+  controller.addTab = function(tab)
+    rawTabs[#rawTabs+1] = processTab(tab, controller.idTable, jsUpdateFunctions, channelIn)
+    tab.id = tab.name:gsub("%s", "_") .. #rawTabs
+    local updateTbl = {new = "tab", tab}
+    channelIn:push(encode(updateTbl))
+  end
+  
   --
   return setmetatable(controller, {
     __newindex = function(_, key)

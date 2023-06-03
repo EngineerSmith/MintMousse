@@ -92,7 +92,8 @@
             const update = updates[i];
             const fn = window[update[0]];
             if (typeof(fn) === 'function') {
-              fn(document.getElementById(update[1]), update[2]);
+              const element = document.getElementById(update[1]);
+              fn(element ? element : update[1], update[2], update[3]);
             }
           }
         }
@@ -109,6 +110,67 @@
 
   interval = window.setInterval(updateRequest, pollInterval);
 
+  function setAttributes(el, attrs) {
+    for(var key in attrs) {
+      el.setAttribute(key, attrs[key]);
+    }
+  }
+
+  function newTab(id, name, value) {
+    // set navbar
+    const navbar = document.getElementById("tabNavbar");
+
+    const tabID = id + "-tab-pane";
+
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.setAttribute("role", "presentation");
+    const button = document.createElement("button");
+    button.classList.add("nav-link");
+    button.textContent = name ? name : "TEST";
+    setAttributes(button, {
+      "id": id + "-tab",
+      "data-bs-toggle": "tab",
+      "data-bs-target": tabID,
+      "type": "button",
+      "role": "tab",
+      "aria-controls": tabID,
+      "aria-selected": false
+    });
+    li.append(button);
+    navbar.append(li);
+    // set tab
+    const tabPane = document.createElement("div");
+    tabPane.classList.add(["tab-pane", "fade", "container", "mt-2"]);
+    setAttributes(tabPane, {
+      "id": tabID,
+      "role": "tabpanel",
+      "aria-labelledby": id + "-tab",
+      "tabindex": 0
+    });
+    const grid = document.createElement("div");
+    grid.classList.add("grid");
+    grid.setAttribute("data-masonry", '{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}');
+    const gridSizer = document.createElement("div");
+    gridSizer.classList.add("grid-sizer");
+    const gutterSizer = document.createElement("div");
+    gutterSizer.classList.add("gutter-sizer");
+
+    grid.append(gridSizer);
+    grid.append(gutterSizer);
+
+    if (value) {
+      value.forEach(function(component) {
+        const element = document.createContextualFragment(component);
+        grid.insertAdjacentHTML(element);
+      });
+    }
+
+    tabPane.append(grid);
+    const myTabContent = document.getElementById("myTabContent");
+    myTabContent.append(tabPane);
+  }
+
 {{&javascript}}</script>
   <nav class="navbar navbar-expand-sm bg-body-tertiary">
     <div class="container-fluid">
@@ -119,7 +181,7 @@
       <a class="navbar-brand" href="/">{{title}}</a>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <ul class="nav nav-underline" role="tablist">
+          <ul class="nav nav-underline" role="tablist" id="tabNavbar">
             {{#tabs}}
             <li class="nav-item" role="presentation">
               <button class="nav-link{{#active}} active{{/active}}" id="{{id}}-tab" data-bs-toggle="tab" data-bs-target="#{{id}}-tab-pane"

@@ -52,7 +52,7 @@ end
 local escapeCharactersFn = function(s)
   return string.char(tonumber(s, 16))
 end
-helper.unformatText = function(str)
+helper.restoreText = function(str)
   return str:gsub("%+", " "):gsub("[%%%$](..)", escapeCharactersFn)
 end
 
