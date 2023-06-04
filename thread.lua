@@ -391,6 +391,47 @@ webserver.generateIDTable = function(components, idTable, parent)
   end
 end
 
+local removeIDsTable_processComponent = function(component, idTable)
+  if component.id then
+    component._parent = nil
+    idTable[component.id] = nil
+  end
+  if component.children then
+    webserver.removeIDsTable(component.children, idTable)
+  end
+end
+
+webserver.removeIDsTable = function(components, idTable)
+  if type(components ~= "table") then
+    return
+  end
+
+  if components.type then
+    removeIDsTable_processComponent(components, idTable)
+  else
+    for _, component in ipairs(components) do
+      if type(component) == "table" then
+        removeIDsTable_processComponent(component, idTable)
+      end
+    end
+  end
+end
+
+webserver.addAspect = function(id, time, aspect)
+  webserver.removeAspect(id)
+  aspect.id, aspect.timeUpdated = id, time
+  table.insert(webserver.newAspect, aspect)
+end
+
+webserver.removeAspect = function(id)
+  for index, aspect in ipairs(webserver.newAspect) do
+    if aspect.id == id then
+      table.remove(webserver.newAspect, index)
+      return
+    end
+  end
+end
+
 webserver.processUpdate = function(updateInformation, time)
   -- Parameters
   local id, key, value, isChildUpdate = updateInformation[1], updateInformation[2], updateInformation[3],
@@ -482,12 +523,31 @@ webserver.addNewTab = function(tab, time)
   end
 
   table.insert(website.tabs, tab)
-  table.insert(webserver.newAspect, {
-    timeUpdated = time,
+  webserver.addAspect(tab.id, time, {
     func = "newTab",
-    id = tab.id,
     name = tab.name,
     value = #renders ~= 0 and renders or nil
+  })
+end
+
+webserver.removeTab = function(tabId, time)
+  local index, tab
+  for i, t in ipairs(website.tabs) do
+    if t.id == tabId then
+      index, tab = i, t
+    end
+  end
+  if not index then
+    webserver.out("warning", "Could not find tab with id to remove (de-sync between main thread and mintmousse?): "..tostring(tabId))
+    return
+  end
+  if type(tab.components) then
+    webserver.removeIDsTable(tab.components, webserver.idTable)
+  end
+  table.remove(website.tabs, index)
+  webserver.addAspect(tabId, time, {
+    func = "removeTab",
+    
   })
 end
 

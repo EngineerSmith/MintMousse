@@ -239,10 +239,27 @@ return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
   end
   
   controller.addTab = function(tab)
-    rawTabs[#rawTabs+1] = processTab(tab, controller.idTable, jsUpdateFunctions, channelIn)
+    table.insert(rawTabs, processTab(tab, controller.idTable, jsUpdateFunctions, channelIn))
     tab.id = tab.name:gsub("%s", "_") .. #rawTabs
     local updateTbl = {new = "tab", tab}
     channelIn:push(encode(updateTbl))
+    return tab.id
+  end
+
+  controller.removeTab = function(tabId)
+    if type(tabId) == "table" then -- tab table
+      tabId = tabId.id
+    end
+    assert(type(tabId) == "string", "Must give tab id to remove the tab")
+    channelIn:push(encode({remove = "tab", tabId}))
+
+    for index, tab in ipairs(rawTabs) do
+      if tab.id == tabId then
+        table.remove(rawTabs, index)
+        tabId = nil
+      end
+    end
+    assert(tab == nil, "Could not find tab with that id!")
   end
   
   --

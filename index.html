@@ -48,6 +48,7 @@
   const pollInterval = {{pollInterval}};
   var interval;
   var reloading = false;
+  const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-li";
 
   var aliveRequest;
   aliveRequest = function(time){
@@ -124,7 +125,10 @@
 
     const li = document.createElement("li");
     li.classList.add("nav-item");
-    li.setAttribute("role", "presentation");
+    setAttributes(li, {
+      "role": "presentation",
+      "id": id + "-li"
+    });
     const button = document.createElement("button");
     button.classList.add("nav-link");
     button.textContent = name ? name : "TEST";
@@ -166,8 +170,28 @@
     }
 
     tabPane.append(grid);
-    const myTabContent = document.getElementById("myTabContent");
-    myTabContent.append(tabPane);
+    const tabContent = document.getElementById("tabContent");
+    tabContent.append(tabPane);
+    tabContent.append(tabPane);
+  }
+
+  function removeTab(id) {
+    const pane = document.getElementById(id + "-tab-pane");
+    if (pane) {
+      if (nav.classList.contains('active')) {
+        if (defaultTab != id + '-li')
+          bootstrap.Tab.getInstance(document.getElementById(defaultTab)).show();
+        else {
+          const element = document.querySelector('#tabNavbar li:first-child button');
+          if (element)
+            bootstrap.Tab.getInstance(element).show();
+        }
+      }
+      pane.remove();
+    }
+    const nav = document.getElementById(id + "-li");
+    if (nav)
+      nav.remove();
   }
 
 {{&javascript}}</script>
@@ -182,7 +206,7 @@
         <div class="navbar-nav">
           <ul class="nav nav-underline" role="tablist" id="tabNavbar">
             {{#tabs}}
-            <li class="nav-item" role="presentation">
+            <li class="nav-item" role="presentation" id="{{id}}-li">
               <button class="nav-link{{#active}} active{{/active}}" id="{{id}}-tab" data-bs-toggle="tab" data-bs-target="#{{id}}-tab-pane"
                 type="button" role="tab" aria-controls="{{id}}-tab-pane" aria-selected="false">{{name}}
                <span class="badge rounded-pill bg-primary visually-hidden">99+</span> {{! todo }}
@@ -199,7 +223,7 @@
     </div>
   </nav>
 
-  <div class="tab-content" id="myTabContent">
+  <div class="tab-content" id="tabContent">
     {{#tabs}}
     <div class="tab-pane fade container mt-2{{#active}} show active{{/active}}" id="{{id}}-tab-pane" role="tabpanel" aria-labelledby="{{id}}-tab" tabindex="0">
       <div class="grid" data-masonry='{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}'>
