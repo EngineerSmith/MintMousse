@@ -480,7 +480,6 @@ webserver.addNewTab = function(tab, time)
       end
     end
   end
-  webserver.out("debug", #renders)
 
   table.insert(website.tabs, tab)
   table.insert(webserver.newAspect, {
