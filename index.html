@@ -50,15 +50,17 @@
   var reloading = false;
   const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-tab";
 
-  const triggerTabList = document.querySelectorAll('#tabNavbar button')
-  triggerTabList.forEach(triggerEl => {
-    const tabTrigger = new bootstrap.Tab(triggerEl)
+  (function(){
+    const triggerTabList = document.querySelectorAll('#tabNavbar button');
+    triggerTabList.forEach(triggerEl => {
+      const tabTrigger = new bootstrap.Tab(triggerEl);
 
-    triggerEl.addEventListener('click', event => {
-      event.preventDefault()
-      tabTrigger.show()
+      triggerEl.addEventListener('click', event => {
+        event.preventDefault();
+        tabTrigger.show();
+      });
     })
-  })
+  })();
 
   var aliveRequest;
   aliveRequest = function(time){
@@ -182,7 +184,12 @@
     tabPane.append(grid);
     const tabContent = document.getElementById("tabContent");
     tabContent.append(tabPane);
-    tabContent.append(tabPane);
+
+    const tabTrigger = new bootstrap.Tab(button);
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      tabTrigger.show();
+    });
   }
 
   function removeTab(id) {
