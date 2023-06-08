@@ -152,10 +152,10 @@ processComponents = function(components, parent, idTable, ...)
     __index = function(_, key)
       return rawget(newComponents, key)
     end
-  })
+  }), newComponents
 end
 
-local processTab = function(tab, ...)
+local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
   
   if type(tab.name) ~= "string" then
     error("Name must be type string")
@@ -167,10 +167,40 @@ local processTab = function(tab, ...)
     end -- todo check index.html
   }
 
-  local components
+  local components, rawComponents
   if type(tab.components) == "table" then
     globalID = setIDValidate(tab.components, globalID)
-    components = processComponents(tab.components, nil, ...)
+    components, rawComponents = processComponents(tab.components, nil, idTable, jsUpdateFunctions, channelIn)
+  end
+
+  tabController.addComponent = function(component)
+    globalID = setIDValidate(component, globalID)
+    local com, raw = processComponents(component, nil, idTable, jsUpdateFunctions, channelIn)
+    if raw then -- multiple components
+      if rawComponents then
+        for _, c in ipairs(raw) do
+          table.insert(rawComponents, c)
+        end
+      else
+        rawComponents = raw
+      end
+    else -- flat component
+      if not tab.components then
+        tab.components = {}
+      end
+      table.insert(tab.components, component)
+      if not rawComponents then
+        rawComponents = {}
+      end
+      table.insert(rawComponents, com)
+    end
+    local updateTbl = {new = "component", component}
+    channelIn:push(encode(updateTbl))
+    return component.id
+  end
+
+  tabController.removeComponent = function(componentId)
+    
   end
 
   return setmetatable(tabController, {

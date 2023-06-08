@@ -191,8 +191,7 @@ end
  0) add http1.1 full feature support
  0.1) keep-alive
  0.2) compression
-
- 2) Complete all todo comments
+ 
  3) Add component factories to make it easier to make a website than creating a massive table (but keep option for table for more control)
  4) Add further component concepts
  4.1) 2D graph (line graph, point graph); Status lights (badges + inc. tab update ping); interactive list; crash report; form (text input, etc.); interactive world map;
@@ -207,6 +206,7 @@ end
  7) Session id
  7.1) If session id is different within webpage: force reload
  7.1.1) This is to correct the page if the webserver is restarted "too quickly"
+ 8) Complete all todo comments
 
  Considerations: Continuous tcp connection? 
   Benefits: Easily push updates to live data (might keep a tcp connect open for certain components + warn users of this drawback + could add support for non-continuous tcp connections)

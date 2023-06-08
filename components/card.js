@@ -25,7 +25,7 @@ function getSizeClass(element) {
 //     element.classList.add('grid-item-' + value);
 // }
 
-function setElementVisiblity(element, bool) {
+function setElementVisibility(element, bool) {
   if (bool) {
     element.classList.remove('invisible');
   } else {
@@ -36,7 +36,7 @@ function setElementVisiblity(element, bool) {
 function setCardText(textElement, value) {
   if (textElement) {
     textElement.textContent = value;
-    setElementVisiblity(element, value);
+    setElementVisibility(element, value);
   }
 }
 

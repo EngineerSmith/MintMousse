@@ -551,6 +551,14 @@ webserver.removeTab = function(tabId, time)
   })
 end
 
+webserver.addNewComponent = function(component, time)
+  
+end
+
+webserver.removeComponent = function(componentId, time)
+  
+end
+
 -- == preprocessing ==
 
 if settings.whitelist then
@@ -636,11 +644,13 @@ while not quit do
     -- new
     if var.new == "tab" then
       func = webserver.addNewTab
-      var = var[1];
+      var = var[1]
+    elseif var.new == "component" then
+      func = webserver.addNewComponent
       -- remove
     elseif var.remove == "tab" then
       func = webserver.removeTab
-      var = var[1];
+      var = var[1]
     end
     func(var, getTime())
   end
