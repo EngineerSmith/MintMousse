@@ -38,7 +38,7 @@ local httpMethod = {
   end,
   ["api/alive"] = function(request)
     if request.method == "GET" then
-      return "202"
+      return "204"
     end
     return "405"
   end,

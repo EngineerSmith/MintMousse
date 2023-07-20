@@ -67,9 +67,9 @@
     request.timeout = pollInterval;
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
-        const status = request.status;
-        if (status >= 200 && status < 400) {
-          console.log("Reconnected! Reloading..."+status);
+        console.log(request.status);
+        if (request.status >= 200 && request.status < 400) {
+          console.log("Reconnected! Reloading...");
           if (!reloading) {
             location.reload();
             reloading = true;

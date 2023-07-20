@@ -6,66 +6,13 @@ local channelDictionary = "MintMousseDictionary"
 
 local controller = require(PATH .. "controller")
 local javascript = require(PATH .. "javascript")
-local svg = require(PATH .. "svg")
+local formatIcon = require(PATH .. "icon")
 
 local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
 local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(dirPATH .. "components"))
 
-local formatIcon = function(icon)
-  if type(icon) == "string" then
-    if icon:find("%.svg$") then
-      return love.filesystem.read(icon)
-    end
-    icon = {
-      emoji = icon
-    }
-  end
-  -- Emoji
-  if type(icon.emoji) == "string" then
-    local len = #icon.emoji
-    assert(len == 2 or len == 4,
-      "It is determined that you haven't given an emoji, raise an issue if you see this on github")
-  else
-    error("icon.emoji must be type string")
-  end
-  -- Shape
-  assert(icon.shape == "rect" or icon.shape == "circle" or icon.shape == "nil",
-    "icon.shape must be 'rect', 'circle', or nil")
-  if icon.shape == "rect" then
-    icon.rect = true
-  end
-  if icon.shape == "circle" then
-    icon.circle = true
-  end
-  assert(not (icon.rect and icon.circle), "Cannot display both rect and circle at the same time")
-  -- Color
-  local count
-  if type(icon.color) == "string" then
-    icon.color, count = icon.color:gsub("^#", "%%23")
-    assert(svg.color[icon.color] or count ~= 0, icon.color .. " is not a valid color")
-  else
-    icon.color = nil
-  end
-  -- inside
-  if type(icon.insideColor) == "string" then
-    icon.insideColor, count = icon.insideColor:gsub("^#", "%%23")
-    assert(svg.color[icon.insideColor] or count ~= 0, icon.insideColor .. " is not a valid color")
-  else
-    icon.insideColor = icon.color
-  end
-  -- outside
-  if type(icon.outsideColor) == "string" then
-    icon.outsideColor, count = icon.outsideColor:gsub("^#", "%%23")
-    assert(svg.color[icon.outsideColor] or count ~= 0, icon.outsideColor .. " is not a valid color")
-  else
-    icon.outsideColor = icon.color
-  end
-
-  return icon
-end
-
-local settings_host_allowedStr = "*, 0.0.0.0, localhost, or 127.0.0.1"
+local settings_hostAllowed_Str = "*, 0.0.0.0, localhost, or 127.0.0.1"
 local settings_hostAllowed = {
   ["*"] = true,
   ["0.0.0.0"] = true,
@@ -74,44 +21,33 @@ local settings_hostAllowed = {
 }
 
 local validateSettings = function(settings)
-  local error = function(errMsg)
-    error("MintMousse settings: " .. errMsg or error("MintMousse settings: Tell a programmer you reached here."))
+  local assert = function(bool, errorMessage)
+    if not bool then
+      error("MintMousse settings: " .. tostring(errorMessage))
+    end
   end
 
   -- host
   if type(settings.host) ~= "string" then
     settings.host = "127.0.0.1"
   end
-  if not settings_hostAllowed[settings.host] then
-    error("Host must be " .. settings_host_allowedStr)
-  end
+  assert(settings_hostAllowed[settings.host], "Host must be " .. settings_hostAllowed_Str)
 
   -- port
-  if type(settings.port) ~= "number" then
-    error("Port must be type number")
-  end
-  if settings.port < 0 or settings.port > 65535 then
-    error("Port must be in the range of 0-65535")
-  end
+  assert(type(settings.port) == "number", "Port must be type number")
+  assert(settings.port >= 0 and settings.port <= 65535, "Port must be in the range of 0-65535")
   if settings.backupPort then
-    if type(settings.backupPort) ~= "number" then
-      error("Backup Port must be type number")
-    end
-    if settings.backupPort < 0 or settings.backupPort > 65535 then
-      error("Backup Port must be in the range of 0-65535")
-    end
-    if settings.backupPort == settings.port then
-      error("Backup Port must be a different value to Port")
-    end
+    assert(type(settings.backupPort) == "number", "Backup port must be type number")
+    assert(settings.backupPort >= 0 and settings.backupPort <= 65535, "Backup port must be in the range of 0-65535")
+    assert(settings.backupPort ~= settings.port, "Backup port must be a different value to port")
   end
 
   -- poll interval
   if type(settings.pollInterval) ~= "number" then
-    settings.pollInterval = 1000
+    settings.pollInterval = 500
   end
-  if settings.pollInterval < 100 then
-    error("Poll Interval must be greater than or equal to 100ms (500ms is recommended lowest value)")
-  end
+  assert(settings.pollInterval >= 100, 
+    "Poll Interval must be greater than or equal to 100ms (200ms is recommended lowest value)")
 end
 
 local mintMousse = {}
@@ -147,7 +83,7 @@ mintMousse.start = function(settings, website)
   -- website
   -- icon
   if website.icon then
-    website.icon = formatIcon(website.icon)
+    website.icon = formatIcon(PATH, website.icon)
   end
   -- tabs
 
@@ -182,7 +118,7 @@ love.handlers[channelInOut] = function(enum, ...)
       love[event](variable)
     end
   else
-    print(enum, ...)
+    print(enum, ...) -- debug
   end
 end
 
@@ -205,9 +141,6 @@ end
  7.1.1) This is to correct the page if the webserver is restarted "too quickly"
  8) Complete all todo comments
 
- Considerations: Continuous tcp connection? 
-  Benefits: Easily push updates to live data (might keep a tcp connect open for certain components + warn users of this drawback + could add support for non-continuous tcp connections)
-  Drawback: Keeps a port open; which can limit resources for the system if multiple servers are on one machine and each server is serving 10+ mintmousse it adds up quickly
 ]]
 
 return mintMousse
