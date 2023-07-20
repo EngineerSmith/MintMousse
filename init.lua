@@ -188,9 +188,6 @@ end
 
 --[[
  TODO list
- 0) add http1.1 full feature support
- 0.1) keep-alive
- 0.2) compression
  
  3) Add component factories to make it easier to make a website than creating a massive table (but keep option for table for more control)
  4) Add further component concepts

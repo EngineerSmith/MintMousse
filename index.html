@@ -46,7 +46,6 @@
   <script type="text/javascript">
   var updateTime = {{time}};
   const pollInterval = {{pollInterval}};
-  var interval;
   var reloading = false;
   const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-tab";
 
@@ -62,8 +61,7 @@
     })
   })();
 
-  var aliveRequest;
-  aliveRequest = function(time){
+  function aliveRequest(time){
     const request = new XMLHttpRequest();
     request.open("GET", "api/alive", true);
     request.timeout = pollInterval;
@@ -86,34 +84,32 @@
     }
     request.send();
   }
-  var foo;
+  
   function updateRequest(){
     const request = new XMLHttpRequest();
     request.open("GET", "api/update?updateTime="+updateTime, true);
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
-        const status = request.status;
-        if (status === 200) {
+        if (request.status === 200) {
           const jsonResponse = JSON.parse(request.responseText);
-          if (jsonResponse.updateTime < updateTime) {
-            return; // outdated reply
-          }
-          updateTime = jsonResponse.updateTime;
+          if (jsonResponse.updateTime > updateTime) { // check for outdated reply
+            updateTime = jsonResponse.updateTime;
 
-          const updates = jsonResponse.updates;
-          for (let i = 0; i < updates.length; i++) {
-            const update = updates[i];
-            const fn = window[update[0]];
-            if (typeof(fn) === 'function') {
-              const element = document.getElementById(update[1]);
-              fn(element ? element : update[1], update[2], update[3]);
+            const updates = jsonResponse.updates;
+            for (let i = 0; i < updates.length; i++) {
+              const update = updates[i];
+              const fn = window[update[0]];
+              if (typeof(fn) === 'function') {
+                const element = document.getElementById(update[1]);
+                fn(element ? element : update[1], update[2], update[3]);
+              }
             }
           }
+          setTimeout(updateRequest, pollInterval);
         }
       }
     }
     request.onerror = () => {
-      window.clearInterval(interval);
       aliveRequest(0);
       document.getElementById("connected").classList.add("visually-hidden");
       document.getElementById("disconnected").classList.remove("visually-hidden");
@@ -121,7 +117,7 @@
     request.send();
   }
 
-  interval = window.setInterval(updateRequest, pollInterval);
+  updateRequest();
 
   function setAttributes(el, attrs) {
     for(var key in attrs) {

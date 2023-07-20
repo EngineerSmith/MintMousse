@@ -34,7 +34,7 @@ local httpMethod = {
       webserver.out("event", request.parsedBody["event"], request.parsedBody["variable"])
       return "202"
     end
-    return "402"
+    return "422"
   end,
   ["api/alive"] = function(request)
     if request.method == "GET" then
@@ -52,7 +52,7 @@ local httpMethod = {
     end
     local json = webserver.getUpdatePayload("json", lastUpdateTime)
     if json then
-      return "200header", json, "Content-Type: application/json"
+      return "200", json, "application/json"
     end
     return "204" -- processed successfully, but no update
   end
@@ -289,35 +289,63 @@ webserver.parseRequest = function(client)
   return request
 end
 
-webserver.handleRequest = function(request)
+webserver.generateHeaders = function(contentLength, keepAlive, contentType)
+  local headers = {}
+  if keepAlive then
+    table.insert(headers, "Connection: keep-alive\r\nKeep-Alive: max=" .. keepAlive)
+  end
+  if contentLength then
+    table.insert(headers, "Content-Length: " .. contentLength)
+  end
+  if contentType then
+    table.insert(headers, "Content-Type: " .. contentType)
+  end
+  return table.concat(headers, "\r\n") .. "\r\n\r\n"
+end
+
+webserver.handleRequest = function(request, keepAlive)
   local path = request.parsedURL.path
+
   if httpMethod[path] then
-    local status, response, data, headers = pcall(httpMethod[path], request)
+    local status, response, data, contentType = pcall(httpMethod[path], request)
     if not status then
       webserver.out("error", "Error occurred while trying to call for", path, ". Error message:", response)
       response = "500"
-      data = nil
+      data, keepAlive = nil, false
     end
     if response then
-      return httpResponse[response] .. (headers and headers .. "\r\n\r\n" or "") .. (data or "")
+      local headers = webserver.generateHeaders(data and #data or nil, keepAlive, contentType)
+      return httpResponse[response] .. (headers and headers or "") .. (data or "")
     end
   end
   if path == "index" then
     website.time = getTime()
-    return httpResponse["200header"] .. "Content-Type: text/html\r\n\r\n" .. lustache:render(webserver.index, website)
+    local status, html = pcall(lustache.render, lustache, webserver.index, website)
+    if not status then
+      return httpResponse["500"]
+    end
+    local headers = webserver.generateHeaders(#html, keepAlive, "text/html")
+    return httpResponse["200"] .. headers .. html
   end
   return httpResponse["404"]
 end
 
-webserver.connection = function(client)
+webserver.connection = function(client, maxAlive)
   local request = webserver.parseRequest(client)
+  local keepAlive = request.headers["Connection"] == "keep-alive"
+  client:setoption("keepalive", keepAlive)
+
   if request.protocol == "HTTP/1.1" or request.protocol == "HTTP/1.0" then
-    local reply = webserver.handleRequest(request)
+    local reply = webserver.handleRequest(request, keepAlive and maxAlive or nil)
     webserver.sendReply(client, reply)
   elseif request.protocol and request.protocol:find("HTTP") then
     webserver.sendReply(client, httpResponse["505"])
   end
-  client:close()
+  if not keepAlive then
+    client:close()
+    return "closed"
+  end
+  return "open"
 end
 
 webserver.sendReply = function(client, data)
@@ -538,7 +566,8 @@ webserver.removeTab = function(tabId, time)
     end
   end
   if not index then
-    webserver.out("warning", "Could not find tab with id to remove (de-sync between main thread and mintmousse?): "..tostring(tabId))
+    webserver.out("warning", "Could not find tab with id to remove (de-sync between main thread and mintmousse?): " ..
+      tostring(tabId))
     return
   end
   if type(tab.components) then
@@ -546,63 +575,64 @@ webserver.removeTab = function(tabId, time)
   end
   table.remove(website.tabs, index)
   webserver.addAspect(tabId, time, {
-    func = "removeTab",
-    
+    func = "removeTab"
+
   })
 end
 
 webserver.addNewComponent = function(component, time)
-  
+
 end
 
 webserver.removeComponent = function(componentId, time)
-  
+
 end
 
--- == preprocessing ==
+do -- == preprocessing ==
 
-if settings.whitelist then
-  for index, allowedAddress in ipairs(settings.whitelist) do
-    webserver.addToWhitelist(allowedAddress)
-  end
-end
-
-if type(website.icon) == "table" then
-  website.icon = lustache:render(webserver.svgIcon, website.icon)
-end
-
-for _, tab in ipairs(website.tabs) do
-  if type(tab.components) == "table" then
-    -- generate website tab
-    webserver.render(tab.components)
-    -- generate id table to access tables
-    webserver.generateIDTable(tab.components, webserver.idTable)
-  end
-end
-
--- Generate error pages
-local errorPagePath = dirPATH .. httpErrorDirectory
-for _, file in ipairs(lfs.getDirectoryItems(errorPagePath)) do
-  local name, extension = getFileNameExtension(file)
-  if extension == "lua" then
-    if not httpResponse[name] then
-      error("Make sure to remember to add the errorPage to http.lua")
+  if settings.whitelist then
+    for index, allowedAddress in ipairs(settings.whitelist) do
+      webserver.addToWhitelist(allowedAddress)
     end
-    local pageTbl = {
-      title = website.title,
-      error = name,
-      javascript = website.javascript,
-      tabs = {{
-        name = "😱 Error " .. name,
-        active = true,
-        components = require(PATH .. httpErrorDirectory .. "." .. name)
-      }}
-    }
-    webserver.render(pageTbl.tabs[1].components)
-    httpResponse[name] = httpResponse[name] .. lustache:render(webserver.index, pageTbl)
   end
-end
 
+  if type(website.icon) == "table" then
+    website.icon = lustache:render(webserver.svgIcon, website.icon)
+  end
+
+  for _, tab in ipairs(website.tabs) do
+    if type(tab.components) == "table" then
+      -- generate website tab
+      webserver.render(tab.components)
+      -- generate id table to access tables
+      webserver.generateIDTable(tab.components, webserver.idTable)
+    end
+  end
+
+  -- Generate error pages
+  local errorPagePath = dirPATH .. httpErrorDirectory
+  for _, file in ipairs(lfs.getDirectoryItems(errorPagePath)) do
+    local name, extension = getFileNameExtension(file)
+    if extension == "lua" then
+      if not httpResponse[name] then
+        error("Make sure to remember to add the errorPage to http.lua")
+      end
+      local pageTbl = {
+        title = website.title,
+        error = name,
+        javascript = website.javascript,
+        tabs = {{
+          name = "😱 Error " .. name,
+          active = true,
+          components = require(PATH .. httpErrorDirectory .. "." .. name)
+        }}
+      }
+      webserver.render(pageTbl.tabs[1].components)
+      httpResponse[name] = httpResponse[name] .. lustache:render(webserver.index, pageTbl)
+    end
+  end
+
+end
 -- == Main loop ==
 
 webserver.startServer(settings.host, settings.port, settings.backupPort)
@@ -616,7 +646,18 @@ while not quit do
     local address = client:getsockname()
     if webserver.isWhitelisted(address) then
       local connection = coroutine.wrap(function()
-        webserver.connection(client)
+        local closed, maxAlive = false, 1000
+        for it = 1, maxAlive do
+          if webserver.connection(client, maxAlive - it) == "closed" then
+            closed = true
+            break
+          end
+          coroutine.yield(true)
+        end
+        if not closed then
+          client:send(httpResponse["408"])
+          client:close()
+        end
       end)
       webserver.connections[connection] = true
     else
