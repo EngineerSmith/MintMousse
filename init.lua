@@ -6,7 +6,7 @@ local channelDictionary = "MintMousseDictionary"
 
 local controller = require(PATH .. "controller")
 local javascript = require(PATH .. "javascript")
-local formatIcon = require(PATH .. "icon")
+local validateIcon = require(PATH .. "icon")
 
 local thread = love.thread.newThread(dirPATH .. "thread.lua")
 
@@ -23,7 +23,7 @@ local settings_hostAllowed = {
 local validateSettings = function(settings)
   local assert = function(bool, errorMessage)
     if not bool then
-      error("MintMousse settings: " .. tostring(errorMessage))
+      error("MintMousse:Setting Validation: " .. tostring(errorMessage))
     end
   end
 
@@ -44,10 +44,10 @@ local validateSettings = function(settings)
 
   -- poll interval
   if type(settings.pollInterval) ~= "number" then
-    settings.pollInterval = 500
+    settings.pollInterval = 250
   end
-  assert(settings.pollInterval >= 100, 
-    "Poll Interval must be greater than or equal to 100ms (200ms is recommended lowest value)")
+  assert(settings.pollInterval >= 75, 
+    "Poll Interval must be greater than or equal to 75ms. 200ms is a value I recommended; which will give at least ~4 updates a second")
 end
 
 local mintMousse = {}
@@ -83,12 +83,12 @@ mintMousse.start = function(settings, website)
   -- website
   -- icon
   if website.icon then
-    website.icon = formatIcon(PATH, website.icon)
+    website.icon = validateIcon(PATH, website.icon)
   end
   -- tabs
 
   if type(website.tabs) ~= "table" or #website.tabs < 1 then
-    error("Requires at least one tab!")
+    error("MintMousse:Tab Validation: Requires at least one tab!")
   end
 
   local active = false
@@ -102,8 +102,11 @@ mintMousse.start = function(settings, website)
     website.tabs[1].active = true
   end
 
+  -- update polling
   website.pollInterval = settings.pollInterval
 
+
+  -- Letsss go
   local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 
   thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut, channelDictionary)
@@ -140,7 +143,7 @@ end
  7.1) If session id is different within webpage: force reload
  7.1.1) This is to correct the page if the webserver is restarted "too quickly"
  8) Complete all todo comments
-
+ 9) Add custom httpErrorPages without having to edit repo
 ]]
 
 return mintMousse

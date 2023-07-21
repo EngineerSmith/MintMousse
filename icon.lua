@@ -1,3 +1,13 @@
+local error = function(str)
+  error("MintMousse:Icon Validation:"..tostring(str))
+end
+
+local assert = function(bool, errorMessage)
+  if not bool then
+    error(errorMessage)
+  end
+end
+
 return function(PATH, icon)
   local svg = require(PATH .. "svg")
 
@@ -11,14 +21,13 @@ return function(PATH, icon)
   end
   -- Emoji
   if type(icon.emoji) == "string" then
-    local len = #icon.emoji
-    assert(len == 2 or len == 4,
+    assert(require("utf8").len(icon.emoji) == 1,
       "It is determined that you haven't given an emoji, raise an issue on github and you have a valid emoji")
   else
     error("icon.emoji must be type string")
   end
   -- Shape
-  assert(icon.shape == "rect" or icon.shape == "circle" or icon.shape == "nil",
+  assert(icon.shape == "rect" or icon.shape == "circle" or icon.shape == nil,
     "icon.shape must be 'rect', 'circle', or nil")
   if icon.shape == "rect" then
     icon.rect = true

@@ -312,6 +312,7 @@ end
 x2.1) Make it easy to update a field without going down a long list of tables
 x2.1.1) e.g. website.tabs[1].components[1].children[2].progress = 5  NO (but keep support for it)
 x2.1.2) controller.updateVariable(id, variableName, newValue) YES
+ 2.1.3) What about, controller[id].variableName = newValue ? using metafunctions
  2.2) Add functions to add or remove
  2.2.1) Insert new components between old ones, at the start or end.
  2.2.2) Remove components from any part of the list
