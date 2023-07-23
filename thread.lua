@@ -430,7 +430,7 @@ local removeIDsTable_processComponent = function(component, idTable)
 end
 
 webserver.removeIDsTable = function(components, idTable)
-  if type(components ~= "table") then
+  if type(components)  ~= "table" then
     return
   end
 

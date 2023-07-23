@@ -76,4 +76,8 @@ helper.getColor = function(num)
   return helper.color[num] or "primary"
 end
 
+helper.getFileNameExtension = function(file)
+  return file:match("^(.+)%..-$"), file:match("^.+%.(.+)$"):lower()
+end
+
 return helper

@@ -106,7 +106,7 @@ mintMousse.start = function(settings, website)
   website.pollInterval = settings.pollInterval
 
 
-  -- Letsss go
+  -- Lets go
   local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 
   thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut, channelDictionary)
