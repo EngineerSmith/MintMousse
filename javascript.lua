@@ -29,22 +29,23 @@ local updateFunctionPattern_22 = "_update_child_(%S+)%(" -- <type>_update_child_
 
 javascript.processJavascriptFunctions = function(type, script)
   local updateFunctions, touched = { children = { }}, false
-  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_21)
+  -- parent update functions
+  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_21) -- start of string match
   if variable then
     updateFunctions[variable] = true
     touched = true
   end
-  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_21) do
+  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_21) do -- for each line match
     updateFunctions[variable] = true
     touched = true
   end
-  --
-  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_22)
+  -- child update functions
+  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_22) -- start of string match
   if variable then
     updateFunctions.children[variable] = true
     touched = true
   end
-  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_22) do
+  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_22) do -- for each line match
     updateFunctions.children[variable] = true
     touched = true
   end

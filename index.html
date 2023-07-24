@@ -46,6 +46,7 @@
   <script type="text/javascript">
   var updateTime = {{time}};
   const pollInterval = {{pollInterval}};
+  const errorPage = {{#error}}true{{/error}}{{^error}}false{{/error}};
   var reloading = false;
   const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-tab";
 
@@ -69,18 +70,28 @@
       if (request.readyState == XMLHttpRequest.DONE) {
         console.log(request.status);
         if (request.status >= 200 && request.status < 400) {
-          console.log("Reconnected! Reloading...");
-          if (!reloading) {
-            location.reload();
-            reloading = true;
+          document.getElementById("connected").classList.remove("visually-hidden");
+          document.getElementById("disconnected").classList.add("visually-hidden");
+          if (!errorPage) {
+            console.log("Reconnected! Reloading...");
+            if (!reloading) {
+              location.reload();
+              reloading = true;
+            }
+          } else {
+            setTimeout(aliveRequest, pollInterval * 15, pollInterval * 15);
           }
         } else {
           if (time > pollInterval * 10) {
             time = pollInterval * 9;
           }
-          setTimeout(aliveRequest, time + pollInterval, time);
+          setTimeout(aliveRequest, time + pollInterval, time + pollInterval);
         }
       }
+    }
+    request.onerror = () => {
+      document.getElementById("connected").classList.add("visually-hidden");
+      document.getElementById("disconnected").classList.remove("visually-hidden");
     }
     request.send();
   }
@@ -117,7 +128,10 @@
     request.send();
   }
 
-  updateRequest();
+  if (!errorPage)
+    updateRequest();
+  else
+    aliveRequest(0);
 
   function setAttributes(el, attrs) {
     for(var key in attrs) {

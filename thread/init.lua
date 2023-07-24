@@ -8,6 +8,8 @@ require("love.event")
 require("love.window")
 require("love.timer")
 
+local helper = requireMintMousse("helper")
+
 -- decode messages from main thread
 local decode = function(value) return value end
 
@@ -55,13 +57,17 @@ website.processComponents(dirPATH.."components")
 website.setWebpageTemplate(love.filesystem.read(dirPATH.."index.html"))
 website.setIconTemplate(love.filesystem.read(dirPATH.."icon.svg"))
 
-webpage.pollInterval = settings.pollInterval
-
 website.setWebpage(webpage)
 website.setIcon(webpage.icon)
 
-
 local httpServer = requireMintMousse("thread.httpServer")
+
+for _, item in ipairs(love.filesystem.getDirectoryItems(dirPATH.."httpErrorPages")) do -- todo allow for user to add own error pages without editing repo
+  local name, extension = helper.getFileNameExtension(item)
+  if extension == "lua" and tonumber(name) ~= nil then
+    website.setErrorPageComponents(httpServer, tonumber(name), requireMintMousse("httpErrorPages."..name))
+  end
+end
 
 for _, address in ipairs(settings.whitelist) do
   httpServer.addToWhitelist(address)

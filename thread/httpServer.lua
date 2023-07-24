@@ -171,6 +171,7 @@ httpServer.addDefaultResponse = function(code, content, contentType)
     content = content,
     contentType = contentType
   }
+  log("HTTPServer added default response for status", code)
 end
 
 --[[status codes]]
