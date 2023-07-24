@@ -1,6 +1,6 @@
-local helper = require("helper")
-local lustache = require("libs.lustache")
-local json = require("libs.json")
+local helper = requireMintMousse("helper")
+local lustache = requireMintMousse("libs.lustache")
+local json = requireMintMousse("libs.json")
 
 local lfs = love.filesystem
 
@@ -11,7 +11,7 @@ local website = {
   idTable = {},
   aspect = {},
   update = {},
-  updateIndex = {},
+  updateIndex = {}
 }
 
 website.setWebpageTemplate = function(template)
@@ -78,10 +78,11 @@ website.addAspect = function(id, time, aspect)
   table.insert(website.aspect, aspect)
 end
 
-website.processUpdate = function(updateInformation, time)
+website.updateComponent = function(currentTime, updateInformation)
   -- Parameters
-  local id, key, value, isChildUpdate = updateInformation[1], updateInformation[2], updateInformation[3], updateInformation[4]
-  
+  local id, key, value, isChildUpdate = updateInformation[1], updateInformation[2], updateInformation[3],
+    updateInformation[4]
+
   -- update value in website for newly requested site
   local component = website.idTable[id]
   if not component then
@@ -103,7 +104,7 @@ website.processUpdate = function(updateInformation, time)
   local updateID = website.updateIndex[updateIndexKey]
   if not updateID then
     table.insert(website.update, {
-      timeUpdated = time,
+      timeUpdated = currentTime,
       componentID = id,
       func = (isChildUpdate or component.type) .. "_update_" .. (isChildUpdate and "child_" or "") .. key,
       value = component[key] -- render could format value, so we use component's rendered value instead
@@ -111,7 +112,7 @@ website.processUpdate = function(updateInformation, time)
     website.updateIndex[updateIndexKey] = #website.update
   else
     local updateTable = website.update[updateID]
-    updateTable.timeUpdated = time
+    updateTable.timeUpdated = currentTime
     updateTable.value = component[key]
   end
 
@@ -120,7 +121,7 @@ end
 website.getUpdatePayload = function(lastUpdateTime, currentTime)
   local payload = {
     updateTime = currentTime,
-    updates = {},
+    updates = {}
   }
   -- component updates
   for _, update in ipairs(website.update) do
@@ -151,7 +152,7 @@ local componentFileHandle = {
     website.components[name].javascript = lfs.read(path)
   end,
   ["lua"] = function(path, name)
-    website.components[name].format = require(path:gsub("[\\/]", "."))
+    website.components[name].format = require(path:sub(1, -5):gsub("[\\/]", "."))
   end
 }
 
@@ -172,6 +173,61 @@ website.processComponents = function(directory)
       log("Website found a non-file within component directory:", item)
     end
   end
+end
+
+--[[new components]]
+website.addNewTab = function(currentTime, tab)
+  if type(tab.components) == "table" then
+    website.render(tab.components)
+    website.generateIDTable(tab.components)
+  end
+  local renders = {}
+  if tab.components then
+    if tab.components.render then
+      table.insert(renders, tab.components.render)
+    else
+      for _, component in ipairs(tab.components) do
+        if component.render then
+          table.insert(renders, component.render);
+        end
+      end
+    end
+  end
+
+  table.insert(website.index.tabs, tab)
+  website.addAspect(tab.id, currentTime, {
+    func = "newTab",
+    name = tab.name,
+    value = #renders ~= 0 and renders or nil
+  })
+end
+
+
+website.addNewComponent = function(currentTime, component)
+  warning("Website addNewComponent not implemented yet")
+end
+--[[remove components]]
+website.removeTab = function(currentTime, tabId)
+  local index, tab
+  for i, t in ipairs(website.index.tabs) do
+    if t.id == tabId then
+      index, tab = i, t
+    end
+  end
+  if not index then
+    return warning("Website could not find tab with id to remove (de-sync between main thread and mintmousse?):", tabId)
+  end
+  if type(tab.components) then
+    website.removeFromIDTable(tab.components)
+  end
+  table.remove(website.index.tabs, index)
+  website.addAspect(tabId, currentTime, {
+    func = "removeTab"
+  })
+end
+
+website.removeComponent = function(currentTime, component)
+  warning("Website removeComponent not implemented yet")
 end
 
 --[[id]]
@@ -248,7 +304,7 @@ website.renderComponent = function(component)
   if not componentType then
     return warning("Website has not loaded component:", component.type)
   end
-  
+
   if componentType.format then
     local children = componentType.format(component, helper)
     if children then
@@ -260,3 +316,5 @@ website.renderComponent = function(component)
   end
   component.render = lustache:render(componentType.template, component)
 end
+
+return website

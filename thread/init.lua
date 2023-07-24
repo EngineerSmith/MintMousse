@@ -1,5 +1,9 @@
 local PATH, dirPATH, settings, webpage, channelInName, channelOutName, channelDictionary = ...
 
+requireMintMousse = function(file)
+  return require(PATH..file)
+end
+
 require("love.event")
 require("love.window")
 require("love.timer")
@@ -18,28 +22,52 @@ if dictionary then
   end
 end
 
+--
+
 local channelIn = love.thread.getChannel(channelInName)
 local channelOut = function(enum, ...)
   love.event.push(channelOutName, enum, ...)
 end
---
 
-_require = require
-require = function(file)
-  local status, result = pcall(_require(PATH..file))
-  if status then
-    return result
-  end
-  return _require(file)
+
+--[[logging]]
+local printOut = function(...)
+  channelOut("print", table.concat({...}, " "))
 end
 
-local httpServer = require("thread.httpServer")
-local website = require("thread.website")
+log = function(...)
+  printOut("MintMousse Thread: log:", ...)
+end
+
+warning = function(...)
+  printOut("MintMousse Thread: warning:", ...)
+end
+
+error = function(...)
+  printOut("MintMousse Thread: error:", ...)
+end
+--
+
+local website = requireMintMousse("thread.website")
+
+website.processComponents(dirPATH.."components")
+
+website.setWebpageTemplate(love.filesystem.read(dirPATH.."index.html"))
+website.setIconTemplate(love.filesystem.read(dirPATH.."icon.svg"))
+
+webpage.pollInterval = settings.pollInterval
+
+website.setWebpage(webpage)
+website.setIcon(webpage.icon)
+
+
+local httpServer = requireMintMousse("thread.httpServer")
 
 for _, address in ipairs(settings.whitelist) do
   httpServer.addToWhitelist(address)
 end
 
+do
 
 httpServer.addMethod("GET", "index", function(_)
   local html = website.getIndex(httpServer.getTime())
@@ -67,6 +95,8 @@ httpServer.addMethod("POST", "api/event", function(request)
   end
 end)
 
+end
+
 httpServer.start(settings.host, settings.port, settings.backupPort)
 
 while true do
@@ -74,16 +104,19 @@ while true do
   httpServer.updateConnections()
   -- Thread communication
   for _ = 0, 50 do
-    local message = channelIn.pop()
+    local message = channelIn:pop()
     if not message then break end
+
+    message = decode(message)
 
     if message.func == "quit" then
       return
     end
 
-    if website[message.func] then
+    if message.func == "updateComponent" then
+      website.updateComponent(httpServer.getTime(), message)
+    elseif website[message.func] then
       website[message.func](httpServer.getTime(), message[1])
     end
-    
   end
 end

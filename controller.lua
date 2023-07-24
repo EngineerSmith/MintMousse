@@ -18,9 +18,9 @@ local setIDValidate -- function set later
 
 local formatComponent = function(component, id)
   if component.type then
-    local dir = dirPATH.."components/"..component.type
-    if not love.filesystem.getInfo(dir..".html", "file") or not love.filesystem.getInfo(dir..".lua", "file") then
-      error("Component type: "..tostring(component.type).." does not exist: "..tostring(dir))
+    local dir = dirPATH .. "components/" .. component.type
+    if not love.filesystem.getInfo(dir .. ".html", "file") or not love.filesystem.getInfo(dir .. ".lua", "file") then
+      error("Component type: " .. tostring(component.type) .. " does not exist: " .. tostring(dir))
     end
     if not component.id then
       component.id = id
@@ -92,7 +92,7 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
         local previous = rawget(component, key)
         if (previous ~= value) then
           rawset(component, key, value)
-          local updateTbl = {component.id, key, value, isChildUpdate and parent.type or nil}
+          local updateTbl = {func = "updateComponent", component.id, key, value, isChildUpdate and parent.type or nil}
           channelIn:push(encode(updateTbl))
         end
       else
@@ -156,11 +156,11 @@ processComponents = function(components, parent, idTable, ...)
 end
 
 local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
-  
+
   if type(tab.name) ~= "string" then
     error("Name must be type string")
   end
-  
+
   local tabController = {
     notify = function()
       error()
@@ -194,13 +194,16 @@ local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
       end
       table.insert(rawComponents, com)
     end
-    local updateTbl = {new = "component", component}
+    local updateTbl = {
+      func = "addNewComponent",
+      component
+    }
     channelIn:push(encode(updateTbl))
     return component.id
   end
 
   tabController.removeComponent = function(componentId)
-    
+
   end
 
   return setmetatable(tabController, {
@@ -242,7 +245,7 @@ return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
     }
   end
   buffer = require("string.buffer").new(dictionary) -- love 11.4 +
-  
+
   local controller = {
     idTable = {}
   }
@@ -256,22 +259,25 @@ return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
   if type(website.tabs) == "table" then
     tabs, rawTabs = processTabs(website.tabs, controller.idTable, jsUpdateFunctions, channelIn)
   end
-  
+
   -- build controller
   controller.getById = function(id)
     return controller.idTable[id]
   end
-  
+
   controller.update = function(id, key, value)
     local component = controller.getById(id)
     assert(component, "Invalid id given: " .. tostring(id))
     component[key] = value
   end
-  
+
   controller.addTab = function(tab)
     table.insert(rawTabs, processTab(tab, controller.idTable, jsUpdateFunctions, channelIn))
     tab.id = tab.name:gsub("%s", "_") .. #rawTabs
-    local updateTbl = {new = "tab", tab}
+    local updateTbl = {
+      func = "addNewTab",
+      tab
+    }
     channelIn:push(encode(updateTbl))
     return tab.id
   end
@@ -281,7 +287,10 @@ return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
       tabId = tabId.id
     end
     assert(type(tabId) == "string", "Must give tab id to remove the tab")
-    channelIn:push(encode({remove = "tab", tabId}))
+    channelIn:push(encode({
+      func = "removeTab",
+      tabId
+    }))
 
     for index, tab in ipairs(rawTabs) do
       if tab.id == tabId then
@@ -291,7 +300,7 @@ return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
     end
     assert(tab == nil, "Could not find tab with that id!")
   end
-  
+
   --
   return setmetatable(controller, {
     __newindex = function(_, key)

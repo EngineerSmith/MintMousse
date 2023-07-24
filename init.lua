@@ -8,7 +8,7 @@ local controller = require(PATH .. "controller")
 local javascript = require(PATH .. "javascript")
 local validateIcon = require(PATH .. "icon")
 
-local thread = love.thread.newThread(dirPATH .. "thread.lua")
+local thread = love.thread.newThread(dirPATH .. "thread/init.lua")
 
 local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(dirPATH .. "components"))
 
@@ -59,7 +59,11 @@ mintMousse.start = function(settings, website)
   -- preprocessing
   local dictionaryChannel = love.thread.getChannel(channelDictionary)
 
-  local dictionary, lookup = {}, {}
+  local dictionary, lookup = {
+    "func",
+    "addNewTab", "removeTab",
+    "addNewComponent", "removeComponent",
+  }, {}
   for type, variables in pairs(jsUpdateFunctions) do
     if not lookup[type] then
       table.insert(dictionary, type)
@@ -72,11 +76,6 @@ mintMousse.start = function(settings, website)
       end
     end
   end
-  table.insert(dictionary, "new")
-  table.insert(dictionary, "remove")
-
-  table.insert(dictionary, "tab")
-  table.insert(dictionary, "component")
 
   dictionaryChannel:push(dictionary)
   dictionary, lookup = nil, nil
@@ -105,7 +104,6 @@ mintMousse.start = function(settings, website)
   -- update polling
   website.pollInterval = settings.pollInterval
 
-
   -- Lets go
   local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
 
@@ -120,6 +118,9 @@ love.handlers[channelInOut] = function(enum, ...)
     if love[event] then
       love[event](variable)
     end
+  elseif enum == "print" then
+    local str = select(1, ...)
+    print(str)
   else
     print(enum, ...) -- debug
   end

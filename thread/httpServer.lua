@@ -1,4 +1,5 @@
 local socket = require("socket")
+local helper = requireMintMousse("helper")
 
 local httpServer = {
   connections = {},
@@ -29,12 +30,8 @@ httpServer.start = function(host, port, backupPort)
 
   httpServer.tcp:settimeout(0)
 
-  local address, port = httpServer.tcp:getsockname()
-  if address and port then
-    address = address == "0.0.0.0" and "127.0.0.1" or address
-    port = port ~= 80 and ":" .. port or ""
-    log("HTTPServer started on:", "http://" .. address .. port)
-  elseif port then
+  local _, port = httpServer.tcp:getsockname()
+  if port then
     log("HTTPServer started on port:", port)
   else
     log("HTTPServer started.")
@@ -79,7 +76,7 @@ httpServer.newIncomingConnection = function()
       log("HTTPServer non-whitelisted connection attempt from:", address)
       client:close()
     end
-  elseif errorMessage ~= "timeout" or errorMessage ~= "closed" then
+  elseif errorMessage ~= "timeout" and errorMessage ~= "closed" then
     warning("HTTPServer error occurred while accepting a connection:", errorMessage)
   end
 end
@@ -106,13 +103,12 @@ httpServer.processConnection = function(client, maxAlive)
       return "error", client:close()
     end
 
-    local urlFunc = methodTable[request.url]
+    local urlFunc = methodTable[request.parsedURL.path]
     if not urlFunc then
-      log("HTTPServer client requested for unknown url:", request.url)
+      log("HTTPServer client requested for unknown url:", request.parsedURL.path)
       httpServer.respond(client, 404, false)
       return "error", client:close()
     end
-
 
     local status, code, content, contentType = true, nil, nil, nil
     if type(urlFunc) == "function" then
@@ -120,7 +116,7 @@ httpServer.processConnection = function(client, maxAlive)
     else
       code = urlFunc
     end
-    
+
     if not status then
       warning("HTTPServer error occurred while trying to call:", request.method, request.url, ". Error message:", code)
       httpServer.respond(client, 500, false)
@@ -173,7 +169,7 @@ httpServer.addDefaultResponse = function(code, content, contentType)
   end
   httpServer.defaultResponse[code] = {
     content = content,
-    contentType = contentType,
+    contentType = contentType
   }
 end
 
@@ -221,13 +217,16 @@ httpServer.respond = function(client, code, keepAlive, content, contentType)
     warning("HTTPServer could not find given status code to respond:", code)
     httpServer.respond(client, 500, false)
   end
+
   if not content and httpServer.defaultResponse[code] then
     local defaultResponse = httpServer.defaultResponse[code]
     content = defaultResponse.content
     contentType = defaultResponse.contentType
   end
-  return httpServer.statusCode[code] ..
-           httpServer.generateHeaders(keepAlive, type(content) == "string" and #content, contentType) .. content or ""
+  local httpResponse = httpServer.statusCode[code] ..
+                         httpServer.generateHeaders(keepAlive, type(content) == "string" and #content, contentType) ..
+                         (content or "")
+  httpServer.send(client, httpResponse)
 end
 
 --[[helper]]
@@ -270,11 +269,12 @@ httpServer.parseRequest = function(client)
   }
   -- method
   local requestMethod = httpServer.receive(client, "*l")
+  request.rawMethod = requestMethod
   request.method, request.url, request.protocol = requestMethod:match(requestMethodPattern) -- GET /images/logo.png HTTP/1.1 -> GET | /images/logo.png | HTTP/1.1
   request.parsedURL = httpServer.parseURL(request.url)
   -- headers
   while true do
-    local data = webserver.receive(client, "*l")
+    local data = httpServer.receive(client, "*l")
     if not data or data == "" then
       break
     end
@@ -303,7 +303,7 @@ httpServer.parseURL = function(url)
   }
   local postfix
   parsedURL.path, postfix = url:match(pathPattern)
-  if parsedURL.path == "" then
+  if parsedURL.path == "/" or parsedURL.path == "" then
     parsedURL.path = "index"
   end
   for variable, value in postfix:gmatch(variablePattern) do
@@ -320,3 +320,5 @@ httpServer.parseBody = function(body)
   end
   return parsedBody
 end
+
+return httpServer
