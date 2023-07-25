@@ -4,11 +4,12 @@ helper.formatImage = function(image)
   if type(image) == "string" then
     if love.filesystem.getInfo(image, "file") then
       local extension = image:match("^.+%.(.+)$"):lower()
-      return "data:image/" .. extension .. ";base64," .. love.data.encode("string", "base64", love.filesystem.read(image))
+      return "data:image/" .. extension .. ";base64," ..
+               love.data.encode("string", "base64", love.filesystem.read(image))
     elseif image:find("^data:image/") then
       return image;
     elseif image:find("^.PNG") then
-      return "data:image/png;base64,"..love.data.encode("string", "base64", image)
+      return "data:image/png;base64," .. love.data.encode("string", "base64", image)
     else
       error(tostring(image) .. " isn't a file, could not be found, or recognised as string of an png")
     end
@@ -31,7 +32,7 @@ local htmlEscapeCharacters = {
   [">"] = "&gt;",
   ['"'] = "&quot;",
   ["'"] = "&#39;",
-  ["/"] = "&#x2F;",
+  ["/"] = "&#x2F;"
 }
 
 local escapeCharactersFn = function(s)
@@ -60,17 +61,7 @@ helper.limitSize = function(size)
   return size > 5 and 5 or size < 0 and 1 or size
 end
 
-helper.color = {
-  "primary",
-  "secondary",
-  "success",
-  "danger",
-  "warning",
-  "info",
-  "light",
-  "dark",
-  "link",
-}
+helper.color = {"primary", "secondary", "success", "danger", "warning", "info", "light", "dark", "link"}
 
 helper.getColor = function(num)
   return helper.color[num] or "primary"

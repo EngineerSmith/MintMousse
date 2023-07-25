@@ -1,6 +1,6 @@
 return function(settings, helper)
   if settings.children then
-    local childComponents = { }
+    local childComponents = {}
     for i, child in ipairs(settings.children) do
       local t = type(child)
       if t == "string" then

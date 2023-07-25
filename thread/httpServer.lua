@@ -20,11 +20,12 @@ httpServer.start = function(host, port, backupPort)
   httpServer.tcp, errorMessage = socket.bind(host, port or 80)
   if not httpServer.tcp then
     if backupPort then
-      warning("HTTPServer could not be started. Attempting to start again on backupPort. Reason:", errorMessage)
+      warningMintMousse("HTTPServer could not be started. Attempting to start again on backupPort. Reason:",
+        errorMessage)
       httpServer.tcp, errorMessage = socket.bind(host, backupPort)
     end
     if not httpServer.tcp then
-      error("HTTPServer could not be started. Reason:", errorMessage)
+      errorMintMousse("HTTPServer could not be started. Reason:", errorMessage)
     end
   end
 
@@ -32,9 +33,9 @@ httpServer.start = function(host, port, backupPort)
 
   local _, port = httpServer.tcp:getsockname()
   if port then
-    log("HTTPServer started on port:", port)
+    logMintMousse("HTTPServer started on port:", port)
   else
-    log("HTTPServer started.")
+    logMintMousse("HTTPServer started.")
   end
 end
 
@@ -47,7 +48,7 @@ end
 httpServer.addMethod = function(method, url, func)
   local methodTable = httpServer.methods[method]
   if not methodTable then
-    return error("HTTPServer method is not supported:", method)
+    return errorMintMousse("HTTPServer method is not supported:", method)
   end
   methodTable[url] = func
 end
@@ -61,7 +62,7 @@ httpServer.newIncomingConnection = function()
       httpServer.connections[coroutine.wrap(function()
         local closed, maxAlive = false, 1000
         for it = 1, maxAlive do
-          local status = httpServer.processConnection(client, maxAlive)
+          local status = httpServer.processConnection(client, maxAlive - it)
           if status == "close" then
             break
           elseif status == "error" then
@@ -73,11 +74,11 @@ httpServer.newIncomingConnection = function()
         client:close()
       end)] = true
     else
-      log("HTTPServer non-whitelisted connection attempt from:", address)
+      logMintMousse("HTTPServer non-whitelisted connection attempt from:", address)
       client:close()
     end
   elseif errorMessage ~= "timeout" and errorMessage ~= "closed" then
-    warning("HTTPServer error occurred while accepting a connection:", errorMessage)
+    warningMintMousse("HTTPServer error occurred while accepting a connection:", errorMessage)
   end
 end
 
@@ -98,14 +99,14 @@ httpServer.processConnection = function(client, maxAlive)
 
     local methodTable = httpServer.methods[request.method]
     if not methodTable then
-      log("HTTPServer client requested for unsupported method:", request.method)
+      logMintMousse("HTTPServer client requested for unsupported method:", request.method)
       httpServer.respond(client, 405, false)
       return "error", client:close()
     end
 
     local urlFunc = methodTable[request.parsedURL.path]
     if not urlFunc then
-      log("HTTPServer client requested for unknown url:", request.parsedURL.path)
+      logMintMousse("HTTPServer client requested for unknown url:", request.parsedURL.path)
       httpServer.respond(client, 404, false)
       return "error", client:close()
     end
@@ -118,7 +119,8 @@ httpServer.processConnection = function(client, maxAlive)
     end
 
     if not status then
-      warning("HTTPServer error occurred while trying to call:", request.method, request.url, ". Error message:", code)
+      warningMintMousse("HTTPServer error occurred while trying to call:", request.method, request.url,
+        ". Error message:", code)
       httpServer.respond(client, 500, false)
       return "error", client:close()
     end
@@ -126,7 +128,7 @@ httpServer.processConnection = function(client, maxAlive)
     httpServer.respond(client, code, keepAlive and maxAlive or nil, content, contentType)
 
   elseif request.protocol and request.protocol:find("HTTP") then
-    log("HTTPServer client using unsupported HTTP protocol:", request.protocol)
+    logMintMousse("HTTPServer client using unsupported HTTP protocol:", request.protocol)
     httpServer.respond(client, 505, false)
     return "error", client:close()
   end
@@ -165,13 +167,13 @@ end
 
 httpServer.addDefaultResponse = function(code, content, contentType)
   if not httpServer.statusCode[code] then
-    return warning("HTTPServer tried to add default response for non-existing status code:", code)
+    return warningMintMousse("HTTPServer tried to add default response for non-existing status code:", code)
   end
   httpServer.defaultResponse[code] = {
     content = content,
     contentType = contentType
   }
-  log("HTTPServer added default response for status", code)
+  logMintMousse("HTTPServer added default response for status", code)
 end
 
 --[[status codes]]
@@ -215,7 +217,7 @@ end
 
 httpServer.respond = function(client, code, keepAlive, content, contentType)
   if not httpServer.statusCode[code] then
-    warning("HTTPServer could not find given status code to respond:", code)
+    warningMintMousse("HTTPServer could not find given status code to respond:", code)
     httpServer.respond(client, 500, false)
   end
 

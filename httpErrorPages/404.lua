@@ -5,7 +5,7 @@ return {{
   headerTitle = true,
   children = {
     type = "cardBody",
-    text = "Page could not be found.",
-  --imgBottom = "404.png"
+    text = "Page could not be found."
+    -- imgBottom = "404.png"
   }
 }}

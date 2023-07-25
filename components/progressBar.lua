@@ -1,7 +1,7 @@
 local defaultStyle = {
   color = "primary",
   striped = true,
-  animated = true,
+  animated = true
 }
 
 return function(settings, helper)
@@ -11,10 +11,14 @@ return function(settings, helper)
   if type(settings.percentage) ~= "number" then
     settings.percentage = 0
   end
-  if settings.percentage < 0 then settings.percentage = 0 end
-  if settings.percentage > 100 then settings.percentage = 100 end
+  if settings.percentage < 0 then
+    settings.percentage = 0
+  end
+  if settings.percentage > 100 then
+    settings.percentage = 100
+  end
   if settings.label and not settings.percentageLabel then
-    settings.generatedLabel = tostring(math.floor(settings.percentage*1000)/1000).."%"
+    settings.generatedLabel = tostring(math.floor(settings.percentage * 1000) / 1000) .. "%"
     settings.updateLabel = true
   end
 

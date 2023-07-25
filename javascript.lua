@@ -1,63 +1,58 @@
 local lfs = love.filesystem
 
-local javascript = {}
+local helper = requireMintMousse("helper")
 
-local getFileNameExtension = function(file)
-  return file:match("^(.+)%..-$"), file:match("^.+%.(.+)$"):lower()
-end
+local updateFunctionPattern_11 = "^function%s+" -- start of string
+local updateFunctionPattern_12 = "\nfunction%s+" -- new line
+local updateFunctionPattern_21 = "_update_(%S+)%(" -- <type>_update_(variable)
+local updateFunctionPattern_22 = "_update_child_(%S+)%(" -- <type>_update_child_(variable)
 
-javascript.readScripts = function(path)
-  local scripts = {}
+-- This scrapes javascript files to find out what variables can be updated
+-- Takes function names in the following styles
+--  1 <type>_update_<variable> : e.g. card_update_imgTop -> card.imgTop value changes will be reflected on the webpage
+--  2 <type>_update_child_<variable> : e.g. buttonGroup_update_child_text -> buttonGroup.components[1].text value will be reflected on the webpage
+
+return function(path)
+  local functions = {}
 
   for _, item in ipairs(lfs.getDirectoryItems(path)) do
-    local filepath = path .. "/" .. item
-    if lfs.getInfo(filepath, "file") then
-      local name, extension = getFileNameExtension(item)
+    local itemPath = path .. "/" .. item
+    if lfs.getInfo(itemPath, "file") then
+      local type, extension = helper.getFileNameExtension(item)
       if extension == "js" then
-        scripts[name] = lfs.read(filepath)
+        local updateFunctions, touched = {
+          children = {}
+        }, false
+
+        local script = lfs.read(itemPath)
+
+        -- parent update functions
+        local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_21)
+        if variable then
+          updateFunctions[variable] = true
+          touched = true
+        end
+        for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_21) do
+          updateFunctions[variable] = true
+          touched = true
+        end
+        -- child update functions
+        local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_22)
+        if variable then
+          updateFunctions.children[variable] = true
+          touched = true
+        end
+        for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_22) do
+          updateFunctions.children[variable] = true
+          touched = true
+        end
+        --
+        if touched then
+          functions[type] = updateFunctions
+        end
       end
     end
   end
 
-  return scripts
+  return functions
 end
-
-local updateFunctionPattern_11 = "^function%s+" -- string start match
-local updateFunctionPattern_12 = "\nfunction%s+" -- new line match
-local updateFunctionPattern_21 = "_update_(%S+)%(" -- <type>_update_(variable)
-local updateFunctionPattern_22 = "_update_child_(%S+)%(" -- <type>_update_child_(variable)
-
-javascript.processJavascriptFunctions = function(type, script)
-  local updateFunctions, touched = { children = { }}, false
-  -- parent update functions
-  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_21) -- start of string match
-  if variable then
-    updateFunctions[variable] = true
-    touched = true
-  end
-  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_21) do -- for each line match
-    updateFunctions[variable] = true
-    touched = true
-  end
-  -- child update functions
-  local _, _, variable = script:find(updateFunctionPattern_11 .. type .. updateFunctionPattern_22) -- start of string match
-  if variable then
-    updateFunctions.children[variable] = true
-    touched = true
-  end
-  for variable in script:gmatch(updateFunctionPattern_12 .. type .. updateFunctionPattern_22) do -- for each line match
-    updateFunctions.children[variable] = true
-    touched = true
-  end
-  return touched and updateFunctions or nil
-end
-
-javascript.getUpdateFunctions = function(scripts)
-  local updateFunctions = {}
-  for type, script in pairs(scripts) do
-    updateFunctions[type] = javascript.processJavascriptFunctions(type, script)
-  end
-  return updateFunctions
-end
-
-return javascript

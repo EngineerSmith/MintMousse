@@ -62,7 +62,7 @@ website.setIconTemplate = function(template)
 end
 
 website.setIcon = function(icon)
-  website.index.icon = lustache:render(website.template.icon, icon)
+  website.index.icon = "data:image/svg+xml," .. lustache:render(website.template.icon, icon)
 end
 
 --[[Webpage updates]]
@@ -88,7 +88,7 @@ website.updateComponent = function(currentTime, updateInformation)
   -- update value in website for newly requested site
   local component = website.idTable[id]
   if not component then
-    return warning("Website could not find component with id:", id)
+    return warningMintMousse("Website could not find component with id:", id)
   end
   component[key] = value
   local toRender = component
@@ -169,10 +169,10 @@ website.processComponents = function(directory)
       if componentFileHandle[extension] then
         componentFileHandle[extension](path, name)
       else
-        log("Website unsupported file within component directory:", extension)
+        logMintMousse("Website unsupported file within component directory:", extension)
       end
     else
-      log("Website found a non-file within component directory:", item)
+      logMintMousse("Website found a non-file within component directory:", item)
     end
   end
 end
@@ -204,9 +204,8 @@ website.addNewTab = function(currentTime, tab)
   })
 end
 
-
 website.addNewComponent = function(currentTime, component)
-  warning("Website addNewComponent not implemented yet")
+  warningMintMousse("Website addNewComponent not implemented yet")
 end
 --[[remove components]]
 website.removeTab = function(currentTime, tabId)
@@ -217,7 +216,8 @@ website.removeTab = function(currentTime, tabId)
     end
   end
   if not index then
-    return warning("Website could not find tab with id to remove (de-sync between main thread and mintmousse?):", tabId)
+    return warningMintMousse(
+      "Website could not find tab with id to remove (de-sync between main thread and mintmousse?):", tabId)
   end
   if type(tab.components) then
     website.removeFromIDTable(tab.components)
@@ -229,7 +229,7 @@ website.removeTab = function(currentTime, tabId)
 end
 
 website.removeComponent = function(currentTime, component)
-  warning("Website removeComponent not implemented yet")
+  warningMintMousse("Website removeComponent not implemented yet")
 end
 
 --[[id]]
@@ -304,7 +304,7 @@ end
 website.renderComponent = function(component)
   local componentType = website.components[component.type]
   if not componentType then
-    return warning("Website has not loaded component:", component.type)
+    return warningMintMousse("Website has not loaded component:", component.type)
   end
 
   if componentType.format then

@@ -1,16 +1,49 @@
 local PATH = ... .. "."
 local dirPATH = PATH:gsub("%.", "/")
 
+require(PATH .. "global")(PATH)
+
 local channelInOut = "MintMousse"
 local channelDictionary = "MintMousseDictionary"
 
-local controller = require(PATH .. "controller")
-local javascript = require(PATH .. "javascript")
-local validateIcon = require(PATH .. "icon")
+local controller = requireMintMousse("controller")
+local getJavascriptFunctions = requireMintMousse("javascript")
+local validateIcon = requireMintMousse("icon")
 
 local thread = love.thread.newThread(dirPATH .. "thread/init.lua")
 
-local jsUpdateFunctions = javascript.getUpdateFunctions(javascript.readScripts(dirPATH .. "components"))
+-- dictionary
+local jsUpdateFunctions = getJavascriptFunctions(dirPATH .. "components")
+
+local dictionaryChannel = love.thread.getChannel(channelDictionary)
+
+local dictionary, lookup = {"func", "addNewTab", "removeTab", "addNewComponent", "removeComponent"}, {}
+for _, word in ipairs(dictionary) do
+  lookup[word] = true
+end
+
+for type, variables in pairs(jsUpdateFunctions) do
+  if not lookup[type] then
+    table.insert(dictionary, type)
+    lookup[type] = true
+  end
+  for variable in pairs(variables) do
+    if not lookup[variable] then
+      table.insert(dictionary, variable)
+      lookup[variable] = true
+    end
+  end
+  for childVariable in pairs(variables.children) do
+    if not lookup[childVariable] then
+      table.insert(dictionary, childVariable)
+      lookup[childVariable] = true
+    end
+  end
+end
+
+dictionaryChannel:push(dictionary)
+dictionary, lookup = nil, nil
+--
 
 local settings_hostAllowed_Str = "*, 0.0.0.0, localhost, or 127.0.0.1"
 local settings_hostAllowed = {
@@ -46,7 +79,7 @@ local validateSettings = function(settings)
   if type(settings.pollInterval) ~= "number" then
     settings.pollInterval = 250
   end
-  assert(settings.pollInterval >= 75, 
+  assert(settings.pollInterval >= 75,
     "Poll Interval must be greater than or equal to 75ms. 200ms is a value I recommended; which will give at least ~4 updates a second")
 end
 
@@ -56,29 +89,6 @@ mintMousse.start = function(settings, website)
 
   validateSettings(settings)
 
-  -- preprocessing
-  local dictionaryChannel = love.thread.getChannel(channelDictionary)
-
-  local dictionary, lookup = {
-    "func",
-    "addNewTab", "removeTab",
-    "addNewComponent", "removeComponent",
-  }, {}
-  for type, variables in pairs(jsUpdateFunctions) do
-    if not lookup[type] then
-      table.insert(dictionary, type)
-      lookup[type] = true
-    end
-    for variable in pairs(variables) do
-      if not lookup[variable] then
-        table.insert(dictionary, variable)
-        lookup[variable] = true
-      end
-    end
-  end
-
-  dictionaryChannel:push(dictionary)
-  dictionary, lookup = nil, nil
   -- website
   -- icon
   if website.icon then
@@ -87,7 +97,7 @@ mintMousse.start = function(settings, website)
   -- tabs
 
   if type(website.tabs) ~= "table" or #website.tabs < 1 then
-    error("MintMousse:Tab Validation: Requires at least one tab!")
+    error("MintMousse:Webpage Validation: Requires at least one tab!")
   end
 
   local active = false
@@ -105,7 +115,8 @@ mintMousse.start = function(settings, website)
   website.pollInterval = settings.pollInterval
 
   -- Lets go
-  local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions, love.thread.getChannel(channelInOut))
+  local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions,
+    love.thread.getChannel(channelInOut))
 
   thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut, channelDictionary)
 

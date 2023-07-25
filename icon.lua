@@ -1,5 +1,5 @@
 local error = function(str)
-  error("MintMousse:Icon Validation:"..tostring(str))
+  error("MintMousse:Icon Validation:" .. tostring(str))
 end
 
 local assert = function(bool, errorMessage)

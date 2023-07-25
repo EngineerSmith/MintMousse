@@ -1,6 +1,6 @@
 local defaultStyle = {
   color = "primary",
-  outline = false,
+  outline = false
 }
 
 return function(settings, helper)

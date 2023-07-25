@@ -5,7 +5,7 @@ return {{
   headerTitle = true,
   children = {
     type = "cardBody",
-    text = "Issue has been logged.",
-  --imgBottom = "500.png"
+    text = "Issue has been logged."
+    -- imgBottom = "500.png"
   }
 }}

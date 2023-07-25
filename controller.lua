@@ -92,7 +92,13 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
         local previous = rawget(component, key)
         if (previous ~= value) then
           rawset(component, key, value)
-          local updateTbl = {func = "updateComponent", component.id, key, value, isChildUpdate and parent.type or nil}
+          local updateTbl = {
+            func = "updateComponent",
+            component.id,
+            key,
+            value,
+            isChildUpdate and parent.type or nil
+          }
           channelIn:push(encode(updateTbl))
         end
       else

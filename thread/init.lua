@@ -1,8 +1,16 @@
 local PATH, dirPATH, settings, webpage, channelInName, channelOutName, channelDictionary = ...
 
-requireMintMousse = function(file)
-  return require(PATH..file)
+local channelIn = love.thread.getChannel(channelInName)
+local channelOut = function(enum, ...)
+  love.event.push(channelOutName, enum, ...)
 end
+
+-- redirect logging
+print = function(...)
+  channelOut("print", ...)
+end
+
+require(PATH .. "global")(PATH, "Thread")
 
 require("love.event")
 require("love.window")
@@ -11,7 +19,9 @@ require("love.timer")
 local helper = requireMintMousse("helper")
 
 -- decode messages from main thread
-local decode = function(value) return value end
+local decode = function(value)
+  return value
+end
 
 local dictionary = love.thread.getChannel(channelDictionary):peek()
 if dictionary then
@@ -26,46 +36,22 @@ end
 
 --
 
-local channelIn = love.thread.getChannel(channelInName)
-local channelOut = function(enum, ...)
-  love.event.push(channelOutName, enum, ...)
-end
-
-
---[[logging]]
-local printOut = function(...)
-  channelOut("print", table.concat({...}, " "))
-end
-
-log = function(...)
-  printOut("MintMousse Thread: log:", ...)
-end
-
-warning = function(...)
-  printOut("MintMousse Thread: warning:", ...)
-end
-
-error = function(...)
-  printOut("MintMousse Thread: error:", ...)
-end
---
-
 local website = requireMintMousse("thread.website")
 
-website.processComponents(dirPATH.."components")
+website.processComponents(dirPATH .. "components")
 
-website.setWebpageTemplate(love.filesystem.read(dirPATH.."index.html"))
-website.setIconTemplate(love.filesystem.read(dirPATH.."icon.svg"))
+website.setWebpageTemplate(love.filesystem.read(dirPATH .. "index.html"))
+website.setIconTemplate(love.filesystem.read(dirPATH .. "icon.svg"))
 
 website.setWebpage(webpage)
 website.setIcon(webpage.icon)
 
 local httpServer = requireMintMousse("thread.httpServer")
 
-for _, item in ipairs(love.filesystem.getDirectoryItems(dirPATH.."httpErrorPages")) do -- todo allow for user to add own error pages without editing repo
+for _, item in ipairs(love.filesystem.getDirectoryItems(dirPATH .. "httpErrorPages")) do -- todo allow for user to add own error pages without editing repo
   local name, extension = helper.getFileNameExtension(item)
   if extension == "lua" and tonumber(name) ~= nil then
-    website.setErrorPageComponents(httpServer, tonumber(name), requireMintMousse("httpErrorPages."..name))
+    website.setErrorPageComponents(httpServer, tonumber(name), requireMintMousse("httpErrorPages." .. name))
   end
 end
 
@@ -75,31 +61,40 @@ end
 
 do
 
-httpServer.addMethod("GET", "index", function(_)
-  local html = website.getIndex(httpServer.getTime())
-  return 200, html, "text/html"
-end)
+  httpServer.addMethod("GET", "index", function(_)
+    local html = website.getIndex(httpServer.getTime())
+    return 200, html, "text/html"
+  end)
 
-httpServer.addMethod("GET", "api/alive", 204)
+  httpServer.addMethod("GET", "favicon.ico", function()
+    if website.index.icon then
+      return 200, website.index.icon, "image/svg+xml"
+    end
+    return 404
+  end)
 
-httpServer.addMethod("GET", "api/update", function(request)
-  local lastUpdateTime = tonumber(request.parsedURL.values["updateTime"])
-  if not lastUpdateTime then
-    return 422
-  end
-  local payload = website.getUpdatePayload(lastUpdateTime, httpServer.getTime())
-  if payload then
-    return 200, payload, "application/json"
-  end
-  return 204 -- no updates
-end)
+  httpServer.addMethod("GET", "api/alive", 204)
 
-httpServer.addMethod("POST", "api/event", function(request)
-  if request.parsedBody then
-    channelOut("event", request.parsedBody["event"], request.parsedBody["variable"]) --todo add event validation, if event can be fired (to avoid someone sending event attacks)
-    return 202
-  end
-end)
+  httpServer.addMethod("GET", "api/update", function(request)
+    local lastUpdateTime = tonumber(request.parsedURL.values["updateTime"])
+    if not lastUpdateTime then
+      return 422
+    end
+    local payload = website.getUpdatePayload(lastUpdateTime, httpServer.getTime())
+    if payload then
+      return 200, payload, "application/json"
+    end
+    return 204 -- no updates
+  end)
+  
+
+  httpServer.addMethod("POST", "api/event", function(request)
+    if request.parsedBody then
+      channelOut("event", request.parsedBody["event"], request.parsedBody["variable"]) -- todo add event validation, if event can be fired (to avoid someone sending event attacks)
+      return 202
+    end
+  end)
+
 
 end
 
@@ -111,7 +106,9 @@ while true do
   -- Thread communication
   for _ = 0, 50 do
     local message = channelIn:pop()
-    if not message then break end
+    if not message then
+      break
+    end
 
     message = decode(message)
 
