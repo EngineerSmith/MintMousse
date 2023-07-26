@@ -87,14 +87,12 @@ do
     return 204 -- no updates
   end)
   
-
   httpServer.addMethod("POST", "api/event", function(request)
     if request.parsedBody then
       channelOut("event", request.parsedBody["event"], request.parsedBody["variable"]) -- todo add event validation, if event can be fired (to avoid someone sending event attacks)
       return 202
     end
   end)
-
 
 end
 

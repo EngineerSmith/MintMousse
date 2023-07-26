@@ -151,6 +151,7 @@ end
  6.2) Add time since last connected on disconnect hover
  6.3) Add option to add timestamp that js updates
  6.3.1) e.g. "X was 5 minutes ago", "X was 10 hours ago", "X was 4 days ago"
+ 6.3.2) support patterns for custom text
  7) Session id
  7.1) If session id is different within webpage: force reload
  7.1.1) This is to correct the page if the webserver is restarted "too quickly"
