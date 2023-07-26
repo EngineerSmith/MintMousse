@@ -9,6 +9,7 @@ local channelDictionary = "MintMousseDictionary"
 local controller = requireMintMousse("controller")
 local getJavascriptFunctions = requireMintMousse("javascript")
 local validateIcon = requireMintMousse("icon")
+local builder = requireMintMousse("builder")
 
 local thread = love.thread.newThread(dirPATH .. "thread/init.lua")
 
@@ -56,7 +57,7 @@ local settings_hostAllowed = {
 local validateSettings = function(settings)
   local assert = function(bool, errorMessage)
     if not bool then
-      error("MintMousse:Setting Validation: " .. tostring(errorMessage))
+      errorMintMousse("Setting Validation: " .. tostring(errorMessage))
     end
   end
 
@@ -83,42 +84,51 @@ local validateSettings = function(settings)
     "Poll Interval must be greater than or equal to 75ms. 200ms is a value I recommended; which will give at least ~4 updates a second")
 end
 
-local mintMousse = {}
+local mintMousse = {
+  newBuilder = builder.new
+}
 
-mintMousse.start = function(settings, website)
+mintMousse.start = function(settings, webpage)
 
   validateSettings(settings)
 
-  -- website
+  -- build webpage if created using the builder
+  if getmetatable(webpage) == builder then
+    webpage = webpage:_build()
+  end
+
   -- icon
-  if website.icon then
-    website.icon = validateIcon(PATH, website.icon)
+  if webpage.icon then
+    webpage.icon = validateIcon(PATH, webpage.icon)
   end
   -- tabs
 
-  if type(website.tabs) ~= "table" or #website.tabs < 1 then
-    error("MintMousse:Webpage Validation: Requires at least one tab!")
+  if type(webpage.tabs) ~= "table" or #webpage.tabs < 1 then
+    errorMintMousse("Webpage Validation: Requires at least one tab!")
   end
 
   local active = false
-  for index, tab in ipairs(website.tabs) do
+  for index, tab in ipairs(webpage.tabs) do
     if tab.active then
+      if active then
+        tab.active = false -- only allow 1 active tab; picks first one it matches
+      end
       active = true
     end
     tab.id = tab.name:gsub("%s", "_") .. index
   end
   if not active then
-    website.tabs[1].active = true
+    webpage.tabs[1].active = true
   end
 
   -- update polling
-  website.pollInterval = settings.pollInterval
+  webpage.pollInterval = settings.pollInterval
 
   -- Lets go
-  local controller = controller(dirPATH, website, dictionaryChannel, jsUpdateFunctions,
+  local controller = controller(dirPATH, webpage, dictionaryChannel, jsUpdateFunctions,
     love.thread.getChannel(channelInOut))
 
-  thread:start(PATH, dirPATH, settings, website, channelInOut, channelInOut, channelDictionary)
+  thread:start(PATH, dirPATH, settings, webpage, channelInOut, channelInOut, channelDictionary)
 
   return controller
 end
