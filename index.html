@@ -49,6 +49,20 @@
   const errorPage = {{#error}}true{{/error}}{{^error}}false{{/error}};
   var reloading = false;
   const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-tab";
+  var updateCount = 0;
+  var connectedTooltip;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+  });
+
+  setInterval(function(){
+    document.getElementById('connected').setAttribute("data-bs-title", updateCount + " updates/second");
+    bootstrap.Tooltip.getInstance('#connected').setContent({'.tooltip-inner': updateCount + " updates/second"});
+    console.log(updateCount);
+    updateCount = 0;
+  }, 1000);
 
   (function(){
     const triggerTabList = document.querySelectorAll('#tabNavbar button');
@@ -102,6 +116,7 @@
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
         if (request.status === 200) {
+          updateCount++;
           const jsonResponse = JSON.parse(request.responseText);
           if (jsonResponse.updateTime > updateTime) { // check for outdated reply
             updateTime = jsonResponse.updateTime;
@@ -245,7 +260,7 @@
         </div>
       </div>
       <span class="navbar-text">
-        <h5 class="m-0" id="connected"><span class="badge text-bg-success">Connected</span></h5>
+        <h5 class="m-0" id="connected" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="0 updates/second" data-bs-animation="false"><span class="badge text-bg-success">Connected</span></h5>
         <h5 class="m-0 visually-hidden" id="disconnected"><span class="badge text-bg-danger">Disconnected</span></h5>
       </span>
     </div>
