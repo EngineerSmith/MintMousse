@@ -18,14 +18,7 @@ tab.addComponent = function(self, ...)
 end
 tab.addChild = tab.addComponent
 tab.addSibling = function()
-  errorMintMousse("Builder tab: cannot add sibling to tab as it is a root node.")
-end
-
-tab.addComponents = function(self, component, ...)
-  if component then
-    self:addComponent(component)
-    self:addComponents(...)
-  end
+  errorMintMousse("Builder tab: cannot add sibling to tab, as it is a root node.")
 end
 
 return tab

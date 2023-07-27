@@ -150,7 +150,6 @@ end
 --[[
  TODO list
  
- 3) Add component factories to make it easier to make a website than creating a massive table (but keep option for table for more control)
  4) Add further component concepts
  4.1) 2D graph (line graph, point graph); Status lights (badges + inc. tab update ping); interactive list; crash report; form (text input, etc.); interactive world map;
  4.2) Maybes: toast updates; AppleCake support;

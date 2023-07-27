@@ -13,7 +13,11 @@ end
 
 builder.addTab = function(self, name, index, active)
   local tab = tab.new(name, active)
-  table.insert(self.tabs, index or tab, index and tab)
+  if index then
+    table.insert(self.tabs, index, tab)
+  else
+    table.insert(self.tabs, tab)
+  end
   return tab
 end
 
@@ -22,7 +26,7 @@ builder._build = function(self)
   for _, tab in ipairs(self.tabs) do
     if tab.components then
       for _, component in ipairs(tab.components) do
-        component._removeParent()
+        component:_removeParent()
       end
     end
     setmetatable(tab, nil)
