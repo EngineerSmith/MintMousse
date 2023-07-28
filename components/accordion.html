@@ -6,7 +6,10 @@
       }}aria-expanded="false" aria-controls="{{id}}" id="{{_idTitle}}">{{title}}</button>
     </h2>
     <div id="{{id}}" class="accordion-collapse collapse{{#show}} show{{/show}}" data-title={{_idTitle}} {{^alwaysOpen}}data-bs-parent="#{{parentID}}"{{/alwaysOpen}}>
-      <div class="accordion-body">{{text}}{{^text}}{{&render}}{{/text}}</div>
+      <div class="accordion-body">{{#beforeText}}{{&beforeText.render}}{{^beforeText.render}}{{&render}}{{/beforeText.render}}{{/beforeText}}{{!
+      }}{{&text}}{{!
+      }}{{#afterText}}{{&afterText.render}}{{^afterText.render}}{{&render}}{{/afterText.render}}{{/afterText}}{{!
+      }}{{^text}}{{&render}}{{/text}}</div>
     </div>
   </div>
   {{/children}}

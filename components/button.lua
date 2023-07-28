@@ -26,4 +26,17 @@ return function(settings, helper)
       style.color = helper.getColor(style.color)
     end
   end
+
+    -- child to render
+    local children
+    if settings.beforeText or settings.afterText then
+      children = {}
+    end
+    if settings.beforeText then
+      table.insert(children, settings.beforeText)
+    end
+    if settings.afterText then
+      table.insert(children, settings.afterText)
+    end
+    return children
 end

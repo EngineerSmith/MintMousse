@@ -43,6 +43,16 @@ component.addSiblingRaw = function(self, ...)
   return self._parent:addChildRaw(...)
 end
 
+component.addBeforeText = function(self, ...)
+  self.beforeText = component.new(self, ...)
+  return self
+end
+
+component.addAfterText = function(self, ...)
+  self.afterText = component.new(self, ...)
+  return self
+end
+
 component._removeParent = function(self)
   if self.children then
     for _, child in ipairs(self.children) do
@@ -50,6 +60,12 @@ component._removeParent = function(self)
         child:_removeParent()
       end
     end
+  end
+  if self.beforeText then
+    self.beforeText:_removeParent()
+  end
+  if self.afterText then
+    self.afterText:_removeParent()
   end
   self._parent = nil
   setmetatable(self, nil)

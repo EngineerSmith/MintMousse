@@ -26,5 +26,12 @@ return function(settings, helper)
     child.parentID = settings.id
   end
 
+  if settings.beforeText then
+    table.insert(componentChildren, settings.beforeText)
+  end
+  if settings.afterText then
+    table.insert(componentChildren, settings.afterText)
+  end
+
   return #componentChildren ~= 0 and componentChildren or nil
 end

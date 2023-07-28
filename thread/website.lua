@@ -241,9 +241,9 @@ local generateIDTableComponent = function(component, parent)
     component._parent = parent
     website.idTable[component.id] = component
   end
-  if component.children then
-    website.generateIDTable(component.children, component)
-  end
+  website.generateIDTable(component.children, component)
+  website.generateIDTable(component.beforeText, component)
+  website.generateIDTable(component.afterText, component)
 end
 
 website.generateIDTable = function(components, parent)
@@ -269,9 +269,9 @@ local removeFromIDTableComponent = function(component)
     component._parent = nil
     website.idTable[component.id] = nil
   end
-  if component.children then
-    website.removeFromIDTable(component.children)
-  end
+  website.removeFromIDTable(component.children)
+  website.removeFromIDTable(component.beforeText)
+  website.removeFromIDTable(component.afterText)
 end
 
 website.removeFromIDTable = function(components)

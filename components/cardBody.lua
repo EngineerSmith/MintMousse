@@ -11,5 +11,20 @@ return function(settings, helper)
   end
 
   -- child to render
-  return settings.children
+  local children = settings.children
+  if settings.beforeText or settings.afterText then
+    children = {}
+    if settings.children then
+      for k, v in ipairs(settings.children) do
+        children[k] = v
+      end
+    end
+  end
+  if settings.beforeText then
+    table.insert(children, settings.beforeText)
+  end
+  if settings.afterText then
+    table.insert(children, settings.afterText)
+  end
+  return children
 end
