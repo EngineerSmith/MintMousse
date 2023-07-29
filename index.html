@@ -55,6 +55,9 @@
   document.addEventListener('DOMContentLoaded', () => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    const toastElList = document.querySelectorAll('.toast')
+    const toastList = Array.from(toastElList).map(toastEl => new bootstrap.Toast(toastEl))
   });
 
   setInterval(function(){
@@ -237,6 +240,16 @@
       nav.remove();
   }
 
+  function newComponent(id, parentID, value)
+  {
+    
+  }
+
+  function removeComponent(id)
+  {
+
+  }
+
 {{&javascript}}</script>
   <nav class="navbar navbar-expand-sm bg-body-tertiary">
     <div class="container-fluid">
@@ -278,6 +291,11 @@
       </div>
     </div>
     {{/tabs}}
+  </div>
+
+  <div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div id="toast-container" class="toast-container top-0 end-0 p-3">
+    </div>
   </div>
 </body>
 

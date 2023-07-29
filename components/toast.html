@@ -1,0 +1,14 @@
+<div class="toast" role="alert">
+  <div class="toast-header">
+  <strong class="me-auto">{{title}}</strong>
+  <small class="text-body-secondary">1 second ago</small>
+  <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+  </div>
+  <div class="toast-body">
+    {{beforeText}}{{text}}{{afterText}}
+    <div class="mt-2 pt-2 boarder-top">
+    {{#children}}{{children.render}}{{^children.render}}{{&render}}
+    {{/children.render}}{{/children}}
+    </div>
+  </div>
+</div>

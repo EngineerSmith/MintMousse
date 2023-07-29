@@ -205,8 +205,20 @@ website.addNewTab = function(currentTime, tab)
 end
 
 website.addNewComponent = function(currentTime, component)
-  warningMintMousse("Website addNewComponent not implemented yet")
+  website.render(component)
+  website.generateIDTable(component)
+
+  if not component._parent.children then
+    component._parent.children = {}
+  end
+  table.insert(component._parent.children, component)
+  website.addAspect(component.id, currentTime, {
+    func = "newComponent",
+    name = component._parent.id,
+    value = component.render
+  })
 end
+
 --[[remove components]]
 website.removeTab = function(currentTime, tabId)
   local index, tab
