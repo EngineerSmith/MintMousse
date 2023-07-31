@@ -282,7 +282,7 @@ httpServer.parseRequest = function(client)
       break
     end
     local header, value = data:match(requestHeaderPattern) -- Content-Type: text/html
-    request.headers[header] = value
+    request.headers[header] = value --todo, support multiple values into table: "Keep-Alive: timeout=99,max=99"
   end
   if request.headers["Content-Length"] then
     local length = tonumber(request.headers["Content-Length"])
