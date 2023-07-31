@@ -11,7 +11,7 @@ helper.formatImage = function(image)
     elseif image:find("^.PNG") then
       return "data:image/png;base64," .. love.data.encode("string", "base64", image)
     else
-      error(tostring(image) .. " isn't a file, could not be found, or recognised as string of an png")
+      error(tostring(image) .. " isn't a file, could not be found, or recognised string of a png")
     end
   end
   if not image:typeOf("ImageData") and image:typeOf("Data") then
