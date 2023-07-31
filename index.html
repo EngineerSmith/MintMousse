@@ -50,7 +50,7 @@
   var reloading = false;
   const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-tab";
   var updateCount = 0;
-  var connectedTooltip;
+  var interval;
 
   document.addEventListener('DOMContentLoaded', () => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -60,12 +60,24 @@
     const toastList = Array.from(toastElList).map(toastEl => new bootstrap.Toast(toastEl))
   });
 
-  setInterval(function(){
+  interval = setInterval(function(){
     document.getElementById('connected').setAttribute("data-bs-title", updateCount + " updates/second");
     bootstrap.Tooltip.getInstance('#connected').setContent({'.tooltip-inner': updateCount + " updates/second"});
-    console.log(updateCount);
     updateCount = 0;
   }, 1000);
+
+  var timeUnit = " seconds";
+  function tooltipDisconnected(){
+    updateCount++;
+    if (updateCount >= 60 && timeUnit == " seconds") {
+      updateCount = 1;
+      timeUnit = " minutes";
+      clearInterval(interval);
+      interval = setInterval(tooltipDisconnected, 60000);
+    }
+    document.getElementById('disconnected').setAttribute("data-bs-title", "Last connected " + updateCount + timeUnit + " ago");
+    bootstrap.Tooltip.getInstance('#disconnected').setContent({'.tooltip-inner': "Last connected " + updateCount + timeUnit + " ago"});
+  }
 
   (function(){
     const triggerTabList = document.querySelectorAll('#tabNavbar button');
@@ -85,7 +97,6 @@
     request.timeout = pollInterval;
     request.onreadystatechange = () => {
       if (request.readyState == XMLHttpRequest.DONE) {
-        console.log(request.status);
         if (request.status >= 200 && request.status < 400) {
           document.getElementById("connected").classList.remove("visually-hidden");
           document.getElementById("disconnected").classList.add("visually-hidden");
@@ -139,6 +150,9 @@
       }
     }
     request.onerror = () => {
+      clearInterval(interval);
+      updateCount = 0;
+      interval = setInterval(tooltipDisconnected, 1000);
       aliveRequest(0);
       document.getElementById("connected").classList.add("visually-hidden");
       document.getElementById("disconnected").classList.remove("visually-hidden");
@@ -148,8 +162,12 @@
 
   if (!errorPage)
     updateRequest();
-  else
+  else {
+    clearInterval(interval);
+    updateCount = 0;
+    interval = setInterval(tooltipDisconnected, 1000);
     aliveRequest(0);
+  }
 
   function setAttributes(el, attrs) {
     for(var key in attrs) {
@@ -274,7 +292,7 @@
       </div>
       <span class="navbar-text">
         <h5 class="m-0" id="connected" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="0 updates/second" data-bs-animation="false"><span class="badge text-bg-success">Connected</span></h5>
-        <h5 class="m-0 visually-hidden" id="disconnected"><span class="badge text-bg-danger">Disconnected</span></h5>
+        <h5 class="m-0 visually-hidden" id="disconnected"  data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Last connected 0 seconds ago" data-bs-animation="false"><span class="badge text-bg-danger">Disconnected</span></h5>
       </span>
     </div>
   </nav>
