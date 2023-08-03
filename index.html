@@ -40,24 +40,66 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
     crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"
-    integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous"
-    async></script>
+  <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
   <script type="text/javascript">
   var updateTime = {{time}};
   const pollInterval = {{pollInterval}};
   const errorPage = {{#error}}true{{/error}}{{^error}}false{{/error}};
   var reloading = false;
   const defaultTab = "{{#tabs}}{{#active}}{{id}}{{/active}}{{/tabs}}-tab";
+  var tabMasonry;
+  const masonryOptions = {"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"};
   var updateCount = 0;
   var interval;
 
+  var isLowEndMachine = false;
+  {
+    var userAgent = navigator.userAgent;
+    if (userAgent.match(/(Android|iPhone|iPad|iPod)/)) {
+      // Check the RAM
+      var memory = navigator.deviceMemory;
+      if (memory < 1024) {
+        isLowEndMachine = true;
+      }
+    } else {
+      // Check the CPU
+      var cpu = navigator.cpuClass;
+      if (cpu < "medium") {
+        isLowEndMachine = true;
+      }
+    }
+  }
+  
+  function hasEvent(element, eventType) {
+    var listeners = element.addEventListener ? element.addEventListener._listeners : element._listeners;
+    return listeners && listeners[eventType] !== undefined;
+  }
+
+  function eventInit() {
+    for (var element of document.getElementsByClassName("collapse")) {
+      if (hasEvent(element, "shown.bs.collapse"))
+        continue;
+      if(!isLowEndMachine)
+        element.addEventListener("hide.bs.collapse", resizeMasonry);
+      element.addEventListener("hidden.bs.collapse", resizeMasonry);
+      if(!isLowEndMachine)
+        element.addEventListener("show.bs.collapse", resizeMasonry);
+      element.addEventListener("shown.bs.collapse", resizeMasonry);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
+    tabMasonry = new Map();
+    {{#tabs}}tabMasonry.set("{{id}}", new Masonry('#{{id}}-tab-grid', masonryOptions));
+    {{/tabs}}
+
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
     const toastElList = document.querySelectorAll('.toast')
     const toastList = Array.from(toastElList).map(toastEl => new bootstrap.Toast(toastEl))
+
+    eventInit();
   });
 
   interval = setInterval(function(){
@@ -175,7 +217,17 @@
     }
   }
 
+  function resizeMasonry() {
+    tabMasonry.forEach(function(value, key) {
+      value.layout();
+    });
+  }
+
   function newTab(id, name, value) {
+    if (tabMasonry.has(id)) {
+      removeTab(id);
+    }
+    
     // set navbar
     const navbar = document.getElementById("tabNavbar");
 
@@ -212,7 +264,7 @@
     });
     const grid = document.createElement("div");
     grid.classList.add("grid");
-    grid.setAttribute("data-masonry", '{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}');
+    grid.setAttribute("id", id + "-tab-grid")
     const gridSizer = document.createElement("div");
     gridSizer.classList.add("grid-sizer");
     const gutterSizer = document.createElement("div");
@@ -236,9 +288,16 @@
       event.preventDefault();
       tabTrigger.show();
     });
+
+    tabMasonry.set(id, new Masonry(grid, masonryOptions));
+    eventInit();
   }
 
   function removeTab(id) {
+    if (tabMasonry.has(id)) {
+      tabMasonry.get(id).destory();
+      tabMasonry.remove(id);
+    }
     const button = document.getElementById(id + "-tab");
     const pane = document.getElementById(id + "-tab-pane");
     if (pane) {
@@ -260,12 +319,24 @@
 
   function newComponent(id, parentID, value)
   {
-    
+    if (document.getElementById(id) !== null) {
+      removeComponent(id);
+    }
+    if (tabMasonry.has(parentID)) {
+      const grid = document.getElementById(parentID + "-tab-grid");
+      grid.insertAdjacentHTML("beforeend", value);
+      var msnry = tabMasonry.get(parentID);
+      msnry.appended(grid.lastChild);
+      msnry.layout();
+    } else {
+      console.log("todo")
+    }
+    eventInit();
   }
 
   function removeComponent(id)
   {
-
+    // if id + "-parent" exists, remove that instead
   }
 
 {{&javascript}}</script>
@@ -300,7 +371,7 @@
   <div class="tab-content" id="tabContent">
     {{#tabs}}
     <div class="tab-pane fade container mt-2{{#active}} show active{{/active}}" id="{{id}}-tab-pane" role="tabpanel" aria-labelledby="{{id}}-tab" tabindex="0">
-      <div class="grid" data-masonry='{"percentPosition": true, "columnWidth": ".grid-sizer", "itemSelector": ".grid-item", "gutter": ".gutter-sizer"}'>
+      <div class="grid" id="{{id}}-tab-grid">
         <div class="grid-sizer"></div>
         <div class="gutter-sizer"></div>
         {{#components}}

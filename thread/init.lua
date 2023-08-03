@@ -117,7 +117,7 @@ while true do
     if message.func == "updateComponent" then
       website.updateComponent(httpServer.getTime(), message)
     elseif website[message.func] then
-      website[message.func](httpServer.getTime(), message[1])
+      website[message.func](httpServer.getTime(), message[1], message[2])
     end
   end
 end

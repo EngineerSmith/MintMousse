@@ -3,25 +3,24 @@ return function(PATH, prefix, log, warning, _error)
     return require(PATH .. file)
   end
 
-  prefix = prefix or ""
-  prefix = "Mintmousse " .. prefix .. ": "
+  prefix = "MintMousse " .. (prefix or "") .. ": "
 
   if log ~= false then -- note, nil is true
-    local logging_log = prefix .. "log:"
+    local logging_log = prefix .. "log: "
     logMintMousse = function(...)
       print(logging_log .. table.concat({...}, " "))
     end
   end
 
   if warning ~= false then
-    local logging_warning = prefix .. "warning:"
+    local logging_warning = prefix .. "warning: "
     warningMintMousse = function(...)
       print(logging_warning .. table.concat({...}, " "))
     end
   end
 
   if _error ~= false then
-    local logging_error = prefix .. "error:"
+    local logging_error = prefix .. "error: "
     errorMintMousse = function(...)
       local str = table.concat({...}, " ")
 

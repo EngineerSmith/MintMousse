@@ -21,9 +21,10 @@ end
 website.setWebpage = function(webpage)
   website.index = webpage
   for _, tab in ipairs(website.index.tabs) do
+    website.idTable[tab.id] = tab
     if type(tab.components) == "table" then
       website.render(tab.components)
-      website.generateIDTable(tab.components)
+      website.generateIDTable(tab.components, tab)
     end
   end
 
@@ -179,9 +180,10 @@ end
 
 --[[new components]]
 website.addNewTab = function(currentTime, tab)
+  website.idTable[tab.id] = tab
   if type(tab.components) == "table" then
     website.render(tab.components)
-    website.generateIDTable(tab.components)
+    website.generateIDTable(tab.components, tab)
   end
   local renders = {}
   if tab.components then
@@ -204,14 +206,18 @@ website.addNewTab = function(currentTime, tab)
   })
 end
 
-website.addNewComponent = function(currentTime, component)
+website.addNewComponent = function(currentTime, component, parentID)
   website.render(component)
-  website.generateIDTable(component)
+  website.generateIDTable(component, website.idTable[parentID])
 
-  if not component._parent.children then
+  if not component._parent.children and not component._parent.components then
     component._parent.children = {}
   end
-  table.insert(component._parent.children, component)
+  if component._parent.components then -- tab
+    table.insert(component._parent.components, component)
+  else
+    table.insert(component._parent.children, component)
+  end
   website.addAspect(component.id, currentTime, {
     func = "newComponent",
     name = component._parent.id,

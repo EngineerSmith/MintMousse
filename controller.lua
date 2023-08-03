@@ -73,9 +73,9 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
     return component
   end
 
-  local children
+  local children, rawChildren
   if component.children then
-    children = processComponents(component.children, parent, idTable, jsUpdateFunctions, channelIn)
+    children, rawChildren = processComponents(component.children, parent, idTable, jsUpdateFunctions, channelIn)
   end
 
   local newindex
@@ -92,14 +92,13 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
         local previous = rawget(component, key)
         if (previous ~= value) then
           rawset(component, key, value)
-          local updateTbl = {
+          channelIn:push(encode({
             func = "updateComponent",
             component.id,
             key,
             value,
             isChildUpdate and parent.type or nil
-          }
-          channelIn:push(encode(updateTbl))
+          }))
         end
       else
         indexError(key)
@@ -111,24 +110,50 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
     end
   end
 
-  local componentTbl = {}
-  if children then
-    componentTbl.insert = function()
-      error()
+  local insertComponent = function(newComponent)
+    globalID = setIDValidate(newComponent, globalID)
+    local com, raw = processComponents(newComponent, component, idTable, jsUpdateFunctions, channelIn)
+    if raw then -- multiple components
+      if rawChildren then
+        for _, c in ipairs(raw) do
+          table.insert(rawChildren, c)
+        end
+      else
+        rawChildren = raw
+      end
+    else -- flat component
+      if not children then
+        children = {}
+        component.children = children
+      end
+      table.insert(children, com)
+      if not rawChildren then
+        rawChildren = {}
+      end
+      table.insert(rawChildren, com)
     end
-    componentTbl.remove = function()
-      error()
-    end
+    channelIn:push(encode({
+      func = "addNewComponent",
+      newComponent
+    }))
+    return newComponent.id
   end
 
-  return setmetatable(componentTbl, {
+  local removeComponent = function(id)
+    error("todo") -- todo
+  end
+
+  return setmetatable({}, {
     __newindex = newindex,
     __index = function(_, key)
       if key == "children" then
         return children
-      end
-      if key == "style" then
-        return indexError("style. You cannot edit style. Request this feature on github issues if you really need it.")
+      elseif key == "style" then
+        return indexError("style")
+      elseif key == "insert" then
+        return insertComponent
+      elseif key == "removeComponent" then
+        return removeComponent
       end
       return rawget(component, key)
     end
@@ -200,11 +225,11 @@ local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
       end
       table.insert(rawComponents, com)
     end
-    local updateTbl = {
+    channelIn:push(encode({
       func = "addNewComponent",
-      component
-    }
-    channelIn:push(encode(updateTbl))
+      component,
+      tab.id
+    }))
     return component.id
   end
 
@@ -280,12 +305,11 @@ return function(path, website, channelDictionary, jsUpdateFunctions, channelIn)
   controller.addTab = function(tab)
     table.insert(rawTabs, processTab(tab, controller.idTable, jsUpdateFunctions, channelIn))
     tab.id = tab.name:gsub("%s", "_") .. #rawTabs
-    local updateTbl = {
+    channelIn:push(encode({
       func = "addNewTab",
       tab
-    }
-    channelIn:push(encode(updateTbl))
-    return tab.id
+    }))
+    return tab.id, rawTabs[#rawTabs]
   end
 
   controller.removeTab = function(tabId)
