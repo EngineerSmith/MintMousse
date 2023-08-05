@@ -57,16 +57,10 @@
     var userAgent = navigator.userAgent;
     if (userAgent.match(/(Android|iPhone|iPad|iPod)/)) {
       // Check the RAM
-      var memory = navigator.deviceMemory;
-      if (memory < 1024) {
-        isLowEndMachine = true;
-      }
+      isLowEndMachine = navigator.deviceMemory < 1024;
     } else {
       // Check the CPU
-      var cpu = navigator.cpuClass;
-      if (cpu < "medium") {
-        isLowEndMachine = true;
-      }
+      isLowEndMachine = navigator.cpuClass < "medium";
     }
   }
   
