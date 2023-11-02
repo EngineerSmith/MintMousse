@@ -178,14 +178,21 @@ end
 
 --[[status codes]]
 
-httpServer.statusCode = { -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_response_messages
+httpServer.statusCode = { -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_response_messages https://developer.mozilla.org/en-US/docs/Web/HTTP/Status 
   [200] = "200 OK",
   [202] = "202 Accepted",
   [204] = "204 No Content",
+  [401] = "401 Unauthorized",
+  [403] = "403 Forbidden",
   [404] = "404 Not Found",
   [405] = "405 Method Not Allowed",
   [408] = "408 Request Timeout",
+  [409] = "409 Conflict",
+  [413] = "413 Payload Too Large",
+  [414] = "414 URI Too Long",
+  [418] = "418 I'm a teapot",
   [422] = "422 Unprocessable Entity",
+  [429] = "429 Too Many Requests",
   [500] = "500 Internal Server Error",
   [505] = "505 HTTP Version Not Supported"
 }

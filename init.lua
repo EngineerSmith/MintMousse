@@ -13,37 +13,36 @@ local builder = requireMintMousse("builder")
 
 local thread = love.thread.newThread(dirPATH .. "thread/init.lua")
 
--- dictionary
-local jsUpdateFunctions = getJavascriptFunctions(dirPATH .. "components")
-
-local dictionaryChannel = love.thread.getChannel(channelDictionary)
-
-local dictionary, lookup = {"func", "addNewTab", "removeTab", "addNewComponent", "removeComponent"}, {}
-for _, word in ipairs(dictionary) do
-  lookup[word] = true
-end
-
-for type, variables in pairs(jsUpdateFunctions) do
-  if not lookup[type] then
-    table.insert(dictionary, type)
-    lookup[type] = true
+-- dictionary --
+  local dictionary, lookup = {"func", "addNewTab", "removeTab", "addNewComponent", "removeComponent"}, {}
+  for _, word in ipairs(dictionary) do
+    lookup[word] = true
   end
-  for variable in pairs(variables) do
-    if not lookup[variable] then
-      table.insert(dictionary, variable)
-      lookup[variable] = true
+
+  local jsUpdateFunctions = getJavascriptFunctions(dirPATH .. "components")
+
+  for type, variables in pairs(jsUpdateFunctions) do
+    if not lookup[type] then
+      table.insert(dictionary, type)
+      lookup[type] = true
+    end
+    for variable in pairs(variables) do
+      if not lookup[variable] then
+        table.insert(dictionary, variable)
+        lookup[variable] = true
+      end
+    end
+    for childVariable in pairs(variables.children) do
+      if not lookup[childVariable] then
+        table.insert(dictionary, childVariable)
+        lookup[childVariable] = true
+      end
     end
   end
-  for childVariable in pairs(variables.children) do
-    if not lookup[childVariable] then
-      table.insert(dictionary, childVariable)
-      lookup[childVariable] = true
-    end
-  end
-end
 
-dictionaryChannel:push(dictionary)
-dictionary, lookup = nil, nil
+  local dictionaryChannel = love.thread.getChannel(channelDictionary)
+  dictionaryChannel:push(dictionary)
+  dictionary, lookup = nil, nil
 --
 
 local settings_hostAllowed_Str = "*, 0.0.0.0, localhost, or 127.0.0.1"
@@ -65,7 +64,7 @@ local validateSettings = function(settings)
   if type(settings.host) ~= "string" then
     settings.host = "127.0.0.1"
   end
-  assert(settings_hostAllowed[settings.host], "Host must be " .. settings_hostAllowed_Str)
+  assert(settings_hostAllowed[settings.host], "Host must be: " .. settings_hostAllowed_Str)
 
   -- port
   assert(type(settings.port) == "number", "Port must be type number")
@@ -81,7 +80,7 @@ local validateSettings = function(settings)
     settings.pollInterval = 250
   end
   assert(settings.pollInterval >= 75,
-    "Poll Interval must be greater than or equal to 75ms. 200ms is a value I recommended; which will give at least ~4 updates a second")
+    "Poll Interval must be greater than or equal to 75ms. 200ms is a value I recommended; which will give at least 4 updates a second to each connected client")
 end
 
 local mintMousse = {
@@ -111,7 +110,7 @@ mintMousse.start = function(settings, webpage)
   for index, tab in ipairs(webpage.tabs) do
     if tab.active then
       if active then
-        tab.active = false -- only allow 1 active tab; picks first one it matches
+        tab.active = false -- only allow 1 active tab; picks first tab that has the active flag
       end
       active = true
     end

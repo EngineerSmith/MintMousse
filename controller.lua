@@ -1,5 +1,5 @@
 local indexError = function(key)
-  error("Cannot add or change this index in this table. Key given: " .. tostring(key))
+  errorMintMousse("Cannot add or change this index in this table. Key given: " .. tostring(key))
 end
 
 local dirPATH
@@ -14,17 +14,17 @@ local encode = function(value)
 end
 
 local globalID = 0
-local setIDValidate -- function set later
+local validateComponentSettings -- function, forward declaration
 
-local formatComponent = function(component, id)
+local formatComponent = function(component)
   if component.type then
     local dir = dirPATH .. "components/" .. component.type
     if not love.filesystem.getInfo(dir .. ".html", "file") or not love.filesystem.getInfo(dir .. ".lua", "file") then
-      error("Component type: " .. tostring(component.type) .. " does not exist: " .. tostring(dir))
+      errorMintMousse("Component type: " .. tostring(component.type) .. " does not exist: " .. tostring(dir))
     end
     if not component.id then
-      component.id = id
-      id = id + 1
+      component.id = globalID
+      globalID = globalID + 1
     elseif type(component.id) == "string" then
       local failed
       for capture in component.id:gmatch("(%W)") do -- For each non-alphanumeric character
@@ -34,25 +34,23 @@ local formatComponent = function(component, id)
         end
       end
       if failed then
-        error("You can only use alphanumeric and . _ , : ; @ characters for the id. Not: " .. tostring(failed))
+        errorMintMousse("You can only use alphanumeric and . _ , : ; @ characters for the id. Failed value: " .. tostring(failed))
       end
     end
   end
   if component.children then
-    id = setIDValidate(component.children, id)
+    validateComponentSettings(component.children)
   end
-  return id
 end
 
-setIDValidate = function(settings, id)
-  id = id or globalID
+validateComponentSettings = function(settings)
   if settings.type then
-    return formatComponent(settings, id)
+    formatComponent(settings)
+  else
+    for _, component in ipairs(settings) do
+      formatComponent(component)
+    end
   end
-  for _, component in ipairs(settings) do
-    id = formatComponent(component, id)
-  end
-  return id
 end
 
 local basicLockTable = function(tbl)
@@ -66,7 +64,7 @@ local basicLockTable = function(tbl)
   })
 end
 
-local processComponents -- function, defined later
+local processComponents -- function, forward declaration
 
 local processComponent = function(component, parent, idTable, jsUpdateFunctions, channelIn)
   if type(component) ~= "table" then
@@ -111,7 +109,7 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
   end
 
   local insertComponent = function(newComponent)
-    globalID = setIDValidate(newComponent, globalID)
+    validateComponentSettings(newComponent)
     local com, raw = processComponents(newComponent, component, idTable, jsUpdateFunctions, channelIn)
     if raw then -- multiple components
       if rawChildren then
@@ -140,7 +138,7 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
   end
 
   local removeComponent = function(id)
-    error("todo") -- todo
+    errorMintMousse("todo") -- todo
   end
 
   return setmetatable({}, {
@@ -189,23 +187,23 @@ end
 local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
 
   if type(tab.name) ~= "string" then
-    error("Name must be type string")
+    errorMintMousse("Name must be type string")
   end
 
   local tabController = {
     notify = function()
-      error()
+      errorMintMousse()
     end -- todo check index.html
   }
 
   local components, rawComponents
   if type(tab.components) == "table" then
-    globalID = setIDValidate(tab.components, globalID)
+    validateComponentSettings(tab.components)
     components, rawComponents = processComponents(tab.components, nil, idTable, jsUpdateFunctions, channelIn)
   end
 
   tabController.addComponent = function(component)
-    globalID = setIDValidate(component, globalID)
+    validateComponentSettings(component)
     local com, raw = processComponents(component, nil, idTable, jsUpdateFunctions, channelIn)
     if raw then -- multiple components
       if rawComponents then

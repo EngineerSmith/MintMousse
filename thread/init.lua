@@ -60,8 +60,7 @@ for _, address in ipairs(settings.whitelist) do
 end
 
 do
-
-  httpServer.addMethod("GET", "index", function(_)
+  httpServer.addMethod("GET", "index", function()
     local html = website.getIndex(httpServer.getTime())
     return 200, html, "text/html"
   end)

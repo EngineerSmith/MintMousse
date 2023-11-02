@@ -37,6 +37,7 @@ website.setWebpage = function(webpage)
 end
 
 website.getIndex = function(currentTime)
+  logMintMousse("website.getIndex")
   website.index.time = currentTime
   return lustache:render(website.template.webpage, website.index)
 end
@@ -69,14 +70,17 @@ end
 --[[Webpage updates]]
 
 website.addAspect = function(id, time, aspect)
-  -- remove old
+  -- add new aspect to index
+  website.removeComponent(time, id)
+
+  -- remove old aspect
   for index, aspect in ipairs(website.aspect) do
     if aspect.id == id then
       table.remove(website.aspect, index)
       break
     end
   end
-  -- add new
+  -- add new aspect
   aspect.id, aspect.timeUpdated = id, time
   table.insert(website.aspect, aspect)
 end
@@ -89,14 +93,14 @@ website.updateComponent = function(currentTime, updateInformation)
   -- update value in website for newly requested site
   local component = website.idTable[id]
   if not component then
-    return warningMintMousse("Website could not find component with id:", id)
+    return warningMintMousse("Website could not find component with id:", id, ", trying to update:", key)
+  end
+  if component[key] == value then
+    return warningMintMousse("Website tried to change components value when values are equal with id:", id, ", key:", key, "\nTell a programmer! Possible thread error on order of the received messages from main thread.")
   end
   component[key] = value
   local toRender = component
-  while true do
-    if not toRender._parent then
-      break
-    end
+  while toRender._parent and toRender._parent._parent do
     toRender = toRender._parent
   end
   website.render(toRender)
@@ -247,7 +251,10 @@ website.removeTab = function(currentTime, tabId)
 end
 
 website.removeComponent = function(currentTime, component)
-  warningMintMousse("Website removeComponent not implemented yet")
+  -- remove component from index.html
+  
+  -- remove component from active user
+  warningMintMousse("Website removeComponent not fully implemented yet") --todo add aspect request to remove component from website
 end
 
 --[[id]]
