@@ -150,7 +150,7 @@ local processComponent = function(component, parent, idTable, jsUpdateFunctions,
         return indexError("style")
       elseif key == "insert" then
         return insertComponent
-      elseif key == "removeComponent" then
+      elseif key == "remove" then
         return removeComponent
       end
       return rawget(component, key)
@@ -198,6 +198,9 @@ local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
 
   local components, rawComponents
   if type(tab.components) == "table" then
+    if tab.components.type then -- flat component needs to be put within a table
+      tab.components = { tab.components }
+    end
     validateComponentSettings(tab.components)
     components, rawComponents = processComponents(tab.components, nil, idTable, jsUpdateFunctions, channelIn)
   end
@@ -223,6 +226,7 @@ local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
       end
       table.insert(rawComponents, com)
     end
+
     channelIn:push(encode({
       func = "addNewComponent",
       component,
@@ -232,7 +236,7 @@ local processTab = function(tab, idTable, jsUpdateFunctions, channelIn)
   end
 
   tabController.removeComponent = function(componentId)
-
+    -- todo
   end
 
   return setmetatable(tabController, {

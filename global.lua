@@ -3,7 +3,7 @@ return function(PATH, prefix, log, warning, _error)
     return require(PATH .. file)
   end
 
-  prefix = "MintMousse " .. (prefix or "") .. ": "
+  prefix = "MintMousse" .. (prefix and " " .. prefix or "") .. ": "
 
   if log ~= false then -- note, nil is true
     local logging_log = prefix .. "log: "

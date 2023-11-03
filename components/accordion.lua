@@ -9,7 +9,7 @@ return function(settings, helper)
     if child.type then
       table.insert(componentChildren, child)
     else
-      child.id = settings.id .. ":" .. i
+      child.id = settings.id .. "_" .. i
 
       if type(child.title) == "string" then
         child.title = helper.formatText(child.title)
@@ -20,7 +20,7 @@ return function(settings, helper)
       end
     end
 
-    child._idTitle = "title:" .. child.id
+    child._idTitle = "title_" .. child.id
 
     -- inherited values
     child.parentID = settings.id

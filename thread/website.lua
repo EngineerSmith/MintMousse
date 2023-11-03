@@ -37,8 +37,10 @@ website.setWebpage = function(webpage)
 end
 
 website.getIndex = function(currentTime)
-  logMintMousse("website.getIndex")
   website.index.time = currentTime
+  for _, tab in ipairs(website.index.tabs) do
+    logMintMousse(tab.id, " has ", #tab.components, " components")
+  end
   return lustache:render(website.template.webpage, website.index)
 end
 
@@ -70,9 +72,6 @@ end
 --[[Webpage updates]]
 
 website.addAspect = function(id, time, aspect)
-  -- add new aspect to index
-  website.removeComponent(time, id)
-
   -- remove old aspect
   for index, aspect in ipairs(website.aspect) do
     if aspect.id == id then
@@ -99,11 +98,14 @@ website.updateComponent = function(currentTime, updateInformation)
     return warningMintMousse("Website tried to change components value when values are equal with id:", id, ", key:", key, "\nTell a programmer! Possible thread error on order of the received messages from main thread.")
   end
   component[key] = value
+
   local toRender = component
   while toRender._parent and toRender._parent._parent do
     toRender = toRender._parent
   end
-  website.render(toRender)
+  if toRender ~= component then
+    website.render(toRender)
+  end
 
   -- add new value to update table
 
@@ -214,14 +216,22 @@ website.addNewComponent = function(currentTime, component, parentID)
   website.render(component)
   website.generateIDTable(component, website.idTable[parentID])
 
-  if not component._parent.children and not component._parent.components then
-    component._parent.children = {}
+  local parent = component._parent
+
+  if not parent.children and not parent.components then
+    parent.children = {}
   end
-  if component._parent.components then -- tab
-    table.insert(component._parent.components, component)
-  else
-    table.insert(component._parent.children, component)
+
+  table.insert(parent.children or parent.components --[[tabs]], component)
+
+  local toRender = component
+  while toRender._parent and toRender._parent._parent do
+    toRender = toRender._parent
   end
+  if toRender ~= component then
+    website.render(toRender)
+  end
+
   website.addAspect(component.id, currentTime, {
     func = "newComponent",
     name = component._parent.id,
@@ -252,9 +262,26 @@ end
 
 website.removeComponent = function(currentTime, component)
   -- remove component from index.html
-  
+  local parent = component._parent
+
+  website.removeFromIDTable(component)
+  if parent.children == component then
+    parent.children = nil
+  else
+    local found = false
+    for index, child in ipairs(parent.children) do
+      if child == component then
+        table.remove(parent.children, index)
+        found = true
+        break
+      end
+    end
+    if not found then
+      warningMintMousse("website.removeComponent could not find child component in parent.")
+    end
+  end
   -- remove component from active user
-  warningMintMousse("Website removeComponent not fully implemented yet") --todo add aspect request to remove component from website
+  warningMintMousse("Website.removeComponent: TODO not fully implemented") --todo add aspect request to remove component from website
 end
 
 --[[id]]

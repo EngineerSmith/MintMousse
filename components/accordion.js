@@ -3,7 +3,8 @@ function accordion_update_child_title(element, value) {
   titleElement.textContent = value;
 }
 
-function accordion_update_child_text(element, value) {
+function accordion_update_child_text(id, value) {
+  const element = document.getElementById('_' + id);
   const textElement = element.querySelector('.accordion-body');
   textElement.textContent = value;
 }
