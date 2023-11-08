@@ -27,7 +27,7 @@ return function(PATH, prefix, log, warning, _error)
       if debug then
         local info = debug.getinfo(2, "fnS")
         if info then
-          local name = ""
+          local name = "UNKNOWN"
           if info.name then
             name = info.name
           elseif info.func then -- Attempt to create a name from memory address
