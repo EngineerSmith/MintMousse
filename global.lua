@@ -1,4 +1,4 @@
-return function(PATH, prefix, log, warning, _error)
+return function(PATH, prefix, log, warning, _error, _assert)
   requireMintMousse = function(file)
     return require(PATH .. file)
   end
@@ -20,12 +20,13 @@ return function(PATH, prefix, log, warning, _error)
   end
 
   if _error ~= false then
+    local asserting = 0  -- Used to raise the stack depth when generating debug info
     local logging_error = prefix .. "error: "
     errorMintMousse = function(...)
       local str = table.concat({...}, " ")
 
       if debug then
-        local info = debug.getinfo(2, "fnS")
+        local info = debug.getinfo(2 + asserting, "fnS")
         if info then
           local name = "UNKNOWN"
           if info.name then
@@ -42,6 +43,16 @@ return function(PATH, prefix, log, warning, _error)
 
       print(logging_error .. str)
       error(logging_error .. str)
+    end
+
+    if _assert ~= false then
+      assertMintMousse = function(condition, ...)
+        if not condition then
+          asserting = 1
+          errorMintMousse(...)
+          asserting = 0
+        end
+      end
     end
   end
 end
