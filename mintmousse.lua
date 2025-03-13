@@ -10,11 +10,12 @@ return function(path, directoryPath)
   love.mintmousse = {
     path = path,
     directoryPath = directoryPath,
-    -- Do not change these IDs at run time!
+-- Do not change these at run time they won't affect the thread!
+    MAX_DATA_RECEIVE_SIZE = 50000,
     THREAD_COMMAND_QUEUE_ID = "MintMousse", -- id for a thread Channel
     THREAD_RESPONSE_QUEUE_ID = "MintMousse", -- id for the Event handler
     READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary", -- id for a thread Channel
-    -- logging
+      -- logging
     loggingTimestampEnable = true, -- if timestamp should be appended to log messages
     loggingTimestampFormat = "%Y-%m-%d %H:%M:%S", -- os.date format
     loggingEnable = true, -- if any logging function calls global 'print' function

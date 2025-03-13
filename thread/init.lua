@@ -5,7 +5,11 @@ require("love.timer")
 
 require(PATH .. "mintmousse")(PATH, dirPATH)
 
+local server = love.mintmousse.require("thread.server")
+
 while true do
+  server.newIncomingConnection()
+  server.updateConnections()
   for _ = 0, 50 do
     local message = love.mintmousse.pop()
     if not message then
