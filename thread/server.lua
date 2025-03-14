@@ -74,9 +74,11 @@ server.newIncomingConnection = function()
             -- handle request
           end
         elseif connection.type == "HTTP/2" then
+          connection.initialRaw = nil
           -- HTTP/2 not yet supported; close connection and request HTTP/1.1
           http1_1.respond(client, 426, { Upgrade = "HTTP/1.1", Connection = "upgrade, close" })
           status = "close"
+          love.mintmousse.info("TCPServer: Client [", address, "] using HTTP/2 has been requested to upgrade to HTTP/1.1")
         elseif connection.type == "WS/13" then
           -- TODO
           -- process connection as websocket until close
