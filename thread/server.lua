@@ -2,6 +2,9 @@ if not love.isThread then
   love.mintmousse.warning("TCPServer: Trying to run TCPServer on main thread. There may be blocking calls!")
 end
 
+local http = love.mintmousse.require("thread.http")
+local http1_1 = love.mintmousse.require("thread.http1_1")
+
 local server = {
   connections = { },
   whitelist = { },
@@ -50,23 +53,42 @@ server.newIncomingConnection = function()
     local client = love.mintmousse.require("thread.client").new(rawClient)
 
     server.connections[coroutine.wrap(function()
-      local connection = { type = "http" } -- Assume all incoming connections are HTTP requests; fail them if not
+      local connection = {
+        type = "undetermined"
+      }
+      connection.initialRaw = client:receive(16)
+      if connection.initialRaw == "PRI * HTTP/2.0\r\n" then
+        connection.type = "HTTP/2"
+      else
+        connection.type = "HTTP/1.1"
+      end
       while true do
         local status
-        if connection.type == "http" then
-          -- process connection as HTTP until it says upgrade to websocket or close
 
-        elseif connection.type == "websocket" then
+        if connection.type == "HTTP/1.1" then
+          local request = http1_1.parseRequest(client, connection.initialRaw)
+          connection.initialRaw = nil
+          if not request then
+            status = "close"
+          else
+            -- handle request
+          end
+        elseif connection.type == "HTTP/2" then
+          -- HTTP/2 not yet supported; close connection and request HTTP/1.1
+          http1_1.respond(client, 426, { Upgrade = "HTTP/1.1", Connection = "upgrade, close" })
+          status = "close"
+        elseif connection.type == "WS/13" then
+          -- TODO
           -- process connection as websocket until close
         end
+
+        coroutine.yield(true)
 
         if status == "close" then
           break
         elseif status == "error" then
           return
         end
-
-        coroutine.yield(true)
       end
       client:close()
     end)]
