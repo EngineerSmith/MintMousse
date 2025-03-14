@@ -5,7 +5,8 @@ local http = {
   },
   defaultResponse = { },
   statusCode = {
-    [101] = "Switching Protocols"
+    --[101] = "Switching Protocols",
+    --[200] = "OK",
     [400] = "Bad Request",
     [426] = "Upgrade Require",
     [500] = "Internal Server Error",

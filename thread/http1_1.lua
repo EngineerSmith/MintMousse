@@ -46,8 +46,8 @@ http1_1.parseRequest = function(client, initialRaw)
     local length = tonumber(request.headers["Content-Length"])
     if length then
       request.body = client:receive(length)
-      if request.body then
-        request.body = socket_url.unescape(request.body)
+      if request.body and request.headers["Content-Type"] == "application/x-www-form-urlencoded" then
+        request.body = http1_1.parseUrlQuery(request.body)
       end
     end
   end
@@ -66,14 +66,17 @@ http1_1.parseURI = function(uri)
     parsedURI.path = "index"
   end
 
-  parsedURI.values = { }
-  if parsedURI.query then
-    for key, value in parsedURI.query:gmatch("([^&^=]+)=([^&^=]+)") do
-      parsedURI.values[socket_url.unescape(key)] = socket_url.unescape(value)
-    end
-  end
+  parsedURI.values = http1_1.parseUrlQuery(parsedURI.query)
 
   return parsedURI.values
+end
+
+http1_1.parseUrlQuery = function(query)
+  local values = { }
+  for key, value in query:gmatch("([^&^=]+)=([^&^=]+)") do
+    values[socket_url.unescape(key)] = socket_url.unescape(value)
+  end
+  return values
 end
 
 http1_1.respond = function(client, code, headers, content)
