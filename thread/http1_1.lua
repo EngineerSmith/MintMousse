@@ -3,8 +3,6 @@ local socket_url = require("socket.url")
 
 local http1_1 = { }
 
-local upgradeValue = "HTTP/1.1" --"HTTP/1.1, HTTP/2"
-
 -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_request_messages
 local requestMethodPattern = "(%S*)%s*(%S*)%s*(%S*)"
 local requestHeaderPattern = "(^:*):%s*(.*)$"
@@ -16,21 +14,23 @@ http1_1.parseRequest = function(client, initialRaw)
   request.raw = client:receive("*l", initialRaw)
   request.method, request.uri, request.version = request.raw:match(requestMethodPattern)
 
+  request.version = type(request) == "string" and request.version:upper() or nil
+
   if not request.method or not request.uri or not request.version then
-    http1_1.respond(client, 400, { Upgrade = upgradeValue })
-    return nil
+    http1_1.respond(client, 400, request.uri, { upgrade = http1_1.upgradeValue or "HTTP/1.1", connection = "upgrade, close" })
+    return "close"
   end
 
   if request.version ~= "HTTP/1.1" then
-    http1_1.respond(client, 400, { Upgrade = upgradeValue })
-    return nil
+    http1_1.respond(client, 426, request.uri, { upgrade = http1_1.upgradeValue or "HTTP/1.1", connection = "upgrade, close" })
+    return "close"
   end
 
   request.parsedURI = http1_1.parseURI(request.uri)
 
   if not request.parsedURI then
-    http1_1.respond(client, 400, { Upgrade = upgradeValue })
-    return nil
+    http1_1.respond(client, 400, request.uri, { upgrade = http1_1.upgradeValue or "HTTP/1.1", connection = "upgrade, close" })
+    return "close"
   end
 
   while true do
@@ -39,17 +39,23 @@ http1_1.parseRequest = function(client, initialRaw)
       break
     end
     local key, value = header:match(requestHeaderPattern)
-    request.headers[key] = value
+    request.headers[key:lower()] = value:lower()
   end
 
-  if request.headers["Content-Length"] then
-    local length = tonumber(request.headers["Content-Length"])
-    if length then
+  if request.headers["content-length"] then
+    local length = tonumber(request.headers["content-length"])
+    if length and length > 0 then
       request.body = client:receive(length)
-      if request.body and request.headers["Content-Type"] == "application/x-www-form-urlencoded" then
+      if request.body and request.body ~= "" and request.headers["content-type"] == "application/x-www-form-urlencoded" then
         request.body = http1_1.parseUrlQuery(request.body)
       end
+    elseif not length or length < 0 then
+      http1_1.respond(client, 400, request.uri, { Connection = "close" })
+      return "close"
     end
+  else
+    http1_1.respond(client, 411, request.uri)
+    return nil
   end
 
   return request
@@ -79,26 +85,32 @@ http1_1.parseUrlQuery = function(query)
   return values
 end
 
-http1_1.respond = function(client, code, headers, content)
+http1_1.respond = function(client, code, uri, headers, content)
   if not http1_1.statusCode[code] then
     love.mintmousse.warning("HTTP: Could not find given status code to respond:", code)
-    http1_1.respond(client, 500)
+    http1_1.respond(client, 500, uri)
     return
   end
 
   local response = http1_1.generateStatusLine(code)
 
-  if not headers and content then
-    headers = { }
-  end
-  if headers then
-    if content then
-      headers["Content-Length"] = tostring(#content)
-    end
-    headers["Allow"] = = http.allowedMethods
+  headers = headers or { }
 
-    response = response .. generateHeaders(headers)
+  if not headers["connection"] then
+    headers["connection"] = "keep-alive"
   end
+
+  if uri then
+    headers["allow"] =  http.getAllowedMethods(uri)
+  end
+
+  if content then
+    headers["content-length"] = tostring(#content)
+  else
+    headers["content-length"] = "0"
+  end
+
+  response = response .. generateHeaders(headers)
 
   if content then
     response = response .. content
