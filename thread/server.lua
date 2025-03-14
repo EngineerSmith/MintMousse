@@ -74,7 +74,11 @@ server.newIncomingConnection = function()
           if type(request) ~= "table" then
             status = request
           else
-            -- handle request
+            local code, headers, content = http.processRequest(request)
+            http1_1.respond(client, code, request.parsedURI.path, headers, content)
+            if headers and headers["connection"] and headers["connection"]:match("close") then
+              status = "close"
+            end
           end
         elseif connection.type == "HTTP/2" then
           connection.initialRaw = nil

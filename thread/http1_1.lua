@@ -50,12 +50,12 @@ http1_1.parseRequest = function(client, initialRaw)
         request.body = http1_1.parseUrlQuery(request.body)
       end
     elseif not length or length < 0 then
-      http1_1.respond(client, 400, request.uri, { Connection = "close" })
+      http1_1.respond(client, 400, request.parsedURI.path, { Connection = "close" })
       return "close"
     end
   else
-    http1_1.respond(client, 411, request.uri)
-    return nil
+    http1_1.respond(client, 411, request.parsedURI.path)
+    return "open"
   end
 
   return request
