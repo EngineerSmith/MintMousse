@@ -98,6 +98,14 @@ server.newIncomingConnection = function()
         elseif status == "error" then
           return
         end
+
+        while true do
+          if client:dirty() then
+            break
+          end
+          love.timer.sleep(0.00005)
+          coroutine.yield(true)
+        end
       end
       client:close()
     end)]

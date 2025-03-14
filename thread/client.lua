@@ -25,6 +25,10 @@ client.getsockname = function(self)
   return self.client:getsockname()
 end
 
+client.dirty = function(self)
+  return self.client:dirty()
+end
+
 client.receive = function(self, pattern, prefix)
   while true do
     local data, errorMessage = self.client:receive(pattern, prefix)

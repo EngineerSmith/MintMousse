@@ -19,4 +19,5 @@ while true do
       return
     end
   end
+  love.timer.sleep(0.0001)
 end
