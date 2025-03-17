@@ -42,13 +42,6 @@ client.receive = function(self, pattern, prefix)
         return nil
       end
     else
-      local size = #data
-      if size > love.mintmousse.MAX_DATA_RECEIVE_SIZE then
-        love.mintmousse.warning("CLIENT: Surpassed maxed data size force closing connection! Got:", size, ". Limit:", love.mintmousse.MAX_DATA_RECEIVE_SIZE)
-        self:close()
-        coroutine.yield(nil)
-        return
-      end
       return data
     end
   end

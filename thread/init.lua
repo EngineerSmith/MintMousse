@@ -1,5 +1,6 @@
 local PATH, dirPATH, settings = ...
 
+-- love.data, love.filesystem, & love.thread is preloaded for threads, other modules must be loaded
 require("love.event")
 require("love.timer")
 

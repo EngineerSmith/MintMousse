@@ -39,18 +39,32 @@ http1_1.parseRequest = function(client, initialRaw)
       break
     end
     local key, value = header:match(requestHeaderPattern)
-    request.headers[key:lower()] = value:lower()
+    if key and value then
+      local lowerKey = key:lower()
+      request.headers[lowerKey], request.headerSet[lowerKey] = { }, { }
+      for v in values:gmatch("([^,]+)") do
+        local trimmedValue = v:gsub("^%s*", ""):gsub("%s*$"):lower()
+        table.insert(request.headers[lowerKey], trimmedValue)
+        request.headerSet[lowerKey][trimmedValue] = true
+      end
+    end
   end
 
   if request.headers["content-length"] then
-    local length = tonumber(request.headers["content-length"])
+    local length = tonumber(request.headers["content-length"][1])
     if length and length > 0 then
+      if length > love.mintmousse.MAX_DATA_RECEIVE_SIZE then
+        love.mintmousse.info("HTTP: Client sent body that exceeded the limit. Sent:", length, ". Limit:", love.mintmousse.MAX_DATA_RECEIVE_SIZE)
+        http1_1.respond(client, 413, request.parsedURI.path, { connection = "close" })
+        return "close"
+      end
+
       request.body = client:receive(length)
-      if request.body and request.body ~= "" and request.headers["content-type"] == "application/x-www-form-urlencoded" then
+      if request.body and request.body ~= "" and request.headerSet["content-type"] and request.headerSet["content-type"]["application/x-www-form-urlencoded"] then
         request.body = http1_1.parseUrlQuery(request.body)
       end
     elseif not length or length < 0 then
-      http1_1.respond(client, 400, request.parsedURI.path, { Connection = "close" })
+      http1_1.respond(client, 400, request.parsedURI.path, { connection = "close" })
       return "close"
     end
   else
@@ -69,7 +83,7 @@ http1_1.parseURI = function(uri)
   end
 
   if parsedURI.path == "/" then
-    parsedURI.path = "index"
+    parsedURI.path = "/index"
   end
 
   parsedURI.values = http1_1.parseUrlQuery(parsedURI.query)

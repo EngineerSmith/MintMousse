@@ -11,7 +11,8 @@ return function(path, directoryPath)
     path = path,
     directoryPath = directoryPath,
 -- Do not change these at run time they won't affect the thread! Change the file
-    MAX_DATA_RECEIVE_SIZE = 50000,
+    MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body character limit of incoming HTTP requests
+      -- Thread Communication
     THREAD_COMMAND_QUEUE_ID = "MintMousse", -- id for a thread Channel
     THREAD_RESPONSE_QUEUE_ID = "MintMousse", -- id for the Event handler
     READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary", -- id for a thread Channel
