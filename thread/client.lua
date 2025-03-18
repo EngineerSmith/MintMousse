@@ -30,6 +30,7 @@ client.dirty = function(self)
 end
 
 client.receive = function(self, pattern, prefix)
+  -- todo; max number of tries? Timer?
   while true do
     local data, errorMessage = self.client:receive(pattern, prefix)
     if not data then

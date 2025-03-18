@@ -5,6 +5,8 @@ end
 local http = love.mintmousse.require("thread.http")
 local http1_1 = love.mintmousse.require("thread.http1_1")
 
+local websocket13 = love.mintmousse.require("thread.websocket13")
+
 -- We only support HTTP/1.1 for now
 local upgradeValue = "HTTP/1.1" --"HTTP/1.1, HTTP/2"
 http1_1.upgradeValue = upgradeValue
@@ -43,10 +45,10 @@ http.addMethod("GET", "/live-updates", function(request)
 
   -- Return 101, Switching Protocols response
   return 101, {
-    upgrade = "websocket",
-    connection = "upgrade",
-    ["sec-websocket-version"] = "13",
     ["sec-websocket-accept"] = accept,
+    ["sec-websocket-version"] = "13",
+    ["connection"] = "upgrade",
+    ["upgrade"] = "websocket",
   }, nil
 end)
 
@@ -136,23 +138,32 @@ server.newIncomingConnection = function()
           status = "close"
           love.mintmousse.info("TCPServer: Client [", address, "] using HTTP/2 has been requested to upgrade to HTTP/1.1")
         elseif connection.type == "WS/13" then
-          -- TODO
-          -- process connection as websocket until close
+          local request, errorMessage = websocket13.processRequest(client)
+          if request then
+            if request.type == "close" then
+              status = "close"
+            elseif request.type == "text" or request.type == "binary" then
+              -- process request
+            else
+              status = websocket13.handleRequest(request)
+            end
+          else
+            love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
+            websocket13.close(client)
+            status = "close"
+          end
         end
 
         coroutine.yield(true)
 
         if status == "close" then
           break
-        elseif status == "error" then
-          return
         end
 
         while true do
           if client:dirty() then
             break
           end
-          love.timer.sleep(0.00005)
           coroutine.yield(true)
         end
       end
