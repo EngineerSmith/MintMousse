@@ -82,12 +82,60 @@ websocket13.processRequest = function(client)
 
     request.payload = request.payload .. unmaskedPayload
 
+    coroutine.yield(true)
     if header.fin == 1 then
       break
     end
   end
 
   return request
+end
+
+websocket13.close = function(client)
+  websocket13.send(client, 0x8)
+end
+
+local maxChunk = 65535
+websocket13.send = function(client, opcode, payload)
+  local header = ffi.new("websocket_header")
+  header.fin = 0
+  header.rsv1, header.rsv2, header.rsv3 = 0, 0, 0
+  header.opcode = opcode
+  header.masked = 0
+
+  local payloadLength = payload and #payload or 0
+
+  if payloadLength == 0 then
+    header.payload_len = 0
+    local headerBytes = ffi.string(ffi.cast("void*"), 2)
+    client:send(headerBytes .. love.data.pack(">I[4]", 0))
+    return
+  end
+
+  for offset = 1, payloadLength, maxChunk do
+    local chunk = payload:sub(offset, offset + maxChunk - 1)
+
+    if offset + maxChunk - 1 >= payloadLength then
+      header.fin = 1
+    end
+
+    local headerBytes
+    if #chunk <= 125 then
+      header.payload_len = #chunk
+      headerBytes = ffi.string(ffi.cast("void*", header), 2)
+    elseif #chunk <= 65535 then
+      header.payload_len = 126
+      headerBytes = ffi.string(ffi.cast("void*", header), 2)
+      headerBytes = headerBytes .. love.data.pack(">I[2]", #chunk)
+    else
+      header.payload_len = 127
+      headerBytes = ffi.string(ffi.cast("void*", header), 2)
+      headerBytes = headerBytes .. love.data.pack(">I[8]", #chunk)
+    end
+    client:send(headerBytes .. love.data.pack(">I[4]", 0) .. chunk)
+
+    header.opcode = 0x0
+  end
 end
 
 return websocket13

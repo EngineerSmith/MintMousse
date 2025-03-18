@@ -141,9 +141,11 @@ server.newIncomingConnection = function()
           local request, errorMessage = websocket13.processRequest(client)
           if request then
             if request.type == "close" then
+              websocket13.close(client)
               status = "close"
             elseif request.type == "text" or request.type == "binary" then
               -- process request
+              love.mintmousse.warning("TCPServer: TODO WebSocket Response:", request.type, ". Payload length:", #request.payload)
             else
               status = websocket13.handleRequest(request)
             end
