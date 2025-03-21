@@ -1,8 +1,100 @@
 local controller = {
+  updateSinks = { },
   tabs = { },
-  tree = { },
-  idLookUp = { },
+  idMap = { },
 }
+
+controller.getSink = function(threadID)
+  for index, sink in ipairs(controller.updateSinks) do
+    if sink.threadID == threadID then
+      return sink, index
+  end
+  return nil
+end
+
+local syncSinkExplore
+syncSinkExplore = function(component, typeMap, relationships, target, isInTargetSubtree)
+  isInTargetSubtree = isInTargetSubtree or component.id == target
+
+  if isInTargetSubtree then
+    typeMap[component.id] = component.type
+    relationships[component.id] = { }
+  end
+
+  for index, child in ipairs(component.children) do
+    if isInTargetSubtree then
+      relationships[component.id][index] = child.id
+    end
+    syncSinkExplore(child, typeMap, relationships, target, isInTargetSubtree)
+  end
+end
+
+controller.syncSink = function(sink)
+  local package = {
+    type = "latest",
+    typeMap = { },
+    relationships = { },
+  }
+  for _, tab in ipairs(controller.tabs) do
+    syncSinkExplore(tab, package.typeMap, package.relationships, sink.target, sink.target == "all")
+  end
+  sink.channel:clear()
+  sink.channel:push(love.mintmousse._encode(package))
+end
+
+controller.updateThreadSubscription = function(threadID, target)
+  if threadID == "MintMousse" then
+    love.mintmousse.warning("Controller: 'MintMousse' cannot subscribe to updates. The 'MintMousse' thread is the owner and already has the most up-to-date information.")
+    return
+  end
+  local sink, index = controller.getSink(threadID)
+  if target == "none" then
+    if sink then
+      sink.channel:clear()
+      table.remove(controller.updateSinks, index)
+    end
+    return
+  end
+  if not sink then
+    sink = {
+      threadID = threadID,
+      channel = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(threadID))
+    }
+    table.insert(controller.updateSinks, sink)
+  end
+  sink.target = target
+  -- Clear sink, and push latest
+  sink.channel:performAtomic(controller.syncSink, sink)
+end
+
+controller.newTab = function(id, title, index)
+  if not id then
+    return love.mintmousse.warning("Controller: No ID passed to newTab")
+  end
+  if not title then
+    return love.mintmousse.warning("Controller: No Title passed to newTab")
+  end
+
+  if controller.idMap[id] then
+    love.mintmousse.warning("Controller: Tried to create Tab with pre-existing ID:", id)
+    return
+  end
+
+  if not index then
+    index = #controller.tabs
+  end
+
+  local tab = {
+    id = id,
+    parent = controller.tabs,
+    children = { },
+    title = title,
+    treeRef = treeTab,
+  }
+
+  controller.idMap[tab.id] = tab
+  table.insert(controller.tabs, index, tab)
+end
 
 -- local TREE_VERSION_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_VERSION_ID)
 -- local TREE_DATA_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_DATA_ID)
@@ -16,43 +108,6 @@ local controller = {
 --   end)
 -- end
 
--- controller.newTab = function(id, title, index)
---   if not id then
---     return love.mintmousse.warning("Controller: No ID passed to newTab")
---   end
---   if not title then
---     return love.mintmousse.warning("Controller: No Title passed to newTab")
---   end
-
---   if controller.idLookUp[id] then
---     love.mintmousse.warning("Controller: Tried to create Tab with pre-existing ID:", id)
---     return
---   end
-
---   if not index then
---     index = #controller.tabs
---   end
-
---   local treeTab = {
---     id = id,
---     type = "tab",
---     parent = controller.tree,
---     children = { }
---   }
-
---   local tab = {
---     id = id,
---     parent = controller.tabs,
---     children = { },
---     title = title,
---     treeRef = treeTab,
---   }
-
---   controller.idLookUp[tab.id] = tab
---   table.insert(controller.tabs, index, tab)
---   table.insert(controller.tree, index, treeTab)
--- end
-
 -- -- Programmer note; when calling this function, add your own logging if it returns nil
 -- controller.getComponent = function(id)
 --   if not id then
@@ -64,7 +119,7 @@ local controller = {
 -- controller.removeComponent = function(id)
 --   local component = controller.getComponent(id)
 --   if not component then
---     love.mintmousse.warn("Controller: Could not find component,", id, ", to remove. This could be because the id is invalid, or it has already been removed.")
+--     love.mintmousse.warning("Controller: Could not find component,", id, ", to remove. This could be because the id is invalid, or it has already been removed.")
 --     return
 --   end
 --   controller.idLookUp[id] = nil
