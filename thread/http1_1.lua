@@ -100,8 +100,8 @@ http1_1.parseUrlQuery = function(query)
 end
 
 http1_1.respond = function(client, code, uri, headers, content)
-  if not http1_1.statusCode[code] then
-    love.mintmousse.warning("HTTP: Could not find given status code to respond:", code)
+  if not http.statusCode[code] then
+    love.mintmousse.warning("HTTP: Could not find given status code to respond. Tell a programmer:", code)
     http1_1.respond(client, 500, uri)
     return
   end

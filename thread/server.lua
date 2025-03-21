@@ -80,6 +80,10 @@ server.start = function(host, httpPort)
   end
 end
 
+server.isRunning = function()
+  return server.tcp ~= nil
+end
+
 server.cleanUp = function()
   if server.tcp then
     server.tcp:close()
@@ -127,7 +131,7 @@ server.newIncomingConnection = function()
               if headers["upgrade"] == "websocket" then
                 connection.type = "WS/"..headers["sec-websocket-version"]
               else
-                love.mintmousse.error("TCPServer: HTTP 101 returned unexpected upgrade")
+                love.mintmousse.error("TCPServer: HTTP 101 returned unexpected upgrade; tell a programmer to add connection type. Upgrade:", tostring(headers["upgrade"]))
               end
             end
           end
@@ -139,7 +143,11 @@ server.newIncomingConnection = function()
           love.mintmousse.info("TCPServer: Client [", address, "] using HTTP/2 has been requested to upgrade to HTTP/1.1")
         elseif connection.type == "WS/13" then
           local request, errorMessage = websocket13.processRequest(client)
-          if request then
+          if not request then
+            love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
+            websocket13.close(client)
+            status = "close"
+          else
             if request.type == "close" then
               websocket13.close(client)
               status = "close"
@@ -149,10 +157,6 @@ server.newIncomingConnection = function()
             else
               status = websocket13.handleRequest(request)
             end
-          else
-            love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
-            websocket13.close(client)
-            status = "close"
           end
         end
 
@@ -173,7 +177,7 @@ server.newIncomingConnection = function()
     end)]
 
   elseif errorMessage ~= "timeout" and errorMessage ~= "closed" then
-    love.mintmousse.warning("TCPServer: Error occurred while accepting a connection:", errorMessage)
+    love.mintmousse.info("TCPServer: Error occurred while accepting a connection:", errorMessage)
   end
 end
 
