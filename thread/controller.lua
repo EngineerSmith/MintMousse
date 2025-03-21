@@ -67,6 +67,67 @@ controller.updateThreadSubscription = function(threadID, target)
   sink.channel:performAtomic(controller.syncSink, sink)
 end
 
+local isIDRelevant
+isIDRelevant = function(component, target)
+  if component.id == target then
+    return true
+  end
+  if not component.id then
+    return false
+  end
+  return isIDRelevant(component.parent, target)
+end
+
+local packageComponent
+packageComponent = function(component)
+  local package = {
+    id = component.id,
+    type = component.type,
+    parentID = component.parent.id
+  }
+  if #component.children ~= 0 then
+    package.children = { }
+    for index, child in ipairs(component.children) do
+      package.children[index] = format(child)
+    end
+  end
+  return package
+end
+
+controller.notifySubscribersComponentAdded = function(targetComponent, parentChildIndex)
+  if not parentChildIndex then
+    for i, child in ipairs(targetComponent.parent.children) do
+      if child == targetComponent then
+        parentChildIndex = i
+        break
+      end
+    end
+    if not parentChildIndex then
+      love.mintmousse.warning("Controller: Couldn't find child in parent's children! Tell a programmer:", targetComponent.id, ". Parent:", targetComponent.parent.id)
+      return
+    end
+  end
+  for _, sink in ipairs(controller.updateSinks) do
+    if sink.target == "all" or isIDRelevant(targetComponent, sink.target) then
+      sink.channel:push(love.mintmousse._encode({
+        type = "componentAdded",
+        packageComponent(targetComponent), parentChildIndex
+      }))
+    end
+  end
+end
+
+controller.notifySubscribersComponentRemoved = function(targetComponent)
+  for _, sink in ipairs(controller.updateSinks) do
+    if sink.target == "all" or isIDRelevant(targetComponent, sink.target) then
+      sink.channel:push(love.mintmousse._encode({
+        type = "componentRemoved",
+        packageComponent(targetComponent)
+      }))
+    end
+  end
+end
+
 controller.newTab = function(id, title, index)
   if not id then
     return love.mintmousse.warning("Controller: No ID passed to newTab")
@@ -94,6 +155,7 @@ controller.newTab = function(id, title, index)
 
   controller.idMap[tab.id] = tab
   table.insert(controller.tabs, index, tab)
+
 end
 
 -- local TREE_VERSION_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_VERSION_ID)
@@ -113,7 +175,7 @@ end
 --   if not id then
 --     return nil
 --   end
---   return controller.idLookUp[id]
+--   return controller.idMap[id]
 -- end
 
 -- controller.removeComponent = function(id)
@@ -122,7 +184,7 @@ end
 --     love.mintmousse.warning("Controller: Could not find component,", id, ", to remove. This could be because the id is invalid, or it has already been removed.")
 --     return
 --   end
---   controller.idLookUp[id] = nil
+--   controller.idMap[id] = nil
 
 --   local tbl = component.parent.children or component.parent
 --   local found = false

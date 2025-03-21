@@ -29,10 +29,11 @@ local createBuffer = function()
       "style",
       "update",
       "latest",
-      "typeMap",
       "children",
+      "parentID",
       "mintmousse"
-      "relationships",
+      "componentAdded",
+      "componentRemoved",
     }, { }
     for _, word in ipairs(dictionary) do
       lookup[word] = true
@@ -69,7 +70,7 @@ return function(path, directoryPath)
     THREAD_COMPONENT_UPDATES_ID = "MintMousseUpdate_%s", -- id for love.thread Channel (appended with threadID)
 
     -- Internal use
-    hinting = {
+    _hinting = {
       -- Hinting data received from the main MintMousse thread
       typeMap = { },
       relationships = { },
@@ -190,7 +191,78 @@ return function(path, directoryPath)
       func = "updateSubscription",
       love.mintmousse.threadID, target
     })
-    -- todo should this function clear local hinting?
+  end
+
+  local cleanUpLocalHinting = function()
+    -- Remove acknowledged type hints
+    for id in pairs(love.mintmousse._hinting.localTypeMap) do
+      if love.mintmousse._hinting.typeMap[id] then
+        love.mintmousse._hinting.localTypeMap[id] = nil
+      end
+    end
+
+    -- Remove acknowledged relationships hints
+    -- pairs are used as local relationships may not be an unbroken indexed table
+    for id, relationships in pairs(love.mintmousse._hinting.localRelationships) do
+      for index in pairs(relationships) do
+        if love.mintmousse._hinting.relationships[id][index] then
+          love.mintmousse._hinting.localRelationships[id][index] = nil
+        end
+      end
+      local hasIndex = false
+      for _ in pairs(love.mintmousse._hinting.localRelationships[id]) do
+        hasIndex = true
+        break
+      end
+      if not hasIndex then
+        love.mintmousse._hinting.localRelationships[id] = nil
+      end
+    end
+  end
+
+  local hintingComponentAdded 
+  hintingComponentAdded = function(packagedComponent)
+    love.mintmousse._hinting.typeMap[packagedComponent.id] = packagedComponent.type
+    love.mintmousse._hinting.localTypeMap[packagedComponent.id] = nil
+    if packagedComponent.children then
+      local relationships = { }
+      love.mintmousse._hinting.relationships[packagedComponent.id] = relationships
+      local localRelationships = love.mintmousse._hinting.localRelationships[packagedComponent.id]
+
+      for index, child in ipairs(packagedComponent.children) do
+        relationships[index] = child.id
+        if localRelationships then
+          for localIndex, childID in pairs(localRelationships) do
+            if childID == child.id then
+              localRelationships[localIndex] = nil
+              break
+            end
+          end
+        end
+        hintingComponentAdded(child)
+      end
+      local hasIndex = false
+      for _ in pairs(localRelationships) do
+        hasIndex = true
+        break
+      end
+      if not hasIndex then
+        love.mintmousse._hinting.localRelationships[packagedComponent.id] = nil
+      end
+    end
+  end
+
+  -- This function doesn't check locals as someone may remove a component, and then add a new component with the same id
+  --     hintingComponentAdded should handle all cases; I don't foresee a race condition edge case where a component is removed without there being an added event
+  local hintingComponentRemoved
+  hintingComponentRemoved = function(packagedComponent)
+    love.mintmousse._hinting.typeMap[packagedComponent.id] = nil
+    if packagedComponent.children then
+      for index, child in ipairs(packagedComponent.children) do
+        hintingComponentRemoved(child)
+      end
+    end
+    love.mintmousse._hinting.relationships[packagedComponent.id] = nil
   end
 
   local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(love.mintmousse.threadID))
@@ -201,75 +273,38 @@ return function(path, directoryPath)
     end
     package = love.mintmousse._decode(package)
     if package.type == "latest" then
-      love.mintmousse.hinting.typeMap = package.typeMap
-      love.mintmousse.hinting.relationships = package.relationships
-
-      -- Remove acknowledged type hints
-      for id in pairs(love.mintmousse.hinting.localTypeMap) do
-        if love.mintmousse.hinting.typeMap[id] then
-          love.mintmousse.hinting.localTypeMap[id] = nil
-        end
-      end
-
-      -- Remove acknowledged relationship hints
-      -- pairs are used as local relationships may not be an unbroken indexed table
-      for id, relationships in pairs(love.mintmousse.hinting.localRelationships) do
-        for index in pairs(relationships) do
-          if love.mintmousse.hinting.relationships[id][index] then
-            love.mintmousse.hinting.localRelationships[id][index] = nil
-          end
-        end
-        local hasIndex = false
-        for _ in pairs(love.mintmousse.hinting.localRelationships[id]) do
-          hasIndex = true
-          break
-        end
-        if not hasIndex then
-          love.mintmousse.hinting.localRelationships[id] = nil
-        end
-      end
+      local typeMap, relationships = unpack(package)
+      love.mintmousse._hinting.typeMap = typeMap
+      love.mintmousse._hinting.relationships = relationships
+      cleanUpLocalHinting()
+    elseif package.type == "componentAdded" then
+      local packagedComponent, parentChildIndex = unpack(package)
+      hintingComponentAdded(packagedComponent)
+      table.insert(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex, packagedComponent.id)
+    elseif package.type == "componentRemoved" then
+      local packagedComponent, parentChildIndex = unpack(package)
+      hintingComponentRemoved(packagedComponent)
+      table.remove(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex)
     else
-      love.mintmousse.error("TODO other package types", package.type)
+      love.mintmousse.error("Package types hasn't been updated if new types have been added. Tell a programmer:", package.type)
       return
     end
   end
 
---   local TREE_VERSION_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_VERSION_ID)
---   local TREE_DATA_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_DATA_ID)
+  -- Front facing commands
+  love.mintmousse.get = function(id)
+    love.mintmousse.error("TODO: Return proxy table")
+  end
 
---   local lastVersion = nil
---   love.mintmousse.updateTree = function()
---     local treeVersion = TREE_VERSION_CHANNEL:peek()
---     if lastVerson ~= treeVersion then
---       lastVersion = treeVersion
---       local tree = love.mintmousse._decode(TREE_DATA_CHANNEL:peek())
-
-
---     end
---   end
-
---   love.mintmousse.isID = function(id)
---     love.mintmousse.updateTree()
---   end
-
--- -- Front facing commands
---   love.mintmousse.get = function(id)
---     if not love.mintmousse.isID(id) then
---       return error("TODO: component isn't an existing component? OR 'hope it exists'")
---     end
---     -- todo
---   end
-
---   love.mintmousse.newTab = function(title, id, index)
---     local id = id or title
---     if love.mintmousse.isID(id) then
---       love.mintmousse.warning("Tried to create Tab with id that already exists")
---       return nil
---     end
---     love.mintmousse.push({
---       func = "newTab",
---       id, title, index
---     })
---     return love.mintmousse.get(id)
---   end
+  love.mintmousse.newTab = function(title, id, index)
+    local success, errorMessage = love.mintmousse.isValidID(id)
+    if not success then
+      love.mintmousse.error("Couldn't create title with given ID. Reason:", errorMessage)
+      return
+    end
+    love.mintmousse.push({
+      func = "newTab",
+      id, title, index
+    })
+  end
 end
