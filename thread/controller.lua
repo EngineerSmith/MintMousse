@@ -1,3 +1,6 @@
+local lustache = love.mintmousse.require("libs.lustache")
+local json = love.mintmousse.require("libs.json")
+
 local controller = {
   updateSinks = { },
   tabs = { },
@@ -126,6 +129,79 @@ controller.notifySubscribersComponentRemoved = function(targetComponent)
       }))
     end
   end
+end
+
+controller.renderIcon = function(icon)
+  local iconMustache = love.mintmousse.read("thread/icon/icon.mustache")
+  controller.icon = lustache:render(iconMustache, icon)
+end
+
+controller.setSVGIcon = function(icon)
+  local svgIconMustache = love.mintmousse.read("thread/icon/icon.svg.mustache")
+  local render = lustache:render(svgIconMustache, icon)
+  local encoded = "data:image/svg+xml;base64," .. love.data.encode("string", "base64", render)
+  controller.setIconRaw(encoded, "image/svg+xml")
+end
+
+controller.setIconFromFile = function(filepath)
+  if not love.filesystem.getInfo(filepath, "file") then
+    love.mintmousse.warning("Controller: setIconFromFile: Couldn't locate given filepath. Gave:", filepath)
+    return
+  end
+  local rawIcon = love.filesystem.read(filepath)
+  local temp = filepath:lower()
+  local iconType
+  if temp:match(".png$") then
+    iconType = "image/png"
+  elseif temp:match(".jpeg$") or temp:match(".jpg$") then
+    iconType = "image/jpeg"
+  end
+  if not iconType then
+    love.mintmousse.warning("Controller: setIconFromFile: Couldn't determine MIME type. File:", filepath)
+    return
+  end
+  controller.setIconRaw(rawIcon, iconType)
+end
+
+controller.setIconRaw = function(icon, iconType)
+  controller.renderIcon({
+    icon = "data:"..iconType..";base64,"..love.data.encode("string", "base64", icon),
+    iconType = iconType
+  })
+end
+
+controller.setIconRFG = function(filepath)
+  local success = love.filesystem.mount(filepath, love.mintmousse.TEMP_MOUNT_LOCATION, true)
+  if not success then
+    love.mintmousse.warning("Controller: Could not mount given RFG zip to temporary location. Location:", love.mintmousse.TEMP_MOUNT_LOCATION)
+    return
+  end
+
+  local icon = { RFG = true }
+
+  local readAndEncode = function(path)
+    local file = love.filesystem.read(love.mintmousse.TEMP_MOUNT_LOCATION..path)
+    return love.data.encode("string", "base64", file)
+  end
+
+  icon.favicon96x96PNG = "data:image/png;base64,"..readAndEncode("favicon-96x96.png")
+  icon.faviconSVG = "data:image/svg+xml;base64,"..readAndEncode("favicon.svg")
+  icon.faviconICO = "data:image/x-icon;base64,"..readAndEncode("favicon.ico")
+  icon.faviconAppleTouch = "data:image/png;base64,"..readAndEncode("apple-touch-icon.png")
+
+  local webmanifestJson = love.filesystem.read(love.mintmousse.TEMP_MOUNT_LOCATION.."site.webmanifest")
+  local manifest = json.decode(webmanifestJson)
+
+  for _, icon in ipairs(manifest.icons) do
+    local raw = love.filesystem.read(love.mintmousse.TEMP_MOUNT_LOCATION..icon.src:sub(2))
+    icon.src = "data:"..icon.type..";base64," .. love.data.encode("string", "base64", raw)
+  end
+
+  icon.webmanifest = "data:application/json;base64,"..love.data.encode("string", "base64", json.encode(manifest))
+
+  controller.renderIcon(icon)
+
+  love.filesystem.unmount(filepath)
 end
 
 controller.newTab = function(id, title, index)

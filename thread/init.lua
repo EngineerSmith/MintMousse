@@ -10,6 +10,10 @@ local controller = love.mintmousse.require("thread.controller")
 --         This has the issue of dependency
 local callbacks = { }
 
+callbacks.setSVGIcon = controller.setSVGIcon
+callbacks.setIconRaw = controller.setIconRaw
+callbacks.setIconRFG = controller.setIconRFG
+callbacks.setIconFromFile = controller.setIconFromFile
 callbacks.updateSubscription = controller.updateThreadSubscription
 
 while true do

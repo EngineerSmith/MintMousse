@@ -3,6 +3,7 @@ love.mintmousse.logging = {
   timestampFormat = "%Y-%m-%d %H:%M:%S", -- os.date format
   enablePrint = true, -- if love.mintmousse logging functions call global 'print' function
   enableError = true, -- if love.mintmousse.error calls global 'error' function
+    -- Note; turning this off could cause functions to try and continue into undefined behaviour
     -- Note; love.mintmousse's own thread ignore enableError, and will always call global 'error' function
   warningsCauseErrors = false, -- Should warnings be treated as errors, and call love.mintmousse.error instead
 -- internal usage

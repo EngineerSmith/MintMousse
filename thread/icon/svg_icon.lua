@@ -10,6 +10,8 @@ return function(icon)
     }
   end
 
+  icon.type = "svg"
+
   -- Emoji
   love.mintmousse.assert(type(icon.emoji) == "string", "SVG ICON: icon.emoji must be type String")
 

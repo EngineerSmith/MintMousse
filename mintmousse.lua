@@ -62,8 +62,9 @@ return function(path, directoryPath)
     directoryPath = directoryPath,
     -- Do not change these at run time they won't affect threads! Change the file
     MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body byte limit of incoming HTTP requests 
+    TEMP_MOUNT_LOCATION = ".MintMousse/", -- Location for temporary zip mounting
 
-    -- Thread Communication
+      -- Thread Communication
     THREAD_COMMAND_QUEUE_ID = "MintMousse", -- id for a love.thread Channel
     THREAD_RESPONSE_QUEUE_ID = "MintMousse", -- id for the love.event handler
     READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary", -- id for a love.thread Channel
@@ -111,7 +112,11 @@ return function(path, directoryPath)
       end
       return love.mintmousse._decode(encodedMessage)
     end
-    
+
+    love.mintmousse.popRaw = function()
+      return COMMAND_QUEUE:pop()
+    end
+
     love.mintmousse.threadID = "MintMousse"
   end
 
@@ -123,6 +128,10 @@ return function(path, directoryPath)
 
   love.mintmousse.require = function(file)
     return require(love.mintmousse.path .. file)
+  end
+
+  love.mintmousse.read = function(file)
+    return love.filesystem.read(love.mintmousse.directoryPath .. file)
   end
 
   if not love.isThread then -- main thread
@@ -137,7 +146,7 @@ return function(path, directoryPath)
 
     love.mintmousse.stop = function()
       love.mintmousse.push({
-        func = "quit"
+        func = "quit",
       })
     end
 
@@ -179,20 +188,6 @@ return function(path, directoryPath)
     return true, nil
   end
 
-  love.mintmousse.updateSubscription = function(target)
-    if target ~= "all" and target ~= "none" then
-      local isValid, errorMessage = love.mintmousse.isValidID(target)
-      if not isValid then
-        love.mintmousse.warning("Could not update subscription for thread. Gave invalid target assumed to be an ID:", errorMessage)
-        return
-      end
-    end
-    love.mintmousse.push({
-      func = "updateSubscription",
-      love.mintmousse.threadID, target
-    })
-  end
-
   local cleanUpLocalHinting = function()
     -- Remove acknowledged type hints
     for id in pairs(love.mintmousse._hinting.localTypeMap) do
@@ -227,8 +222,8 @@ return function(path, directoryPath)
     if packagedComponent.children then
       local relationships = { }
       love.mintmousse._hinting.relationships[packagedComponent.id] = relationships
-      local localRelationships = love.mintmousse._hinting.localRelationships[packagedComponent.id]
 
+      local localRelationships = love.mintmousse._hinting.localRelationships[packagedComponent.id]
       for index, child in ipairs(packagedComponent.children) do
         relationships[index] = child.id
         if localRelationships then
@@ -291,7 +286,74 @@ return function(path, directoryPath)
     end
   end
 
-  -- Front facing commands
+-- Front facing functions
+
+  love.mintmousse.updateSubscription = function(target)
+    if target ~= "all" and target ~= "none" then
+      local isValid, errorMessage = love.mintmousse.isValidID(target)
+      if not isValid then
+        love.mintmousse.warning("Could not update subscription for thread. Gave invalid target assumed to be an ID:", errorMessage)
+        return
+      end
+    end
+    love.mintmousse.push({
+      func = "updateSubscription",
+      love.mintmousse.threadID, target,
+    })
+  end
+
+  local pngMagicNumber = string.char(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)
+  local jpegMagicNumber = string.char(0xff, 0xd8, 0xff)
+  love.mintmousse.setIcon = function(icon)
+    if type(icon) == "table" then
+      icon = love.mintmousse.require("thread.icon.svg_icon")(icon)
+      love.mintmousse.push({
+        func = "setSVGIcon",
+        icon,
+      })
+      return
+    elseif type(icon) == "string" then
+      if love.filesystem.getInfo(icon, "file") then
+        local temp = icon:lower()
+        if temp:match(".png$") or temp:match(".jpeg$") or temp:match(".jpg$") then
+          love.mintmousse.push({
+            func = "setIconFromFile",
+            icon,
+          })
+          return
+        end
+        love.mintmousse.warning("Valid file provided, invalid file extension. Only .PNG, .JPEG, or .JPG are supported")
+        return
+      elseif icon:sub(#pngMagicNumber) == pngMagicNumber then
+        love.mintmousse.setIconRaw(icon, "image/png")
+        return
+      elseif icon:sub(#jpegMagicNumber) == jpegMagicNumber then
+        love.mintmousse.setIconRaw(icon, "image/jpeg")
+        return
+      end
+    end
+    love.mintmousse.warning("Invalid icon provided. Please supply either an SVG table, a file path to a .PNG, .JPEG, or .JPG image, or raw PNG or JPEG image data (identified by their magic numbers)")
+  end
+
+  love.mintmousse.setIconRaw = function(icon, iconType)
+    love.mintmousse.push({
+      func = "setIconRaw",
+      icon, iconType,
+    })
+  end
+
+  -- https://realfavicongenerator.net
+  love.mintmousse.setIconRFG = function(filepath)
+    love.mintmousse.assert(type(filepath) == "string", "filepath must be type String")
+    local temp = filepath:lower()
+    love.mintmousse.assert(temp:match("$.zip"), "Invalid file path, must end with .ZIP file extension. Gave:", filepath)
+    love.mintmousse.assert(love.filesystem.getInfo(filepath), "Invalid file path, couldn't reach file with given path. Gave:", filepath)
+    love.mintmousse.push({
+      func = "setIconRFG",
+      filepath,
+    })
+  end
+
   love.mintmousse.get = function(id)
     love.mintmousse.error("TODO: Return proxy table")
   end
@@ -304,7 +366,7 @@ return function(path, directoryPath)
     end
     love.mintmousse.push({
       func = "newTab",
-      id, title, index
+      id, title, index,
     })
   end
 end
