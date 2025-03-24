@@ -5,10 +5,11 @@ local http1_1 = { }
 
 -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_request_messages
 local requestMethodPattern = "(%S*)%s*(%S*)%s*(HTTP/%S*)"
-local requestHeaderPattern = "(^:*):%s*(.*)$"
+local requestHeaderPattern = "([^:]*):%s*(.*)$"
 http1_1.parseRequest = function(client, initialRaw)
   local request = {
-    headers = { }
+    headers = { },
+    headerSet = { },
   }
   
   request.raw = client:receive("*l", initialRaw)
@@ -42,8 +43,8 @@ http1_1.parseRequest = function(client, initialRaw)
     if key and value then
       local lowerKey = key:lower()
       request.headers[lowerKey], request.headerSet[lowerKey] = { }, { }
-      for v in values:gmatch("([^,]+)") do
-        local trimmedValue = v:gsub("^%s*", ""):gsub("%s*$"):lower()
+      for v in value:gmatch("([^,]+)") do
+        local trimmedValue = v:gsub("^%s*", ""):gsub("%s*$", ""):lower()
         table.insert(request.headers[lowerKey], trimmedValue)
         request.headerSet[lowerKey][trimmedValue] = true
       end
