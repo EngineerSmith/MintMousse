@@ -12,7 +12,7 @@ client.new = function(socketClient)
 
   self.client:settimeout(0)
   self.client:setoption("keepalive", true)
-  self.client:setoption("linger", { true, .5 })
+  self.client:setoption("linger", { on = true, timeout = .5 })
 
   return self
 end
@@ -23,10 +23,6 @@ end
 
 client.getsockname = function(self)
   return self.client:getsockname()
-end
-
-client.dirty = function(self)
-  return self.client:dirty()
 end
 
 client.receive = function(self, pattern, prefix)
@@ -51,7 +47,7 @@ end
 client.send = function(self, data, i, j)
   local i, size = 1, #data
   while i < size do
-    local j, errorMessage, k = client:send(data, i)
+    local j, errorMessage, k = self.client:send(data, i)
     if not j then
       if errorMessage == "closed" then
         coroutine.yield(nil)

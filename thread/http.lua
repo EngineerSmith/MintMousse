@@ -59,10 +59,10 @@ http.processRequest = function(request)
 
   local success, code, headers, content = true, nil, nil, nil
 
-  if type(urlFunc) == "function" then
-    success, code, headers, content = pcall(urlFunc, request)
+  if type(uriFunc) == "function" then
+    success, code, headers, content = pcall(uriFunc, request)
   else
-    code = urlFunc
+    code = uriFunc
   end
 
   if not success then

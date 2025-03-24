@@ -31,7 +31,7 @@ local createBuffer = function()
       "latest",
       "children",
       "parentID",
-      "mintmousse"
+      "mintmousse",
       "componentAdded",
       "componentRemoved",
     }, { }
@@ -107,7 +107,7 @@ return function(path, directoryPath)
 
   if love.isMintMousseServerThread then
     -- only the mintmousse thread should pop the command queue!
-    love.mintmousse.pop() = function()
+    love.mintmousse.pop = function()
       local encodedMessage = COMMAND_QUEUE:pop()
       if not encodedMessage then
         return nil
@@ -142,8 +142,12 @@ return function(path, directoryPath)
       error("TODO")
     end
 
-    love.mintmousse.start = function()
-      error("TODO")
+    love.mintmousse.start = function(config)
+      -- todo validate
+      love.mintmousse.push({
+        func = "start",
+        config,
+      })
     end
 
     love.mintmousse.stop = function()
@@ -179,7 +183,7 @@ return function(path, directoryPath)
     end
     local failed = id:match("[^%w%._,:;@]")
     if failed then
-      return false, "ID Can only contain alphanumeric or . _ , : ; @ characters. Failed character:" tostring(failed)
+      return false, "ID Can only contain alphanumeric or . _ , : ; @ characters. Failed character:"..tostring(failed)
     end
     if id:find("^%d") then
       return false, "ID cannot use a numeric as the first character of an id"

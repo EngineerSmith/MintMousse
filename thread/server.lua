@@ -2,6 +2,7 @@ if not love.isThread then
   love.mintmousse.warning("TCPServer: Trying to run TCPServer on main thread. There may be blocking calls!")
 end
 
+local socket = require("socket")
 local http = love.mintmousse.require("thread.http")
 local http1_1 = love.mintmousse.require("thread.http1_1")
 
@@ -70,7 +71,7 @@ server.start = function(host, httpPort)
 
   server.tcp:settimeout(0)
   server.tcp:setoption("keepalive", true)
-  server.tcp:setoption("linger", { false, 0 })
+  server.tcp:setoption("linger", { on = false, timeout = 0 })
 
   local _, port = server.tcp:getsockname()
   if port then
@@ -94,8 +95,8 @@ end
 server.newIncomingConnection = function()
   local rawClient, errorMessage = server.tcp:accept()
   if rawClient then
-    local address = client:getsockname()
-    if not http.isWhitelisted(address) then
+    local address = rawClient:getsockname()
+    if not server.isWhitelisted(address) then
       rawClient:close()
       love.mintmousse.info("TCPServer: Non-whitelisted connection attempt from:", address)
       return
@@ -165,16 +166,9 @@ server.newIncomingConnection = function()
         if status == "close" then
           break
         end
-
-        while true do
-          if client:dirty() then
-            break
-          end
-          coroutine.yield(true)
-        end
       end
       client:close()
-    end)]
+    end)] = true
 
   elseif errorMessage ~= "timeout" and errorMessage ~= "closed" then
     love.mintmousse.info("TCPServer: Error occurred while accepting a connection:", errorMessage)

@@ -4,7 +4,7 @@ local socket_url = require("socket.url")
 local http1_1 = { }
 
 -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_request_messages
-local requestMethodPattern = "(%S*)%s*(%S*)%s*(%S*)"
+local requestMethodPattern = "(%S*)%s*(%S*)%s*(HTTP/%S*)"
 local requestHeaderPattern = "(^:*):%s*(.*)$"
 http1_1.parseRequest = function(client, initialRaw)
   local request = {
@@ -14,7 +14,7 @@ http1_1.parseRequest = function(client, initialRaw)
   request.raw = client:receive("*l", initialRaw)
   request.method, request.uri, request.version = request.raw:match(requestMethodPattern)
 
-  request.version = type(request) == "string" and request.version:upper() or nil
+  request.version = type(request.version) == "string" and request.version:upper() or nil
 
   if not request.method or not request.uri or not request.version then
     http1_1.respond(client, 400, request.uri, { upgrade = http1_1.upgradeValue or "HTTP/1.1", connection = "upgrade, close" })
@@ -67,7 +67,7 @@ http1_1.parseRequest = function(client, initialRaw)
       http1_1.respond(client, 400, request.parsedURI.path, { connection = "close" })
       return "close"
     end
-  else
+  elseif request.method ~= "GET" then
     http1_1.respond(client, 411, request.parsedURI.path)
     return "open"
   end
@@ -88,11 +88,14 @@ http1_1.parseURI = function(uri)
 
   parsedURI.values = http1_1.parseUrlQuery(parsedURI.query)
 
-  return parsedURI.values
+  return parsedURI
 end
 
 http1_1.parseUrlQuery = function(query)
   local values = { }
+  if not query then
+    return values
+  end
   for key, value in query:gmatch("([^&^=]+)=([^&^=]+)") do
     values[socket_url.unescape(key)] = socket_url.unescape(value)
   end
@@ -125,12 +128,11 @@ http1_1.respond = function(client, code, uri, headers, content)
   end
 
   headers["Date"] = http.getDate()
-  response = response .. generateHeaders(headers)
+  response = response .. http1_1.generateHeaders(headers)
 
   if content then
     response = response .. content
   end
-
 
   client:send(response)
 end

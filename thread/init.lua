@@ -13,9 +13,9 @@ controller.setSVGIcon({
   emoji = "🦆",
   rect = true,
   rounded = true,
-  color = "mintcream",
-  outsideColor = "%2300FF07", -- #00FF07
-  easterEgg = true
+  insideColor = "#95d7ab",
+  outsideColor = "#00FF07",
+  easterEgg = true,
 })
 
 -- todo; should callbacks be added via a function?
@@ -33,6 +33,13 @@ callbacks.start = function(config)
   if config then
     if type(config.title) == "string" then
       controller.setTitle(config.title)
+    end
+    if type(config.whitelist) == "table" then
+      for _, v in ipairs(config.whitelist) do
+        server.addToWhitelist(v)
+      end
+    elseif type(config.whitelist) == "string" then
+      server.addToWhitelist(config.whitelist)
     end
   end
   server.start(config and config.host, config and config.httpPort)
@@ -55,7 +62,7 @@ end)
 while true do
   for _ = 0, 50 do
     local message = love.mintmousse.pop()
-    if table(message) ~= "table" then
+    if type(message) ~= "table" then
       break
     end
     if type(message.func) == "string" then

@@ -23,6 +23,7 @@ controller.getSink = function(threadID)
   for index, sink in ipairs(controller.updateSinks) do
     if sink.threadID == threadID then
       return sink, index
+    end
   end
   return nil
 end
@@ -158,8 +159,7 @@ end
 controller.setSVGIcon = function(icon)
   local svgIconMustache = love.mintmousse.read("thread/icon/icon.svg.mustache")
   local render = lustache:render(svgIconMustache, icon)
-  local encoded = "data:image/svg+xml;base64," .. love.data.encode("string", "base64", render)
-  controller.setIconRaw(encoded, "image/svg+xml")
+  controller.setIconRaw(render, "image/svg+xml")
 end
 
 controller.setIconFromFile = function(filepath)
