@@ -21,6 +21,7 @@ controller.setSVGIcon({
 --         This has the issue of dependency
 local callbacks = { }
 
+callbacks.setTitle = controller.setTitle
 callbacks.setSVGIcon = controller.setSVGIcon
 callbacks.setIconRaw = controller.setIconRaw
 callbacks.setIconRFG = controller.setIconRFG

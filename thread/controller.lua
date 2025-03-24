@@ -159,7 +159,7 @@ controller.setIconFromFile = function(filepath)
     iconType = "image/png"
   elseif temp:match(".jpeg$") or temp:match(".jpg$") then
     iconType = "image/jpeg"
-  elseif temp:match(".svg"$) then
+  elseif temp:match(".svg$") then
     iconType = "image/svg+xml"
   end
   if not iconType then

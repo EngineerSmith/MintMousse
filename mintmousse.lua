@@ -342,7 +342,7 @@ return function(path, directoryPath)
     })
   end
 
-  -- https://realfavicongenerator.net
+  -- https://realfavicongenerator.net @ 2025
   love.mintmousse.setIconRFG = function(filepath)
     love.mintmousse.assert(type(filepath) == "string", "filepath must be type String")
     local temp = filepath:lower()
@@ -351,6 +351,14 @@ return function(path, directoryPath)
     love.mintmousse.push({
       func = "setIconRFG",
       filepath,
+    })
+  end
+
+  love.mintmousse.setTitle = function(title)
+    love.mintmousse.assert(type(title) == "string", "Title must be type String")
+    love.mintmousse.push({
+      func = "setTitle",
+      title,
     })
   end
 
