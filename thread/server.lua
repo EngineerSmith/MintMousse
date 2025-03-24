@@ -23,10 +23,10 @@ end
 
 http.addMethod("GET", "/live-updates", function(request)
   -- Check for websocket upgrade headers
-  if not request.headerSet["update"]                or not request.headerSet["update"]["websocket"] or
+  if not request.headerSet["upgrade"]                or not request.headerSet["upgrade"]["websocket"] or
      not request.headerSet["connection"]            or not request.headerSet["connection"]["upgrade"] or
      not request.headerSet["sec-websocket-version"] or not request.headerSet["sec-websocket-version"]["13"] then
-    return 426, { ["upgrade"] = "websocket", ["connection"] = "upgrade", ["sec-websocket-version"] = "13" }, nil
+      return 426, { ["upgrade"] = "websocket", ["connection"] = "upgrade", ["sec-websocket-version"] = "13" }, nil
   end
 
   -- Check for sec-websocket-key header
@@ -41,12 +41,13 @@ http.addMethod("GET", "/live-updates", function(request)
   end
 
   -- Calculate sec-websocket-accept
-  local accept = love.data.hash("sha1", key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+  local keyBD = love.data.newByteData(key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
+  local accept = love.data.hash("data", "sha1", keyBD)
   accept = love.data.encode("string", "base64", accept)
 
   -- Return 101, Switching Protocols response
   return 101, {
-    ["sec-websocket-accept"] = accept,
+    ["Sec-WebSocket-Accept"] = accept,
     ["sec-websocket-version"] = "13",
     ["connection"] = "upgrade",
     ["upgrade"] = "websocket",
@@ -108,8 +109,8 @@ server.newIncomingConnection = function()
       local connection = {
         type = "undetermined"
       }
-      connection.initialRaw = client:receive(16)
-      if connection.initialRaw == "PRI * HTTP/2.0\r\n" then
+      connection.initialRaw = client:receive(14)
+      if connection.initialRaw == "PRI * HTTP/2.0" then
         connection.type = "HTTP/2"
       else
         connection.type = "HTTP/1.1"
@@ -131,6 +132,7 @@ server.newIncomingConnection = function()
             if code == 101 then
               if headers["upgrade"] == "websocket" then
                 connection.type = "WS/"..headers["sec-websocket-version"]
+                websocket13.send(client, 0x1, "hello world")
               else
                 love.mintmousse.warning("TCPServer: HTTP 101 returned unexpected upgrade; tell a programmer to add connection type. Upgrade:", tostring(headers["upgrade"]))
               end

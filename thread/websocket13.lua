@@ -2,13 +2,13 @@ local ffi = require("ffi")
 -- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#format
 ffi.cdef([[
   typedef struct {
-    uint8_t fin:1;
-    uint8_t rsv1:1;
-    uint8_t rsv2:1;
-    uint8_t rsv3:1;
     uint8_t opcode:4;
-    uint8_t masked:1;
+    uint8_t rsv3:1;
+    uint8_t rsv2:1;
+    uint8_t rsv1:1;
+    uint8_t fin:1;
     uint8_t payload_len:7;
+    uint8_t masked:1;
   } websocket_header;
 ]])
 
@@ -60,11 +60,11 @@ websocket13.processRequest = function(client)
     if payloadLength == 126 then
       local len_bytes = client:receive(2)
       if not len_bytes or #len_bytes ~= 2 then return nil, "UNKNOWN" end
-      payloadLength = love.data.unpack(">I[2]", len_bytes)
+      payloadLength = love.data.unpack(">I2", len_bytes)
     elseif payload_len == 127 then
       local len_bytes = client:receive(8)
       if not len_bytes or #len_bytes ~= 8 then return nil, "UNKNOWN" end
-      payloadLength = love.data.unpack(">I[8]", len_bytes)
+      payloadLength = love.data.unpack(">I8", len_bytes)
     end
 
     local masking_key = client:receive(4)
@@ -73,10 +73,10 @@ websocket13.processRequest = function(client)
     if not payload then return nil, "UNKNOWN" end
 
     local unmaskedPayloadTable = {}
-    for i = 0, #payload + 1 do
+    for i = 0, #payload - 1 do
       local maskedByte = string.byte(payload, i + 1)
       local maskingByte = string.byte(masking_key, i % 4 + 1)
-      unmaskedPayloadTable[i + 1] = string.char(bit.xor(maskedByte, maskingByte))
+      unmaskedPayloadTable[i + 1] = string.char(bit.bxor(maskedByte, maskingByte))
     end
     local unmaskedPayload = table.concat(unmaskedPayloadTable)
 
@@ -106,9 +106,10 @@ websocket13.send = function(client, opcode, payload)
   local payloadLength = payload and #payload or 0
 
   if payloadLength == 0 then
+    header.fin = 1
     header.payload_len = 0
-    local headerBytes = ffi.string(ffi.cast("void*"), 2)
-    client:send(headerBytes .. love.data.pack(">I[4]", 0))
+    local headerBytes = ffi.string(ffi.cast("void*", header), 2)
+    client:send(headerBytes .. love.data.pack("string", ">I4", 0))
     return
   end
 
@@ -126,16 +127,20 @@ websocket13.send = function(client, opcode, payload)
     elseif #chunk <= 65535 then
       header.payload_len = 126
       headerBytes = ffi.string(ffi.cast("void*", header), 2)
-      headerBytes = headerBytes .. love.data.pack(">I[2]", #chunk)
+      headerBytes = headerBytes .. love.data.pack("string", ">I2", #chunk)
     else
       header.payload_len = 127
       headerBytes = ffi.string(ffi.cast("void*", header), 2)
-      headerBytes = headerBytes .. love.data.pack(">I[8]", #chunk)
+      headerBytes = headerBytes .. love.data.pack("string", ">I8", #chunk)
     end
-    client:send(headerBytes .. love.data.pack(">I[4]", 0) .. chunk)
+    client:send(headerBytes .. chunk)
 
     header.opcode = 0x0
   end
+end
+
+websocket13.handleRequest = function(request)
+  love.mintmousse.info(">", request.payload)
 end
 
 return websocket13

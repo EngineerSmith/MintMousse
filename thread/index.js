@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   websocket.onopen = () => {
     console.log("WebSocket connection opened");
+    websocket.send("hello world");
   }
   websocket.onmessage = (event) => {
     console.log("Message from server:", event.data);

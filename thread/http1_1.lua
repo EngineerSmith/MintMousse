@@ -44,7 +44,10 @@ http1_1.parseRequest = function(client, initialRaw)
       local lowerKey = key:lower()
       request.headers[lowerKey], request.headerSet[lowerKey] = { }, { }
       for v in value:gmatch("([^,]+)") do
-        local trimmedValue = v:gsub("^%s*", ""):gsub("%s*$", ""):lower()
+        local trimmedValue = v:gsub("^%s*", ""):gsub("%s*$", "")
+        if lowerKey ~= "sec-websocket-key" then
+          trimmedValue = trimmedValue:lower()
+        end
         table.insert(request.headers[lowerKey], trimmedValue)
         request.headerSet[lowerKey][trimmedValue] = true
       end
@@ -118,17 +121,17 @@ http1_1.respond = function(client, code, uri, headers, content)
     headers["connection"] = "keep-alive"
   end
 
-  if uri then
+  if uri and code ~= 101 then
     headers["allow"] =  http.getAllowedMethods(uri)
   end
 
   if content then
     headers["content-length"] = tostring(#content)
-  else
+  elseif code ~= 101 then
     headers["content-length"] = "0"
   end
 
-  headers["Date"] = http.getDate()
+  headers["date"] = http.getDate()
   response = response .. http1_1.generateHeaders(headers)
 
   if content then
