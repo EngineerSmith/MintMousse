@@ -315,7 +315,7 @@ return function(path, directoryPath)
     elseif type(icon) == "string" then
       if love.filesystem.getInfo(icon, "file") then
         local temp = icon:lower()
-        if temp:match(".png$") or temp:match(".jpeg$") or temp:match(".jpg$") then
+        if temp:match(".png$") or temp:match(".jpeg$") or temp:match(".jpg$") or temp:match(".svg$") then
           love.mintmousse.push({
             func = "setIconFromFile",
             icon,

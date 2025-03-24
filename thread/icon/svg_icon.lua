@@ -1,16 +1,7 @@
 local svg_colors = love.mintmousse.require("core.svg_colors.lua")
 
 return function(icon)
-  if type(icon) == "string" then
-    if icon:find("%.svg$") then
-      return love.filesystem.read(icon)
-    end
-    icon = {
-      emoji = icon
-    }
-  end
-
-  icon.type = "svg"
+  love.mintmousse.assert(type(icon) ~= "table", "SVG ICON: icon must be type Table")
 
   -- Emoji
   love.mintmousse.assert(type(icon.emoji) == "string", "SVG ICON: icon.emoji must be type String")
@@ -20,7 +11,7 @@ return function(icon)
   if icon.shape == "rect" then
     icon.rect = true
   elseif icon.shape == "circle" then
-    icon.rect = true
+    icon.circle = true
   end
   love.mintmousse.assert(not (icon.rect and iron.circle), "SVG ICON: Cannot display both rect and circle at the same time")
 

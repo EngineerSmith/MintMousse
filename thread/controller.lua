@@ -131,6 +131,10 @@ controller.notifySubscribersComponentRemoved = function(targetComponent)
   end
 end
 
+controller.setTitle = function(title)
+  controller.title = type(title) == "string" and title or "MintMousse"
+end
+
 controller.renderIcon = function(icon)
   local iconMustache = love.mintmousse.read("thread/icon/icon.mustache")
   controller.icon = lustache:render(iconMustache, icon)
@@ -155,6 +159,8 @@ controller.setIconFromFile = function(filepath)
     iconType = "image/png"
   elseif temp:match(".jpeg$") or temp:match(".jpg$") then
     iconType = "image/jpeg"
+  elseif temp:match(".svg"$) then
+    iconType = "image/svg+xml"
   end
   if not iconType then
     love.mintmousse.warning("Controller: setIconFromFile: Couldn't determine MIME type. File:", filepath)
@@ -231,28 +237,7 @@ controller.newTab = function(id, title, index)
 
   controller.idMap[tab.id] = tab
   table.insert(controller.tabs, index, tab)
-
 end
-
--- local TREE_VERSION_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_VERSION_ID)
--- local TREE_DATA_CHANNEL = love.thread.getChannel(love.mintmousse.COMPONENT_TREE_DATA_ID)
--- controller.updateTree = function()
---   TREE_VERSION_CHANNEL:performAtomic(function()
---   TREE_DATA_CHANNEL:performAtomic(function()
---     TREE_VERSION_CHANNEL:push(TREE_VERSION_CHANNEL:pop() + 1)
---     TREE_DATA_CHANNEL:clear()
---     TREE_DATA_CHANNEL:push(love.mintmousse._encode(controller.tree))
---   end)
---   end)
--- end
-
--- -- Programmer note; when calling this function, add your own logging if it returns nil
--- controller.getComponent = function(id)
---   if not id then
---     return nil
---   end
---   return controller.idMap[id]
--- end
 
 -- controller.removeComponent = function(id)
 --   local component = controller.getComponent(id)

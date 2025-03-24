@@ -6,6 +6,17 @@ require(PATH .. "mintmousse")(PATH, dirPATH)
 local server = love.mintmousse.require("thread.server")
 local controller = love.mintmousse.require("thread.controller")
 
+-- Set defaults
+controller.setTitle("MintMousse")
+controller.setSVGIcon({
+  emoji = "🦆",
+  rect = true,
+  rounded = true,
+  color = "mintcream",
+  outsideColor = "%2300FF07", -- #00FF07
+  easterEgg = true
+})
+
 -- todo; should callbacks be added via a function?
 --         This has the issue of dependency
 local callbacks = { }
