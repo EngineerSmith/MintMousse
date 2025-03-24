@@ -73,4 +73,8 @@ http.processRequest = function(request)
   return code, headers, content
 end
 
+http.getDate = function()
+  return os.date("!%a, %d %b %Y %H:%M:%S GMT", os.time())
+end
+
 return http

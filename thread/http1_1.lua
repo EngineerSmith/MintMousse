@@ -124,6 +124,7 @@ http1_1.respond = function(client, code, uri, headers, content)
     headers["content-length"] = "0"
   end
 
+  headers["Date"] = http.getDate()
   response = response .. generateHeaders(headers)
 
   if content then

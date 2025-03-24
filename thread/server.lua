@@ -61,7 +61,7 @@ server.start = function(host, httpPort)
   server.cleanUp()
 
   local errorMessage
-  server.tcp, errorMessage = socket.bind(host, httpPort or 80)
+  server.tcp, errorMessage = socket.bind(host or "*", httpPort or 80)
 
   if not server.tcp then
     love.mintmousse.error("TCPServer: Could not bind to port", httpPort or 80, ". Reason:", errorMessage)

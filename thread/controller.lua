@@ -5,7 +5,19 @@ local controller = {
   updateSinks = { },
   tabs = { },
   idMap = { },
+  _isDirty = true,
 }
+
+controller.javascript = love.mintmousse.read("thread/index.js")
+
+local indexMustache = love.mintmousse.read("thread/index.html")
+controller.getIndex = function()
+  if controller._isDirty then
+    controller.index = lustache:render(indexMustache, controller)
+    controller._isDirty = false
+  end
+  return controller.index
+end
 
 controller.getSink = function(threadID)
   for index, sink in ipairs(controller.updateSinks) do
@@ -132,12 +144,15 @@ controller.notifySubscribersComponentRemoved = function(targetComponent)
 end
 
 controller.setTitle = function(title)
+  local previousTitle = controller.title
   controller.title = type(title) == "string" and title or "MintMousse"
+  controller._isDirty = controller._isDirty or controller.title ~= previousTitle
 end
 
 controller.renderIcon = function(icon)
   local iconMustache = love.mintmousse.read("thread/icon/icon.mustache")
   controller.icon = lustache:render(iconMustache, icon)
+  controller._isDirty = controller._isDirty or true
 end
 
 controller.setSVGIcon = function(icon)

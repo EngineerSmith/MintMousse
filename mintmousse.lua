@@ -63,6 +63,8 @@ return function(path, directoryPath)
     -- Do not change these at run time they won't affect threads! Change the file
     MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body byte limit of incoming HTTP requests 
     TEMP_MOUNT_LOCATION = ".MintMousse/", -- Location for temporary zip mounting
+    --CACHE_CONTROL_HEADER = "public, max-age=604800", -- cache-control header response for unchanging static assets
+    CACHE_CONTROL_HEADER = "no-store", -- use for active development of the MintMousse library
 
       -- Thread Communication
     THREAD_COMMAND_QUEUE_ID = "MintMousse", -- id for a love.thread Channel
@@ -342,7 +344,7 @@ return function(path, directoryPath)
     })
   end
 
-  -- https://realfavicongenerator.net @ 2025
+  -- https://realfavicongenerator.net @ 2025 Q1
   love.mintmousse.setIconRFG = function(filepath)
     love.mintmousse.assert(type(filepath) == "string", "filepath must be type String")
     local temp = filepath:lower()
