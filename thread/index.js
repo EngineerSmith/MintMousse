@@ -24,6 +24,25 @@ var isLowEndMachine = false;
   }
 }
 
+function setConnectedStatus() {
+  const connectedStatus = document.getElementById("connected-status");
+  connectedStatus.style.display = "inline-block";
+  const disconnectedStatus = document.getElementById("disconnected-status");
+  disconnectedStatus.style.display = "none";
+}
+
+function setDisconnectedStatus() {
+  const disconnectedStatus = document.getElementById("disconnected-status");
+  disconnectedStatus.style.display = "inline-block";
+  const connectedStatus = document.getElementById("connected-status");
+  connectedStatus.style.display = "none";
+}
+
+function hideSpinner() {
+  const spinnerElement = document.getElementById("loadingSpinner");
+  spinnerElement.style.display = "none";
+}
+
 function hasEvent(element, eventType) {
   const listeners = element.addEventListener ? element.addEventListener._listeners : element._listeners;
   return listeners && listeners[eventType] !== undefined;
@@ -48,26 +67,53 @@ function setAttributes(element, attributes) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+function startConnectionMonitor(pingIntervalSeconds) {
+  const interval = Math.max(1, pingIntervalSeconds);
+
+  setInterval(() => {
+    fetch('/api/ping')
+      .then(response => {
+        if (response.status === 204) {
+          console.log("Server is alive, refreshing page.");
+          window.location.reload()
+        } else {
+          console.log(`Ping failed wit status: ${response.status}`);
+        }
+      })
+      .catch(error => {
+        console.error("Error pinging server:", error)
+      });
+  }, interval * 1000);
+}
+
+function createWebSocketConnection() {
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const host = window.location.hostname;
-  const port = window.location.port ? `:${window.location.port}` : '';
-  const websocketEndpoint = '/live-updates';
+  const port = window.location.port ? `:${window.location.port}` : "";
+  const websocketEndpoint = "/live-updates";
   const websocketUrl = `${protocol}//${host}${port}${websocketEndpoint}`;
-
+  
   const websocket = new WebSocket(websocketUrl);
-
+  
   websocket.onopen = () => {
     console.log("WebSocket connection opened");
-    websocket.send("hello world");
+    setConnectedStatus();
   }
   websocket.onmessage = (event) => {
     console.log("Message from server:", event.data);
   };
   websocket.onclose = () => {
     console.log("WebSocket connection closed");
+    setDisconnectedStatus();
+    startConnectionMonitor(3);
   }
   websocket.onerror = (error) => {
     console.log("WebSocket error:", error);
+    setDisconnectedStatus();
+    startConnectionMonitor(3);
   }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  createWebSocketConnection();
 });

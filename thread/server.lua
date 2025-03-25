@@ -132,7 +132,7 @@ server.newIncomingConnection = function()
             if code == 101 then
               if headers["upgrade"] == "websocket" then
                 connection.type = "WS/"..headers["sec-websocket-version"]
-                websocket13.send(client, 0x1, "hello world")
+                --websocket13.send(client, 0x1, "hello world")
               else
                 love.mintmousse.warning("TCPServer: HTTP 101 returned unexpected upgrade; tell a programmer to add connection type. Upgrade:", tostring(headers["upgrade"]))
               end

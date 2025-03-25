@@ -59,6 +59,19 @@ http.addMethod("GET", "/index.js", function(request)
   }, controller.javascript
 end)
 
+http.addMethod("GET", "/index.css", function(request)
+  return 200, {
+    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["content-type"] = "text/css; charset=utf8",
+  }, controller.css
+end)
+
+http.addMethod("GET", "/api/ping", function(request)
+  return 204, {
+    ["cache-control"] = "no-store"
+  }, nil
+end)
+
 while true do
   for _ = 0, 50 do
     local message = love.mintmousse.pop()

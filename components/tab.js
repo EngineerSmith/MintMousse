@@ -1,5 +1,5 @@
 function tab_new(id, name) {
-  const tabPaneID = id + "-tab-pane";
+  const tabPaneID = id + "-tab-panel";
 
   // add to Navbar
   const li = document.createElement("li");

@@ -9,6 +9,7 @@ local controller = {
 }
 
 controller.javascript = love.mintmousse.read("thread/index.js")
+controller.css = love.mintmousse.read("thread/index.css")
 
 local indexMustache = love.mintmousse.read("thread/index.html")
 controller.getIndex = function()

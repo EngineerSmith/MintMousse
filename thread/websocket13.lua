@@ -2,11 +2,13 @@ local ffi = require("ffi")
 -- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#format
 ffi.cdef([[
   typedef struct {
+  // Byte 1
     uint8_t opcode:4;
     uint8_t rsv3:1;
     uint8_t rsv2:1;
     uint8_t rsv1:1;
     uint8_t fin:1;
+  // Byte 2
     uint8_t payload_len:7;
     uint8_t masked:1;
   } websocket_header;
