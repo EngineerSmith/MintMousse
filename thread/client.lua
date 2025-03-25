@@ -8,7 +8,12 @@ local client = { }
 client.__index = client
 
 client.new = function(socketClient)
-  local self = setmetatable({ client = socketClient }, client)
+  local self = setmetatable({
+    client = socketClient,
+    connection = {
+      type = "undetermined",
+    },
+  }, client)
 
   self.client:settimeout(0)
   self.client:setoption("keepalive", true)
@@ -58,6 +63,10 @@ client.send = function(self, data, i, j)
     end
     coroutine.yield(true)
   end
+end
+
+client.isBufferEmpty = function(self)
+  return not self.client:dirty()
 end
 
 return client

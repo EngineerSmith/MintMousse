@@ -88,6 +88,14 @@ server.isRunning = function()
 end
 
 server.cleanUp = function()
+  for client in pairs(server.clients) do
+    if client.connection.type == "WS/13" then
+      websocket13.closeConnection(client, "Server shutdown", false)
+    else
+      client:close()
+    end
+  end
+  server.clients = { }
   if server.tcp then
     server.tcp:close()
     server.tcp = nil
@@ -108,9 +116,6 @@ server.newIncomingConnection = function()
     server.clients[client] = true
 
     server.connections[coroutine.wrap(function()
-      client.connection = {
-        type = "undetermined"
-      }
       client.connection.initialRaw = client:receive(14)
       if client.connection.initialRaw == "PRI * HTTP/2.0" then
         client.connection.type = "HTTP/2"
@@ -134,7 +139,11 @@ server.newIncomingConnection = function()
             if code == 101 then
               if headers["upgrade"] == "websocket" then
                 client.connection.type = "WS/"..headers["sec-websocket-version"]
-                websocket13.newConnection(client)
+                if client.connection.type == "WS/13" then
+                  websocket13.newConnection(client)
+                else
+                  love.mintmousse.warning("TCPServer: Unknown websocket version:",  client.connection.type)
+                end
               else
                 love.mintmousse.warning("TCPServer: HTTP 101 returned unexpected upgrade; tell a programmer to add connection type. Upgrade:", tostring(headers["upgrade"]))
               end
@@ -147,20 +156,23 @@ server.newIncomingConnection = function()
           status = "close"
           love.mintmousse.info("TCPServer: Client [", address, "] using HTTP/2 has been requested to upgrade to HTTP/1.1")
         elseif client.connection.type == "WS/13" then
-          local request, errorMessage = websocket13.processRequest(client)
-          if not request then
-            love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
-            websocket13.close(client)
-            status = "close"
-          else
-            if request.type == "close" then
+          if not client:isBufferEmpty() then
+            local request, errorMessage = websocket13.processRequest(client)
+            if not request then
+              love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
               websocket13.close(client)
               status = "close"
-            elseif request.type == "text" or request.type == "binary" then
-              -- process request
-              love.mintmousse.warning("TCPServer: TODO WebSocket Response:", request.type, ". Payload length:", #request.payload)
             else
-              status = websocket13.handleRequest(request)
+              if request.type == "close" then
+                websocket13.close(client)
+                status = "close"
+              elseif request.type == "text/utf8" or request.type == "binary" then
+                -- process request
+                love.mintmousse.warning("TCPServer: TODO WebSocket Response:", request.type, ". Payload length:", #request.payload)
+
+              else
+                status = websocket13.handleRequest(client, request)
+              end
             end
           end
         end

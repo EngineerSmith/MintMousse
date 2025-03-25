@@ -62,7 +62,8 @@ return function(path, directoryPath)
     directoryPath = directoryPath,
     -- Do not change these at run time they won't affect threads! Change the file
     MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body byte limit of incoming HTTP requests 
-    TEMP_MOUNT_LOCATION = ".MintMousse/", -- Location for temporary zip mounting
+    TEMP_MOUNT_LOCATION = ".MintMousse/", -- File location for temporary zip mounting
+      -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control
     --CACHE_CONTROL_HEADER = "public, max-age=604800", -- cache-control header response for unchanging static assets
     CACHE_CONTROL_HEADER = "no-store", -- use for active development of the MintMousse library
 
@@ -150,18 +151,20 @@ return function(path, directoryPath)
       })
     end
 
-    love.mintmousse.stop = function()
-      love.mintmousse.push({
-        func = "quit",
-      })
-    end
-
-    love.mintmousse.stopNow = function()
+    love.mintmousse.stop = function(noWait)
       COMMAND_QUEUE:performAtomic(function()
         COMMAND_QUEUE:clear()
         love.mintmousse.stop()
       end)
+      if not noWait then
+        love.mintmousse.thread:wait()
+      end
     end
+
+    love.mintmousse.wait = function()
+      love.mintmousse.thread:wait()
+    end
+
   else
     love.mintmousse.pushEvent = function(enum, ...)
       love.event.push(love.mintmousse.THREAD_RESPONSE_QUEUE_ID, enum, ...)

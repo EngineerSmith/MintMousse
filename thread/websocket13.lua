@@ -42,7 +42,7 @@ websocket13.processRequest = function(client)
         request.type = "close"
       elseif header.opcode == 0x9 then
         if header.fin == 0 then return nil, "client sent ping with unclosed frame" end
-        request.type = "ping" --todo handle; ping should return the exact same payload
+        request.type = "ping"
       elseif header.opcode == 0xA then
         if header.fin == 0 then return nil, "client sent pong with unclosed frame" end
         request.type = "pong" --todo handle
@@ -141,12 +141,46 @@ websocket13.send = function(client, opcode, payload)
   end
 end
 
-websocket13.handleRequest = function(request)
-  love.mintmousse.info(">", request.payload)
+websocket13.handleRequest = function(client, request)
+  love.mintmousse.warning("WS13: todo websocket13.handleRequest")
+  if request.type == "ping" then
+    websocket13.send(client, 0xA, request.payload)
+  elseif request.type == "close" then
+    websocket13.send(client, 0x8, "Close response")
+    return "close"
+  end
+  return "open"
 end
 
 websocket13.newConnection = function(client)
   love.mintmousse.warning("WS13: Need to overwrite websocket13.newConnection callback")
+end
+
+websocket13.closeConnection = function(client, reason, isCoroutine)
+  isCoroutine = isCoroutine or true
+
+  websocket13.send(client, 0x8, reason or "Request closing")
+
+  local startTime, timeout = love.timer.getTime(), isCoroutine and 5 or 1
+  while love.timer.getTime() - startTime < timeout do
+    if not client:isBufferEmpty() then
+      local request, errorMessage = websocket13.processRequest(client)
+      if not request then
+        love.mintmousse.info("WS13: Received error when trying to close WebSocket:", errorMessage)
+      elseif request.type == "close" then
+        break
+      end
+    end
+    if isCoroutine then
+      coroutine.yield(true)
+    else
+      love.timer.sleep(0.0001)
+    end
+  end 
+  client:close()
+  if isCoroutine then
+    coroutine.yield(nil) -- ending the coroutine
+  end
 end
 
 return websocket13

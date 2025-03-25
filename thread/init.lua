@@ -69,23 +69,23 @@ end)
 
 http.addMethod("GET", "/api/ping", function(request)
   return 204, {
-    ["cache-control"] = "no-store"
+    ["cache-control"] = "no-store",
   }, nil
 end)
 
 websocket13.newConnection = function(client)
 
-  client.connection.userdata = "ready"
 end
 
-controller.update = function()
-  for client in pairs(server.clients) do
-    if client.connection.type == "WS13" and client.connection.userdata == "ready" then
-      -- send update
+-- todo updates add to queue of each client
+-- controller.update = function()
+--   for client in pairs(server.clients) do
+--     if client.connection.type == "WS13" and client.connection.userdata == "ready" then
+--       -- send update
 
-    end
-  end
-end
+--     end
+--   end
+-- end
 
 while true do
   for _ = 0, 50 do
@@ -97,7 +97,7 @@ while true do
       callbacks[message.func](unpack(message))
     end
     if message.func == "quit" then
-      --todo add server close function
+      server.cleanUp()
       return
     end
   end

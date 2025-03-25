@@ -83,7 +83,7 @@ function startConnectionMonitor(pingIntervalSeconds) {
     fetchTimeout('/api/ping', interval - 500)
       .then(response => {
         if (response.status === 204) {
-          console.log("Server is alive, refreshing page.");
+          console.log("Server is alive, reloading page.");
           window.location.reload()
         } else {
           console.log(`Ping failed with status: ${response.status}`);
