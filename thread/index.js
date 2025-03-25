@@ -162,5 +162,7 @@ function createWebSocketConnection() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  new bootstrap.Tooltip(document.getElementById("connected-status"));
+
   createWebSocketConnection();
 });

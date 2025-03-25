@@ -1,6 +1,6 @@
 @keyframes pulse {
   0% { opacity: 0.7; transform: scale(1); background-color: #4cd164; }
- 50% { opacity: 1; transform: scale(1.1); background-color: #28a745; }
+ 50% { opacity: 1; transform: scale(1.2); background-color: #28a745; }
 100% { opacity: 0.7; transform: scale(1); background-color: #4cd164; }
 }
 

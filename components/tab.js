@@ -1,4 +1,4 @@
-let active = true
+let active = true;
 function tab_new(payload) {
   const id = payload.id;
   const title = payload.title;
@@ -13,7 +13,8 @@ function tab_new(payload) {
   });
 
   const button = document.createElement("button");
-  button.classList.add("nav-link", active ? "active" : null);
+  button.classList.add("nav-link");
+  if (active) { button.classList.add("active"); }
   button.textContent = title ? title : "UNKNOWN";
   setAttributes(button, {
     "id": id + "-tab",
@@ -31,7 +32,8 @@ function tab_new(payload) {
 
   // add tab pane
   const tabPane = document.createElement("div");
-  tabPane.classList.add("tab-pane", "fade", "container", "mt-2", active ? "active" : null);
+  tabPane.classList.add("tab-pane", "fade", "container", "mt-2");
+  if (active) { tabPane.classList.add("active"); }
   setAttributes(tabPane, {
     "id": tabPaneID,
     "role": "tabpanel",
