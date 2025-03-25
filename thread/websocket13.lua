@@ -45,7 +45,7 @@ websocket13.processRequest = function(client)
         request.type = "ping"
       elseif header.opcode == 0xA then
         if header.fin == 0 then return nil, "client sent pong with unclosed frame" end
-        request.type = "pong" --todo handle
+        request.type = "pong"
       end
     else
       -- all continuation frames must have a 0x0 continuation opcode
@@ -93,10 +93,6 @@ websocket13.processRequest = function(client)
   return request
 end
 
-websocket13.close = function(client)
-  websocket13.send(client, 0x8)
-end
-
 local maxChunk = 65535
 websocket13.send = function(client, opcode, payload)
   local header = ffi.new("websocket_header")
@@ -142,14 +138,14 @@ websocket13.send = function(client, opcode, payload)
 end
 
 websocket13.handleRequest = function(client, request)
-  love.mintmousse.warning("WS13: todo websocket13.handleRequest")
   if request.type == "ping" then
     websocket13.send(client, 0xA, request.payload)
+  elseif request.type == "pong" then
+    love.mintmousse.info("WS13: Received pong from client")
   elseif request.type == "close" then
     websocket13.send(client, 0x8, "Close response")
     return "close"
   end
-  return "open"
 end
 
 websocket13.newConnection = function(client)
