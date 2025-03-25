@@ -24,18 +24,21 @@ var isLowEndMachine = false;
   }
 }
 
+
+const connectedStatus = document.getElementById("connected-status");
+const disconnectedStatus = document.getElementById("disconnected-status");
+const disconnectedStatusText = document.getElementById("disconnected-status-text");
+
 function setConnectedStatus() {
-  const connectedStatus = document.getElementById("connected-status");
   connectedStatus.style.display = "inline-block";
-  const disconnectedStatus = document.getElementById("disconnected-status");
   disconnectedStatus.style.display = "none";
+  disconnectedStatusText.style.display = "none";
 }
 
 function setDisconnectedStatus() {
-  const disconnectedStatus = document.getElementById("disconnected-status");
-  disconnectedStatus.style.display = "inline-block";
-  const connectedStatus = document.getElementById("connected-status");
   connectedStatus.style.display = "none";
+  disconnectedStatus.style.display = "inline-block";
+  disconnectedStatusText.style.display = "inline-block";
 }
 
 function hideSpinner() {

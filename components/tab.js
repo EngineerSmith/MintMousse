@@ -1,3 +1,4 @@
+let active = true
 function tab_new(payload) {
   const id = payload.id;
   const title = payload.title;
@@ -12,7 +13,7 @@ function tab_new(payload) {
   });
 
   const button = document.createElement("button");
-  button.classList.add("nav-link");
+  button.classList.add("nav-link", active ? "active" : null);
   button.textContent = title ? title : "UNKNOWN";
   setAttributes(button, {
     "id": id + "-tab",
@@ -21,13 +22,7 @@ function tab_new(payload) {
     "type": "button",
     "role": "tab",
     "aria-controls": tabPaneID,
-    "aria-selected": false,
-  });
-  const tabTrigger = new bootstrap.Tab(button);
-  button.addEventListener('click', event => {
-    event.preventDefault();
-    tabTrigger.show();
-    resizeMasonry();
+    "aria-selected": active,
   });
 
   li.append(button);
@@ -36,12 +31,12 @@ function tab_new(payload) {
 
   // add tab pane
   const tabPane = document.createElement("div");
-  tabPane.classList.add("tab-pane", "fade", "container", "mt-2");
+  tabPane.classList.add("tab-pane", "fade", "container", "mt-2", active ? "active" : null);
   setAttributes(tabPane, {
     "id": tabPaneID,
     "role": "tabpanel",
     "aria-labelledby": id + "-tab",
-    "tabindex": 0,
+    "tabindex": "0",
   });
 
   const grid = document.createElement("div");
@@ -70,5 +65,14 @@ function tab_new(payload) {
 
   eventInit();
 
+  // Add tab to Bootstrap
+  const tabTrigger = new bootstrap.Tab(button);
+  button.addEventListener('click', event => {
+    event.preventDefault();
+    tabTrigger.show();
+    resizeMasonry();
+  });
+
   console.log("Added tab:", title);
+  active = false;
 }
