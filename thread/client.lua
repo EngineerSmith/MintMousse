@@ -13,6 +13,7 @@ client.new = function(socketClient)
     connection = {
       type = "undetermined",
     },
+    queue = { },
   }, client)
 
   self.client:settimeout(0)

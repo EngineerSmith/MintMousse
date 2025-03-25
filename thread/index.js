@@ -105,26 +105,57 @@ function createWebSocketConnection() {
   const port = window.location.port ? `:${window.location.port}` : "";
   const websocketEndpoint = "/live-updates";
   const websocketUrl = `${protocol}//${host}${port}${websocketEndpoint}`;
-  
+
   const websocket = new WebSocket(websocketUrl);
-  
+
   websocket.onopen = () => {
     console.log("WebSocket connection opened");
     setConnectedStatus();
-  }
-  websocket.onmessage = (event) => {
-    console.log("Message from server:", event.data);
   };
+
+  websocket.onmessage = (event) => {
+    if (typeof event.data === "string") {
+      const receivedString = event.data;
+      try {
+        const payload = JSON.parse(receivedString);
+        console.log("Received JSON data:", payload);
+        try {
+          for (let i = 0; i < payload.length; i++) {
+            const func = window[payload[i].func];
+            if (typeof func === "function") {
+              func(payload[i]);
+            } else {
+              console.error("Error couldn't find function:", payload[i].func)
+            }
+          }
+        } catch (error) {
+          console.error("Error processing json:", error)
+        }
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        console.log("Received text data:", receivedString)
+      }
+    } else if (event.data instanceof Blob) {
+      console.log("Received binary data (Blob):", event.data);
+    } else if (event.data instanceof ArrayBuffer) {
+      console.log("Received binary data (ArrayBuffer):", event.data);
+    } else {
+      console.log("Received unknown data type:", event.data);
+    }
+    hideSpinner();
+  };
+
   websocket.onclose = () => {
     console.log("WebSocket connection closed");
     setDisconnectedStatus();
-    startConnectionMonitor(5);
-  }
+    startConnectionMonitor(3);
+  };
+
   websocket.onerror = (error) => {
     console.log("WebSocket error:", error);
     setDisconnectedStatus();
-    startConnectionMonitor(5);
-  }
+    startConnectionMonitor(3);
+  };
 }
 
 document.addEventListener("DOMContentLoaded", () => {

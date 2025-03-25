@@ -23,6 +23,7 @@ controller.setSVGIcon({
 --         This has the issue of dependency
 local callbacks = { }
 
+callbacks.newTab = controller.newTab
 callbacks.setTitle = controller.setTitle
 callbacks.setSVGIcon = controller.setSVGIcon
 callbacks.setIconRaw = controller.setIconRaw
@@ -74,18 +75,26 @@ http.addMethod("GET", "/api/ping", function(request)
 end)
 
 websocket13.newConnection = function(client)
-
+  local array = controller.getInitialPayload()
+  if array then
+    table.insert(client.queue, {
+      type = "text/utf8",
+      payload = array,
+    })
+  end
 end
 
--- todo updates add to queue of each client
--- controller.update = function()
---   for client in pairs(server.clients) do
---     if client.connection.type == "WS13" and client.connection.userdata == "ready" then
---       -- send update
-
---     end
---   end
--- end
+controller.update = function(jsonPayload)
+  local payload = {
+    type = "text/utf8",
+    payload = "["..jsonPayload.."]",
+  }
+  for client in pairs(server.clients) do
+    if client.connection.type == "WS/13" then
+      table.insert(client.queue, payload)
+    end
+  end
+end
 
 while true do
   for _ = 0, 50 do
@@ -94,7 +103,15 @@ while true do
       break
     end
     if type(message.func) == "string" then
-      callbacks[message.func](unpack(message))
+      local func = callbacks[message.func]
+      if type(func) == "function" then
+        local success = pcall(func, unpack(message))
+        if not success then
+          love.mintmousse.warning("Failed to process message:", message.func)
+        end
+      else
+        love.mintmousse.warning("Could not find callback for:", message.func)
+      end
     end
     if message.func == "quit" then
       server.cleanUp()

@@ -11,6 +11,9 @@ local controller = {
 controller.javascript = love.mintmousse.read("thread/index.js")
 controller.css = love.mintmousse.read("thread/index.css")
 
+-- temp todo!!
+controller.javascript = controller.javascript .. "\r\n" .. love.mintmousse.read("components/tab.js")
+
 local indexMustache = love.mintmousse.read("thread/index.html")
 controller.getIndex = function()
   if controller._isDirty then
@@ -230,6 +233,24 @@ controller.update = function()
   love.mintmousse.warning("Controller: Need to overwrite controller.update callback")
 end
 
+controller.getInitialPayload = function()
+  if #controller.tabs == 0 then
+    return nil
+  end
+
+  local jsonTabs = { }
+  for index, tab in ipairs(controller.tabs) do
+    local payload = {
+      func = "tab_new",
+      id = "tab-"..tab.id,
+      title = tab.title,
+      content = nil, --[[todo render children]]
+    }
+    table.insert(jsonTabs, index, json.encode(payload))
+  end
+  return "["..table.concat(jsonTabs, ",").."]"
+end
+
 controller.newTab = function(id, title, index)
   if not id then
     return love.mintmousse.warning("Controller: No ID passed to newTab")
@@ -243,20 +264,27 @@ controller.newTab = function(id, title, index)
     return
   end
 
-  if not index then
-    index = #controller.tabs
-  end
-
   local tab = {
     id = id,
     parent = controller.tabs,
     children = { },
+    --
     title = title,
-    treeRef = treeTab,
   }
+
+  if not index then
+    index = #controller.tabs + 1
+  end
 
   controller.idMap[tab.id] = tab
   table.insert(controller.tabs, index, tab)
+
+  controller.update(json.encode({
+    func = "tab_new",
+    id = "tab-"..tab.id,
+    title = tab.title,
+    content = nil,
+  }))
 end
 
 -- controller.removeComponent = function(id)

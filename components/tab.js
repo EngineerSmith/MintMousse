@@ -1,4 +1,7 @@
-function tab_new(id, name) {
+function tab_new(payload) {
+  const id = payload.id;
+  const title = payload.title;
+
   const tabPaneID = id + "-tab-panel";
 
   // add to Navbar
@@ -10,7 +13,7 @@ function tab_new(id, name) {
 
   const button = document.createElement("button");
   button.classList.add("nav-link");
-  button.textContent = name ? name : "UNKNOWN";
+  button.textContent = title ? title : "UNKNOWN";
   setAttributes(button, {
     "id": id + "-tab",
     "data-bs-toggle": "tab",
@@ -66,4 +69,6 @@ function tab_new(id, name) {
   tabMasonry.set(id, masonryInstance);
 
   eventInit();
+
+  console.log("Added tab:", title);
 }

@@ -102,12 +102,11 @@ websocket13.send = function(client, opcode, payload)
   header.masked = 0
 
   local payloadLength = payload and #payload or 0
-
   if payloadLength == 0 then
     header.fin = 1
     header.payload_len = 0
     local headerBytes = ffi.string(ffi.cast("void*", header), 2)
-    client:send(headerBytes .. love.data.pack("string", ">I4", 0))
+    client:send(headerBytes)
     return
   end
 

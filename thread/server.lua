@@ -175,6 +175,15 @@ server.newIncomingConnection = function()
               end
             end
           end
+          for _ = 0, 5 do
+            local payload = client.queue[1]
+            if not payload then
+              break
+            end
+            local opcode = payload.type == "binary" and 0x2 or 0x1
+            websocket13.send(client, opcode, payload.payload)
+            table.remove(client.queue, 1)
+          end
         end
 
         coroutine.yield(true)
