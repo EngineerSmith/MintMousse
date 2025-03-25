@@ -226,6 +226,10 @@ controller.setIconRFG = function(filepath)
   love.filesystem.unmount(filepath)
 end
 
+controller.update = function()
+  love.mintmousse.warning("Controller: Need to overwrite controller.update callback")
+end
+
 controller.newTab = function(id, title, index)
   if not id then
     return love.mintmousse.warning("Controller: No ID passed to newTab")

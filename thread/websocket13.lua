@@ -145,4 +145,8 @@ websocket13.handleRequest = function(request)
   love.mintmousse.info(">", request.payload)
 end
 
+websocket13.newConnection = function(client)
+  love.mintmousse.warning("WS13: Need to overwrite websocket13.newConnection callback")
+end
+
 return websocket13

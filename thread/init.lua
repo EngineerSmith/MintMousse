@@ -6,6 +6,7 @@ require(PATH .. "mintmousse")(PATH, dirPATH)
 local http = love.mintmousse.require("thread.http")
 local server = love.mintmousse.require("thread.server")
 local controller = love.mintmousse.require("thread.controller")
+local websocket13 = love.mintmousse.require("thread.websocket13")
 
 -- Set defaults
 controller.setTitle("MintMousse")
@@ -71,6 +72,20 @@ http.addMethod("GET", "/api/ping", function(request)
     ["cache-control"] = "no-store"
   }, nil
 end)
+
+websocket13.newConnection = function(client)
+
+  client.connection.userdata = "ready"
+end
+
+controller.update = function()
+  for client in pairs(server.clients) do
+    if client.connection.type == "WS13" and client.connection.userdata == "ready" then
+      -- send update
+
+    end
+  end
+end
 
 while true do
   for _ = 0, 50 do

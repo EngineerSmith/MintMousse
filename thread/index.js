@@ -67,23 +67,36 @@ function setAttributes(element, attributes) {
   }
 }
 
+// https://stackoverflow.com/a/57888548
+const fetchTimeout = (url, ms, { signal, ...options } = {}) => {
+  const controller = new AbortController();
+  const promise = fetch(url, { signal: controller.signal, ...options });
+  if (signal) signal.addEventListener("abort", () => controller.abort());
+  const timeout = setTimeout(() => controller.abort(), ms);
+  return promise.finally(() => clearTimeout(timeout));
+};
+
 function startConnectionMonitor(pingIntervalSeconds) {
-  const interval = Math.max(1, pingIntervalSeconds);
+  const interval = Math.max(1, pingIntervalSeconds) * 1000;
 
   setInterval(() => {
-    fetch('/api/ping')
+    fetchTimeout('/api/ping', interval - 500)
       .then(response => {
         if (response.status === 204) {
           console.log("Server is alive, refreshing page.");
           window.location.reload()
         } else {
-          console.log(`Ping failed wit status: ${response.status}`);
+          console.log(`Ping failed with status: ${response.status}`);
         }
       })
       .catch(error => {
-        console.error("Error pinging server:", error)
+        if (error.name === "AbortError") {
+          console.log("Ping request timed out.")
+        } else {
+          console.error("Error pinging server:", error)
+        }
       });
-  }, interval * 1000);
+  }, interval);
 }
 
 function createWebSocketConnection() {
@@ -105,12 +118,12 @@ function createWebSocketConnection() {
   websocket.onclose = () => {
     console.log("WebSocket connection closed");
     setDisconnectedStatus();
-    startConnectionMonitor(3);
+    startConnectionMonitor(5);
   }
   websocket.onerror = (error) => {
     console.log("WebSocket error:", error);
     setDisconnectedStatus();
-    startConnectionMonitor(3);
+    startConnectionMonitor(5);
   }
 }
 

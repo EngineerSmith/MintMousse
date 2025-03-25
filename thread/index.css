@@ -1,0 +1,16 @@
+@keyframes pulse {
+  0% { opacity: 0.7; transform: scale(1); background-color: #4cd164; }
+ 50% { opacity: 1; transform: scale(1.1); background-color: #28a745; }
+100% { opacity: 0.7; transform: scale(1); background-color: #4cd164; }
+}
+
+#connected-status.pulsing {
+  animation: pulse 1.5s infinite alternate;
+}
+
+.centered-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

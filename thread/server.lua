@@ -55,6 +55,7 @@ http.addMethod("GET", "/live-updates", function(request)
 end)
 
 local server = {
+  clients = { },
   connections = { },
   whitelist = { },
 }
@@ -104,23 +105,24 @@ server.newIncomingConnection = function()
     end
 
     local client = love.mintmousse.require("thread.client").new(rawClient)
+    server.clients[client] = true
 
     server.connections[coroutine.wrap(function()
-      local connection = {
+      client.connection = {
         type = "undetermined"
       }
-      connection.initialRaw = client:receive(14)
-      if connection.initialRaw == "PRI * HTTP/2.0" then
-        connection.type = "HTTP/2"
+      client.connection.initialRaw = client:receive(14)
+      if client.connection.initialRaw == "PRI * HTTP/2.0" then
+        client.connection.type = "HTTP/2"
       else
-        connection.type = "HTTP/1.1"
+        client.connection.type = "HTTP/1.1"
       end
       while true do
         local status
 
-        if connection.type == "HTTP/1.1" then
-          local request = http1_1.parseRequest(client, connection.initialRaw)
-          connection.initialRaw = nil
+        if client.connection.type == "HTTP/1.1" then
+          local request = http1_1.parseRequest(client, client.connection.initialRaw)
+          client.connection.initialRaw = nil
           if type(request) ~= "table" then
             status = request
           else
@@ -131,20 +133,20 @@ server.newIncomingConnection = function()
             end
             if code == 101 then
               if headers["upgrade"] == "websocket" then
-                connection.type = "WS/"..headers["sec-websocket-version"]
-                --websocket13.send(client, 0x1, "hello world")
+                client.connection.type = "WS/"..headers["sec-websocket-version"]
+                websocket13.newConnection(client)
               else
                 love.mintmousse.warning("TCPServer: HTTP 101 returned unexpected upgrade; tell a programmer to add connection type. Upgrade:", tostring(headers["upgrade"]))
               end
             end
           end
-        elseif connection.type == "HTTP/2" then
-          connection.initialRaw = nil
+        elseif client.connection.type == "HTTP/2" then
+          client.connection.initialRaw = nil
           -- HTTP/2 not yet supported; close connection and request HTTP/1.1
           http1_1.respond(client, 426, nil, { upgrade = "HTTP/1.1", connection = "upgrade, close" })
           status = "close"
           love.mintmousse.info("TCPServer: Client [", address, "] using HTTP/2 has been requested to upgrade to HTTP/1.1")
-        elseif connection.type == "WS/13" then
+        elseif client.connection.type == "WS/13" then
           local request, errorMessage = websocket13.processRequest(client)
           if not request then
             love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
