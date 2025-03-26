@@ -34,7 +34,7 @@ callbacks.updateSubscription = controller.updateThreadSubscription
 callbacks.start = function(config)
   if config then
     if type(config.title) == "string" then
-      controller.setTitle(config.title)
+      callbacks.setTitle(config.title)
     end
     if type(config.whitelist) == "table" then
       for _, v in ipairs(config.whitelist) do

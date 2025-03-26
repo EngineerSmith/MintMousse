@@ -1,3 +1,5 @@
+local love = love
+
 if love.isThread == nil then
   love.isThread = arg == nil
 end
@@ -33,6 +35,7 @@ local createBuffer = function()
       "parentID",
       "mintmousse",
       "componentAdded",
+      "componentUpdate",
       "componentRemoved",
     }, { }
     for _, word in ipairs(dictionary) do
@@ -140,6 +143,7 @@ return function(path, directoryPath)
   if not love.isThread then -- main thread
     love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
       --todo; should all events go back to the main thread now that MM supports multithreaded calls?
+        -- implementing event checking on each user thread would require a repeat call
       error("TODO")
     end
 
@@ -186,13 +190,15 @@ return function(path, directoryPath)
     end
     local failed = id:match("[^%w%._,:;@]")
     if failed then
-      return false, "ID Can only contain alphanumeric or . _ , : ; @ characters. Failed character:"..tostring(failed)
+      return false, "ID Can only contain alphanumeric or . _ , : ; @ characters. Failed character:'"..tostring(failed.."'")
     end
     if id:find("^%d") then
       return false, "ID cannot use a numeric as the first character of an id"
     end
     if id == "all" then
       return false, "ID cannot use the protected keyword 'all'"
+    elseif id == "unknown" then
+      return false, "ID cannot use the protected keyword 'unknown'"
     end
     return true, nil
   end
@@ -271,28 +277,74 @@ return function(path, directoryPath)
 
   local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(love.mintmousse.threadID))
   love.mintmousse.processSubscription = function()
-    local package = COMPONENT_UPDATES_QUEUE:pop()
-    if not package then
-      return
+    for _ = 0, 5 do
+      local package = COMPONENT_UPDATES_QUEUE:pop()
+      if not package then
+        return
+      end
+      package = love.mintmousse._decode(package)
+      if package.type == "latest" then
+        local typeMap, relationships = unpack(package)
+        love.mintmousse._hinting.typeMap = typeMap
+        love.mintmousse._hinting.relationships = relationships
+        cleanUpLocalHinting()
+      elseif package.type == "componentAdded" then
+        local packagedComponent, parentChildIndex = unpack(package)
+        hintingComponentAdded(packagedComponent)
+        table.insert(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex, packagedComponent.id)
+      elseif package.type == "componentRemoved" then
+        local packagedComponent, parentChildIndex = unpack(package)
+        hintingComponentRemoved(packagedComponent)
+        table.remove(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex)
+      else
+        love.mintmousse.error("Package types hasn't been updated if new types have been added. Tell a programmer:", package.type)
+        return
+      end
     end
-    package = love.mintmousse._decode(package)
-    if package.type == "latest" then
-      local typeMap, relationships = unpack(package)
-      love.mintmousse._hinting.typeMap = typeMap
-      love.mintmousse._hinting.relationships = relationships
-      cleanUpLocalHinting()
-    elseif package.type == "componentAdded" then
-      local packagedComponent, parentChildIndex = unpack(package)
-      hintingComponentAdded(packagedComponent)
-      table.insert(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex, packagedComponent.id)
-    elseif package.type == "componentRemoved" then
-      local packagedComponent, parentChildIndex = unpack(package)
-      hintingComponentRemoved(packagedComponent)
-      table.remove(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex)
-    else
-      love.mintmousse.error("Package types hasn't been updated if new types have been added. Tell a programmer:", package.type)
-      return
+  end
+
+  love.mintmousse.getType = function(id)
+    local componentType = love.mintmousse._hinting.typeMap[id]
+    if not componentType then
+      componentType = love.mintmousse._hinting.localTypeMap[id]
     end
+    return componentType or "unknown"
+  end
+
+  local proxyTableMetatable = {
+    __newindex = function(tbl, index, value)
+      local self = rawget(tbl, "__raw")
+      if rawget(self, index) == value then
+        return
+      end
+      rawset(self, index, value)
+      local id = rawget(self, "id")
+      local componentType = love.mintmousse.getType(id)
+      if componentType == "unknown" then
+        love.mintmousse.push({
+          func = "componentUpdate",
+          id, index, value
+        })
+      end
+    end,
+    __index = function(tbl, index)
+      if index == "__raw" then return nil end
+      local self = rawget(tbl, "__raw")
+      if index == "parent" then
+        return love.mintmousse.get(self.parent)
+      end
+      return rawget(self, index)
+    end,
+  }
+
+  love.mintmousse.addToLocalHinting = function(id, type)
+    love.mintmousse._hinting.localTypeMap[id] = type
+  end
+
+  love.mintmousse.createProxyTable = function(raw)
+    return setmetatable({
+      __raw = raw,
+    }, proxyTableMetatable)
   end
 
 -- Front facing functions
@@ -331,7 +383,7 @@ return function(path, directoryPath)
           })
           return
         end
-        love.mintmousse.warning("Valid file provided, invalid file extension. Only .PNG, .JPEG, or .JPG are supported")
+        love.mintmousse.warning("Valid file provided, invalid file extension. Only .PNG, .JPEG, or .JPG are supported for icon.")
         return
       elseif icon:sub(#pngMagicNumber) == pngMagicNumber then
         love.mintmousse.setIconRaw(icon, "image/png")
@@ -378,12 +430,18 @@ return function(path, directoryPath)
   love.mintmousse.newTab = function(title, id, index)
     local success, errorMessage = love.mintmousse.isValidID(id)
     if not success then
-      love.mintmousse.error("Couldn't create title with given ID. Reason:", errorMessage)
+      love.mintmousse.error("Couldn't create tab with given ID. Reason:", errorMessage)
       return
     end
+    love.mintmousse.addToLocalHinting(id, "tab")
     love.mintmousse.push({
       func = "newTab",
       id, title, index,
+    })
+    return love.mintmousse.createProxyTable({
+      id = id,
+      type = "tab",
+      title = title,
     })
   end
 end

@@ -70,6 +70,13 @@ function setAttributes(element, attributes) {
   }
 }
 
+function removeElement(element) {
+  if (typeof element.remove === "function")
+    element.remove()
+  else
+    element.parentNode.removeChild(element)
+}
+
 // https://stackoverflow.com/a/57888548
 const fetchTimeout = (url, ms, { signal, ...options } = {}) => {
   const controller = new AbortController();

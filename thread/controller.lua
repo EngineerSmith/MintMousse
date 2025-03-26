@@ -277,9 +277,9 @@ controller.newTab = function(id, title, index)
   end
 
   controller.idMap[tab.id] = tab
-  table.insert(controller.tabs, index, tab)
+  table.insert(controller.tabs, index, tab) 
 
-  controller.update(json.encode({
+  controller.update(json.encode({ --todo index
     func = "tab_new",
     id = "tab-"..tab.id,
     title = tab.title,

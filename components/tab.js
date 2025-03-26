@@ -1,9 +1,10 @@
-let active = true;
+let activeTab = true;
 function tab_new(payload) {
   const id = payload.id;
   const title = payload.title;
 
-  const tabPaneID = id + "-tab-panel";
+  const buttonId = id + "-tab";
+  const tabPaneId = id + "-tab-panel";
 
   // add to Navbar
   const li = document.createElement("li");
@@ -14,16 +15,16 @@ function tab_new(payload) {
 
   const button = document.createElement("button");
   button.classList.add("nav-link");
-  if (active) { button.classList.add("active"); }
+  if (activeTab) { button.classList.add("active"); }
   button.textContent = title ? title : "UNKNOWN";
   setAttributes(button, {
-    "id": id + "-tab",
+    "id": buttonId,
     "data-bs-toggle": "tab",
-    "data-bs-target": "#" + tabPaneID,
+    "data-bs-target": "#" + tabPaneId,
     "type": "button",
     "role": "tab",
-    "aria-controls": tabPaneID,
-    "aria-selected": active,
+    "aria-controls": tabPaneId,
+    "aria-selected": activeTab,
   });
 
   li.append(button);
@@ -33,11 +34,11 @@ function tab_new(payload) {
   // add tab pane
   const tabPane = document.createElement("div");
   tabPane.classList.add("tab-pane", "fade", "container", "mt-2");
-  if (active) { tabPane.classList.add("active"); }
+  if (activeTab) { tabPane.classList.add("active"); }
   setAttributes(tabPane, {
-    "id": tabPaneID,
+    "id": tabPaneId,
     "role": "tabpanel",
-    "aria-labelledby": id + "-tab",
+    "aria-labelledby": buttonId,
     "tabindex": "0",
   });
 
@@ -76,5 +77,26 @@ function tab_new(payload) {
   });
 
   console.log("Added tab:", title);
-  active = false;
+  activeTab = false;
+}
+
+function tab_update_title(payload) {
+  const id = payload.id;
+  const title = payload.title;
+  const button = document.getElementById(id + "-tab");
+  button.textContent = title;
+  console.log("Updated tab: Title updated to ", title);
+}
+
+function tab_remove(payload) {
+  const id = payload.id;
+
+  const button = document.getElementById(id + "-tab");
+  const title = button.textContent;
+  removeElement(button);
+
+  const tabPane = document.getElementById(id + "-tab-panel");
+  removeElement(tabPane);
+
+  console.log("Removed tab:", title);
 }
