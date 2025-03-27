@@ -46,6 +46,16 @@ function hideSpinner() {
   spinnerElement.style.display = "none";
 }
 
+function showNoContentText() {
+  const noContentContainer = document.getElementById("noContentContainer");
+  noContentContainer.style.setProperty("display", "flex", "important");
+}
+
+function hideNoContentText() {
+  const noContentContainer = document.getElementById("noContentContainer");
+  noContentContainer.style.setProperty("display", "none", "important");
+}
+
 function hasEvent(element, eventType) {
   const listeners = element.addEventListener ? element.addEventListener._listeners : element._listeners;
   return listeners && listeners[eventType] !== undefined;
@@ -126,24 +136,26 @@ function createWebSocketConnection() {
   websocket.onmessage = (event) => {
     if (typeof event.data === "string") {
       const receivedString = event.data;
-      try {
-        const payload = JSON.parse(receivedString);
-        console.log("Received JSON data:", payload);
+      if (receivedString.trim().length !== 0) {
         try {
-          for (let i = 0; i < payload.length; i++) {
-            const func = window[payload[i].func];
-            if (typeof func === "function") {
-              func(payload[i]);
-            } else {
-              console.error("Error couldn't find function:", payload[i].func)
+          const payload = JSON.parse(receivedString);
+          console.log("Received JSON data:", payload);
+          try {
+            for (let i = 0; i < payload.length; i++) {
+              const func = window[payload[i].func];
+              if (typeof func === "function") {
+                func(payload[i]);
+              } else {
+                console.error("Error couldn't find function:", payload[i].func)
+              }
             }
+          } catch (error) {
+            console.error("Error processing json:", error)
           }
         } catch (error) {
-          console.error("Error processing json:", error)
+          console.error("Error parsing JSON:", error);
+          console.log("Received text data:", receivedString);
         }
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-        console.log("Received text data:", receivedString)
       }
     } else if (event.data instanceof Blob) {
       console.log("Received binary data (Blob):", event.data);
@@ -153,6 +165,11 @@ function createWebSocketConnection() {
       console.log("Received unknown data type:", event.data);
     }
     hideSpinner();
+    if (!document.querySelector('.nav-link')) {
+      showNoContentText();
+    } else {
+      hideNoContentText();
+    }
   };
 
   websocket.onclose = () => {

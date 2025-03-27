@@ -83,8 +83,10 @@ function tab_new(payload) {
 function tab_update_title(payload) {
   const id = payload.id;
   const title = payload.title;
+
   const button = document.getElementById(id + "-tab");
   button.textContent = title;
+
   console.log("Updated tab: Title updated to ", title);
 }
 
@@ -93,10 +95,22 @@ function tab_remove(payload) {
 
   const button = document.getElementById(id + "-tab");
   const title = button.textContent;
-  removeElement(button);
+  const isActive = button.classList.contains("active");
+
+  const li = document.getElementById(id + "-li");
+  removeElement(li);
 
   const tabPane = document.getElementById(id + "-tab-panel");
   removeElement(tabPane);
+
+  if (isActive) {
+    const firstTabButton = document.querySelector('.nav-link');
+    if (firstTabButton) {
+      bootstrap.Tab.getInstance(firstTabButton).show();
+    } else {
+      activeTab = true;
+    }
+  }
 
   console.log("Removed tab:", title);
 }

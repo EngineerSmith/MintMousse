@@ -31,6 +31,8 @@ callbacks.setIconRFG = controller.setIconRFG
 callbacks.setIconFromFile = controller.setIconFromFile
 callbacks.updateSubscription = controller.updateThreadSubscription
 
+callbacks.removeComponent = controller.removeComponent
+
 callbacks.start = function(config)
   if config then
     if type(config.title) == "string" then
@@ -76,12 +78,10 @@ end)
 
 websocket13.newConnection = function(client)
   local array = controller.getInitialPayload()
-  if array then
-    table.insert(client.queue, {
-      type = "text/utf8",
-      payload = array,
-    })
-  end
+  table.insert(client.queue, {
+    type = "text/utf8",
+    payload = array,
+  })
 end
 
 controller.update = function(jsonPayload)
@@ -105,9 +105,9 @@ while true do
     if type(message.func) == "string" then
       local func = callbacks[message.func]
       if type(func) == "function" then
-        local success = pcall(func, unpack(message))
+        local success, errorMessage = pcall(func, unpack(message))
         if not success then
-          love.mintmousse.warning("Failed to process message:", message.func)
+          love.mintmousse.warning("Failed to process message:", message.func, ". Error:", errorMessage)
         end
       else
         love.mintmousse.warning("Could not find callback for:", message.func)

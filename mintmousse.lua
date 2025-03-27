@@ -31,12 +31,21 @@ local createBuffer = function()
       "style",
       "update",
       "latest",
+      "newTab",
+      "setTitle",
       "children",
       "parentID",
+      "setSVGIcon",
+      "setIconRaw",
+      "setIconRFG",
       "mintmousse",
+      "addComponent",
       "componentAdded",
+      "removeComponent",
       "componentUpdate",
+      "setIconFromFile",
       "componentRemoved",
+      "updateSubscription",
     }, { }
     for _, word in ipairs(dictionary) do
       lookup[word] = true
@@ -67,8 +76,9 @@ return function(path, directoryPath)
     MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body byte limit of incoming HTTP requests 
     TEMP_MOUNT_LOCATION = ".MintMousse/", -- File location for temporary zip mounting
       -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control
-    --CACHE_CONTROL_HEADER = "public, max-age=604800", -- cache-control header response for unchanging static assets
+    -- CACHE_CONTROL_HEADER = "public, max-age=604800", -- cache-control header response for unchanging static assets
     CACHE_CONTROL_HEADER = "no-store", -- use for active development of the MintMousse library
+    SUBSCRIPTION_MAX_QUEUE_READ = 6, -- The maximum number of updates to retrieve from the subscription queue in a single poll, ensuring non-blocking behaviour.
 
       -- Thread Communication
     THREAD_COMMAND_QUEUE_ID = "MintMousse", -- id for a love.thread Channel
@@ -76,7 +86,7 @@ return function(path, directoryPath)
     READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary", -- id for a love.thread Channel
     THREAD_COMPONENT_UPDATES_ID = "MintMousseUpdate_%s", -- id for love.thread Channel (appended with threadID)
 
-    -- Internal use
+    -- Internal use per thread
     _hinting = {
       -- Hinting data received from the main MintMousse thread
       typeMap = { },
@@ -85,6 +95,7 @@ return function(path, directoryPath)
       localTypeMap = { },
       localRelationships = { },
     },
+    _proxyComponents = { },
   }
 
   -- todo; we should make it so any thread can start the MM thread if it isn't running
@@ -93,6 +104,14 @@ return function(path, directoryPath)
     -- Start MintMousse's thread
     love.mintmousse.thread = love.thread.newThread(love.mintmousse.directoryPath .. "thread/init.lua")
     love.mintmousse.thread:start(love.mintmousse.path, love.mintmousse.directoryPath)
+  end
+
+  love.mintmousse.require = function(file)
+    return require(love.mintmousse.path .. file)
+  end
+
+  love.mintmousse.read = function(file)
+    return love.filesystem.read(love.mintmousse.directoryPath .. file)
   end
 
   local buffer = createBuffer()
@@ -130,14 +149,6 @@ return function(path, directoryPath)
   if not love.isMintMousseServerThread then
     --todo match AppleCake; recently checked AppleCake, it just numbers threads based on order of initialisation
     love.mintmousse.threadID = ("x"):rep(threadIDLength):gsub("[x]", function(_) return ("%x"):format(love.math.random(0, 15)) end)
-  end
-
-  love.mintmousse.require = function(file)
-    return require(love.mintmousse.path .. file)
-  end
-
-  love.mintmousse.read = function(file)
-    return love.filesystem.read(love.mintmousse.directoryPath .. file)
   end
 
   if not love.isThread then -- main thread
@@ -188,9 +199,9 @@ return function(path, directoryPath)
     if type(id) ~= "string" then
       return false, "ID isn't type string"
     end
-    local failed = id:match("[^%w%._,:;@]")
+    local failed = id:match("[^%w%._,:;@%-]")
     if failed then
-      return false, "ID Can only contain alphanumeric or . _ , : ; @ characters. Failed character:'"..tostring(failed.."'")
+      return false, "ID Can only contain alphanumeric or . _ , : ; @ - characters. Failed character:'"..tostring(failed.."'")
     end
     if id:find("^%d") then
       return false, "ID cannot use a numeric as the first character of an id"
@@ -277,7 +288,7 @@ return function(path, directoryPath)
 
   local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(love.mintmousse.threadID))
   love.mintmousse.processSubscription = function()
-    for _ = 0, 5 do
+    for _ = 1, love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ do
       local package = COMPONENT_UPDATES_QUEUE:pop()
       if not package then
         return
@@ -304,6 +315,7 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.getType = function(id)
+    love.mintmousse.processSubscription()
     local componentType = love.mintmousse._hinting.typeMap[id]
     if not componentType then
       componentType = love.mintmousse._hinting.localTypeMap[id]
@@ -311,8 +323,24 @@ return function(path, directoryPath)
     return componentType or "unknown"
   end
 
+  local proxyTableInsertSelf = function(tbl, component)
+    local self = rawget(tbl, "__raw")
+    local id = rawget(self, "id")
+    love.mintmousse.push({
+      func = "addComponent",
+      component, id
+    })
+  end
+
+  local proxyTableRemoveSelf = function(tbl)
+    local self = rawget(tbl, "__raw")
+    local id = rawget(self, "id")
+    return love.mintmousse.removeComponent(id)
+  end
+
   local proxyTableMetatable = {
     __newindex = function(tbl, index, value)
+      if index == "__raw" then return nil end
       local self = rawget(tbl, "__raw")
       if rawget(self, index) == value then
         return
@@ -323,15 +351,18 @@ return function(path, directoryPath)
       if componentType == "unknown" then
         love.mintmousse.push({
           func = "componentUpdate",
-          id, index, value
+          id, index, value,
         })
       end
     end,
-    __index = function(tbl, index)
+    __index = function(tbl, index) --todo type(index) == "number" get child at index
       if index == "__raw" then return nil end
       local self = rawget(tbl, "__raw")
       if index == "parent" then
-        return love.mintmousse.get(self.parent)
+        local parentId = rawget(self, "parentId")
+        return parentId and love.mintmousse.get(parentId) or nil
+      elseif index == "remove" then
+        return proxyTableRemoveSelf
       end
       return rawget(self, index)
     end,
@@ -342,9 +373,11 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.createProxyTable = function(raw)
-    return setmetatable({
+    local proxyTable = setmetatable({
       __raw = raw,
     }, proxyTableMetatable)
+    love.mintmousse._proxyComponents[raw.id] = proxyTable
+    return proxyTable
   end
 
 -- Front facing functions
@@ -423,11 +456,15 @@ return function(path, directoryPath)
     })
   end
 
-  love.mintmousse.get = function(id)
-    love.mintmousse.error("TODO: Return proxy table")
+  love.mintmousse.get = function(id, componentTypeHint)
+    if componentTypeHint then
+      love.mintmousse.addToLocalHinting(id, componentTypeHint)
+    end
+    local proxyTable = love.mintmousse._proxyComponents[id]
+    return proxyTable or love.mintmousse.createProxyTable({ id = id })
   end
 
-  love.mintmousse.newTab = function(title, id, index)
+  love.mintmousse.newTab = function(title, id, index) -- todo index
     local success, errorMessage = love.mintmousse.isValidID(id)
     if not success then
       love.mintmousse.error("Couldn't create tab with given ID. Reason:", errorMessage)
@@ -440,8 +477,16 @@ return function(path, directoryPath)
     })
     return love.mintmousse.createProxyTable({
       id = id,
-      type = "tab",
       title = title,
+      parentId = nil,
+    })
+  end
+
+  love.mintmousse.removeComponent = function(id)
+    -- todo remove locally
+    love.mintmousse.push({
+      func = "removeComponent",
+      id,
     })
   end
 end

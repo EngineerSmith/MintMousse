@@ -265,6 +265,7 @@ controller.newTab = function(id, title, index)
   end
 
   local tab = {
+    type = "tab",
     id = id,
     parent = controller.tabs,
     children = { },
@@ -279,12 +280,32 @@ controller.newTab = function(id, title, index)
   controller.idMap[tab.id] = tab
   table.insert(controller.tabs, index, tab) 
 
+  controller.notifySubscribersComponentAdded(tab, index)
   controller.update(json.encode({ --todo index
     func = "tab_new",
     id = "tab-"..tab.id,
     title = tab.title,
     content = nil,
   }))
+end
+
+controller.removeComponent = function(id)
+  local component = controller.idMap[id]
+  controller.notifySubscribersComponentRemoved(component)
+  local componentType = component.type
+  if componentType == "tab" then --todo replace with javascript parsed code
+    for index, tab in ipairs(controller.tabs) do
+      if tab == component then
+        table.remove(controller.tabs, index)
+        break
+      end
+    end
+    controller.update(json.encode({
+      func = "tab_remove",
+      id = "tab-"..component.id,
+    }))
+  end
+  controller.idMap[id] = nil
 end
 
 -- controller.removeComponent = function(id)
