@@ -253,16 +253,17 @@ end
 
 controller.newTab = function(id, title, index)
   if not id then
-    return love.mintmousse.warning("Controller: No ID passed to newTab")
+    return love.mintmousse.warning("Controller: newTab: No ID given")
   end
-  if not title then
-    return love.mintmousse.warning("Controller: No Title passed to newTab")
+  if type(title) ~= "string" then
+    return love.mintmousse.warning("Controller: newTab: Title must be type string")
   end
 
   if controller.idMap[id] then
-    love.mintmousse.warning("Controller: Tried to create Tab with pre-existing ID:", id)
-    return
+    return love.mintmousse.warning("Controller: newTab: Tried to create Tab with pre-existing ID:", id)
   end
+
+  title = love.mintmousse.sanitizeText(title)
 
   local tab = {
     type = "tab",
@@ -291,6 +292,7 @@ end
 
 controller.removeComponent = function(id)
   local component = controller.idMap[id]
+  controller.idMap[id] = nil
   controller.notifySubscribersComponentRemoved(component)
   local componentType = component.type
   if componentType == "tab" then --todo replace with javascript parsed code
@@ -305,7 +307,6 @@ controller.removeComponent = function(id)
       id = "tab-"..component.id,
     }))
   end
-  controller.idMap[id] = nil
 end
 
 -- controller.removeComponent = function(id)

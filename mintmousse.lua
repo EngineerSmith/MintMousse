@@ -341,6 +341,10 @@ return function(path, directoryPath)
   local proxyTableMetatable = {
     __newindex = function(tbl, index, value)
       if index == "__raw" then return nil end
+      if index == "type" then
+        love.mintmousse.error("Proxy Table: You cannot change that index:", "type")
+        return
+      end
       local self = rawget(tbl, "__raw")
       if rawget(self, index) == value then
         return
@@ -363,6 +367,9 @@ return function(path, directoryPath)
         return parentId and love.mintmousse.get(parentId) or nil
       elseif index == "remove" then
         return proxyTableRemoveSelf
+      elseif index == "type" then
+        local id = rawget(self, "id")
+        return love.mintmousse.getType(id)
       end
       return rawget(self, index)
     end,
@@ -378,6 +385,13 @@ return function(path, directoryPath)
     }, proxyTableMetatable)
     love.mintmousse._proxyComponents[raw.id] = proxyTable
     return proxyTable
+  end
+
+  -- Only use this if necessary. All MintMousse components will handle sanitizing for you.
+  --   If you have non-standard components, it may help to sanitize to avoid XSS attacks
+  love.mintmousse.sanitizeText = function(text)
+    local lustache = love.mintmousse.require("libs.lustache") -- only grab lustache on the thread if they need to use it
+    return lustache:render("{{text}}", { text = text })
   end
 
 -- Front facing functions
@@ -457,7 +471,7 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.get = function(id, componentTypeHint)
-    if componentTypeHint then
+    if type(componentTypeHint) == "string" then
       love.mintmousse.addToLocalHinting(id, componentTypeHint)
     end
     local proxyTable = love.mintmousse._proxyComponents[id]
