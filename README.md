@@ -24,7 +24,7 @@ git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/
 require("libs.MintMousse")
 love.mintmousse.newTab("Dashboard", "dashboard")
 love.mintmousse.start({
-  whitelist = { "127.0.0.1", "192.168.*.*", "10.0.0.*", "172.16.*.*" }
+  whitelist = { "127.0.0.1", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12" }
 })
 ```
 

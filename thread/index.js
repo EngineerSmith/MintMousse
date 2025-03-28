@@ -87,6 +87,23 @@ function removeElement(element) {
     element.parentNode.removeChild(element)
 }
 
+function newComponent(payload) {
+
+}
+
+function removeComponent(payload) {
+  const id = payload.id;
+
+  const elementRoot = document.getElementById(id+"-root");
+  if (elementRoot) {
+    removeElement(elementRoot);
+    return;
+  }
+
+  const element = document.getElementById(id);
+  removeElement(element);
+}
+
 // https://stackoverflow.com/a/57888548
 const fetchTimeout = (url, ms, { signal, ...options } = {}) => {
   const controller = new AbortController();
