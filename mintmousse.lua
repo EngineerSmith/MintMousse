@@ -326,10 +326,7 @@ return function(path, directoryPath)
   local proxyTableInsertSelf = function(tbl, component)
     local self = rawget(tbl, "__raw")
     local id = rawget(self, "id")
-    love.mintmousse.push({
-      func = "addComponent",
-      component, id
-    })
+    love.mintmousse.addComponent(component, id)
   end
 
   local proxyTableRemoveSelf = function(tbl)
@@ -367,6 +364,8 @@ return function(path, directoryPath)
         return parentId and love.mintmousse.get(parentId) or nil
       elseif index == "remove" then
         return proxyTableRemoveSelf
+      elseif index == "insert" then
+        return proxyTableInsertSelf
       elseif index == "type" then
         local id = rawget(self, "id")
         return love.mintmousse.getType(id)
@@ -494,6 +493,53 @@ return function(path, directoryPath)
       title = title,
       parentId = nil,
     })
+  end
+
+  love.mintmousse.addComponent = function(component, parentID)
+    if type(component) == "string" then
+      component = {
+        type = component,
+      }
+    elseif type(component) ~= "table" then
+      love.mintmousse.error("Component must be componentType (string) or a component (table)")
+      return
+    end
+    if type(parentID) == "string" then
+      love.mintmousse.error("ParentID is required to create component")
+      return
+    end
+
+    if not component.id then
+      component.id = love.mintmousse.generateID()
+    else
+      local success, errorMessage = love.mintmousse.isValidID(component.id)
+      if not success then
+        love.mintmousse.error("Gave invalid ID to create component. Reason:", errorMessage)
+        return
+      end
+    end
+
+    -- todo validate component.type
+    if type(component.type) ~= "string" then
+      love.mintmousse.error("Gave invalid componentType to create component. Reason:", "ComponentType isn't type string")
+      return
+    end
+
+    love.mintmousse.addToLocalHinting(component.id, component.type)
+    love.mintmousse.push({
+      func = "addComponent",
+      component, parentID
+    })
+
+    -- todo: is this needed?
+    local raw = { }
+    for key, value in pairs(component) do
+      if key ~= "type" then
+        raw[key] = value
+      end
+    end
+
+    return love.mintmousse.createProxyTable(raw)
   end
 
   love.mintmousse.removeComponent = function(id)

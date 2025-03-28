@@ -208,23 +208,84 @@ server.updateConnections = function()
   end
 end
 
-local whitelistPattern = function(c)
-  if c == "." then
-    return "%." -- "127.0.0.1" -> "127%.0%.0%.0"
-  elseif c == "*" then
-    return "%d+" -- > "192.168.*.*" - > "192.168.%d+.%d+"
+local ipv4ToInt = function(ipAddress)
+  local parts = { }
+  for part in ipAddress:gmatch("(%d+)") do
+    local n = tonumber(part)
+    if n < 0 or n > 255 then
+      return nil
+    end
+    table.insert(parts, n)
   end
-  return c
+  if #parts ~= 4 then
+    return nil
+  end
+  return parts[1] * 2^24 + parts[2] * 2^16 + parts[3] * 2^8 + parts[4]
+end
+
+local isValidIpv4 = function(address)
+  if not address:match("^%d+.%d+.%d+.%d+$") then
+    return false
+  end
+  for part in address:gmatch("(%d+)") do
+    local n = tonumber(part)
+    if not n or n < 0 or n > 255 then
+      return false
+    end
+  end
+  return true
+end
+local CIDRPattern = "^(%d+.%d+.%d+.%d+)/(%d+)$"
+local isValidCIDR = function(cidrString)
+  local ipPart, maskPart = cidrString:match(CIDRPattern)
+  if not ipPart or not maskPart then
+    return false
+  end
+  if not isValidIpv4(ipPart) then
+    return false
+  end
+  local maskLength = tonumber(maskPart)
+  return maskLength ~= nil and maskLength >= 0 and maskLength <= 32
 end
 
 server.addToWhitelist = function(address)
-  table.insert(server.whitelist, "^" .. address:gsub("[%.%*]", whitelistPattern) .. "$")
+  if isValidCIDR(address) then
+    local ipPart, maskPart = address:match(CIDRPattern)
+    local ipv4Int = ipv4ToInt(ipPart)
+    local maskLength = tonumber(maskPart)
+    networkAllowed = math.floor(ipv4Int / (2^(32 - maskLength)))
+    table.insert(server.whitelist, {
+      type = "cidr",
+      networkAllowed = networkAllowed,
+      maskLength = maskLength,
+    })
+    return
+  elseif isValidIpv4(address) then
+    table.insert(server.whitelist, {
+      type = "ipv4",
+      ip = address,
+    })
+    return
+  end
+  love.mintmousse.warning("TCPServer: Invalid whitelist address format:", address)
 end
 
 server.isWhitelisted = function(address)
-  for _, allowedAddress in ipairs(server.whitelist) do
-    if address:match(allowedAddress) then
-      return true
+  local ipToCheckInt = ipv4ToInt(address)
+  if not ipToCheckInt then
+    return false
+  end
+
+  for _, allowedEntry in ipairs(server.whitelist) do
+    if allowedEntry.type == "cidr" then
+      local networkToCheck = math.floor(ipToCheckInt / (2^(32 - allowedEntry.maskLength)))
+      if networkToCheck == allowedEntry.networkAllowed then
+        return true
+      end
+    elseif allowedEntry.type == "ipv4" then
+      if address == allowedEntry.ip then
+        return true
+      end
     end
   end
   return false

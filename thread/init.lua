@@ -31,6 +31,7 @@ callbacks.setIconRFG = controller.setIconRFG
 callbacks.setIconFromFile = controller.setIconFromFile
 callbacks.updateSubscription = controller.updateThreadSubscription
 
+callbacks.addComponent = controller.addComponent
 callbacks.removeComponent = controller.removeComponent
 
 callbacks.start = function(config)

@@ -146,11 +146,11 @@ function createWebSocketConnection() {
               if (typeof func === "function") {
                 func(payload[i]);
               } else {
-                console.error("Error couldn't find function:", payload[i].func)
+                console.error("Error couldn't find function:", payload[i].func);
               }
             }
           } catch (error) {
-            console.error("Error processing json:", error)
+            console.error("Error processing json:", error);
           }
         } catch (error) {
           console.error("Error parsing JSON:", error);
@@ -165,10 +165,10 @@ function createWebSocketConnection() {
       console.log("Received unknown data type:", event.data);
     }
     hideSpinner();
-    if (!document.querySelector('.nav-link')) {
-      showNoContentText();
-    } else {
+    if (document.querySelector('.nav-link')) {
       hideNoContentText();
+    } else {
+      showNoContentText();
     }
   };
 

@@ -290,6 +290,10 @@ controller.newTab = function(id, title, index)
   }))
 end
 
+controller.addComponent = function(component, parentID)
+  
+end
+
 controller.removeComponent = function(id)
   local component = controller.idMap[id]
   controller.idMap[id] = nil
@@ -307,6 +311,7 @@ controller.removeComponent = function(id)
       id = "tab-"..component.id,
     }))
   end
+  -- todo remove children
 end
 
 -- controller.removeComponent = function(id)
