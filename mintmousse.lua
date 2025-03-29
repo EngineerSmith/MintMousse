@@ -9,12 +9,14 @@ if not jit then
 end
 local success = pcall(require, "string.buffer")
 if not success then
-  error("Library MintMousse requires lua jit with string buffer; update your love version.")
+  error("Library MintMousse requires lua jit with string buffer; update your love version or supply your own lua.dll/lua.so that it includes it.")
 end
 
--- love.data, love.filesystem, & love.thread is preloaded for threads, other modules must be loaded
+-- Load love modules that may be disabled, because we need them.
+require("love.thread")
 require("love.event")
 require("love.timer")
+require("love.data")
 require("love.math") -- todo check if can be removed
 
 local createBuffer = function()
@@ -68,23 +70,11 @@ return function(path, directoryPath)
     local err = type(love.mintmousse) == "table" and love.mintmousse.error or error
     return err("mintmousse/mintmousse.lua has already been ran, or there is a conflict in namespace with love.mintmousse")
   end
-  
+  local start = love.timer.getTime()
+
   love.mintmousse = {
     path = path,
     directoryPath = directoryPath,
-    -- Do not change these at run time they won't affect threads! Change the file
-    MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body byte limit of incoming HTTP requests 
-    TEMP_MOUNT_LOCATION = ".MintMousse/", -- File location for temporary zip mounting
-      -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control
-    -- CACHE_CONTROL_HEADER = "public, max-age=604800", -- cache-control header response for unchanging static assets
-    CACHE_CONTROL_HEADER = "no-store", -- use for active development of the MintMousse library
-    SUBSCRIPTION_MAX_QUEUE_READ = 6, -- The maximum number of updates to retrieve from the subscription queue in a single poll, ensuring non-blocking behaviour.
-
-      -- Thread Communication
-    THREAD_COMMAND_QUEUE_ID = "MintMousse", -- id for a love.thread Channel
-    THREAD_RESPONSE_QUEUE_ID = "MintMousse", -- id for the love.event handler
-    READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary", -- id for a love.thread Channel
-    THREAD_COMPONENT_UPDATES_ID = "MintMousseUpdate_%s", -- id for love.thread Channel (appended with threadID)
 
     -- Internal use per thread
     _hinting = {
@@ -98,17 +88,18 @@ return function(path, directoryPath)
     _proxyComponents = { },
   }
 
-  -- todo; we should make it so any thread can start the MM thread if it isn't running
-  --         ownership could be a channel; accepts love object thread
-  if not love.isThread then
-    -- Start MintMousse's thread
-    love.mintmousse.thread = love.thread.newThread(love.mintmousse.directoryPath .. "thread/init.lua")
-    love.mintmousse.thread:start(love.mintmousse.path, love.mintmousse.directoryPath)
-  end
-
   love.mintmousse.require = function(file)
     return require(love.mintmousse.path .. file)
   end
+
+  local conf = love.mintmousse.require("conf")(love.mintmousse.path, love.mintmousse.directoryPath)
+  for k, v in pairs(conf) do
+    love.mintmousse[k] = v
+  end
+
+  -- Start MintMousse's thread
+  local startThread = love.mintmousse.require("prepare")
+  startThread()
 
   love.mintmousse.read = function(file)
     return love.filesystem.read(love.mintmousse.directoryPath .. file)
@@ -152,13 +143,21 @@ return function(path, directoryPath)
   end
 
   if not love.isThread then -- main thread
-    love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
-      --todo; should all events go back to the main thread now that MM supports multithreaded calls?
-        -- implementing event checking on each user thread would require a repeat call
-      error("TODO")
-    end
+    -- love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
+    --   --todo; should all events go back to the main thread now that MM supports multithreaded calls?
+    --     -- implementing event checking on each user thread would require a repeat call
+    --   error("TODO")
+    -- end
 
     love.mintmousse.start = function(config)
+      local threadChannel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
+      threadChannel:performAtomic(function()
+        local thread = threadChannel:demand()
+        if not thread:isRunning() then
+          thread:start(love.mintmousse.path, love.mintmousse.directoryPath)
+        end
+        threadChannel:push(thread)
+      end)
       -- todo validate
       love.mintmousse.push({
         func = "start",
@@ -172,12 +171,17 @@ return function(path, directoryPath)
         love.mintmousse.stop()
       end)
       if not noWait then
-        love.mintmousse.thread:wait()
+        love.mintmousse.wait()
       end
     end
 
     love.mintmousse.wait = function()
-      love.mintmousse.thread:wait()
+      local threadChannel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
+      threadChannel:performAtomic(function()
+        local thread = threadChannel:demand()
+        thread:wait()
+        threadChannel:push(thread)
+      end)
     end
 
   else
@@ -187,6 +191,17 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.require("logging")
+
+  -- Only use this if necessary. All MintMousse components will handle sanitizing for you.
+  --   If you have non-standard components, it may help to sanitize to avoid XSS attacks
+  love.mintmousse.sanitizeText = function(text)
+    local lustache = love.mintmousse.require("libs.lustache") -- only grab lustache on the thread if they need to use it
+    return lustache:render("{{text}}", { text = text })
+  end
+
+  if love.isMintMousseServerThread then
+    return
+  end
 
   local _idCounter = 0
   love.mintmousse.generateID = function()
@@ -287,8 +302,9 @@ return function(path, directoryPath)
   end
 
   local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(love.mintmousse.threadID))
-  love.mintmousse.processSubscription = function()
-    for _ = 1, love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ do
+  love.mintmousse.processSubscription = function(max)
+    love.mintmousse.assert(type(max) == "number" or type(max) == "nil", "Max should be a number, or nil type.")
+    for _ = 1, max or love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ do
       local package = COMPONENT_UPDATES_QUEUE:pop()
       if not package then
         return
@@ -386,13 +402,6 @@ return function(path, directoryPath)
     return proxyTable
   end
 
-  -- Only use this if necessary. All MintMousse components will handle sanitizing for you.
-  --   If you have non-standard components, it may help to sanitize to avoid XSS attacks
-  love.mintmousse.sanitizeText = function(text)
-    local lustache = love.mintmousse.require("libs.lustache") -- only grab lustache on the thread if they need to use it
-    return lustache:render("{{text}}", { text = text })
-  end
-
 -- Front facing functions
 
   love.mintmousse.updateSubscription = function(target)
@@ -407,6 +416,10 @@ return function(path, directoryPath)
       func = "updateSubscription",
       love.mintmousse.threadID, target,
     })
+  end
+  if not love.isMintMousseServerThread then
+    -- default subscription, required for subscription to component types
+    love.mintmousse.updateSubscription("none")
   end
 
   local pngMagicNumber = string.char(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)
@@ -549,4 +562,14 @@ return function(path, directoryPath)
       id,
     })
   end
+
+
+
+  if not love.isMintMousseServerThread then
+    -- Wait for component types to be parsed: this is a quick operation, but it is blocking
+
+    local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
+    local componentTypes = componentTypesChannel:demand()
+  end
+  print(("Took %.4f ms to load main thread"):format((love.timer.getTime()-start)*1000))
 end

@@ -50,7 +50,7 @@ websocket13.processRequest = function(client)
     else
       -- all continuation frames must have a 0x0 continuation opcode
       if header.opcode ~= 0x0 then
-        return nil, "client sent non-continuation in latter frames"
+        return nil, "client sent non-continuation in later frames"
       end
     end
 

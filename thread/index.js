@@ -117,7 +117,7 @@ function startConnectionMonitor(pingIntervalSeconds) {
   const interval = Math.max(1, pingIntervalSeconds) * 1000;
 
   setInterval(() => {
-    fetchTimeout('/api/ping', interval - 500)
+    fetchTimeout('/api/ping', interval - 200)
       .then(response => {
         if (response.status === 204) {
           console.log("Server is alive, reloading page.");

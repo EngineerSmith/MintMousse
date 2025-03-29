@@ -1,10 +1,17 @@
 local PATH, dirPATH = ...
 
+require("love.timer")
+start = love.timer.getTime()
+
 love.isMintMousseServerThread = true
 require(PATH .. "mintmousse")(PATH, dirPATH)
 
+local components = love.mintmousse.require("components")
+components.init()
+print(("Took %.4f ms to load MM thread"):format((love.timer.getTime()-start)*1000))
+
 local http = love.mintmousse.require("thread.http")
-local server = love.mintmousse.require("thread.server")
+local server = nil -- deferred require until server needs to start
 local controller = love.mintmousse.require("thread.controller")
 local websocket13 = love.mintmousse.require("thread.websocket13")
 
@@ -35,6 +42,9 @@ callbacks.addComponent = controller.addComponent
 callbacks.removeComponent = controller.removeComponent
 
 callbacks.start = function(config)
+  if not server then
+    server = love.mintmousse.require("thread.server")
+  end
   if config then
     if type(config.title) == "string" then
       callbacks.setTitle(config.title)
@@ -86,6 +96,9 @@ websocket13.newConnection = function(client)
 end
 
 controller.update = function(jsonPayload)
+  if not server or not server.isRunning() then
+    return
+  end
   local payload = {
     type = "text/utf8",
     payload = "["..jsonPayload.."]",
@@ -115,11 +128,13 @@ while true do
       end
     end
     if message.func == "quit" then
-      server.cleanUp()
+      if server then
+        server.cleanUp()
+      end
       return
     end
   end
-  if server.isRunning() then
+  if server and server.isRunning() then
     server.newIncomingConnection()
     server.updateConnections()
   end

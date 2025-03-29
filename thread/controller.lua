@@ -49,6 +49,7 @@ syncSinkExplore = function(component, typeMap, relationships, target, isInTarget
   end
 end
 
+-- Must be performed Atomic
 controller.syncSink = function(sink)
   local package = {
     type = "latest",
@@ -291,7 +292,7 @@ controller.newTab = function(id, title, index)
 end
 
 controller.addComponent = function(component, parentID)
-  
+
 end
 
 controller.removeComponent = function(id)
