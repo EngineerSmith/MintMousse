@@ -1,15 +1,16 @@
 local capture = ...
 --[[
 
-Calling this file from within conf.lua saves main thread start up time by 2.5ms my machine.
+Calling this file from within conf.lua saves main thread start up time by 2.5ms on my machine.
+  This script allows a later blocking call to complete faster.
 
 ]]
 
 require("love.thread") -- required if called from conf.lua
 
 local ran = false
-return function(shouldWait)
-  if ran then
+return function()
+  if ran then --todo replace with thread channel check
     return
   end
 

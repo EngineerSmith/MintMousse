@@ -1,14 +1,10 @@
 local PATH, dirPATH = ...
 
-require("love.timer")
-start = love.timer.getTime()
-
 love.isMintMousseServerThread = true
 require(PATH .. "mintmousse")(PATH, dirPATH)
 
 local components = love.mintmousse.require("components")
 components.init()
-print(("Took %.4f ms to load MM thread"):format((love.timer.getTime()-start)*1000))
 
 local http = love.mintmousse.require("thread.http")
 local server = nil -- deferred require until server needs to start

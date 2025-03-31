@@ -70,7 +70,6 @@ return function(path, directoryPath)
     local err = type(love.mintmousse) == "table" and love.mintmousse.error or error
     return err("mintmousse/mintmousse.lua has already been ran, or there is a conflict in namespace with love.mintmousse")
   end
-  local start = love.timer.getTime()
 
   love.mintmousse = {
     path = path,
@@ -571,5 +570,4 @@ return function(path, directoryPath)
     local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
     local componentTypes = componentTypesChannel:demand()
   end
-  print(("Took %.4f ms to load main thread"):format((love.timer.getTime()-start)*1000))
 end
