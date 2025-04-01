@@ -8,10 +8,12 @@ local controller = {
   _isDirty = true,
 }
 
-controller.javascript = love.mintmousse.read("thread/index.js")
-controller.css = love.mintmousse.read("thread/index.css")
+local lfsRead = love.filesystem.read
 
-local indexMustache = love.mintmousse.read("thread/index.html")
+controller.javascript = lfsRead(love.mintmousse.DEFAULT_INDEX_JS)
+controller.css = lfsRead(love.mintmousse.DEFAULT_INDEX_CSS)
+
+local indexMustache = lfsRead(love.mintmousse.DEFAULT_INDEX_HTML)
 controller.getIndex = function()
   if controller._isDirty then
     controller.index = lustache:render(indexMustache, controller)
