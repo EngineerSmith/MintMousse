@@ -205,7 +205,7 @@ return function(path, directoryPath)
 
   local _idCounter = 0
   love.mintmousse.generateID = function()
-    local id = love.mintmousse.threadID .. (_idCounter >= 100 and "_"..string.char(threadIDLength*7, threadIDLength*7, threadIDLength*6-1, 99, 101).."_%x" or "_%x"):format(_idCounter)
+    local id = "MM" .. love.mintmousse.threadID .. (_idCounter >= 100 and "_"..string.char(threadIDLength*7, threadIDLength*7, threadIDLength*6-1, 99, 101).."_%x" or "_%x"):format(_idCounter)
     _idCounter = _idCounter + 1
     return id
   end
@@ -393,8 +393,8 @@ return function(path, directoryPath)
       if index == "__raw" then return nil end
       local self = rawget(tbl, "__raw")
       if index == "parent" then
-        local parentId = rawget(self, "parentId")
-        return parentId and love.mintmousse.get(parentId) or nil
+        local parentID = rawget(self, "parentID")
+        return parentID and love.mintmousse.get(parentID) or nil
       elseif index == "remove" then
         return proxyTableRemoveSelf
       elseif index == "insert" then
@@ -532,7 +532,7 @@ return function(path, directoryPath)
     return love.mintmousse.createProxyTable({
       id = id,
       title = title,
-      parentId = nil,
+      parentID = nil,
     })
   end
 
@@ -545,19 +545,19 @@ return function(path, directoryPath)
       love.mintmousse.error("Component must be componentType (string) or a component (table)")
       return
     end
-    if type(parentID) == "string" then
+    if type(parentID) ~= "string" then
       love.mintmousse.error("ParentID is required to create component")
       return
     end
 
     if not component.id then
       component.id = love.mintmousse.generateID()
-    else
-      local success, errorMessage = love.mintmousse.isValidID(component.id)
-      if not success then
-        love.mintmousse.error("Gave invalid ID to create component. Reason:", errorMessage)
-        return
-      end
+    end
+
+    local success, errorMessage = love.mintmousse.isValidID(component.id)
+    if not success then
+      love.mintmousse.error("Gave invalid ID to create component. Reason:", errorMessage)
+      return
     end
 
     if type(component.type) ~= "string" then

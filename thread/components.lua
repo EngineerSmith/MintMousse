@@ -7,10 +7,12 @@ local controller = love.mintmousse.require("thread.controller")
 
 local functionPattern = "function%s+"
 
-local updatePattern = "_update_(%S+)%s*%(%s*payload%s*%)"
+local payloadPattern = "%s*%(%s*payload%s*%)"
+local updatePattern = "_update_(%S+)" .. payloadPattern
 
-local newPattern = "_new%s*%(%s*payload%s*%)"
-local removePattern = "_remove%s*%(%s*payload%s*%)"
+local newPattern = "_new" .. payloadPattern
+local insertPattern = "_insert" .. payloadPattern
+local removePattern = "_remove" .. payloadPattern
 
 local findUpdatePattern = function(script, componentType, outTable)
   local pattern = functionPattern .. componentType .. updatePattern
@@ -24,15 +26,17 @@ local findUpdatePattern = function(script, componentType, outTable)
   return touched
 end
 
-local findNewRemovePattern = function(script, componentType)
+local findNewInsertRemovePattern = function(script, componentType)
   local mainPattern = functionPattern .. componentType
   local newPattern = mainPattern .. newPattern
+  local insertPattern = mainPattern .. insertPattern
   local removePattern = mainPattern .. removePattern
 
   local foundNewFunction = script:find(newPattern) ~= nil
+  local foundInsertFunction = script:find(insertPattern) ~= nil
   local foundRemoveFunction = script:find(removePattern) ~= nil
 
-  return foundNewFunction, foundRemoveFunction
+  return foundNewFunction, foundInsertFunction, foundRemoveFunction
 end
 
 components.init = function()
@@ -131,7 +135,7 @@ components.parseComponentsJavascript = function(components)
           componentType.updates = nil
         end
         -- New & Remove functions
-        componentType.hasNewFunction, componentType.hasRemoveFunction = findNewRemovePattern(script, componentTypeName)
+        componentType.hasNewFunction, componentType.hasInsertFunction, componentType.hasRemoveFunction = findNewInsertRemovePattern(script, componentTypeName)
       end
     end
   end

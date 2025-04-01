@@ -23,5 +23,6 @@ function card_update_size(payload) {
     element.classList.add(newSize);
 
     // todo resize masonry
+    resizeMasonry(); // could this be a targeted resize? It would requiring to know which tab this component is under
   }
 }

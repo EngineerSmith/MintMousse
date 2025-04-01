@@ -86,10 +86,6 @@ function removeElement(element) {
     element.parentNode.removeChild(element)
 }
 
-function newComponent(payload) {
-  // todo
-}
-
 function removeComponent(payload) {
   const id = payload.id;
 

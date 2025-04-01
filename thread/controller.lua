@@ -311,7 +311,39 @@ controller.newTab = function(id, title, index)
 end
 
 controller.addComponent = function(component, parentID)
+  local componentType = controller.componentTypes[component.type]
+  if not componentType then
+    love.mintmousse.warning("Controller: Tried to create component with invalid type:", component.type)
+    return
+  end
+  local parent = controller.idMap[parentID]
+  component.parent = parent
+  component.children = { }
+  table.insert(parent.children, component)
 
+  controller.notifySubscribersComponentAdded(component, #parent.children)
+
+  if controller.componentTypes[parent.type].hasInsertFunction then
+  end
+  
+  local package = {
+    func = ("%s_insert"):format(parent.type),
+    parentID = ("%s-%s"):format(parent.type, parentID),
+    newFunc = componentType.hasNewFunction and ("%s_new"):format(component.type) or nil,
+  }
+  
+  if componentType.hasNewFunction and componentType.updates then
+    package.id = ("%s-%s"):format(component.type, component.id)
+    for index in pairs(componentType.updates) do
+      package[index] = love.mintmousse.sanitizeText(component[index])
+    end
+  end
+
+  if componentType.mustache then
+    package.render = lustache:render(componentType.mustache, component)
+  end
+
+  controller.update(json.encode(package))
 end
 
 controller.updateComponent = function(id, index, value)

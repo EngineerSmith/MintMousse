@@ -1,10 +1,11 @@
-let activeTab = true;
+var activeTab = true;
 function tab_new(payload) {
   const id = payload.id;
   const title = payload.title;
 
-  const buttonId = id + "-tab";
-  const tabPaneId = id + "-tab-panel";
+  const buttonID = id + "-button";
+  const tabPaneID = id + "-panel";
+  const gridID = id + "-grid";
 
   // add to Navbar
   const li = document.createElement("li");
@@ -15,16 +16,15 @@ function tab_new(payload) {
 
   const button = document.createElement("button");
   button.classList.add("nav-link");
-  if (activeTab) { button.classList.add("active"); }
   button.textContent = title ? title : "UNKNOWN";
   setAttributes(button, {
-    "id": buttonId,
+    "id": buttonID,
     "data-bs-toggle": "tab",
-    "data-bs-target": "#" + tabPaneId,
+    "data-bs-target": "#" + tabPaneID,
     "type": "button",
     "role": "tab",
-    "aria-controls": tabPaneId,
-    "aria-selected": activeTab,
+    "aria-controls": tabPaneID,
+    "aria-selected": "false",
   });
 
   li.append(button);
@@ -34,17 +34,16 @@ function tab_new(payload) {
   // add tab pane
   const tabPane = document.createElement("div");
   tabPane.classList.add("tab-pane", "fade", "container", "mt-2");
-  if (activeTab) { tabPane.classList.add("active"); }
   setAttributes(tabPane, {
-    "id": tabPaneId,
+    "id": tabPaneID,
     "role": "tabpanel",
-    "aria-labelledby": buttonId,
+    "aria-labelledby": buttonID,
     "tabindex": "0",
   });
 
   const grid = document.createElement("div");
   grid.classList.add("grid");
-  grid.setAttribute("id", id + "-tab-grid");
+  grid.setAttribute("id", gridID);
 
   const gridSizer = document.createElement("div");
   gridSizer.classList.add("grid-sizer");
@@ -63,7 +62,7 @@ function tab_new(payload) {
   tabContent.append(tabPane);
 
   // Initialise Masonry
-  const masonryInstance = new Masonry(grid, masonryOptions);
+  const masonryInstance = new Masonry(`#${gridID}`, masonryOptions);
   tabMasonry.set(id, masonryInstance);
 
   eventInit();
@@ -76,8 +75,34 @@ function tab_new(payload) {
     resizeMasonry();
   });
 
+  if (activeTab) {
+    activeTab = false;
+    button.click();
+  }
+
   console.log("Added tab:", title);
-  activeTab = false;
+}
+
+function tab_insert(payload) {
+  const id = payload.parentID;
+  const grid = document.getElementById(id + "-grid");
+
+  if (typeof payload.render === "string") {
+    grid.insertAdjacentHTML("beforeend", payload.render)
+  } // else if (typeof payload.newFunc === "string") {
+  //   console.log("TODO: tab_insert non-render element") 
+  //   const func = window[payload.newFunc];
+  //   if (typeof func === "function") {
+  //     const element = func(payload);
+  //     grid.insertAdjacentElement("beforeend", element);
+  //   } else {
+  //     console.error("Could not find ", payload.newFunc, " function to create element for insertion");
+  //   }
+  // }
+
+  const masonry = tabMasonry.get(id)
+  masonry.appended(grid.lastChild);
+  masonry.layout();
 }
 
 function tab_update_title(payload) {
