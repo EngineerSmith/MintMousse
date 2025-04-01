@@ -63,7 +63,7 @@ components.init = function()
   --
   components.parseComponentsJavascript(components.componentTypes)
 
-  -- Push final types, and their values
+  -- Push final types, and their update values
   channel:performAtomic(function()
     channel:pop()
     channel:push(components.componentTypes)
@@ -113,6 +113,7 @@ local findPath = function(componentTypeName, componentType, extension)
 end
 
 components.parseComponentsJavascript = function(components)
+  local scripts = { }
   for componentTypeName, componentType in pairs(components) do
     local path = findPath(componentTypeName, componentType, ".js")
     if path then
@@ -120,7 +121,7 @@ components.parseComponentsJavascript = function(components)
       if not script then
         love.mintmousse.warning("Components: Unable to read JS file:", path, ". Reason:", errorMessage)
       else
-        controller.addJavascript(script)
+        table.insert(scripts, script)
 
         -- Updates
         local touched = findUpdatePattern(script, componentTypeName, componentType.updates)
@@ -131,6 +132,9 @@ components.parseComponentsJavascript = function(components)
         componentType.hasNewFunction, componentType.hasRemoveFunction = findNewRemovePattern(script, componentTypeName)
       end
     end
+  end
+  if #scripts > 0 then
+    controller.addJavascript(table.concat(scripts, "\r\n"))
   end
 end
 
@@ -175,7 +179,7 @@ components.logStats = function(components)
       end
     end
   end
-  love.mintmousse.info("Components: Found", count, "component types, with a total of", variable, "values that can be updated")
+  love.mintmousse.info("Components: Found", count, "component types, with a total of", variable, "values that can be updated live.")
 end
 
 return components

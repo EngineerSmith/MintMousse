@@ -10,7 +10,7 @@ require("love.thread") -- required if called from conf.lua
 
 local ran = false
 return function()
-  if ran then --todo replace with thread channel check
+  if ran then -- todo replace with thread channel check
     return
   end
 

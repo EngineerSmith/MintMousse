@@ -85,6 +85,7 @@ return function(path, directoryPath)
       localRelationships = { },
     },
     _proxyComponents = { },
+    _componentTypes = nil, -- given via blocking call at bottom of this file
   }
 
   love.mintmousse.require = function(file)
@@ -137,13 +138,13 @@ return function(path, directoryPath)
 
   local threadIDLength = 11
   if not love.isMintMousseServerThread then
-    --todo match AppleCake; recently checked AppleCake, it just numbers threads based on order of initialisation
+    -- todo match AppleCake; recently checked AppleCake, it just numbers threads based on order of initialisation
     love.mintmousse.threadID = ("x"):rep(threadIDLength):gsub("[x]", function(_) return ("%x"):format(love.math.random(0, 15)) end)
   end
 
   if not love.isThread then -- main thread
     -- love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
-    --   --todo; should all events go back to the main thread now that MM supports multithreaded calls?
+    --   -- todo; should all events go back to the main thread now that MM supports multithreaded calls?
     --     -- implementing event checking on each user thread would require a repeat call
     --   error("TODO")
     -- end
@@ -350,6 +351,10 @@ return function(path, directoryPath)
     return love.mintmousse.removeComponent(id)
   end
 
+  local proxyTableGetChildren = function(id)
+    error("TODO") -- todo
+  end
+
   local proxyTableMetatable = {
     __newindex = function(tbl, index, value)
       if index == "__raw" then return nil end
@@ -364,14 +369,27 @@ return function(path, directoryPath)
       rawset(self, index, value)
       local id = rawget(self, "id")
       local componentType = love.mintmousse.getType(id)
-      if componentType == "unknown" then
+      local notComplete = love.mintmousse._componentTypes["unknown"]
+      if notComplete then
+        local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
+        love.mintmousse._componentTypes = componentTypesChannel:peek()
+        notComplete = love.mintmousse._componentTypes["unknown"]
+      end
+      local sendUpdate = false
+      if componentType == "unknown" or notComplete then
+        sendUpdate = true
+      else
+        local updates = love.mintmousse._componentTypes[componentType].updates
+        sendUpdate = updates and updates[index] ~= nil
+      end
+      if sendUpdate then
         love.mintmousse.push({
           func = "componentUpdate",
-          id, index, value,
+          id, index, value
         })
       end
     end,
-    __index = function(tbl, index) --todo type(index) == "number" get child at index
+    __index = function(tbl, index)
       if index == "__raw" then return nil end
       local self = rawget(tbl, "__raw")
       if index == "parent" then
@@ -384,13 +402,24 @@ return function(path, directoryPath)
       elseif index == "type" then
         local id = rawget(self, "id")
         return love.mintmousse.getType(id)
+      elseif index == "children" or type(index) == "number" then
+        local children = rawget(self, "proxyChildren") or proxyTableGetChildren(id)
+        rawset(self, "proxyChildren", children)
+        if type(index) == "number" then
+          return children[index]
+        end
+        return children
       end
       return rawget(self, index)
     end,
   }
 
-  love.mintmousse.addToLocalHinting = function(id, type)
-    love.mintmousse._hinting.localTypeMap[id] = type
+  love.mintmousse.addToLocalHinting = function(id, componentType)
+    if not love.mintmousse._componentTypes[componentType] then
+      love.mintmousse.error("Gave invalid componentType. This type does not exist:", componentType)
+      return
+    end
+    love.mintmousse._hinting.localTypeMap[id] = componentType
   end
 
   love.mintmousse.createProxyTable = function(raw)
@@ -531,9 +560,18 @@ return function(path, directoryPath)
       end
     end
 
-    -- todo validate component.type
     if type(component.type) ~= "string" then
       love.mintmousse.error("Gave invalid componentType to create component. Reason:", "ComponentType isn't type string")
+      return
+    end
+
+    if component.type == "unknown" then
+      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type: 'unknown'")
+      return
+    end
+
+    if not love.mintmousse._componentTypes[component.type] then
+      love.mintmousse.error("Gave invalid componentType. This type does not exist:", component.type)
       return
     end
 
@@ -568,16 +606,22 @@ return function(path, directoryPath)
     -- Wait for component types to be parsed: this is a quick operation, but it is blocking
 
     local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
-    local componentTypes = componentTypesChannel:demand(5)
-    if componentTypes == nil then
+
+    local start = love.timer.getTime()
+    while love.mintmousse._componentTypes == nil do
+      if love.timer.getTime() - start >= 3 then
+        break
+      end
+      love.mintmousse._componentTypes = componentTypesChannel:peek()
+      love.timer.sleep(0.0001) -- 0.1ms
+    end
+
+    if love.mintmousse._componentTypes == nil then
       local was = love.mintmousse.logging.enableError
       love.mintmousse.logging.enableError = false
-      love.mintmousse.error("Timeout reached while waiting for MM thread. Possible error.")
+      love.mintmousse.error("Timeout reached while waiting for MM thread. Possible error in thread code. Continuing to reach love.threaderror callback.")
       love.mintmousse.logging.enableError = was
       return
     end
-
-    -- todo handle componentTypes
-
   end
 end

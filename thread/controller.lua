@@ -301,7 +301,7 @@ controller.newTab = function(id, title, index)
   table.insert(controller.tabs, index, tab) 
 
   controller.notifySubscribersComponentAdded(tab, index)
-  controller.update(json.encode({ --todo index
+  controller.update(json.encode({ -- todo index
     func = "tab_new",
     id = "tab-"..tab.id,
     title = tab.title,
@@ -318,7 +318,7 @@ controller.removeComponent = function(id)
   controller.idMap[id] = nil
   controller.notifySubscribersComponentRemoved(component)
   local componentType = component.type
-  if componentType == "tab" then --todo replace with javascript parsed code
+  if componentType == "tab" then -- todo replace with javascript parsed code
     for index, tab in ipairs(controller.tabs) do
       if tab == component then
         table.remove(controller.tabs, index)
@@ -332,46 +332,5 @@ controller.removeComponent = function(id)
   end
   -- todo remove children
 end
-
--- controller.removeComponent = function(id)
---   local component = controller.getComponent(id)
---   if not component then
---     love.mintmousse.warning("Controller: Could not find component,", id, ", to remove. This could be because the id is invalid, or it has already been removed.")
---     return
---   end
---   controller.idMap[id] = nil
-
---   local tbl = component.parent.children or component.parent
---   local found = false
---   for index, child in ipairs(tbl) do
---     if child == component then
---       table.remove(tbl, index)
---       found = true
---       break
---     end
---   end
---   if not found then
---     love.mintmousse.error("Controller: Tried to remove component,", component.id, ", but couldn't find it within it's parent")
---     return
---   end
-
---   local tbl = component.treeRef.parent.children or component.treeRef.parent
---   local found = false
---   for index, child in ipairs(tbl) do
---     if child == component.treeRef then
---       table.remove(tbl, index)
---       found = true
---       break
---     end
---   end
---   if not found then
---     love.mintmousse.error("Controller: Tried to remove component,", component.id, ", but couldn't find it within it's parent. (tree)")
---     return
---   end
-
---   controller.updateTree()
-
---   --todo tell component to remove itself from webpage
--- end
 
 return controller

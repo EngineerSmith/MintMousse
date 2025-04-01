@@ -1,6 +1,7 @@
+-- Do not change these at run time they won't affect threads! Change the file
+  -- They can be accessed at run time via `love.mintmousse.<NAME>` e.g. `love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ`
 return function(_, directoryPath)
   return {
--- Do not change these at run time they won't affect threads! Change the file
     COMPONENTS_PATHS = { directoryPath.."components/" }, -- Where components are stored, later directories override same named components (file by file)
     -- Paths to the base files that make up the webpage
     DEFAULT_INDEX_HTML = directoryPath.."thread/index.html", -- File location of the webpage's HTML
