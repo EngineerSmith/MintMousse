@@ -301,8 +301,9 @@ controller.newTab = function(id, title, index)
   table.insert(controller.tabs, index, tab) 
 
   controller.notifySubscribersComponentAdded(tab, index)
+
   controller.update(json.encode({ -- todo index
-    func = "tab_new",
+    func = controller.componentTypes[tab.type].hasNewFunction and (tab.type.."_new") or "newComponent",
     id = "tab-"..tab.id,
     title = tab.title,
     content = nil,
@@ -311,6 +312,20 @@ end
 
 controller.addComponent = function(component, parentID)
 
+end
+
+controller.updateComponent = function(id, index, value)
+  local component = controller.idMap[id]
+  local typeUpdates = controller.componentTypes[component.type].updates
+  if typeUpdates[index] then
+    component[index] = value
+
+    controller.update(json.encode({
+      func = ("%s_update_%s"):format(component.type, index),
+      id = ("%s-%s"):format(component.type, component.id),
+      [index] = love.mintmousse.sanitizeText(value),
+    }))
+  end
 end
 
 controller.removeComponent = function(id)

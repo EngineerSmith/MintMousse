@@ -73,6 +73,8 @@ components.init = function()
   components.parseComponentsStyling(components.componentTypes)
 
   components.logStats(components.componentTypes)
+
+  controller.componentTypes = components.componentTypes
 end
 
 components.parseComponentTypes = function(directory)

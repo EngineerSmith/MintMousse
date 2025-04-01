@@ -43,8 +43,8 @@ local createBuffer = function()
       "mintmousse",
       "addComponent",
       "componentAdded",
+      "updateComponent",
       "removeComponent",
-      "componentUpdate",
       "setIconFromFile",
       "componentRemoved",
       "updateSubscription",
@@ -384,7 +384,7 @@ return function(path, directoryPath)
       end
       if sendUpdate then
         love.mintmousse.push({
-          func = "componentUpdate",
+          func = "updateComponent",
           id, index, value
         })
       end
@@ -619,8 +619,19 @@ return function(path, directoryPath)
     if love.mintmousse._componentTypes == nil then
       local was = love.mintmousse.logging.enableError
       love.mintmousse.logging.enableError = false
-      love.mintmousse.error("Timeout reached while waiting for MM thread. Possible error in thread code. Continuing to reach love.threaderror callback.")
+      love.mintmousse.error("Timeout reached while waiting for MM thread. Possible error in thread code. Attempting to manually call love.threaderror")
       love.mintmousse.logging.enableError = was
+      local channel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
+      if not channel:peek() then
+        return
+      end
+      local thread = channel:peek()
+      local errorMessage = thread:getError()
+      if errorMessage then
+        love.handlers["threaderror"](thread, errorMessage)
+      else
+        love.mintmousse.warning("There was no error waiting on the thread object. Possible that it is trying to load too many components and timeout needs to be increased. Tell a programmer.")
+      end
       return
     end
   end
