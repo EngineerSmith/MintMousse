@@ -6,16 +6,16 @@ local lfs = love.filesystem
 
 local functionPattern = "function%s+"
 
-local updatePattern = "_update_(%S+)%s*%(payload%)"
+local updatePattern = "_update_(%S+)%s*%(%s*payload%s*%)"
 
-local newPattern = "_new%s*%(payload%)"
-local removePattern = "_remove%s*%(payload%)"
+local newPattern = "_new%s*%(%s*payload%s*%)"
+local removePattern = "_remove%s*%(%s*payload%s*%)"
 
 local findUpdatePattern = function(script, componentType, outTable)
-  local pattern = functionPattern .. type .. updatePattern
+  local pattern = functionPattern .. componentType .. updatePattern
 
   local touched = false
-  for v in script:gmatch(pattern) do
+  for variable in script:gmatch(pattern) do
     outTable[variable] = true
     touched = true
   end
@@ -24,12 +24,12 @@ local findUpdatePattern = function(script, componentType, outTable)
 end
 
 local findNewRemovePattern = function(script, componentType)
-  local mainPattern = functionPattern .. type
+  local mainPattern = functionPattern .. componentType
   local newPattern = mainPattern .. newPattern
   local removePattern = mainPattern .. removePattern
 
-  local foundNewFunction = script:find(newPattern)
-  local foundRemoveFunction = script:find(removePattern)
+  local foundNewFunction = script:find(newPattern) ~= nil
+  local foundRemoveFunction = script:find(removePattern) ~= nil
 
   return foundNewFunction, foundRemoveFunction
 end
@@ -41,7 +41,7 @@ components.init = function()
       for _, directoryComponentType in ipairs(directoryComponentTypes) do
         if directoryComponentType ~= "unknown" then
           local componentType = components.componentTypes[directoryComponentType] 
-          if not then
+          if not componentType then
             components.componentTypes[directoryComponentType] = {
               directories = { directory },
               updates = { },
@@ -58,24 +58,19 @@ components.init = function()
   local channel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
   components.componentTypes["unknown"] = true
   channel:push(components.componentTypes) -- All threads await for this push
+  components.componentTypes["unknown"] = nil
   --
   components.parseComponentsJavascript(components.componentTypes)
 
   -- Push final types, and their values
-  components.componentTypes["unknown"] = nil
   channel:performAtomic(function()
     channel:pop()
     channel:push(components.componentTypes)
   end)
 
-  -- todo Mustache & lua
-  --   do we still need lua? Focus on Mustache first
+  components.parseComponentsMustache(components.componentTypes)
 
-  local count = 0
-  for _ in pairs(components.componentTypes) do
-    count = count + 1
-  end
-  love.mintmousse.info("Components: Found", count, "component types")
+  components.log(components.componentTypes)
 end
 
 components.parseComponentTypes = function(directory)
@@ -89,7 +84,7 @@ components.parseComponentTypes = function(directory)
 
   -- Symlink may not be a directory; but lfs.getDirectoryItems doesn't care and will return an empty table
   for _, item in ipairs(lfs.getDirectoryItems(directory)) do
-    if lfs.getInfo(item, "file") then -- Must be file, not symlink to a file
+    if lfs.getInfo(directory..item, "file") then -- Must be file, not symlink to a file
       local name = item:match("^(.+)%..*$")
       local nameLower = name:lower()
       if not lookup[nameLower] then
@@ -103,7 +98,7 @@ components.parseComponentTypes = function(directory)
 end
 
 components.parseComponentsJavascript = function(components)
-  for componentTypeName, componentType in ipairs(components) do
+  for componentTypeName, componentType in pairs(components) do
     -- Javascript
     local path --todo function, arg extension
     for i = #componentType.directories, 1, -1 do
@@ -129,6 +124,25 @@ components.parseComponentsJavascript = function(components)
       end
     end
   end
+end
+
+components.parseComponentsMustache = function(components)
+  for componentTypeName, componentType in pairs(components) do
+
+  end
+end
+
+components.log = function(components)
+  local count, variable = 0, 0
+  for _, componentType in pairs(components) do
+    count = count + 1
+    if componentType.updates then
+      for _ in pairs(componentType.updates) do
+        variable = variable + 1
+      end
+    end
+  end
+  love.mintmousse.info("Components: Found", count, "component types, with a total of", variable, "values that can be updated")
 end
 
 return components

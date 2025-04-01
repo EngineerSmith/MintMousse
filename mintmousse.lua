@@ -568,6 +568,16 @@ return function(path, directoryPath)
     -- Wait for component types to be parsed: this is a quick operation, but it is blocking
 
     local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
-    local componentTypes = componentTypesChannel:demand()
+    local componentTypes = componentTypesChannel:demand(5)
+    if componentTypes == nil then
+      local was = love.mintmousse.logging.enableError
+      love.mintmousse.logging.enableError = false
+      love.mintmousse.error("Timeout reached while waiting for MM thread. Possible error.")
+      love.mintmousse.logging.enableError = was
+      return
+    end
+
+    -- todo handle componentTypes
+
   end
 end

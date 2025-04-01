@@ -14,7 +14,7 @@ local websocket13 = love.mintmousse.require("thread.websocket13")
 -- Set defaults
 controller.setTitle("MintMousse")
 controller.setSVGIcon({
-  emoji = "🦆",
+  emoji = "🍮",
   rect = true,
   rounded = true,
   insideColor = "#95d7ab",
