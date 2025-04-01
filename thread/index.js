@@ -24,7 +24,6 @@ var isLowEndMachine = false;
   }
 }
 
-
 const connectedStatus = document.getElementById("connected-status");
 const disconnectedStatus = document.getElementById("disconnected-status");
 const disconnectedStatusText = document.getElementById("disconnected-status-text");
@@ -88,7 +87,7 @@ function removeElement(element) {
 }
 
 function newComponent(payload) {
-
+  // todo
 }
 
 function removeComponent(payload) {
@@ -123,14 +122,7 @@ function startConnectionMonitor(pingIntervalSeconds) {
           console.log("Server is alive, reloading page.");
           window.location.reload()
         } else {
-          console.log(`Ping failed with status: ${response.status}`);
-        }
-      })
-      .catch(error => {
-        if (error.name === "AbortError") {
-          console.log("Ping request timed out.")
-        } else {
-          console.error("Error pinging server:", error)
+          console.error(`Ping failed with returned status: ${response.status}`);
         }
       });
   }, interval);

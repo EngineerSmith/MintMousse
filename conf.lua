@@ -2,9 +2,11 @@ return function(_, directoryPath)
   return {
 -- Do not change these at run time they won't affect threads! Change the file
     COMPONENTS_PATHS = { directoryPath.."components/" }, -- Where components are stored, later directories override same named components (file by file)
-    DEFAULT_INDEX_HTML = directoryPath.."thread/index.html",
-    DEFAULT_INDEX_JS = directoryPath.."thread/index.js",
-    DEFAULT_INDEX_CSS = directoryPath.."thread/index.css",
+    -- Paths to the base files that make up the webpage
+    DEFAULT_INDEX_HTML = directoryPath.."thread/index.html", -- File location of the webpage's HTML
+    DEFAULT_INDEX_JS = directoryPath.."thread/index.js", -- File location of the webpage's JavaScript
+    DEFAULT_INDEX_CSS = directoryPath.."thread/index.css", -- File location of the webpage's Styling
+
     MAX_DATA_RECEIVE_SIZE = 50000, -- Maximum body byte limit of incoming HTTP requests 
     TEMP_MOUNT_LOCATION = ".MintMousse/", -- File location for temporary zip mounting
       -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control

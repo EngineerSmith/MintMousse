@@ -8,12 +8,23 @@ local controller = {
   _isDirty = true,
 }
 
-local lfsRead = love.filesystem.read
+local errorMessage
+controller.javascript, errorMessage = love.filesystem.read(love.mintmousse.DEFAULT_INDEX_JS)
+if not controller.javascript then
+  love.mintmousse.error("Controller: Unable to read JavaScript file:", love.mintmousse.DEFAULT_INDEX_JS, ". Reason:", errorMessage)
+  return
+end
+controller.css, errorMessage = love.filesystem.read(love.mintmousse.DEFAULT_INDEX_CSS)
+if not controller.css then
+  love.mintmousse.error("Controller: Unable to read CSS file:", love.mintmousse.DEFAULT_INDEX_CSS, ". Reason:", errorMessage)
+  return
+end
 
-controller.javascript = lfsRead(love.mintmousse.DEFAULT_INDEX_JS)
-controller.css = lfsRead(love.mintmousse.DEFAULT_INDEX_CSS)
-
-local indexMustache = lfsRead(love.mintmousse.DEFAULT_INDEX_HTML)
+local indexMustache, errorMessage = love.filesystem.read(love.mintmousse.DEFAULT_INDEX_HTML)
+if not indexMustache then
+  love.mintmousse.error("Controller: Unable to read HTML/Mustache file:", love.mintmousse.DEFAULT_INDEX_HTML, ". Reason:", errorMessage)
+  return
+end
 controller.getIndex = function()
   if controller._isDirty then
     controller.index = lustache:render(indexMustache, controller)
@@ -23,11 +34,11 @@ controller.getIndex = function()
 end
 
 controller.addJavascript = function(script)
-  controller.javascript = controller.javascript .. "/r/n" .. script
+  controller.javascript = controller.javascript .. "\r\n" .. script
 end
 
 controller.addStyling = function(styling)
-  controller.css = controller.css .. "/r/n" .. styling
+  controller.css = controller.css .. "\r\n" .. styling
 end
 
 controller.getSink = function(threadID)
