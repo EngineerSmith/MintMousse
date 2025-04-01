@@ -3,6 +3,7 @@ local components = {
 }
 
 local lfs = love.filesystem
+local controller = love.mintmousse.require("thread.controller")
 
 local functionPattern = "function%s+"
 
@@ -69,8 +70,9 @@ components.init = function()
   end)
 
   components.parseComponentsMustache(components.componentTypes)
+  components.parseComponentsStyling(components.componentTypes)
 
-  components.log(components.componentTypes)
+  components.logStats(components.componentTypes)
 end
 
 components.parseComponentTypes = function(directory)
@@ -97,29 +99,35 @@ components.parseComponentTypes = function(directory)
   return #componentTypes ~= 0 and componentTypes or nil
 end
 
+local findPath = function(componentTypeName, componentType, extension)
+  local path
+  for i = #componentType.directories, 1, -1 do
+    path = componentType.directories[i] .. componentTypeName .. extension
+    if lfs.getInfo(path, "file") then
+      break
+    else
+      path = nil
+    end
+  end
+  return path
+end
+
 components.parseComponentsJavascript = function(components)
   for componentTypeName, componentType in pairs(components) do
-    -- Javascript
-    local path --todo function, arg extension
-    for i = #componentType.directories, 1, -1 do
-      path = componentType.directories[i] .. componentTypeName .. ".js"
-      if lfs.getInfo(path, "file") then
-        break
-      else
-        path = nil
-      end
-    end
+    local path = findPath(componentTypeName, componentType, ".js")
     if path then
       local script, errorMessage = lfs.read(path)
       if not script then
         love.mintmousse.warning("Components: Unable to read JS file:", path, ". Reason:", errorMessage)
       else
+        controller.addJavascript(script)
+
         -- Updates
         local touched = findUpdatePattern(script, componentTypeName, componentType.updates)
         if not touched then
           componentType.updates = nil
         end
-        -- New & Remove
+        -- New & Remove functions
         componentType.hasNewFunction, componentType.hasRemoveFunction = findNewRemovePattern(script, componentTypeName)
       end
     end
@@ -128,11 +136,36 @@ end
 
 components.parseComponentsMustache = function(components)
   for componentTypeName, componentType in pairs(components) do
-
+    local path = findPath(componentTypeName, componentType, ".html")
+    if not path then
+      path = findPath(componentTypeName, componentType, ".mustache")
+    end
+    if path then
+      local script, errorMessage = lfs.read(path)
+      if not script then
+        love.mintmousse.warning("Components: Unable to read HTML/Mustache file:", path, ". Reason:", errorMessage)
+      else
+        componentType.mustache = script
+      end
+    end
   end
 end
 
-components.log = function(components)
+components.parseComponentsStyling = function(components)
+  for componentTypeName, componentType in pairs(components) do
+    local path = findPath(componentTypeName, componentType, ".css")
+    if path then
+      local styling, errorMessage = lfs.read(path)
+      if not styling then
+        love.mintmousse.warning("Components: Unable to read CSS file:", path, ". Reason:", errorMessage)
+      else
+        controller.addStyling(styling)
+      end
+    end
+  end
+end
+
+components.logStats = function(components)
   local count, variable = 0, 0
   for _, componentType in pairs(components) do
     count = count + 1

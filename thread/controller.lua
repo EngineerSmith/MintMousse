@@ -11,9 +11,6 @@ local controller = {
 controller.javascript = love.mintmousse.read("thread/index.js")
 controller.css = love.mintmousse.read("thread/index.css")
 
--- temp todo!!
-controller.javascript = controller.javascript .. "\r\n" .. love.mintmousse.read("components/tab.js")
-
 local indexMustache = love.mintmousse.read("thread/index.html")
 controller.getIndex = function()
   if controller._isDirty then
@@ -21,6 +18,14 @@ controller.getIndex = function()
     controller._isDirty = false
   end
   return controller.index
+end
+
+controller.addJavascript = function(script)
+  controller.javascript = controller.javascript .. "/r/n" .. script
+end
+
+controller.addStyling = function(styling)
+  controller.css = controller.css .. "/r/n" .. styling
 end
 
 controller.getSink = function(threadID)

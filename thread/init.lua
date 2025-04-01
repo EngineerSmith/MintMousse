@@ -3,7 +3,7 @@ local PATH, dirPATH = ...
 love.isMintMousseServerThread = true
 require(PATH .. "mintmousse")(PATH, dirPATH)
 
-local components = love.mintmousse.require("components")
+local components = love.mintmousse.require("thread.components")
 components.init()
 
 local http = love.mintmousse.require("thread.http")
