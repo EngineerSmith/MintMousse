@@ -351,19 +351,80 @@ return function(path, directoryPath)
     return love.mintmousse.removeComponent(id)
   end
 
+  local childrenMetatable
+  childrenMetatable = {
+    __index = function(tbl, index)
+      if index == "length" or index == "len" then
+        return childrenMetatable.__len(tbl)
+      end
+      love.mintmousse._metafunctionDepth("entered")
+      if type(index) ~= "number" then
+        love.mintmousse._metafunctionDepth("exited")
+        return nil
+      end
+      local relationships = love.mintmousse._hinting.relationships
+      if (#relationships or 0) > index then
+        relationships = love.mintmousse._hinting.relationships
+      end
+      if not relationships then
+        love.mintmousse._metafunctionDepth("exited")
+        return nil
+      end
+      local childID = relationships[index]
+      local childProxyTable = love.mintmousse.get(childID)
+      love.mintmousse._metafunctionDepth("exited")
+      return childProxyTable
+    end,
+    __newindex = function(tbl, index, value)
+      love.mintmousse._metafunctionDepth("entered")
+      love.mintmousse.error("Proxy Table: You cannot change children, table values directly.")
+      love.mintmousse._metafunctionDepth("exited")
+      return
+    end,
+    __len = function(tbl)
+      love.mintmousse._metafunctionDepth("entered")
+      local id = rawget(tbl, "__id")
+      local relationships = love.mintmousse._hinting.relationships[id]
+      local count = relationships and #relationships or 0
+      local localRelationships = love.mintmousse._hinting.localRelationships[id]
+      if localRelationships then
+        while true do
+          if localRelationships[count+1] ~= nil then
+            count = count + 1
+          else
+            break
+          end
+        end
+      end
+      love.mintmousse._metafunctionDepth("exited")
+      return count
+    end,
+  }
+
   local proxyTableGetChildren = function(id)
-    error("TODO") -- todo
+    return setmetatable({
+      __id = id,
+    }, childrenMetatable)
   end
 
-  local proxyTableMetatable = {
+  local proxyTableMetatable
+  proxyTableMetatable = {
     __newindex = function(tbl, index, value)
       if index == "__raw" then return nil end
+      love.mintmousse._metafunctionDepth("entered")
       if index == "type" then
+        love.mintmousse._metafunctionDepth("exited")
         love.mintmousse.error("Proxy Table: You cannot change that index:", "type")
+        return
+      end
+      if type(index) == "number" then
+        love.mintmousse.error("Proxy Table: You cannot change that index:", index, ". As it is related to the child table.")
+        love.mintmousse._metafunctionDepth("exited")
         return
       end
       local self = rawget(tbl, "__raw")
       if rawget(self, index) == value then
+        love.mintmousse._metafunctionDepth("exited")
         return
       end
       rawset(self, index, value)
@@ -388,29 +449,51 @@ return function(path, directoryPath)
           id, index, value
         })
       end
+      love.mintmousse._metafunctionDepth("exited")
     end,
     __index = function(tbl, index)
       if index == "__raw" then return nil end
+      love.mintmousse._metafunctionDepth("entered")
       local self = rawget(tbl, "__raw")
       if index == "parent" then
         local parentID = rawget(self, "parentID")
-        return parentID and love.mintmousse.get(parentID) or nil
+        local v = parentID and love.mintmousse.get(parentID) or nil
+        love.mintmousse._metafunctionDepth("exited")
+        return v
       elseif index == "remove" then
+        love.mintmousse._metafunctionDepth("exited")
         return proxyTableRemoveSelf
       elseif index == "insert" then
+        love.mintmousse._metafunctionDepth("exited")
         return proxyTableInsertSelf
       elseif index == "type" then
         local id = rawget(self, "id")
-        return love.mintmousse.getType(id)
+        local componentType = love.mintmousse.getType(id)
+        love.mintmousse._metafunctionDepth("exited")
+        return componentType
       elseif index == "children" or type(index) == "number" then
-        local children = rawget(self, "proxyChildren") or proxyTableGetChildren(id)
-        rawset(self, "proxyChildren", children)
+        local children = rawget(tbl, "__proxyChildren")
         if type(index) == "number" then
-          return children[index]
+          local child = children[index]
+          love.mintmousse._metafunctionDepth("exited")
+          return child
         end
+        love.mintmousse._metafunctionDepth("exited")
         return children
       end
-      return rawget(self, index)
+      local v = rawget(self, index)
+      if not v and (index == "length" or index == "len") then
+        v = proxyTableMetatable.__len(tbl)
+      end
+      love.mintmousse._metafunctionDepth("exited")
+      return v
+    end,
+    __len = function(tbl)
+      love.mintmousse._metafunctionDepth("entered")
+      local children = rawget(tbl, "__proxyChildren")
+      local count = children.length
+      love.mintmousse._metafunctionDepth("exited")
+      return count
     end,
   }
 
@@ -422,9 +505,30 @@ return function(path, directoryPath)
     love.mintmousse._hinting.localTypeMap[id] = componentType
   end
 
+  love.mintmousse.addToLocalRelationships = function(parentID, childID)
+    local relationships = love.mintmousse._hinting.relationships[parentID]
+    local count = relationships and #relationships + 1 or 1
+    local localRelationships = love.mintmousse._hinting.localRelationships[parentID]
+    if localRelationships then
+      while true do
+        if localRelationships[count + 1] ~= nil then
+          count = count + 1
+        else
+          break
+        end
+      end
+      table.insert(localRelationships, count, childID)
+    else
+      love.mintmousse._hinting.localRelationships[parentID] = {
+        [count] = childID,
+      }
+    end
+  end
+
   love.mintmousse.createProxyTable = function(raw)
     local proxyTable = setmetatable({
       __raw = raw,
+      __proxyChildren = proxyTableGetChildren(raw.id),
     }, proxyTableMetatable)
     love.mintmousse._proxyComponents[raw.id] = proxyTable
     return proxyTable
@@ -576,6 +680,7 @@ return function(path, directoryPath)
     end
 
     love.mintmousse.addToLocalHinting(component.id, component.type)
+    love.mintmousse.addToLocalRelationships(parentID, component.id)
     love.mintmousse.push({
       func = "addComponent",
       component, parentID

@@ -89,16 +89,16 @@ function tab_insert(payload) {
 
   if (typeof payload.render === "string") {
     grid.insertAdjacentHTML("beforeend", payload.render)
-  } // else if (typeof payload.newFunc === "string") {
-  //   console.log("TODO: tab_insert non-render element") 
-  //   const func = window[payload.newFunc];
-  //   if (typeof func === "function") {
-  //     const element = func(payload);
-  //     grid.insertAdjacentElement("beforeend", element);
-  //   } else {
-  //     console.error("Could not find ", payload.newFunc, " function to create element for insertion");
-  //   }
-  // }
+  } else if (typeof payload.newFunc === "string") {
+    const func = window[payload.newFunc];
+    if (typeof func === "function") {
+      const element = func(payload);
+      grid.insertAdjacentElement("beforeend", element);
+    } else {
+      console.error("Could not find ", payload.newFunc, " function to create element for insertion!");
+      return;
+    }
+  }
 
   const masonry = tabMasonry.get(id)
   masonry.appended(grid.lastChild);

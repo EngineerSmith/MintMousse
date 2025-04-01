@@ -17,7 +17,7 @@ local logPrefix = {
   error = prefix .. "error:",
 }
 prefix = nil
-local assertingDepthOffset = 0
+local errorDepthOffset = 0
 
 local getTimestamp = function()
   return os.date(love.mintmousse.logging.timestampFormat)
@@ -63,9 +63,9 @@ love.mintmousse.warning = function(...)
     return
   end
   if love.mintmousse.logging.warningsCauseErrors then
-    assertingDepthOffset = 1
+    errorDepthOffset = errorDepthOffset + 1
     love.mintmousse.error(...)
-    assertingDepthOffset = 0
+    errorDepthOffset = errorDepthOffset - 1
     return
   end
 
@@ -83,7 +83,7 @@ love.mintmousse.error = function(...)
 
   local debugInfo
   if type(debug) == "table" and type(debug.getinfo) == "function" then
-    local info = debug.getinfo(2 + assertingDepthOffset, "fnS")
+    local info = debug.getinfo(2 + errorDepthOffset, "fnS")
     if info then
       local name = info.name and info.name or info.func and tostring(info.func):gsub("function: ", "") or "UNKNOWN"
       if info.short_src then
@@ -110,8 +110,18 @@ end
 
 love.mintmousse.assert = function(condition, ...)
   if not condition then
-    assertingDepthOffset = 1
+    errorDepthOffset = errorDepthOffset + 1
     love.mintmousse.error(...)
-    assertingDepthOffset = 0
+    errorDepthOffset = errorDepthOffset - 1
+  end
+end
+
+love.mintmousse._metafunctionDepth = function(state)
+  if state == "entered" then
+    errorDepthOffset = errorDepthOffset + 1
+  elseif state == "exited" then
+    errorDepthOffset = errorDepthOffset - 1
+  else
+    error("You spelt it wrong:", "'"..tostring(state).."'")
   end
 end
