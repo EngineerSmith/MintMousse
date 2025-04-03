@@ -41,6 +41,7 @@ client.receive = function(self, pattern, prefix)
       elseif errorMessage == "closed" then
         coroutine.yield(nil)
       else
+        -- documentation only mentions "timeout" and "closed" events, but we can never be sure
         love.mintmousse.warning("CLIENT: Receive unhandled error message! Tell a programmer:", errorMessage)
         return nil
       end

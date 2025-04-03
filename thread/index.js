@@ -79,6 +79,21 @@ function setAttributes(element, attributes) {
   }
 }
 
+function insertPayload(target, payload) {
+  if (typeof payload.render === "string") {
+    target.insertAdjacentHTML("beforeend", payload.render)
+  } else if (typeof payload.newFunc === "string") {
+    const func = window[payload.newFunc];
+    if (typeof func === "function") {
+      const element = func(payload);
+      target.insertAdjacentElement("beforeend", element);
+    } else {
+      console.error("Could not find ", payload.newFunc, " function to create element for insertion!");
+      return;
+    }
+  }
+}
+
 function removeElement(element) {
   if (typeof element.remove === "function")
     element.remove()

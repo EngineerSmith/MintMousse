@@ -10,6 +10,15 @@ function getSizeClass(element) {
   return null;
 }
 
+function card_insert(payload) {
+  const id = payload.parentID;
+  const card = document.getElementById(id);
+
+  insertPayload(card, payload);
+
+  eventInit();
+}
+
 function card_update_size(payload) {
   const id = payload.id;
   const size = payload.size;

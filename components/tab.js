@@ -87,22 +87,13 @@ function tab_insert(payload) {
   const id = payload.parentID;
   const grid = document.getElementById(id + "-grid");
 
-  if (typeof payload.render === "string") {
-    grid.insertAdjacentHTML("beforeend", payload.render)
-  } else if (typeof payload.newFunc === "string") {
-    const func = window[payload.newFunc];
-    if (typeof func === "function") {
-      const element = func(payload);
-      grid.insertAdjacentElement("beforeend", element);
-    } else {
-      console.error("Could not find ", payload.newFunc, " function to create element for insertion!");
-      return;
-    }
-  }
+  insertPayload(grid, payload);
 
   const masonry = tabMasonry.get(id)
   masonry.appended(grid.lastChild);
   masonry.layout();
+
+  eventInit();
 }
 
 function tab_update_title(payload) {

@@ -152,11 +152,10 @@ return function(path, directoryPath)
     love.mintmousse.start = function(config)
       local threadChannel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
       threadChannel:performAtomic(function()
-        local thread = threadChannel:demand()
+        local thread = threadChannel:peek()
         if not thread:isRunning() then
           thread:start(love.mintmousse.path, love.mintmousse.directoryPath)
         end
-        threadChannel:push(thread)
       end)
       -- todo validate
       love.mintmousse.push({
@@ -178,9 +177,8 @@ return function(path, directoryPath)
     love.mintmousse.wait = function()
       local threadChannel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
       threadChannel:performAtomic(function()
-        local thread = threadChannel:demand()
+        local thread = threadChannel:peek()
         thread:wait()
-        threadChannel:push(thread)
       end)
     end
 
@@ -339,18 +337,6 @@ return function(path, directoryPath)
     return componentType or "unknown"
   end
 
-  local proxyTableInsertSelf = function(tbl, component)
-    local self = rawget(tbl, "__raw")
-    local id = rawget(self, "id")
-    love.mintmousse.addComponent(component, id)
-  end
-
-  local proxyTableRemoveSelf = function(tbl)
-    local self = rawget(tbl, "__raw")
-    local id = rawget(self, "id")
-    return love.mintmousse.removeComponent(id)
-  end
-
   local childrenMetatable
   childrenMetatable = {
     __index = function(tbl, index)
@@ -401,10 +387,56 @@ return function(path, directoryPath)
     end,
   }
 
+  local proxyTableNew = function(tbl, component)
+    local self = rawget(tbl, "__raw")
+    local id = rawget(self, "id")
+    return love.mintmousse.addComponent(component, id)
+  end
+
+  local proxyTableAdd = function(tbl, component)
+    local self = rawget(tbl, "__raw")
+    local id = rawget(self, "id")
+    love.mintmousse.addComponent(component, id)
+    return tbl
+  end
+
+  local proxyTableRemoveSelf = function(tbl)
+    local self = rawget(tbl, "__raw")
+    local id = rawget(self, "id")
+    return love.mintmousse.removeComponent(id)
+  end
+
   local proxyTableGetChildren = function(id)
     return setmetatable({
       __id = id,
     }, childrenMetatable)
+  end
+
+  local cachedCreationMethods = {
+    new = { },
+    add = { }
+  }
+
+  local getNewMethod = function(componentType)
+    local cachedNewMethods = cachedCreationMethods["new"]
+    if not cachedNewMethods[componentType] then
+      cachedNewMethods[componentType] = function(tbl, component)
+        component.type = componentType
+        return proxyTableNew(tbl, component)
+      end
+    end
+    return cachedNewMethods[componentType]
+  end
+
+  local getAddMethod = function(componentType)
+    local cachedAddMethods = cachedCreationMethods["add"]
+    if not cachedAddMethods[componentType] then
+      cachedAddMethods[componentType] = function(tbl, component)
+        component.type = componentType
+        return proxyTableAdd(tbl, component)
+      end
+    end
+    return cachedAddMethods[componentType]
   end
 
   local proxyTableMetatable
@@ -463,9 +495,6 @@ return function(path, directoryPath)
       elseif index == "remove" then
         love.mintmousse._metafunctionDepth("exited")
         return proxyTableRemoveSelf
-      elseif index == "insert" then
-        love.mintmousse._metafunctionDepth("exited")
-        return proxyTableInsertSelf
       elseif index == "type" then
         local id = rawget(self, "id")
         local componentType = love.mintmousse.getType(id)
@@ -480,6 +509,24 @@ return function(path, directoryPath)
         end
         love.mintmousse._metafunctionDepth("exited")
         return children
+      elseif index == "new" then
+        love.mintmousse._metafunctionDepth("exited")
+        return proxyTableNew
+      elseif index == "add" then
+        love.mintmousse._metafunctionDepth("exited")
+        return proxyTableAdd
+      elseif type(index) == "string" and #index > 3 then
+        local sub = index:sub(1, 3)
+        local componentType = index:sub(4)
+        -- ComponentType name must be in camelCase
+        componentType = componentType:gsub("^(.)", function(c) return c:lower() end, 1)
+        if sub == "new" then
+          love.mintmousse._metafunctionDepth("exited")
+          return getNewMethod(componentType)
+        elseif sub == "add" then
+          love.mintmousse._metafunctionDepth("exited")
+          return getAddMethod(componentType)
+        end
       end
       local v = rawget(self, index)
       if not v and (index == "length" or index == "len") then
@@ -670,7 +717,10 @@ return function(path, directoryPath)
     end
 
     if component.type == "unknown" then
-      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type: 'unknown'")
+      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type: 'unknown'. This is a protected keyword.")
+      return
+    elseif component.type == "tab" then
+      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type: 'tab'. Please use love.mintmousse.newTab")
       return
     end
 
@@ -686,15 +736,7 @@ return function(path, directoryPath)
       component, parentID
     })
 
-    -- todo: is this needed?
-    local raw = { }
-    for key, value in pairs(component) do
-      if key ~= "type" then
-        raw[key] = value
-      end
-    end
-
-    return love.mintmousse.createProxyTable(raw)
+    return love.mintmousse.createProxyTable(component)
   end
 
   love.mintmousse.removeComponent = function(id)
@@ -714,7 +756,7 @@ return function(path, directoryPath)
 
     local start = love.timer.getTime()
     while love.mintmousse._componentTypes == nil do
-      if love.timer.getTime() - start >= 3 then
+      if love.timer.getTime() - start >= 3 then -- seconds timeout
         break
       end
       love.mintmousse._componentTypes = componentTypesChannel:peek()

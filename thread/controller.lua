@@ -50,6 +50,10 @@ controller.getSink = function(threadID)
   return nil
 end
 
+controller.getWebsiteID = function(component)
+  return ("%s-%s"):format(component.type, component.id)
+end
+
 local syncSinkExplore
 syncSinkExplore = function(component, typeMap, relationships, target, isInTargetSubtree)
   isInTargetSubtree = isInTargetSubtree or component.id == target
@@ -252,22 +256,58 @@ controller.update = function()
   love.mintmousse.warning("Controller: Need to overwrite controller.update callback")
 end
 
+local makeNewPackage = function(component)
+  local componentType = controller.componentTypes[component.type]
+
+  local package = {
+    func = ("%s_insert"):format(component.parent.type),
+    parentID = controller.getWebsiteID(component.parent),
+    newFunc = componentType.hasNewFunction and ("%s_new"):format(component.type) or nil,
+  }
+  
+  if componentType.hasNewFunction and componentType.updates then
+    package.id = controller.getWebsiteID(component)
+    for index in pairs(componentType.updates) do
+      package[index] = love.mintmousse.sanitizeText(component[index])
+    end
+  end
+
+  if componentType.mustache then
+    local id = component.id
+    component.id = controller.getWebsiteID(component)
+    package.render = lustache:render(componentType.mustache, component)
+    component.id = id
+  end
+
+  return package
+end
+
+local addPackagesForChildren
+addPackagesForChildren = function(component, packages)
+  if component.type ~= "tab" then
+    table.insert(packages, json.encode(makeNewPackage(component)))
+  end
+  for _, child in ipairs(component.children) do
+    addPackagesForChildren(child, packages)
+  end
+end
+
 controller.getInitialPayload = function()
   if #controller.tabs == 0 then
     return nil
   end
 
-  local jsonTabs = { }
+  local packages = { }
   for index, tab in ipairs(controller.tabs) do
     local payload = {
       func = "tab_new",
-      id = "tab-"..tab.id,
+      id = controller.getWebsiteID(tab),
       title = tab.title,
-      content = nil, --[[todo render children]]
     }
-    table.insert(jsonTabs, index, json.encode(payload))
+    table.insert(packages, index, json.encode(payload))
+    addPackagesForChildren(tab, packages)
   end
-  return "["..table.concat(jsonTabs, ",").."]"
+  return "["..table.concat(packages, ",").."]"
 end
 
 controller.newTab = function(id, title, index)
@@ -303,46 +343,30 @@ controller.newTab = function(id, title, index)
   controller.notifySubscribersComponentAdded(tab, index)
 
   controller.update(json.encode({ -- todo index
-    func = controller.componentTypes[tab.type].hasNewFunction and (tab.type.."_new") or "newComponent",
-    id = "tab-"..tab.id,
+    func = controller.componentTypes[tab.type].hasNewFunction and (tab.type.."_new") or love.mintmousse.error("Tell a programmer; tab_new is missing from tab.js"),
+    id = controller.getWebsiteID(tab),
     title = tab.title,
     content = nil,
   }))
 end
 
 controller.addComponent = function(component, parentID)
-  local componentType = controller.componentTypes[component.type]
-  if not componentType then
+  if not controller.componentTypes[component.type] then
     love.mintmousse.warning("Controller: Tried to create component with invalid type:", component.type)
     return
   end
   local parent = controller.idMap[parentID]
+  if not controller.componentTypes[parent.type].hasInsertFunction then
+    love.mintmousse.warning("Controller: Tried to add component to child who can't have children. If you're a developer add the function <type>_insert to your javascript.")
+  end
+
   component.parent = parent
   component.children = { }
   table.insert(parent.children, component)
-
+  controller.idMap[component.id] = component
   controller.notifySubscribersComponentAdded(component, #parent.children)
 
-  if controller.componentTypes[parent.type].hasInsertFunction then
-  end
-  
-  local package = {
-    func = ("%s_insert"):format(parent.type),
-    parentID = ("%s-%s"):format(parent.type, parentID),
-    newFunc = componentType.hasNewFunction and ("%s_new"):format(component.type) or nil,
-  }
-  
-  if componentType.hasNewFunction and componentType.updates then
-    package.id = ("%s-%s"):format(component.type, component.id)
-    for index in pairs(componentType.updates) do
-      package[index] = love.mintmousse.sanitizeText(component[index])
-    end
-  end
-
-  if componentType.mustache then
-    package.render = lustache:render(componentType.mustache, component)
-  end
-
+  local package = makeNewPackage(component)
   controller.update(json.encode(package))
 end
 
@@ -354,30 +378,42 @@ controller.updateComponent = function(id, index, value)
 
     controller.update(json.encode({
       func = ("%s_update_%s"):format(component.type, index),
-      id = ("%s-%s"):format(component.type, component.id),
+      id = controller.getWebsiteID(component),
       [index] = love.mintmousse.sanitizeText(value),
     }))
   end
 end
 
+local removeChildren
+removeChildren = function(component)
+  for _, child in ipairs(component.children) do
+    removeChildren(child)
+  end
+  controller.idMap[component.id] = nil
+  component.children = nil
+end
+
 controller.removeComponent = function(id)
   local component = controller.idMap[id]
-  controller.idMap[id] = nil
   controller.notifySubscribersComponentRemoved(component)
-  local componentType = component.type
-  if componentType == "tab" then -- todo replace with javascript parsed code
-    for index, tab in ipairs(controller.tabs) do
-      if tab == component then
-        table.remove(controller.tabs, index)
-        break
-      end
+
+  -- component.parent will hold children if it is the root (controller.tabs)
+  local children = component.parent.children or component.parent
+  for index, child in ipairs(children) do
+    if child == component then
+      table.remove(children, index)
+      break
     end
-    controller.update(json.encode({
-      func = "tab_remove",
-      id = "tab-"..component.id,
-    }))
   end
-  -- todo remove children
+
+  removeChildren(component)
+
+  local componentType = controller.componentType[component.type]
+  local package = {
+    func = componentType.hasRemoveFunction and ("%s_remove"):format(component.type) or "removeComponent",
+    id = controller.getWebsiteID(component),
+  }
+  controller.update(json.encode(package))
 end
 
 return controller
