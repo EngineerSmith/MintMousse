@@ -19,11 +19,13 @@ Designed to be easily extended with custom components, empowering the community 
 cd loveProject
 git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/.
 ```
+### Hello world
 ```lua
 require("libs.MintMousse")
 love.mintmousse.start({
   whitelist = { "127.0.0.1", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12" },
 })
+
 local dashboard = love.mintmousse.newTab("Dashboard", "dashboard")
 dashboard:newCard({ size = 5 })
   :addCardText({ text = "Hello World!" })
@@ -33,10 +35,15 @@ dashboard:newCard({ size = 5 })
 Check out our [wiki][doclink]
 
 # Credits
+## Dependencies
 Massive thank you to our dependencies! Without them the MintMousse wouldn't exist as it is.
-* [Lustache][git.lustache]
-* [Bootstrap][git.bootstrap]
-* [Json.lua][git.json]
+- [Lustache][git.lustache]
+- [Bootstrap][git.bootstrap]
+- [Json.lua][git.json]
+
+## Kudos
+Special thanks to:
+- **[Immow](https://github.com/Immow)** Suggesting the lua api for defining the components.
 
 [doclink]: https://github.com/EngineerSmith/MintMousse/wiki
 [git.lustache]: https://github.com/Olivine-Labs/lustache
