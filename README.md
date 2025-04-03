@@ -25,14 +25,8 @@ love.mintmousse.start({
   whitelist = { "127.0.0.1", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12" },
 })
 local dashboard = love.mintmousse.newTab("Dashboard", "dashboard")
-dashboard:insert({
-  type = "card",
-  size = 5,
-  children = { {
-    type = "CardText",
-    text = "Hello World!",
-  } },
-})
+dashboard:newCard({ size = 5 })
+  :addCardText({ text = "Hello World!" })
 ```
 
 # Docs
