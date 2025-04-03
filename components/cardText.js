@@ -9,7 +9,7 @@ function cardText_new(payload) {
   const p = document.createElement("p");
   p.classList.add("card-text");
   p.setAttribute("id", id);
-  p.textContent = text;
+  p.textContent = text
 
   container.append(p);
 

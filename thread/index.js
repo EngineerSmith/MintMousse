@@ -159,7 +159,7 @@ function createWebSocketConnection() {
       if (receivedString.trim().length !== 0) {
         try {
           const payload = JSON.parse(receivedString);
-          console.log("Received JSON data:", payload);
+          //console.log("Received JSON data:", payload); // For debugging
           try {
             for (let i = 0; i < payload.length; i++) {
               const func = window[payload[i].func];
