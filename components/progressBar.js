@@ -1,9 +1,9 @@
 function progressBar_new(payload) {
   const id = payload.id;
   const percentage = String(payload.percentage ?? "0");
-  const showLabel = Boolean(payload.showLabel);
+  const showLabel = Boolean(payload.showLabel) === true;
   const ariaLabel = String(payload.ariaLabel ?? "Unknown");
-  const isStriped = Boolean(payload.isStriped);
+  const isStriped = Boolean(payload.isStriped) === true;
   const bgColor = BSColor(payload.color);
 
   const container = document.createElement("div");
@@ -18,20 +18,21 @@ function progressBar_new(payload) {
   });
 
   const progressBar = document.createElement("div");
-  progressBar.classList.add("progress-bar", "text-bg-" + bgColor);
+  progressBar.classList.add("progress-bar");
+  if (bgColor !== null)
+    progressBar.classList.add("text-bg-" + bgColor)
+
   setAttributes(progressBar, {
     "id": id,
   });
   progressBar.style["width"] = percentage + "%";
   progressBar.dataset.showLabel = String(showLabel);
 
-  if (progressBar.dataset.showLabel === "true") {
+  if (progressBar.dataset.showLabel === "true")
     progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
-  }
 
-  if (isStriped) {
+  if (isStriped)
     progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
-  }
 
   container.append(progressBar);
 
@@ -45,9 +46,8 @@ function progressBar_update_percentage(payload) {
   const progressBar = document.getElementById(id);
   progressBar.style["width"] = percentage + "%";
 
-  if (progressBar.dataset.showLabel === "true") {
+  if (progressBar.dataset.showLabel === "true")
     progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
-  }
 
   const container = document.getElementById(id + "-root");
   container.setAttribute("aria-valuenow", percentage);
@@ -55,7 +55,7 @@ function progressBar_update_percentage(payload) {
 
 function progressBar_update_showLabel(payload) {
   const id = payload.id;
-  const showLabel = Boolean(payload.showLabel);
+  const showLabel = Boolean(payload.showLabel) === true;
 
   const progressBar = document.getElementById(id);
   progressBar.dataset.showLabel = String(showLabel);
@@ -74,7 +74,7 @@ function progressBar_update_ariaLabel(payload) {
 
 function progressBar_update_isStriped(payload) {
   const id = payload.id;
-  const isStriped = Boolean(payload.isStriped);
+  const isStriped = Boolean(payload.isStriped) === true;
 
   const progressBar = document.getElementById(id);
   if (isStriped) {
@@ -90,8 +90,8 @@ function progressBar_update_color(payload) {
 
   const progressBar = document.getElementById(id);
   const currentBGColor = getColorClass(progressBar, "text-bg-");
-  if (currentBGColor) {
+  if (currentBGColor)
     progressBar.classList.remove(currentBGColor);
-  }
-  progressBar.classList.add("text-bg-" + bgColor);
+  if (bgColor)
+    progressBar.classList.add("text-bg-" + bgColor);
 }

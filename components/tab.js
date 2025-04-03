@@ -84,8 +84,8 @@ function tab_new(payload) {
 
 function tab_insert(payload) {
   const id = payload.parentID;
-  const grid = document.getElementById(id + "-grid");
 
+  const grid = document.getElementById(id + "-grid");
   insertPayload(grid, payload);
 
   const masonry = tabMasonry.get(id)

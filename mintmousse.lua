@@ -421,6 +421,7 @@ return function(path, directoryPath)
     local cachedNewMethods = cachedCreationMethods["new"]
     if not cachedNewMethods[componentType] then
       cachedNewMethods[componentType] = function(tbl, component)
+        component = component or { }
         component.type = componentType
         return proxyTableNew(tbl, component)
       end
@@ -432,6 +433,7 @@ return function(path, directoryPath)
     local cachedAddMethods = cachedCreationMethods["add"]
     if not cachedAddMethods[componentType] then
       cachedAddMethods[componentType] = function(tbl, component)
+        component = component or { }
         component.type = componentType
         return proxyTableAdd(tbl, component)
       end

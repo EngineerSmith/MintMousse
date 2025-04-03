@@ -23,14 +23,14 @@ const validBootstrapColors = [
 ]
 function BSColor(color) {
   if (color === undefined || color === null)
-    return "primary";
+    return null;
 
   const colorLower = String(color).toLowerCase();
 
   if (validBootstrapColors.includes(colorLower))
     return colorLower;
 
-  return "primary";
+  return null;
 }
 
 function getColorClass(element, prefix) {
