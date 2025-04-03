@@ -268,7 +268,11 @@ local makeNewPackage = function(component)
   if componentType.hasNewFunction and componentType.updates then
     package.id = controller.getWebsiteID(component)
     for index in pairs(componentType.updates) do
-      package[index] = love.mintmousse.sanitizeText(component[index])
+      if type(component[index]) == "string" then
+        package[index] = love.mintmousse.sanitizeText(component[index])
+      else
+        package[index] = component[index]
+      end
     end
   end
 
@@ -379,7 +383,7 @@ controller.updateComponent = function(id, index, value)
     controller.update(json.encode({
       func = ("%s_update_%s"):format(component.type, index),
       id = controller.getWebsiteID(component),
-      [index] = love.mintmousse.sanitizeText(value),
+      [index] = type(value) == "string" and love.mintmousse.sanitizeText(value) or value,
     }))
   end
 end

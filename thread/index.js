@@ -12,6 +12,49 @@ function resizeMasonry() {
   });
 }
 
+// https://getbootstrap.com/docs/5.3/utilities/colors/
+const validBootstrapColors = [
+  "primary", "secondary",
+  "success", "danger",
+  "warning", "info",
+  "light", "dark",
+  "body",
+  "black", "white"
+]
+function BSColor(color) {
+  if (color === undefined || color === null)
+    return "primary";
+
+  const colorLower = String(color).toLowerCase();
+
+  if (validBootstrapColors.includes(colorLower))
+    return colorLower;
+
+  return "primary";
+}
+
+function getColorClass(element, prefix) {
+  if (!element || !element.classList)
+    return null;
+
+  for (const className of element.classList) {
+    if (className.startsWith(prefix)) {
+      const colorPart = className.substring(prefix.length);
+      if (validBootstrapColors.includes(colorPart)) {
+        return className
+      }
+    }
+  }
+  return null;
+}
+
+function truncateToTwoDecimalPlaces(str) {
+  const decimalIndex = str.indexOf('.');
+  if (decimalIndex === -1)
+    return str;
+  return str.slice(0, decimalIndex + 3);
+}
+
 var isLowEndMachine = false;
 {
   const userAgent = navigator.userAgent;

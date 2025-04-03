@@ -80,8 +80,6 @@ function tab_new(payload) {
     activeTab = false;
     button.click();
   }
-
-  console.log("Added tab:", title);
 }
 
 function tab_insert(payload) {
@@ -103,8 +101,6 @@ function tab_update_title(payload) {
 
   const button = document.getElementById(id + "-tab");
   button.textContent = title;
-
-  console.log("Updated tab: Title updated to ", title);
 }
 
 function tab_remove(payload) {
@@ -128,6 +124,4 @@ function tab_remove(payload) {
       activeTab = true;
     }
   }
-
-  console.log("Removed tab:", title);
 }

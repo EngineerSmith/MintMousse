@@ -1,8 +1,10 @@
 function progressBar_new(payload) {
   const id = payload.id;
   const percentage = String(payload.percentage ?? "0");
-  const showLabel = payload.showPercentageLabel === true;
+  const showLabel = Boolean(payload.showLabel);
   const ariaLabel = String(payload.ariaLabel ?? "Unknown");
+  const isStriped = Boolean(payload.isStriped);
+  const bgColor = BSColor(payload.color);
 
   const container = document.createElement("div");
   container.classList.add("progress", "m-1")
@@ -16,15 +18,19 @@ function progressBar_new(payload) {
   });
 
   const progressBar = document.createElement("div");
-  progressBar.classList.add("progress-bar")
+  progressBar.classList.add("progress-bar", "text-bg-" + bgColor);
   setAttributes(progressBar, {
     "id": id,
-  })
+  });
   progressBar.style["width"] = percentage + "%";
-  progressBar.dataset.showLabel = showLabel;
+  progressBar.dataset.showLabel = String(showLabel);
 
-  if (progressBar.dataset.showLabel) {
-    progressBar.textContent = percentage + "%";
+  if (progressBar.dataset.showLabel === "true") {
+    progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
+  }
+
+  if (isStriped) {
+    progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
   }
 
   container.append(progressBar);
@@ -39,20 +45,23 @@ function progressBar_update_percentage(payload) {
   const progressBar = document.getElementById(id);
   progressBar.style["width"] = percentage + "%";
 
-  if (progressBar.dataset.showLabel) {
-    progressBar.textContent = percentage + "%";
+  if (progressBar.dataset.showLabel === "true") {
+    progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
   }
 
   const container = document.getElementById(id + "-root");
   container.setAttribute("aria-valuenow", percentage);
 }
 
-function progressBar_update_showPercentageLabel(payload) {
+function progressBar_update_showLabel(payload) {
   const id = payload.id;
-  const showLabel = payload.showPercentageLabel === true;
+  const showLabel = Boolean(payload.showLabel);
 
   const progressBar = document.getElementById(id);
-  progressBar.dataset.showLabel = showLabel;
+  progressBar.dataset.showLabel = String(showLabel);
+
+  payload.percentage = progressBar.style["width"].slice(0, -1);
+  progressBar_update_percentage(payload);
 }
 
 function progressBar_update_ariaLabel(payload) {
@@ -61,4 +70,28 @@ function progressBar_update_ariaLabel(payload) {
 
   const container = document.getElementById(id + "-root");
   container.setAttribute("aria-label") = ariaLabel;
+}
+
+function progressBar_update_isStriped(payload) {
+  const id = payload.id;
+  const isStriped = Boolean(payload.isStriped);
+
+  const progressBar = document.getElementById(id);
+  if (isStriped) {
+    progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
+  } else {
+    progressBar.classList.remove("progress-bar-striped", "progress-bar-animated");
+  }
+}
+
+function progressBar_update_color(payload) {
+  const id = payload.id;
+  const bgColor = BSColor(payload.color);
+
+  const progressBar = document.getElementById(id);
+  const currentBGColor = getColorClass(progressBar, "text-bg-");
+  if (currentBGColor) {
+    progressBar.classList.remove(currentBGColor);
+  }
+  progressBar.classList.add("text-bg-" + bgColor);
 }
