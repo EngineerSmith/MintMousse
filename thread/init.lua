@@ -36,6 +36,8 @@ callbacks.addComponent = controller.addComponent
 callbacks.updateComponent = controller.updateComponent
 callbacks.removeComponent = controller.removeComponent
 
+callbacks.notify = controller.notifyToast
+
 callbacks.start = function(config)
   if not server then
     server = love.mintmousse.require("thread.server")

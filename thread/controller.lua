@@ -286,6 +286,11 @@ local makeNewPackage = function(component)
     component.id = id
   end
 
+  if not package.newFunc and not package.render then
+    love.mintmousse.error("Controller: Tried to call makeNewPackage; but neither JS or HTML was successful in creating this componentType. Tell a programmer: this should have been caught earlier.")
+    return nil
+  end
+
   return package
 end
 
@@ -358,10 +363,17 @@ controller.newTab = function(id, title, index)
 end
 
 controller.addComponent = function(component, parentID)
-  if not controller.componentTypes[component.type] then
+  local componentType = controller.componentTypes[component.type]
+  if not componentType then
     love.mintmousse.warning("Controller: Tried to create component with invalid type:", component.type)
     return
   end
+
+  if not componentType.hasMustacheFile and not componentType.hasNewFunction then
+    love.mintmousse.warning("Controller: Tried to create component with invalid type:", component.type, ". As it does not have a construction method (JS or HTML)")
+    return
+  end
+
   local parent = controller.idMap[parentID]
   if not controller.componentTypes[parent.type].hasInsertFunction then
     love.mintmousse.warning("Controller: Tried to add component to child who can't have children. If you're a developer add the function <type>_insert to your javascript.")
@@ -420,6 +432,17 @@ controller.removeComponent = function(id)
     func = componentType.hasRemoveFunction and ("%s_remove"):format(component.type) or "removeComponent",
     id = controller.getWebsiteID(component),
   }
+  controller.update(json.encode(package))
+end
+
+controller.notifyToast = function(message)
+  local package = {
+    func = "notify",
+    type = "toast",
+    title = message.title and love.mintmousse.sanitizeText(message.title) or nil,
+    text = message.text and love.mintmousse.sanitizeText(message.text) or nil,
+  }
+
   controller.update(json.encode(package))
 end
 

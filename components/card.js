@@ -41,13 +41,13 @@ function card_new(payload) {
   const title = document.createElement("h4");
   title.classList.add("card-title")
   title.setAttribute("id", id + "-title");
-  title.textContent = titleText;
+  title.innerHTML = titleText;
   title.hidden = titleText === null;
 
   const p = document.createElement("p");
   p.classList.add("card-text");
   p.setAttribute("id", id + "-text");
-  p.textContent = text;
+  p.innerHTML = text;
   p.hidden = text === null;
 
   body.append(title, p);
@@ -147,7 +147,7 @@ function card_update_title(payload) {
   const titleText = getText(payload.title);
 
   const title = document.getElementById(id + "-title")
-  title.textContent = titleText;
+  title.innerHTML = titleText;
   title.hidden = titleText === null;
 
   const body = document.getElementById(id + "-body");
@@ -160,7 +160,7 @@ function card_update_text(payload) {
   const text = getText(payload.text);
 
   const p = document.getElementById(id + "-text");
-  p.textContent = text;
+  p.innerHTML = text;
   p.hidden = text === null;
 
   const body = document.getElementById(id + "-body");

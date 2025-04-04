@@ -44,15 +44,17 @@ components.init = function()
     local directoryComponentTypes = components.parseComponentTypes(directory)
     if directoryComponentTypes then
       for _, directoryComponentType in ipairs(directoryComponentTypes) do
-        if directoryComponentType ~= "unknown" then
-          local componentType = components.componentTypes[directoryComponentType] 
+        if directoryComponentType.name ~= "unknown" then
+          local componentType = components.componentTypes[directoryComponentType.name]
           if not componentType then
-            components.componentTypes[directoryComponentType] = {
+            components.componentTypes[directoryComponentType.name] = {
               directories = { directory },
               updates = { },
+              hasMustacheFile = directoryComponentType.hasMustacheFile,
             }
           else
             table.insert(componentType.directories, directory)
+            componentType.hasMustacheFile = componentType.hasMustacheFile or directoryComponentType.hasMustacheFile
           end
         else
           love.mintmousse.warning("Components: Found a component type named 'unknown'. This is a protected keyword within MintMousse. Directory:", directory)
@@ -93,11 +95,14 @@ components.parseComponentTypes = function(directory)
   -- Symlink may not be a directory; but lfs.getDirectoryItems doesn't care and will return an empty table
   for _, item in ipairs(lfs.getDirectoryItems(directory)) do
     if lfs.getInfo(directory..item, "file") then -- Must be file, not symlink to a file
-      local name = item:match("^(.+)%..*$")
-      local nameLower = name:lower()
+      local name, extension = item:match("^(.+)%.(.+)$")
+      local nameLower, extension = name:lower(), extension:lower()
       if not lookup[nameLower] then
-        lookup[nameLower] = true
-        table.insert(componentTypes, name)
+        table.insert(componentTypes, { name = name, hasMustacheFile = (extension == "html" or extension == "mustache") })
+        lookup[nameLower] = #componentTypes
+      else
+        local componentType = componentTypes[lookup[nameLower]]
+        componentType.hasMustacheFile = componentType.hasMustacheFile or (extension == "html" or extension == "mustache")
       end
     end
   end

@@ -167,6 +167,18 @@ function removeComponent(payload) {
   removeElement(element);
 }
 
+function notify(payload) {
+  const type = payload.type;
+  const funcName = type + "_notify";
+
+  const func = window[funcName];
+  if (typeof func === "function") {
+    func(payload);
+  } else {
+    console.error("Couldn't find notify function for type:", type);
+  }
+}
+
 // https://stackoverflow.com/a/57888548
 const fetchTimeout = (url, ms, { signal, ...options } = {}) => {
   const controller = new AbortController();
@@ -176,11 +188,11 @@ const fetchTimeout = (url, ms, { signal, ...options } = {}) => {
   return promise.finally(() => clearTimeout(timeout));
 };
 
-function startConnectionMonitor(pingIntervalSeconds) {
-  const interval = Math.max(1, pingIntervalSeconds) * 1000;
+function startConnectionMonitor(pingIntervalSeconds = 1) {
+  const interval = Math.max(0.5, pingIntervalSeconds) * 1000;
 
   setInterval(() => {
-    fetchTimeout('/api/ping', interval - 200)
+    fetchTimeout('/api/ping', interval - 100)
       .then(response => {
         if (response.status === 204) {
           console.log("Server is alive, reloading page.");
@@ -248,13 +260,13 @@ function createWebSocketConnection() {
   websocket.onclose = () => {
     console.log("WebSocket connection closed");
     setDisconnectedStatus();
-    startConnectionMonitor(3);
+    startConnectionMonitor(2);
   };
 
   websocket.onerror = (error) => {
     console.log("WebSocket error:", error);
     setDisconnectedStatus();
-    startConnectionMonitor(3);
+    startConnectionMonitor(2);
   };
 }
 

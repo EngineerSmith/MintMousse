@@ -9,7 +9,7 @@ function cardHeader_new(payload) {
     header.classList.add("bg-transparent");
 
   header.setAttribute("id", id);
-  header.textContent = text;
+  header.innerHTML = text;
   header.hidden = text === null;
 
   return header;
@@ -20,7 +20,7 @@ function cardHeader_update_text(payload) {
   const text = getText(payload.text);
 
   const header = document.getElementById(id);
-  header.textContent = text;
+  header.innerHTML = text;
   header.hidden = text === null;
 }
 

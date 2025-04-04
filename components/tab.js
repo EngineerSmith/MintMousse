@@ -17,7 +17,7 @@ function tab_new(payload) {
 
   const button = document.createElement("button");
   button.classList.add("nav-link");
-  button.textContent = title ? title : "UNKNOWN";
+  button.innerHTML = title ? title : "UNKNOWN";
   setAttributes(button, {
     "id": buttonID,
     "data-bs-toggle": "tab",
@@ -100,14 +100,13 @@ function tab_update_title(payload) {
   const title = payload.title;
 
   const button = document.getElementById(id + "-tab");
-  button.textContent = title;
+  button.innerHTML = title;
 }
 
 function tab_remove(payload) {
   const id = payload.id;
 
   const button = document.getElementById(id + "-tab");
-  const title = button.textContent;
   const isActive = button.classList.contains("active");
 
   const li = document.getElementById(id + "-li");

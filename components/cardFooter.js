@@ -9,7 +9,7 @@ function cardFooter_new(payload) {
     footer.classList.add("bg-transparent");
 
   footer.setAttribute("id", id);
-  footer.textContent = text;
+  footer.innerHTML = text;
   footer.hidden = text === null;
 
   return footer
@@ -20,7 +20,7 @@ function cardFooter_update_text(payload) {
   const text = getText(payload.text);
 
   const footer = document.getElementById(id);
-  footer.textContent = text;
+  footer.innerHTML = text;
   footer.hidden = text === null;
 }
 

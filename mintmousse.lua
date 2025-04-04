@@ -727,8 +727,22 @@ return function(path, directoryPath)
       return
     end
 
-    if not love.mintmousse._componentTypes[component.type] then
+    local notComplete = love.mintmousse._componentTypes["unknown"]
+    if notComplete then
+      local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
+      love.mintmousse._componentTypes = componentTypesChannel:peek()
+      notComplete = love.mintmousse._componentTypes["unknown"]
+    end
+
+    local componentType = love.mintmousse._componentTypes[component.type]
+    if not componentType then
       love.mintmousse.error("Gave invalid componentType. This type does not exist:", component.type)
+      return
+    end
+
+    -- if notComplete; thread will reject it anyway - this just makes the error message more clear
+    if not notComplete and not componentType.hasMustacheFile and not componentType.hasNewFunction then
+      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type:", "'"..tostring(component.type).."'.", "As it does not have a construction method (JS or HTML)")
       return
     end
 
@@ -751,6 +765,12 @@ return function(path, directoryPath)
     })
   end
 
+  love.mintmousse.notify = function(message)
+    love.mintmousse.push({
+      func = "notify",
+      message,
+    })
+  end
 
 
   if not love.isMintMousseServerThread then
