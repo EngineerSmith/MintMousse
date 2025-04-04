@@ -53,6 +53,7 @@ local createBuffer = function()
       lookup[word] = true
     end
     -- !!todo!! Add commonly found strings to push into dictionary
+    --  This is unlikely to happen now components are loaded on a thread and checked at the end of this file
 
     channelDictionary:push(dictionary)
   end
@@ -143,11 +144,11 @@ return function(path, directoryPath)
   end
 
   if not love.isThread then -- main thread
-    -- love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
+    love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
     --   -- todo; should all events go back to the main thread now that MM supports multithreaded calls?
     --     -- implementing event checking on each user thread would require a repeat call
-    --   error("TODO")
-    -- end
+      error("TODO")
+    end
 
     love.mintmousse.start = function(config)
       local threadChannel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
@@ -212,9 +213,9 @@ return function(path, directoryPath)
     if type(id) ~= "string" then
       return false, "ID isn't type string"
     end
-    local failed = id:match("[^%w%._,:;@%-]")
+    local failed = id:match("[^%w%._,:;@]")
     if failed then
-      return false, "ID Can only contain alphanumeric or . _ , : ; @ - characters. Failed character:'"..tostring(failed.."'")
+      return false, "ID Can only contain alphanumeric or . _ , : ; @ characters. Failed character:'"..tostring(failed.."'")
     end
     if id:find("^%d") then
       return false, "ID cannot use a numeric as the first character of an id"
@@ -738,6 +739,7 @@ return function(path, directoryPath)
       component, parentID
     })
 
+    component.parentID = parentID
     return love.mintmousse.createProxyTable(component)
   end
 

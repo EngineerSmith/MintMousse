@@ -1,8 +1,8 @@
 function progressBar_new(payload) {
   const id = payload.id;
-  const percentage = String(payload.percentage ?? "0");
+  const percentage = getText(payload.percentage) ?? "0";
   const showLabel = Boolean(payload.showLabel) === true;
-  const ariaLabel = String(payload.ariaLabel ?? "Unknown");
+  const ariaLabel = getText(payload.ariaLabel) ?? "Unknown";
   const isStriped = Boolean(payload.isStriped) === true;
   const bgColor = BSColor(payload.color);
 
@@ -41,7 +41,7 @@ function progressBar_new(payload) {
 
 function progressBar_update_percentage(payload) {
   const id = payload.id;
-  const percentage = String(payload.percentage ?? "0");
+  const percentage = getText(payload.percentage) ?? "0";
 
   const progressBar = document.getElementById(id);
   progressBar.style["width"] = percentage + "%";
@@ -66,7 +66,7 @@ function progressBar_update_showLabel(payload) {
 
 function progressBar_update_ariaLabel(payload) {
   const id = payload.id;
-  const ariaLabel = String(payload.ariaLabel ?? "Unknown");
+  const ariaLabel = getText(payload.ariaLabel) ?? "Unknown";
 
   const container = document.getElementById(id + "-root");
   container.setAttribute("aria-label") = ariaLabel;

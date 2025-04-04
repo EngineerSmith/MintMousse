@@ -22,8 +22,6 @@ controller.setSVGIcon({
   easterEgg = true,
 })
 
--- todo; should callbacks be added via a function?
---         This has the issue of dependency
 local callbacks = { }
 
 callbacks.newTab = controller.newTab

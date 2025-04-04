@@ -4,7 +4,6 @@ function cardBody_new(payload) {
   const body = document.createElement("div");
   body.classList.add("card-body");
   body.setAttribute("id", id);
-  console.log(payload);
 
   return body
 }

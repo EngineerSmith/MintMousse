@@ -1,19 +1,20 @@
 function cardSubtitle_new(payload) {
   const id = payload.id;
-  const text = String(payload.text);
+  const text = getText(payload.text);
 
-  const header = document.createElement("h5");
-  header.classList.add("card-subtitle", "text-body-secondary");
-  header.setAttribute("id", id);
-  header.textContent = text;
+  const subtitle = document.createElement("h5");
+  subtitle.classList.add("card-subtitle", "text-body-secondary");
+  subtitle.setAttribute("id", id);
+  subtitle.textContent = text;
+  subtitle.hidden = text === null;
 
-  return header;
+  return subtitle;
 }
 
 function cardSubtitle_update_text(payload) {
   const id = payload.id;
-  const text = String(payload.text);
+  const text = getText(payload.text);
 
-  const header = document.getElementById(id);
-  header.textContent = text;
+  const subtitle = document.getElementById(id);
+  subtitle.textContent = text;
 }

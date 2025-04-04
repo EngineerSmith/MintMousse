@@ -1,6 +1,6 @@
 function cardHeader_new(payload) {
   const id = payload.id;
-  const text = String(payload.text);
+  const text = getText(payload.text);
   const isTransparent = Boolean(payload.isTransparent);
 
   const header = document.createElement("h4");
@@ -10,16 +10,18 @@ function cardHeader_new(payload) {
 
   header.setAttribute("id", id);
   header.textContent = text;
+  header.hidden = text === null;
 
   return header;
 }
 
 function cardHeader_update_text(payload) {
   const id = payload.id;
-  const text = String(payload.text);
+  const text = getText(payload.text);
 
   const header = document.getElementById(id);
   header.textContent = text;
+  header.hidden = text === null;
 }
 
 function cardHeader_update_isTransparent(payload) {

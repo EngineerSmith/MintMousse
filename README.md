@@ -27,8 +27,7 @@ love.mintmousse.start({
 })
 
 local dashboard = love.mintmousse.newTab("Dashboard", "dashboard")
-dashboard:newCard({ size = 5 })
-  :addCardText({ text = "Hello World!" })
+dashboard:newCard({ size = 5, title = "Hello World!" })
 ```
 
 # Docs

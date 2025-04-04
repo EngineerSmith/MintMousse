@@ -1,19 +1,21 @@
 function cardTitle_new(payload) {
   const id = payload.id;
-  const text = String(payload.text);
+  const text = getText(payload.text);
 
-  const header = document.createElement("h4");
-  header.classList.add("card-title");
-  header.setAttribute("id", id);
-  header.textContent = text;
+  const title = document.createElement("h4");
+  title.classList.add("card-title");
+  title.setAttribute("id", id);
+  title.textContent = text;
+  title.hidden = text === null;
 
-  return header;
+  return title;
 }
 
 function cardTitle_update_text(payload) {
   const id = payload.id;
-  const text = String(payload.text);
+  const text = getText(payload.text);
 
-  const header = document.getElementById(id);
-  header.textContent = text;
+  const title = document.getElementById(id);
+  title.textContent = text;
+  title.hidden = text === null;
 }

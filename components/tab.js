@@ -89,7 +89,7 @@ function tab_insert(payload) {
   insertPayload(grid, payload);
 
   const masonry = tabMasonry.get(id)
-  masonry.appended(grid.lastChild);
+  masonry.appended(grid.lastElementChild);
   masonry.layout();
 
   eventInit();
