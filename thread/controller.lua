@@ -391,6 +391,10 @@ end
 
 controller.updateComponent = function(id, index, value)
   local component = controller.idMap[id]
+  if not component then
+    love.mintmousse.warning("Controller: Tried to update component when component does not exist.")
+    return
+  end
   local typeUpdates = controller.componentTypes[component.type].updates
   if typeUpdates[index] then
     component[index] = value

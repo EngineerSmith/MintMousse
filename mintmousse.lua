@@ -168,7 +168,9 @@ return function(path, directoryPath)
     love.mintmousse.stop = function(noWait)
       COMMAND_QUEUE:performAtomic(function()
         COMMAND_QUEUE:clear()
-        love.mintmousse.stop()
+        love.mintmousse.push({
+          func = "quit",
+        })
       end)
       if not noWait then
         love.mintmousse.wait()
@@ -298,6 +300,20 @@ return function(path, directoryPath)
       end
     end
     love.mintmousse._hinting.relationships[packagedComponent.id] = nil
+  end
+
+  local localHintingRemove
+  localHintingRemove = function(id)
+    if love.mintmousse._hinting.localTypeMap[id] then
+      love.mintmousse._hinting.localTypeMap[id] = nil
+    end
+    local children = love.mintmousse._hinting.localRelationships[id]
+    if children then
+      for _, childID in ipairs(children) do
+        localHintingRemove(childID)
+      end
+    end
+    love.mintmousse._hinting.localRelationships[id] = nil
   end
 
   local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(love.mintmousse.threadID))
@@ -490,7 +506,7 @@ return function(path, directoryPath)
       if index == "__raw" then return nil end
       love.mintmousse._metafunctionDepth("entered")
       local self = rawget(tbl, "__raw")
-      if index == "parent" then
+      if index == "parent" or index == "back" then
         local parentID = rawget(self, "parentID")
         local v = parentID and love.mintmousse.get(parentID) or nil
         love.mintmousse._metafunctionDepth("exited")
@@ -727,6 +743,7 @@ return function(path, directoryPath)
       return
     end
 
+    -- Get latest componentTyping information
     local notComplete = love.mintmousse._componentTypes["unknown"]
     if notComplete then
       local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
@@ -758,7 +775,7 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.removeComponent = function(id)
-    -- todo remove locally
+    localHintingRemove(id);
     love.mintmousse.push({
       func = "removeComponent",
       id,

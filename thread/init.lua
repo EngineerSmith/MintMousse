@@ -113,6 +113,12 @@ while true do
     if type(message) ~= "table" then
       break
     end
+    if message.func == "quit" then
+      if server then
+        server.cleanUp()
+      end
+      return
+    end
     if type(message.func) == "string" then
       local func = callbacks[message.func]
       if type(func) == "function" then
@@ -123,12 +129,6 @@ while true do
       else
         love.mintmousse.warning("Could not find callback for:", message.func)
       end
-    end
-    if message.func == "quit" then
-      if server then
-        server.cleanUp()
-      end
-      return
     end
   end
   if server and server.isRunning() then
