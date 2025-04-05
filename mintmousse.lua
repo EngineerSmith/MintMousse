@@ -145,8 +145,8 @@ return function(path, directoryPath)
 
   if not love.isThread then -- main thread
     love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
-    --   -- todo; should all events go back to the main thread now that MM supports multithreaded calls?
-    --     -- implementing event checking on each user thread would require a repeat call
+      -- todo; should all events go back to the main thread now that MM supports multithreaded calls?
+        -- implementing event checking on each user thread would require a repeat call
       error("TODO")
     end
 
@@ -241,9 +241,11 @@ return function(path, directoryPath)
     -- Remove acknowledged relationships hints
     -- pairs are used as local relationships may not be an unbroken indexed table
     for id, relationships in pairs(love.mintmousse._hinting.localRelationships) do
-      for index in pairs(relationships) do
-        if love.mintmousse._hinting.relationships[id][index] then
-          love.mintmousse._hinting.localRelationships[id][index] = nil
+      if love.mintmousse._hinting.relationships[id] then
+        for index in pairs(relationships) do
+          if love.mintmousse._hinting.relationships[id][index] then
+            love.mintmousse._hinting.localRelationships[id][index] = nil
+          end
         end
       end
       local hasIndex = false
@@ -261,9 +263,9 @@ return function(path, directoryPath)
   hintingComponentAdded = function(packagedComponent)
     love.mintmousse._hinting.typeMap[packagedComponent.id] = packagedComponent.type
     love.mintmousse._hinting.localTypeMap[packagedComponent.id] = nil
+    local relationships = { }
+    love.mintmousse._hinting.relationships[packagedComponent.id] = relationships
     if packagedComponent.children then
-      local relationships = { }
-      love.mintmousse._hinting.relationships[packagedComponent.id] = relationships
 
       local localRelationships = love.mintmousse._hinting.localRelationships[packagedComponent.id]
       for index, child in ipairs(packagedComponent.children) do
@@ -318,7 +320,7 @@ return function(path, directoryPath)
 
   local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(love.mintmousse.threadID))
   love.mintmousse.processSubscription = function(max)
-    love.mintmousse.assert(type(max) == "number" or type(max) == "nil", "Max should be a number, or nil type.")
+    love.mintmousse.assert(type(max) == "number" or type(max) == "nil", "Max must be type Number, or Nil")
     for _ = 1, max or love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ do
       local package = COMPONENT_UPDATES_QUEUE:pop()
       if not package then
@@ -326,14 +328,15 @@ return function(path, directoryPath)
       end
       package = love.mintmousse._decode(package)
       if package.type == "latest" then
-        local typeMap, relationships = unpack(package)
-        love.mintmousse._hinting.typeMap = typeMap
-        love.mintmousse._hinting.relationships = relationships
+        love.mintmousse._hinting.typeMap = package.typeMap
+        love.mintmousse._hinting.relationships = package.relationships
         cleanUpLocalHinting()
       elseif package.type == "componentAdded" then
         local packagedComponent, parentChildIndex = unpack(package)
         hintingComponentAdded(packagedComponent)
-        table.insert(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex, packagedComponent.id)
+        if packagedComponent.parentID then
+          table.insert(love.mintmousse._hinting.relationships[packagedComponent.parentID], parentChildIndex, packagedComponent.id)
+        end
       elseif package.type == "componentRemoved" then
         local packagedComponent, parentChildIndex = unpack(package)
         hintingComponentRemoved(packagedComponent)
@@ -662,7 +665,7 @@ return function(path, directoryPath)
 
   -- https://realfavicongenerator.net @ 2025 Q1
   love.mintmousse.setIconRFG = function(filepath)
-    love.mintmousse.assert(type(filepath) == "string", "filepath must be type String")
+    love.mintmousse.assert(type(filepath) == "string", "Filepath must be type String")
     local temp = filepath:lower()
     love.mintmousse.assert(temp:match("$.zip"), "Invalid file path, must end with .ZIP file extension. Gave:", filepath)
     love.mintmousse.assert(love.filesystem.getInfo(filepath), "Invalid file path, couldn't reach file with given path. Gave:", filepath)
@@ -783,6 +786,10 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.notify = function(message)
+    love.mintmousse.assert(type(message) == "table", "Message must be type Table")
+    if not message.title and not message.text then
+      return
+    end
     love.mintmousse.push({
       func = "notify",
       message,

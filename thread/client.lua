@@ -57,13 +57,20 @@ client.send = function(self, data, i, j)
     local j, errorMessage, k = self.client:send(data, i)
     if not j then
       if errorMessage == "closed" then
-        coroutine.yield(nil)
+        if coroutine.running() then
+          coroutine.yield(nil)
+        end
+        return
+      else
+        print("TODO HIT ERROR:", errorMessage)
       end
       i = k + 1
     else
       i = i + j
     end
-    coroutine.yield(true)
+    if coroutine.running() then
+      coroutine.yield(true)
+    end
   end
 end
 

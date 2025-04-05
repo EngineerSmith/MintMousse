@@ -108,7 +108,7 @@ controller.update = function(jsonPayload)
 end
 
 while true do
-  for _ = 0, 50 do
+  for _ = 1, 50 do
     local message = love.mintmousse.pop()
     if type(message) ~= "table" then
       break

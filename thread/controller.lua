@@ -72,7 +72,7 @@ syncSinkExplore = function(component, typeMap, relationships, target, isInTarget
 end
 
 -- Must be performed Atomic
-controller.syncSink = function(sink)
+controller.syncSink = function(_, sink)
   local package = {
     type = "latest",
     typeMap = { },
@@ -101,7 +101,7 @@ controller.updateThreadSubscription = function(threadID, target)
   if not sink then
     sink = {
       threadID = threadID,
-      channel = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(threadID))
+      channel = love.thread.getChannel(love.mintmousse.THREAD_COMPONENT_UPDATES_ID:format(threadID)),
     }
     table.insert(controller.updateSinks, sink)
   end

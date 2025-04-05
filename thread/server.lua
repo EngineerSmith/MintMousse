@@ -90,7 +90,7 @@ end
 server.cleanUp = function()
   for client in pairs(server.clients) do
     if client.connection.type == "WS/13" then
-      websocket13.closeConnection(client, "Server shutdown", false)
+      websocket13.closeConnection(client, "Server shutdown")
     else
       client:close()
     end

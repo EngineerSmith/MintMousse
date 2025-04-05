@@ -151,12 +151,11 @@ websocket13.newConnection = function(client)
   love.mintmousse.warning("WS13: Need to overwrite websocket13.newConnection callback")
 end
 
-websocket13.closeConnection = function(client, reason, isCoroutine)
-  isCoroutine = isCoroutine or true
+websocket13.closeConnection = function(client, reason)
 
   websocket13.send(client, 0x8, reason or "Request closing")
 
-  local startTime, timeout = love.timer.getTime(), isCoroutine and 5 or 1
+  local startTime, timeout = love.timer.getTime(), 1
   while love.timer.getTime() - startTime < timeout do
     if not client:isBufferEmpty() then
       local request, errorMessage = websocket13.processRequest(client)
@@ -166,14 +165,14 @@ websocket13.closeConnection = function(client, reason, isCoroutine)
         break
       end
     end
-    if isCoroutine then
+    if coroutine.running() then
       coroutine.yield(true)
     else
       love.timer.sleep(0.0001)
     end
   end 
   client:close()
-  if isCoroutine then
+  if coroutine.running() then
     coroutine.yield(nil) -- ending the coroutine
   end
 end
