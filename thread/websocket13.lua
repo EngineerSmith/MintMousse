@@ -155,7 +155,7 @@ websocket13.closeConnection = function(client, reason)
 
   websocket13.send(client, 0x8, reason or "Request closing")
 
-  local startTime, timeout = love.timer.getTime(), 1
+  local startTime, timeout = love.timer.getTime(), coroutine.running() and 5 or 1
   while love.timer.getTime() - startTime < timeout do
     if not client:isBufferEmpty() then
       local request, errorMessage = websocket13.processRequest(client)
