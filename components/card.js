@@ -15,7 +15,7 @@ function card_new(payload) {
   const size = Math.min(5, Math.max(1, isNaN(sizeAsNumber) ? 1 : sizeAsNumber));
   const newSize = "grid-item-" + size;
   const bgColor = BSColor(payload.color);
-  const isContentCenter = Boolean(payload.isContentCenter) === true;
+  const isContentCenter = Boolean(payload.isContentCenter ?? false);
   const borderColor = BSColor(payload.borderColor);
   const titleText = getText(payload.title);
   const text = getText(payload.text);
@@ -110,7 +110,7 @@ function card_update_color(payload) {
 
 function card_update_isContentCenter(payload) {
   const id = payload.id;
-  const isContentCenter = Boolean(payload.isContentCenter) === true;
+  const isContentCenter = Boolean(payload.isContentCenter ?? false);
 
   const card = document.getElementById(id);
   if (isContentCenter) {

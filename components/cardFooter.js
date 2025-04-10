@@ -1,7 +1,7 @@
 function cardFooter_new(payload) {
   const id = payload.id;
   const text = getText(payload.text);
-  const isTransparent = Boolean(payload.isTransparent) == true;
+  const isTransparent = Boolean(payload.isTransparent ?? false);
 
   const footer = document.createElement("div")
   footer.classList.add("card-footer", "text-body-secondary");
@@ -26,7 +26,7 @@ function cardFooter_update_text(payload) {
 
 function cardFooter_update_isTransparent(payload) {
   const id = payload.id;
-  const isTransparent = Boolean(payload.isTransparent) === true;
+  const isTransparent = Boolean(payload.isTransparent ?? false);
 
   const footer = document.getElementById(id);
   if (isTransparent) {

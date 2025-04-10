@@ -445,7 +445,16 @@ controller.notifyToast = function(message)
     type = "toast",
     title = message.title and love.mintmousse.sanitizeText(message.title) or nil,
     text = message.text and love.mintmousse.sanitizeText(message.text) or nil,
+    hideDelay = type(message.hideDelay) == "number" and message.hideDelay or nil,
   }
+
+  if type(message.animatedFade) == "boolean" then
+    package.animatedFade = message.animatedFade
+  end
+
+  if type(message.autoHide) == "boolean" then
+    package.autoHide = message.autoHide
+  end
 
   controller.update(json.encode(package))
 end

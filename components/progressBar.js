@@ -1,9 +1,9 @@
 function progressBar_new(payload) {
   const id = payload.id;
   const percentage = getText(payload.percentage) ?? "0";
-  const showLabel = Boolean(payload.showLabel) === true;
+  const showLabel = Boolean(payload.showLabel ?? false);
   const ariaLabel = getText(payload.ariaLabel) ?? "Unknown";
-  const isStriped = Boolean(payload.isStriped) === true;
+  const isStriped = Boolean(payload.isStriped ?? false);
   const bgColor = BSColor(payload.color);
 
   const container = document.createElement("div");
@@ -55,7 +55,7 @@ function progressBar_update_percentage(payload) {
 
 function progressBar_update_showLabel(payload) {
   const id = payload.id;
-  const showLabel = Boolean(payload.showLabel) === true;
+  const showLabel = Boolean(payload.showLabel ?? false);
 
   const progressBar = document.getElementById(id);
   progressBar.dataset.showLabel = String(showLabel);
@@ -74,7 +74,7 @@ function progressBar_update_ariaLabel(payload) {
 
 function progressBar_update_isStriped(payload) {
   const id = payload.id;
-  const isStriped = Boolean(payload.isStriped) === true;
+  const isStriped = Boolean(payload.isStriped ?? false);
 
   const progressBar = document.getElementById(id);
   if (isStriped) {

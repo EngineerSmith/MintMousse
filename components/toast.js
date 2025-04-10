@@ -1,6 +1,6 @@
 const toastOptions = {
-  "animated": true,
-  "autohide": false,
+  "animation": true,
+  "autohide": true,
   "delay": 12000, // ms
 };
 
@@ -28,7 +28,17 @@ function toast_updateTimestamp(timestampElement, startTime) {
 function toast_notify(payload) {
   const title = getText(payload.title);
   const text = getText(payload.text);
+  const animatedFade = Boolean(payload.animatedFade ?? toastOptions.animation);
+  const autoHide = Boolean(payload.autoHide ?? toastOptions.autohide);
+  const delay = Number(payload.hideDelay);
   const sentTime = Date.now();
+
+  const currentOptions = { ...toastOptions };
+  currentOptions.animation = animatedFade;
+  currentOptions.autohide = autoHide;
+  if (typeof delay === "number" && !isNaN(delay)) {
+    currentOptions.delay = delay;
+  }
 
   const toast = document.createElement("div");
   toast.classList.add("toast");
@@ -77,7 +87,7 @@ function toast_notify(payload) {
 
   const container = document.getElementById("toastContainer");
   container.append(toast);
-  const t = new bootstrap.Toast(toast, toastOptions);
+  const t = new bootstrap.Toast(toast, currentOptions);
 
   toast_updateTimestamp(timestamp, sentTime);
   t.show()
