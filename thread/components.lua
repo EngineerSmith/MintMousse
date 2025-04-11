@@ -5,25 +5,52 @@ local components = {
 local lfs = love.filesystem
 local controller = love.mintmousse.require("thread.controller")
 
-local functionPattern = "function%s+"
+--[[
 
+I made this over engineered; but even if these variable values are updated.
+  They would have to be updated in the controller which reconstructs the function
+    names to call these found JS functions. So, it is best not to change them \o/
+
+]]
+
+local functionPattern = "function%s+"
 local payloadPattern = "%s*%(%s*payload%s*%)"
-local updatePattern = "_update_(%S+)" .. payloadPattern
+
+-- These are optional variables to help to create the patterns
+local updatePrefix = "_update_" 
+local childIdentifier = "child_"
+--   The childIdentifier is used later to check if the updatePattern has captured a child value
+--   if the patterns are truly unique; then this can be undefined. E.g. updatePattern = "_update_"; updateChildPattern = "_updateChild_"
+
+local updatePattern = updatePrefix .. "(%S+)" .. payloadPattern
+local updateChildPattern = updatePrefix .. childIdentifier .. "(%S+)" .. payloadPattern
 
 local newPattern = "_new" .. payloadPattern
 local insertPattern = "_insert" .. payloadPattern
 local removePattern = "_remove" .. payloadPattern
+local removeChildPattern = "_remove_child" .. payloadPattern
 
-local findUpdatePattern = function(script, componentType, outTable)
-  local pattern = functionPattern .. componentType .. updatePattern
+local findUpdatePatterns = function(script, componentType, updateTable, updateChildTable)
+  local fullUpdatePattern = functionPattern .. componentType .. updatePattern
+  local fullUpdateChildPattern = functionPattern .. componentType .. updateChildPattern
 
-  local touched = false
-  for variable in script:gmatch(pattern) do
-    outTable[variable] = true
-    touched = true
+  -- Component update values
+  local touchedUpdateTable = false
+  for variable in script:gmatch(fullUpdatePattern) do
+    if type(childIdentifier) ~= "string" or childIdentifier == "" or not variable:find("^" .. childIdentifier) then
+      updateTable[variable] = true
+      touchedUpdateTable = true
+    end
+  end
+
+  -- Component children update values
+  local touchedUpdateChildTable = false
+  for variable in script:gmatch(fullUpdateChildPattern) do
+    updateChildTable[variable] = true
+    touchedUpdateChildTable = true
   end
   
-  return touched
+  return touchedUpdateTable, touchedUpdateChildTable
 end
 
 local findNewInsertRemovePattern = function(script, componentType)
@@ -31,12 +58,14 @@ local findNewInsertRemovePattern = function(script, componentType)
   local newPattern = mainPattern .. newPattern
   local insertPattern = mainPattern .. insertPattern
   local removePattern = mainPattern .. removePattern
+  local removeChildPattern = mainPattern .. removeChildPattern
 
   local foundNewFunction = script:find(newPattern) ~= nil
   local foundInsertFunction = script:find(insertPattern) ~= nil
   local foundRemoveFunction = script:find(removePattern) ~= nil
+  local foundRemoveChildFunction = script:find(removeChildPattern) ~= nil
 
-  return foundNewFunction, foundInsertFunction, foundRemoveFunction
+  return foundNewFunction, foundInsertFunction, foundRemoveFunction, foundRemoveChildFunction
 end
 
 components.init = function()
@@ -50,6 +79,7 @@ components.init = function()
             components.componentTypes[directoryComponentType.name] = {
               directories = { directory },
               updates = { },
+              childUpdates = { },
               hasMustacheFile = directoryComponentType.hasMustacheFile,
             }
           else
@@ -66,7 +96,9 @@ components.init = function()
   components.componentTypes["unknown"] = true
   channel:push(components.componentTypes) -- All threads await for this push
   components.componentTypes["unknown"] = nil
-  --
+
+  -- ==== --
+
   components.parseComponentsJavascript(components.componentTypes)
 
   -- Push final types, and their update values
@@ -135,12 +167,16 @@ components.parseComponentsJavascript = function(components)
         table.insert(scripts, script)
 
         -- Updates
-        local touched = findUpdatePattern(script, componentTypeName, componentType.updates)
-        if not touched then
+        local touchedUpdateTable, touchedUpdateChildTable = findUpdatePatterns(script, componentTypeName, componentType.updates, componentType.childUpdates)
+        if not touchedUpdateTable then
           componentType.updates = nil
         end
+        if not touchedUpdateChildTable then
+          componentType.childUpdates = nil
+        end
         -- New & Remove functions
-        componentType.hasNewFunction, componentType.hasInsertFunction, componentType.hasRemoveFunction = findNewInsertRemovePattern(script, componentTypeName)
+        componentType.hasNewFunction, componentType.hasInsertFunction,
+        componentType.hasRemoveFunction, componentType.hasRemoveChildFunction = findNewInsertRemovePattern(script, componentTypeName)
       end
     end
   end

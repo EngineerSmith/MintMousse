@@ -52,7 +52,7 @@ local createBuffer = function()
     for _, word in ipairs(dictionary) do
       lookup[word] = true
     end
-    -- !!todo!! Add commonly found strings to push into dictionary
+    -- todo!! Add commonly found strings to push into dictionary
     --  This is unlikely to happen now components are loaded on a thread and checked at the end of this file
 
     channelDictionary:push(dictionary)
@@ -501,6 +501,22 @@ return function(path, directoryPath)
         love.mintmousse.push({
           func = "updateComponent",
           id, index, value
+        })
+      end
+      -- check parent
+      local parentID = rawget(self, "parentID")
+      local parentComponentType = love.mintmousse.getType(parentID)
+      local sendChildUpdate = false
+      if parentComponentType == "unknown" or notComplete then
+        sendChildUpdate = true
+      else
+        local childUpdates = love.mintmousse._componentTypes[parentComponentType].childUpdates
+        sendChildUpdate = childUpdates and childUpdates[index] ~= nil
+      end
+      if sendChildUpdate then
+        love.mintmousse.push({
+          func = "updateParentComponent",
+          parentID, id, index, value
         })
       end
       love.mintmousse._metafunctionDepth("exited")

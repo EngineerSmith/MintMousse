@@ -286,6 +286,21 @@ local makeNewPackage = function(component)
     component.id = id
   end
 
+  if component.parent then
+    local componentParentType = controller.componentTypes[component.parent.type]
+    if componentParentType.childUpdates then
+      for index in pairs(componentParentType.childUpdates) do
+        if not package[index] then
+          if type(component[index] == "string") then
+            package[index] = love.mintmousse.sanitizeText(component[index])
+          else
+            package[index] = component[index]
+          end
+        end
+      end
+    end
+  end
+
   if not package.newFunc and not package.render then
     love.mintmousse.error("Controller: Tried to call makeNewPackage; but neither JS or HTML was successful in creating this componentType. Tell a programmer: this should have been caught earlier.")
     return nil
@@ -396,12 +411,42 @@ controller.updateComponent = function(id, index, value)
     return
   end
   local typeUpdates = controller.componentTypes[component.type].updates
-  if typeUpdates[index] then
+  if typeUpdates and typeUpdates[index] then
     component[index] = value
 
     controller.update(json.encode({
       func = ("%s_update_%s"):format(component.type, index),
       id = controller.getWebsiteID(component),
+      [index] = type(value) == "string" and love.mintmousse.sanitizeText(value) or value,
+    }))
+  end
+end
+
+controller.updateParentComponent = function(parentID, childID, index, value)
+  local parentComponent = controller.idMap[parentID]
+  if not parentComponent then
+    love.mintmousse.warning("Controller: Tried to update parent component when parent component does not exist.")
+    return
+  end
+  local childComponent = controller.idMap[childID]
+  if not childComponent then
+    love.mintmousse.warning("Controller: Tried to update component when component does not exist.")
+    return
+  end
+
+  if childComponent.parent ~= parentComponent then
+    love.mintmousse.warning("Controller: Parent child mismatch. Given child component gave incorrect parent component.")
+    return
+  end
+
+  local typeChildUpdates = controller.componentTypes[parentComponent.type].childUpdates
+  if typeChildUpdates and typeChildUpdates[index] then
+    childComponent[index] = value
+
+    controller.update(json.encode({
+      func = ("%s_update_child_%s"):format(parentComponent.type, index),
+      parentID = controller.getWebsiteID(parentComponent),
+      id = controller.getWebsiteID(childComponent),
       [index] = type(value) == "string" and love.mintmousse.sanitizeText(value) or value,
     }))
   end
@@ -431,11 +476,24 @@ controller.removeComponent = function(id)
 
   removeChildren(component)
 
-  local componentType = controller.componentType[component.type]
   local package = {
-    func = componentType.hasRemoveFunction and ("%s_remove"):format(component.type) or "removeComponent",
+    func = "removeComponent",
     id = controller.getWebsiteID(component),
   }
+
+  local componentType = controller.componentTypes[component.type]
+  if componentType.hasRemoveFunction then
+    package.func = ("%s_remove"):format(component.type)
+  end
+
+  if component.parent and component.parent.type then
+    local parentComponentType = controller.componentTypes[component.parent.type]
+    if parentComponentType and parentComponentType.hasRemoveChildFunction then
+      package.func = ("%s_remove_child"):format(component.parent.type)
+      package.parentID = controller.getWebsiteID(component.parent)
+    end
+  end
+
   controller.update(json.encode(package))
 end
 

@@ -129,6 +129,17 @@ function setAttributes(element, attributes) {
   }
 }
 
+function getSizeClass(element) {
+  if (!element)
+    return null;
+
+  for (const className of element.classList) {
+    if (/^grid-item-[1-5]$/.test(className))
+      return className;
+  }
+  return null;
+}
+
 function insertPayload(target, payload) {
   if (typeof payload.render === "string") {
     target.insertAdjacentHTML("beforeend", payload.render)
@@ -147,7 +158,7 @@ function insertPayload(target, payload) {
   return null;
 }
 
-function removeElement(element) {
+function removeElement(element) { // todo what if a child has a _remove pattern that needs to be called? e.g. cleaning up a callback
   if (typeof element.remove === "function")
     element.remove()
   else

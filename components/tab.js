@@ -30,7 +30,7 @@ function tab_new(payload) {
 
   li.append(button);
   const navbar = document.getElementById("tabNavbar");
-  navbar.append(li); //todo set index
+  navbar.append(li); // todo set index
 
   // add tab pane
   const tabPane = document.createElement("div");
@@ -52,8 +52,7 @@ function tab_new(payload) {
   const gutterSizer = document.createElement("div");
   gutterSizer.classList.add("gutter-sizer");
 
-  grid.append(gridSizer);
-  grid.append(gutterSizer);
+  grid.append(gridSizer, gutterSizer);
 
   // append components to grid
 
@@ -84,12 +83,24 @@ function tab_new(payload) {
 
 function tab_insert(payload) {
   const id = payload.parentID;
+  const childID = id + "-" + payload.id;
 
   const grid = document.getElementById(id + "-grid");
-  insertPayload(grid, payload);
+
+  const sizeAsNumber = Number(payload.size);
+  const size = Math.min(5, Math.max(1, isNaN(sizeAsNumber) ? 1 : sizeAsNumber));
+  const newSize = "grid-item-" + size;
+
+  const container = document.createElement("div");
+  container.classList.add("grid-item", newSize);
+  container.setAttribute("id", childID);
+
+  insertPayload(container, payload);
+
+  grid.append(container);
 
   const masonry = tabMasonry.get(id)
-  masonry.appended(grid.lastElementChild);
+  masonry.appended(container);
   masonry.layout();
 
   eventInit();
@@ -101,6 +112,34 @@ function tab_update_title(payload) {
 
   const button = document.getElementById(id + "-tab");
   button.innerHTML = title;
+}
+
+function tab_update_child_size(payload) {
+  const id = payload.parentID;
+  const childID = id + "-" + payload.id;
+  const sizeAsNumber = Number(payload.size);
+  const size = Math.min(5, Math.max(1, isNaN(sizeAsNumber) ? 1 : sizeAsNumber));
+  const newSize = "grid-item-" + size;
+
+  const container = document.getElementById(childID);
+  const currentSize = getSizeClass(container);
+
+  if (newSize !== currentSize ) {
+    container.classList.remove(currentSize)
+    container.classList.add(newSize);
+
+    // todo could this be a targeted resize? It would requiring to know which tab this component is under
+    //  which we now know! as we moved this as a "child" update
+    resizeMasonry();
+  }
+}
+
+function tab_remove_child(payload) {
+  const id = payload.parentID;
+  const childID = id + "-" + payload.id;
+
+  const container = document.getElementById(childID);
+  removeElement(container);
 }
 
 function tab_remove(payload) {

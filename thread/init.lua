@@ -34,6 +34,7 @@ callbacks.updateSubscription = controller.updateThreadSubscription
 
 callbacks.addComponent = controller.addComponent
 callbacks.updateComponent = controller.updateComponent
+callbacks.updateParentComponent = controller.updateParentComponent
 callbacks.removeComponent = controller.removeComponent
 
 callbacks.notify = controller.notifyToast

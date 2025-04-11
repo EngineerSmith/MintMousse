@@ -66,17 +66,14 @@ function toast_notify(payload) {
     "aria-label": "Close",
   })
 
-  header.append(headerTitle);
-  header.append(timestamp);
-  header.append(dismissButton);
-  toast.append(header);
+  header.append(headerTitle, timestamp, dismissButton);
 
   const body = document.createElement("div");
   body.classList.add("toast-body");
   body.innerHTML = text;
   body.hidden = text === null;
 
-  toast.append(body);
+  toast.append(header, body);
 
   const intervalID = setInterval(toast_updateTimestamp, 1000, timestamp, sentTime);
 
