@@ -1,5 +1,5 @@
 /* Tab is a special case; where tab_new does not have to return the element */
-var activeTab = true;
+let activeTab = true;
 function tab_new(payload) {
   const id = payload.id;
   const title = payload.title;

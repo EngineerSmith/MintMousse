@@ -39,7 +39,7 @@ function accordion_insert(payload) {
   childContainer.classList.add("accordion-collapse", "collapse");
   setAttributes(childContainer, {
     "id": childContainerID,
-    "data-bs-parent": id,
+    "data-bs-parent": "#" + id,
   });
 
   const childBody = document.createElement("div");
@@ -57,14 +57,6 @@ function accordion_insert(payload) {
   eventInit();
 }
 
-function accordion_remove_child(payload) {
-  const id = payload.parentID;
-  const childID = id + "-" + payload.id;
-
-  const accordionItem = document.getElementById(childID);
-  removeElement(accordionItem);
-}
-
 function accordion_update_child_title(payload) {
   const id = payload.parentID;
   const childID = id + "-" + payload.id;
@@ -73,4 +65,12 @@ function accordion_update_child_title(payload) {
 
   const button = document.getElementById(childTitleID);
   button.innerHTML = childTitle;
+}
+
+function accordion_remove_child(payload) {
+  const id = payload.parentID;
+  const childID = id + "-" + payload.id;
+
+  const accordionItem = document.getElementById(childID);
+  removeElement(accordionItem);
 }
