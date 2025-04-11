@@ -265,9 +265,7 @@ local makeNewPackage = function(component)
     newFunc = componentType.hasNewFunction and ("%s_new"):format(component.type) or nil,
   }
 
-  if componentType.hasNewFunction then
-    package.id = controller.getWebsiteID(component)
-  end
+  package.id = controller.getWebsiteID(component)
 
   if componentType.hasNewFunction and componentType.updates then
     for index in pairs(componentType.updates) do

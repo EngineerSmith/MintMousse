@@ -23,7 +23,7 @@ function accordion_insert(payload) {
   title.classList.add("accordion-header");
 
   const button = document.createElement("button");
-  button.classList.add("accordion-button");
+  button.classList.add("accordion-button", "collapsed");
   setAttributes(button, {
     "id": childTitleID,
     "type": "button",

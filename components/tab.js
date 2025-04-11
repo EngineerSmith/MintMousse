@@ -84,9 +84,6 @@ function tab_new(payload) {
 function tab_insert(payload) {
   const id = payload.parentID;
   const childID = id + "-" + payload.id;
-
-  const grid = document.getElementById(id + "-grid");
-
   const sizeAsNumber = Number(payload.size);
   const size = Math.min(5, Math.max(1, isNaN(sizeAsNumber) ? 1 : sizeAsNumber));
   const newSize = "grid-item-" + size;
@@ -97,6 +94,7 @@ function tab_insert(payload) {
 
   insertPayload(container, payload);
 
+  const grid = document.getElementById(id + "-grid");
   grid.append(container);
 
   const masonry = tabMasonry.get(id)
