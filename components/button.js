@@ -10,7 +10,7 @@ function button_new(payload) {
   const colorClass = colorOutline ? "btn-outline-" + color : "btn-" + color
 
   const button = document.createElement("button");
-  button.classList.add("btn", colorClass, widthClass);
+  button.classList.add("btn", colorClass, widthClass, "d-block");
   if (center === true) {
     button.classList.add("mx-auto");
   }

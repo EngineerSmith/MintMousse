@@ -2,7 +2,6 @@ function container_new(payload) {
   const id = payload.id;
 
   const container = document.createElement("div");
-  container.classList.add("d-grid");
   container.setAttribute("id", id);
 
   return container;
