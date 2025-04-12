@@ -2,7 +2,7 @@ function cardBody_new(payload) {
   const id = payload.id;
 
   const body = document.createElement("div");
-  body.classList.add("card-body");
+  body.classList.add("card-body", "d-grid");
   body.setAttribute("id", id);
 
   return body

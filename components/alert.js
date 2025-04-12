@@ -4,7 +4,7 @@ function alert_new(payload) {
   const buttonID = id + "-button";
   const text = getText(payload.text) ?? "UNKNOWN";
   const alertColor = BSColor(payload.color) ?? "warning";
-  const dismissible = Boolean(payload.dismissible ?? true)
+  const dismissible = Boolean(payload.dismissible ?? true);
 
   const alert = document.createElement("div");
   alert.classList.add("alert", "fade", "show", "alert-" + alertColor);
