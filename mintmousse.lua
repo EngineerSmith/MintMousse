@@ -559,11 +559,13 @@ return function(path, directoryPath)
         -- ComponentType name must be in camelCase
         componentType = componentType:gsub("^(.)", function(c) return c:lower() end, 1)
         if sub == "new" then
+          local func = getNewMethod(componentType)
           love.mintmousse._metafunctionDepth("exited")
-          return getNewMethod(componentType)
+          return func
         elseif sub == "add" then
+          local func = getAddMethod(componentType)
           love.mintmousse._metafunctionDepth("exited")
-          return getAddMethod(componentType)
+          return func
         end
       end
       local v = rawget(self, index)

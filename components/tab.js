@@ -54,8 +54,6 @@ function tab_new(payload) {
 
   grid.append(gridSizer, gutterSizer);
 
-  // append components to grid
-
   tabPane.append(grid);
 
   const tabContent = document.getElementById("tabContent");
@@ -72,7 +70,7 @@ function tab_new(payload) {
   button.addEventListener('click', event => {
     event.preventDefault();
     tabTrigger.show();
-    resizeMasonry();
+    masonryInstance.layout();
   });
 
   if (activeTab) {
@@ -126,9 +124,8 @@ function tab_update_child_size(payload) {
     container.classList.remove(currentSize)
     container.classList.add(newSize);
 
-    // todo could this be a targeted resize? It would requiring to know which tab this component is under
-    //  which we now know! as we moved this as a "child" update
-    resizeMasonry();
+    const masonry = tabMasonry.get(id)
+    masonry.layout();
   }
 }
 
@@ -138,6 +135,9 @@ function tab_remove_child(payload) {
 
   const container = document.getElementById(childID);
   removeElement(container);
+
+  const masonry = tabMasonry.get(id)
+  masonry.layout();
 }
 
 function tab_remove(payload) {

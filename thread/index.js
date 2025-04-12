@@ -4,6 +4,7 @@ const masonryOptions = {
   "columnWidth": ".grid-sizer",
   "gutter": ".gutter-sizer",
   "percentPosition": true,
+  "transitionDuration": "0.2s",
 };
 
 function resizeMasonry() {
@@ -33,6 +34,21 @@ function BSColor(color) {
   return null;
 }
 
+const validBootstrapWidths = [
+  "25", "50", "75", "100", "auto"
+]
+function BSWidth(width) {
+  if (width === undefined || width === null)
+    return null;
+
+  const widthLower = String(width).toLowerCase();
+
+  if (validBootstrapWidths.includes(widthLower))
+    return widthLower;
+
+  return null;
+}
+
 function getColorClass(element, prefix) {
   if (!element || !element.classList)
     return null;
@@ -43,6 +59,18 @@ function getColorClass(element, prefix) {
       if (validBootstrapColors.includes(colorPart)) {
         return className
       }
+    }
+  }
+  return null;
+}
+
+function getClassWithPrefix(element, prefix) {
+  if (!element || !element.classList)
+    return null;
+
+  for (const className of element.classList) {
+    if (className.startsWith(prefix)) {
+      return className;
     }
   }
   return null;
@@ -236,17 +264,17 @@ function createWebSocketConnection() {
         try {
           const payload = JSON.parse(receivedString);
           //console.log("Received JSON data:", payload); // For debugging
-          try {
-            for (let i = 0; i < payload.length; i++) {
+          for (let i = 0; i < payload.length; i++) {
+            try {
               const func = window[payload[i].func];
               if (typeof func === "function") {
                 func(payload[i]);
               } else {
                 console.error("Error couldn't find function:", payload[i].func);
               }
+            } catch (error) {
+              console.error("Error processing json loop:", error);
             }
-          } catch (error) {
-            console.error("Error processing json:", error);
           }
         } catch (error) {
           console.error("Error parsing JSON:", error);

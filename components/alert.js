@@ -17,8 +17,8 @@ function alert_new(payload) {
   });
 
   const p = document.createElement("p");
+  p.classList.add("mb-0")
   p.setAttribute("id", pID);
-  p.style["margin-bottom"] = "0";
   p.innerHTML = text;
 
   alert.append(p);
@@ -36,9 +36,18 @@ function alert_new(payload) {
     alert.append(dismissButton);
   }
 
-  alert.addEventListener("closed.bs.alert", () => {
-    resizeMasonry();
-  })
+  if (typeof payload.parentID === "string") {
+    const hyphenIndex = payload.parentID.indexOf("-");
+    if (hyphenIndex !== -1) {
+      const type = payload.parentID.substring(0, hyphenIndex);
+      const type_remove_child = window[type + "_remove_child"];
+      if (typeof type_remove_child === "function") {
+        alert.addEventListener("closed.bs.alert", () => {
+          type_remove_child(payload); // payload is reused than creating an object with parentID & id
+        });
+      }
+    }
+  }
 
   return alert;
 }
