@@ -10,7 +10,7 @@ function button_new(payload) {
   const colorClass = colorOutline ? "btn-outline-" + color : "btn-" + color
 
   const button = document.createElement("button");
-  button.classList.add("btn", colorClass, widthClass, "d-block");
+  button.classList.add("btn", colorClass, widthClass, "d-block"); // est: d-block won't work work buttongroups 
   if (center === true) {
     button.classList.add("mx-auto");
   }
@@ -29,7 +29,7 @@ function button_new(payload) {
 function button_update_color(payload) {
   const id = payload.id;
   const color = BSColor(payload.color) ?? "primary";
-  
+
   const button = document.getElementById(id);
   const colorOutline = button.dataset.mmColorOutline === "true";
 
@@ -92,7 +92,7 @@ function button_update_width(payload) {
   const currentWidthClass = getClassWithPrefix(button, "w-");
 
   if (widthClass === currentWidthClass) {
-    return; // They match
+    return;
   }
 
   if (currentWidthClass)

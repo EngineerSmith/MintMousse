@@ -1,5 +1,7 @@
 -- Do not change these at run time they won't affect threads! Change the file
   -- They can be accessed at run time via `love.mintmousse.<NAME>` e.g. `love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ`
+-- Equally, some ARE editable at runtime for thread-based settings, like the above `love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ`
+  -- See the documentation for details
 return function(_, directoryPath)
   return {
     COMPONENTS_PATHS = { directoryPath.."components/" }, -- Where components are stored, later directories override same named components (file by file)

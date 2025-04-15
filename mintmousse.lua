@@ -29,10 +29,14 @@ local createBuffer = function()
       "type",
       "func",
       "quit",
+      "size",
+      "text",
       "start",
       "style",
+      "color",
       "update",
       "latest",
+      "parent",
       "newTab",
       "setTitle",
       "children",
@@ -49,7 +53,8 @@ local createBuffer = function()
       "componentRemoved",
       "updateSubscription",
     }, { }
-    for _, word in ipairs(dictionary) do
+    for index, word in ipairs(dictionary) do
+      assert(lookup[word], "You've duplicated a word in the list! " .. index .. " index was already added")
       lookup[word] = true
     end
     -- todo!! Add commonly found strings to push into dictionary

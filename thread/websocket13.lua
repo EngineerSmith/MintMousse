@@ -12,7 +12,7 @@ ffi.cdef([[
     uint8_t payload_len:7;
     uint8_t masked:1;
   } websocket_header;
-]])
+]]) -- todo little endian -> big endian support
 
 local websocket13 = { }
 
