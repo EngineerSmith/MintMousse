@@ -321,15 +321,18 @@ document.addEventListener("DOMContentLoaded", () => {
 function websocketSend(data) {
   if (!appWebSocket) {
     console.error("MM: Tried to send data while websocket isn't initialized.")
-    return;
+    return false;
   }
   if (appWebSocket.readyState !== WebSocket.OPEN) {
     console.error("MM: Tried to send data while websocket wasn't open.")
-    return;
+    return false;
   }
+
   try {
     appWebSocket.send(JSON.stringify(data));
+    return true;
   } catch (error) {
     console.error("WebSocket: Error sending data:", error, data)
+    return false;
   }
 }

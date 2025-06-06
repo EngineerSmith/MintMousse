@@ -23,6 +23,8 @@ function button_new(payload) {
   button.innerHTML = text;
   button.disabled = isDisabled;
 
+  button.addEventListener('click', button_event_click);
+
   return button;
 }
 
@@ -109,5 +111,16 @@ function button_update_center(payload) {
     button.classList.add("mx-auto");
   } else {
     button.classList.remove("mx-auto");
+  }
+}
+
+function button_event_click(event) {
+  const id = event.currentTarget.id;
+  const success = websocketSend({
+    id: id,
+    event: "button_click",
+  });
+  if (!success) {
+    console.warn("MM: Button event triggered; but failed ")
   }
 }

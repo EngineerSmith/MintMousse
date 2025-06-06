@@ -94,14 +94,14 @@ components.init = function()
   end
   local channel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
   components.componentTypes["unknown"] = true
-  channel:push(components.componentTypes) -- All threads await for this push
+  channel:push(components.componentTypes) -- All threads await for this push; releases block
   components.componentTypes["unknown"] = nil
 
   -- ==== --
 
   components.parseComponentsJavascript(components.componentTypes)
 
-  -- Push final types, and their update values
+  -- Push final types, and their updated values
   channel:performAtomic(function()
     channel:pop()
     channel:push(components.componentTypes)
