@@ -179,7 +179,7 @@ function insertPayload(target, payload) {
       target.insertAdjacentElement("beforeend", element);
       return element;
     } else {
-      console.error("Could not find ", payload.newFunc, " function to create element for insertion!");
+      console.error("MM: Could not find ", payload.newFunc, " function to create element for insertion!");
       return null;
     }
   }
@@ -214,7 +214,7 @@ function notify(payload) {
   if (typeof func === "function") {
     func(payload);
   } else {
-    console.error("Couldn't find notify function for type:", type);
+    console.error("MM: Couldn't find notify function for type:", type);
   }
 }
 
@@ -234,10 +234,10 @@ function startConnectionMonitor(pingIntervalSeconds = 1) {
     fetchTimeout('/api/ping', interval - 100)
       .then(response => {
         if (response.status === 204) {
-          console.log("Server is alive, reloading page.");
+          console.log("MM: Server is alive, reloading page.");
           window.location.reload()
         } else {
-          console.error(`Ping failed with returned status: ${response.status}`);
+          console.error(`MM: Ping failed with returned status: ${response.status}`);
         }
       });
   }, interval);
@@ -253,7 +253,7 @@ function createWebSocketConnection() {
   const websocket = new WebSocket(websocketUrl);
 
   websocket.onopen = () => {
-    console.log("WebSocket connection opened");
+    console.log("WebSocket: Connection opened");
     setConnectedStatus();
   };
 
@@ -263,30 +263,30 @@ function createWebSocketConnection() {
       if (receivedString.trim().length !== 0) {
         try {
           const payload = JSON.parse(receivedString);
-          //console.log("Received JSON data:", payload); // For debugging
+          //console.log("WebSocket: Received JSON data:", payload); // For debugging
           for (let i = 0; i < payload.length; i++) {
             try {
               const func = window[payload[i].func];
               if (typeof func === "function") {
                 func(payload[i]);
               } else {
-                console.error("Error couldn't find function:", payload[i].func);
+                console.error("MM: Error while processing payload. Couldn't find function:", payload[i].func);
               }
             } catch (error) {
-              console.error("Error processing json loop:", error);
+              console.error("MM: Error in processing payload loop:", error);
             }
           }
         } catch (error) {
-          console.error("Error parsing JSON:", error);
-          console.log("Received text data:", receivedString);
+          console.log("WebSocket: Received text data:", receivedString);
+          console.error("MM: Error parsing JSON:", error);
         }
       }
     } else if (event.data instanceof Blob) {
-      console.log("Received binary data (Blob):", event.data);
+      console.log("WebSocket: Received binary data (Blob):", event.data);
     } else if (event.data instanceof ArrayBuffer) {
-      console.log("Received binary data (ArrayBuffer):", event.data);
+      console.log("WebSocket: Received binary data (ArrayBuffer):", event.data);
     } else {
-      console.log("Received unknown data type:", event.data);
+      console.log("WebSocket: Received unknown data type:", event.data);
     }
     hideSpinner();
     if (document.querySelector('.nav-link')) {
@@ -297,13 +297,13 @@ function createWebSocketConnection() {
   };
 
   websocket.onclose = () => {
-    console.log("WebSocket connection closed");
+    console.log("WebSocket: Connection closed");
     setDisconnectedStatus();
     startConnectionMonitor(2);
   };
 
   websocket.onerror = (error) => {
-    console.log("WebSocket error:", error);
+    console.log("WebSocket Error:", error);
     setDisconnectedStatus();
     startConnectionMonitor(2);
   };
@@ -320,11 +320,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function websocketSend(data) {
   if (!appWebSocket) {
-    console.error("WebSocket: Tried to send data while websocket isn't initialized.")
+    console.error("MM: Tried to send data while websocket isn't initialized.")
     return;
   }
   if (appWebSocket.readyState !== WebSocket.OPEN) {
-    console.error("WebSocket: Tried to send data while websocket wasn't open.")
+    console.error("MM: Tried to send data while websocket wasn't open.")
     return;
   }
   try {

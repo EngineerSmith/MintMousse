@@ -59,7 +59,7 @@ function alert_update_text(payload) {
 
   const alert = document.getElementById(id);
   if (alert === null) {
-    console.log("Tried to update alert that has been dismissed:", id, "TEXT to:", text)
+    console.log("MM: Tried to update alert that has been dismissed:", id, "TEXT to:", text)
     return; // todo Element has been dismissed by user - should it recreate the alert on update?
   }
 
@@ -73,7 +73,7 @@ function alert_update_color(payload) {
 
   const alert = document.getElementById(id);
   if (alert === null) {
-    console.log("Tried to update alert that has been dismissed:", id, "COLOR to:", color);
+    console.log("MM: Tried to update alert that has been dismissed:", id, "COLOR to:", color);
     return; // todo Element has been dismissed by user - should it recreate the alert on update?
   }
 
@@ -90,7 +90,7 @@ function alert_update_dismissible(payload) {
 
   const alert = document.getElementById(id);
   if (alert === null) {
-    console.log("Tried to update alert that has been dismissed:", id, "DISMISSIBLE to:", dismissible);
+    console.log("MM: Tried to update alert that has been dismissed:", id, "DISMISSIBLE to:", dismissible);
     return; // todo Element has been dismissed by user - should it recreate the alert on update?
   }
 
