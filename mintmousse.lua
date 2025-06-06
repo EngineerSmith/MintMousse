@@ -54,11 +54,11 @@ local createBuffer = function()
       "updateSubscription",
     }, { }
     for index, word in ipairs(dictionary) do
-      assert(lookup[word], "You've duplicated a word in the list! " .. index .. " index was already added")
+      assert(not lookup[word], "You've duplicated a word in the list! " .. index .. " index was already added")
       lookup[word] = true
     end
     -- todo!! Add commonly found strings to push into dictionary
-    --  This is unlikely to happen now components are loaded on a thread and checked at the end of this file
+    --   This is unlikely to happen now components are loaded on a thread and checked at the end of this file
 
     channelDictionary:push(dictionary)
   end

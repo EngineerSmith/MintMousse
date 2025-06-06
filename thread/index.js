@@ -307,10 +307,29 @@ function createWebSocketConnection() {
     setDisconnectedStatus();
     startConnectionMonitor(2);
   };
+
+  return websocket;
 }
 
+let appWebSocket;
 document.addEventListener("DOMContentLoaded", () => {
   new bootstrap.Tooltip(document.getElementById("connected-status"));
 
-  createWebSocketConnection();
+  appWebSocket = createWebSocketConnection();
 });
+
+function websocketSend(data) {
+  if (!appWebSocket) {
+    console.error("WebSocket: Tried to send data while websocket isn't initialized.")
+    return;
+  }
+  if (appWebSocket.readyState !== WebSocket.OPEN) {
+    console.error("WebSocket: Tried to send data while websocket wasn't open.")
+    return;
+  }
+  try {
+    appWebSocket.send(JSON.stringify(data));
+  } catch (error) {
+    console.error("WebSocket: Error sending data:", error, data)
+  }
+}

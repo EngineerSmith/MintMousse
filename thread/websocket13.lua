@@ -13,6 +13,7 @@ ffi.cdef([[
     uint8_t masked:1;
   } websocket_header;
 ]]) -- todo little endian -> big endian support
+-- We could use ping frames to determine if the client is little endian or big endian
 
 local websocket13 = { }
 
