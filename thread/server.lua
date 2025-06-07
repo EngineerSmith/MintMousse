@@ -156,8 +156,11 @@ server.newIncomingConnection = function()
           status = "close"
           love.mintmousse.info("TCPServer: Client [", address, "] using HTTP/2 has been requested to upgrade to HTTP/1.1")
         elseif client.connection.type == "WS/13" then
-          if not client:isBufferEmpty() then
-            local request, errorMessage = websocket13.processRequest(client)
+          -- TCPSocket:dirty doesn't work. I'm peeking into the socket to check if there is anything there
+          --    and then adding it back on within the websocket process request loop.
+          local peek = client.client:receive(1)
+          if peek then
+            local request, errorMessage = websocket13.processRequest(client, peek)
             if not request then
               love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
               websocket13.close(client)

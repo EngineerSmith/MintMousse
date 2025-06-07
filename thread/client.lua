@@ -74,8 +74,10 @@ client.send = function(self, data, i, j)
   end
 end
 
-client.isBufferEmpty = function(self)
-  return not self.client:dirty()
-end
+-- TCPSocket:dirty is broken and doesn't work. Use receive directly; and add it back as a prefix.
+--    Tip: the prefix length is included in the size check no need to alter the size you want by the length of the prefix
+-- client.isBufferEmpty = function(self)
+--   return not self.client:dirty()
+-- end
 
 return client

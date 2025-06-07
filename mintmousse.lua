@@ -198,6 +198,8 @@ return function(path, directoryPath)
 
   love.mintmousse.require("logging")
 
+  love.mintmousse.info(tostring(require("ffi").abi("be")))
+
   -- Only use this if necessary. All MintMousse components will handle sanitizing for you.
   --   If you have non-standard components, it may help to sanitize to avoid XSS attacks
   love.mintmousse.sanitizeText = function(text)

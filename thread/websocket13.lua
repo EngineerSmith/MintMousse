@@ -14,22 +14,25 @@ ffi.cdef([[
   } websocket_header;
 ]]) -- todo little endian -> big endian support
 -- We could use ping frames to determine if the client is little endian or big endian
+-- NO! Websocket will always be sent as big endian!
 
 local websocket13 = { }
 
-websocket13.processRequest = function(client)
+websocket13.processRequest = function(client, peek)
   local request = {
     payload = "",
   }
 
   while true do
-    local header_bytes = client:receive(2)
+    local header_bytes = client:receive(2, peek)
+    peek = nil
+
     if not header_bytes then return nil, "UNKNOWN" end
 
     local header = ffi.cast("websocket_header*", header_bytes)
 
     -- All client-server frames must be masked
-    if header.masked == 0 then return nil, "client sent unmasked frames" end  
+    if header.masked == 0 then return nil, "client sent unmasked frames: 0x"..love.data.encode("string", "hex", ffi.string(header_bytes, 2)) end  
 
     -- Opcode https://en.wikipedia.org/wiki/WebSocket#Opcodes
     if not request.type then
@@ -158,8 +161,9 @@ websocket13.closeConnection = function(client, reason)
 
   local startTime, timeout = love.timer.getTime(), coroutine.running() and 5 or 1
   while love.timer.getTime() - startTime < timeout do
-    if not client:isBufferEmpty() then
-      local request, errorMessage = websocket13.processRequest(client)
+    local peek = client.client:receive(1)
+    if peek then
+      local request, errorMessage = websocket13.processRequest(client, peek)
       if not request then
         love.mintmousse.info("WS13: Received error when trying to close WebSocket:", errorMessage)
       elseif request.type == "close" then
