@@ -1,20 +1,68 @@
 local ffi = require("ffi")
--- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#format
+
+-- As bitfield order (LSB or MSB) isn't defined in C standard.
+--   We aim to support both compilers to avoid issues for end users.
+--   We do this by testing how it packs a dummy struct and then defining a struct for that system.
+
 ffi.cdef([[
   typedef struct {
-  // Byte 1
-    uint8_t opcode:4;
-    uint8_t rsv3:1;
-    uint8_t rsv2:1;
-    uint8_t rsv1:1;
-    uint8_t fin:1;
-  // Byte 2
-    uint8_t payload_len:7;
-    uint8_t masked:1;
-  } websocket_header;
-]]) -- todo little endian -> big endian support
--- We could use ping frames to determine if the client is little endian or big endian
--- NO! Websocket will always be sent as big endian!
+    uint8_t front:1;
+    uint8_t last:7;
+  } mm_bitfieldTest;
+]])
+
+local bitfieldTest = ffi.new("mm_bitfieldTest");
+bitfieldTest.front = 1
+
+local rawByteValue = ffi.cast("uint8_t*", bitfieldTest)[0];
+if rawByteValue == 0x01 then
+  love.mintmousse.info("Switching to using LSB for bitfields")
+  -- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#format
+  ffi.cdef([[
+    typedef struct {
+    // Byte 1
+      uint8_t opcode:4;
+      uint8_t rsv3:1;
+      uint8_t rsv2:1;
+      uint8_t rsv1:1;
+      uint8_t fin:1;
+    // Byte 2
+      uint8_t payload_len:7;
+      uint8_t masked:1;
+    } mm_websocket_header;
+  ]])
+elseif rawByteValue == 0x80 then
+  love.mintmousse.info("Switching to using MSB for bitfields")
+  ffi.cdef([[
+    typedef struct {
+    // Byte 1
+      uint8_t fin:1;
+      uint8_t rsv1:1;
+      uint8_t rsv2:1;
+      uint8_t rsv3:1;
+      uint8_t opcode:4;
+    // Byte 2
+      uint8_t masked:1;
+      uint8_t payload_len:7;
+    } mm_websocket_header;
+  ]])
+else
+  love.mintmousse.warning("Could not determine bitfield packing order. This might indicate unusual compiler behaviour or padding. Attempting to use LSB, expect possible errors.")
+  ffi.cdef([[
+    typedef struct {
+    // Byte 1
+      uint8_t opcode:4;
+      uint8_t rsv3:1;
+      uint8_t rsv2:1;
+      uint8_t rsv1:1;
+      uint8_t fin:1;
+    // Byte 2
+      uint8_t payload_len:7;
+      uint8_t masked:1;
+    } mm_websocket_header;
+  ]])
+end
+bitfieldTest, rawByteValue = nil, nil
 
 local websocket13 = { }
 
@@ -29,7 +77,7 @@ websocket13.processRequest = function(client, peek)
 
     if not header_bytes then return nil, "UNKNOWN" end
 
-    local header = ffi.cast("websocket_header*", header_bytes)
+    local header = ffi.cast("mm_websocket_header*", header_bytes)
 
     -- All client-server frames must be masked
     if header.masked == 0 then return nil, "client sent unmasked frames: 0x"..love.data.encode("string", "hex", ffi.string(header_bytes, 2)) end  
@@ -78,7 +126,7 @@ websocket13.processRequest = function(client, peek)
     local payload = client:receive(payloadLength)
     if not payload then return nil, "UNKNOWN" end
 
-    local unmaskedPayloadTable = {}
+    local unmaskedPayloadTable = { }
     for i = 0, #payload - 1 do
       local maskedByte = string.byte(payload, i + 1)
       local maskingByte = string.byte(masking_key, i % 4 + 1)
@@ -99,7 +147,7 @@ end
 
 local maxChunk = 65535
 websocket13.send = function(client, opcode, payload)
-  local header = ffi.new("websocket_header")
+  local header = ffi.new("mm_websocket_header")
   header.fin = 0
   header.rsv1, header.rsv2, header.rsv3 = 0, 0, 0
   header.opcode = opcode
