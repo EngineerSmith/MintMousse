@@ -31,8 +31,24 @@ client.getsockname = function(self)
   return self.client:getsockname()
 end
 
+-- Check if there is something in the client buffer; this method is used because client:dirty does not work
+client.peek = function(self, length)
+  local peeking = self.client:receive(length or 1)
+  if not peeking then
+    return false
+  end
+
+  self.buffer = (self.buffer or "") .. peeking
+
+  return true
+end
+
 client.receive = function(self, pattern, prefix)
   -- todo; max number of tries? Timer?
+  if prefix or self.buffer then
+    prefix = (prefix or "")..(self.buffer.."")
+    self.buffer = nil
+  end
   while true do
     local data, errorMessage = self.client:receive(pattern, prefix)
     if not data then

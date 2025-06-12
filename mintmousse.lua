@@ -198,8 +198,6 @@ return function(path, directoryPath)
 
   love.mintmousse.require("logging")
 
-  love.mintmousse.info(tostring(require("ffi").abi("be")))
-
   -- Only use this if necessary. All MintMousse components will handle sanitizing for you.
   --   If you have non-standard components, it may help to sanitize to avoid XSS attacks
   love.mintmousse.sanitizeText = function(text)
@@ -848,6 +846,9 @@ return function(path, directoryPath)
       local thread = channel:peek()
       local errorMessage = thread:getError()
       if errorMessage then
+        -- Decided we want to know as soon as possible if there was a
+        --   thread error than waiting for the event loop to pump
+        -- love.event.push("threaderror", thread, errorMessage)
         love.handlers["threaderror"](thread, errorMessage)
       else
         love.mintmousse.warning("There was no error waiting on the thread object. Possible that it is trying to load too many components and timeout needs to be increased. Tell a programmer.")

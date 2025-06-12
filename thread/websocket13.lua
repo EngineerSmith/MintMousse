@@ -16,7 +16,7 @@ bitfieldTest.front = 1
 
 local rawByteValue = ffi.cast("uint8_t*", bitfieldTest)[0];
 if rawByteValue == 0x01 then
-  love.mintmousse.info("Switching to using LSB for bitfields")
+  love.mintmousse.info("WS13: Switching to using LSB for bitfields")
   -- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers#format
   ffi.cdef([[
     typedef struct {
@@ -32,7 +32,7 @@ if rawByteValue == 0x01 then
     } mm_websocket_header;
   ]])
 elseif rawByteValue == 0x80 then
-  love.mintmousse.info("Switching to using MSB for bitfields")
+  love.mintmousse.info("WS13: Switching to using MSB for bitfields")
   ffi.cdef([[
     typedef struct {
     // Byte 1
@@ -61,19 +61,20 @@ else
       uint8_t masked:1;
     } mm_websocket_header;
   ]])
+
+  -- todo, switch to using bit library as a backup for non-ffi support, but that still requires bit
 end
 bitfieldTest, rawByteValue = nil, nil
 
 local websocket13 = { }
 
-websocket13.processRequest = function(client, peek)
+websocket13.processRequest = function(client)
   local request = {
     payload = "",
   }
 
   while true do
-    local header_bytes = client:receive(2, peek)
-    peek = nil
+    local header_bytes = client:receive(2)
 
     if not header_bytes then return nil, "UNKNOWN" end
 

@@ -116,8 +116,8 @@ server.newIncomingConnection = function()
     server.clients[client] = true
 
     server.connections[coroutine.wrap(function()
-      client.connection.initialRaw = client:receive(14)
-      if client.connection.initialRaw == "PRI * HTTP/2.0" then
+      local success = client:peek(14)
+      if client.buffer == "PRI * HTTP/2.0" then
         client.connection.type = "HTTP/2"
       else
         client.connection.type = "HTTP/1.1"
@@ -126,8 +126,7 @@ server.newIncomingConnection = function()
         local status
 
         if client.connection.type == "HTTP/1.1" then
-          local request = http1_1.parseRequest(client, client.connection.initialRaw)
-          client.connection.initialRaw = nil
+          local request = http1_1.parseRequest(client)
           if type(request) ~= "table" then
             status = request
           else
@@ -150,7 +149,6 @@ server.newIncomingConnection = function()
             end
           end
         elseif client.connection.type == "HTTP/2" then
-          client.connection.initialRaw = nil
           -- HTTP/2 not yet supported; close connection and request HTTP/1.1
           http1_1.respond(client, 426, nil, { upgrade = "HTTP/1.1", connection = "upgrade, close" })
           status = "close"
@@ -158,21 +156,20 @@ server.newIncomingConnection = function()
         elseif client.connection.type == "WS/13" then
           -- TCPSocket:dirty doesn't work. I'm peeking into the socket to check if there is anything there
           --    and then adding it back on within the websocket process request loop.
-          local peek = client.client:receive(1)
-          if peek then
-            local request, errorMessage = websocket13.processRequest(client, peek)
+          if client:peek() then
+            local request, errorMessage = websocket13.processRequest(client)
             if not request then
               love.mintmousse.warning("TCPServer: WebSocket encountered an error:", errorMessage)
-              websocket13.close(client)
+              websocket13.closeConnection(client)
               status = "close"
             else
               if request.type == "close" then
-                websocket13.close(client)
+                websocket13.closeConnection(client)
                 status = "close"
               elseif request.type == "text/utf8" or request.type == "binary" then
                 -- process request
                 love.mintmousse.warning("TCPServer: TODO WebSocket Response:", request.type, ". Payload length:", #request.payload)
-
+                
               else
                 status = websocket13.handleRequest(client, request)
               end

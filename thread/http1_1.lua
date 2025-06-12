@@ -6,13 +6,13 @@ local http1_1 = { }
 -- https://en.wikipedia.org/wiki/HTTP#HTTP/1.1_request_messages
 local requestMethodPattern = "(%S*)%s*(%S*)%s*(HTTP/%S*)"
 local requestHeaderPattern = "([^:]*):%s*(.*)$"
-http1_1.parseRequest = function(client, initialRaw)
+http1_1.parseRequest = function(client)
   local request = {
     headers = { },
     headerSet = { },
   }
   
-  request.raw = client:receive("*l", initialRaw)
+  request.raw = client:receive("*l")
   request.method, request.uri, request.version = request.raw:match(requestMethodPattern)
 
   request.version = type(request.version) == "string" and request.version:upper() or nil
