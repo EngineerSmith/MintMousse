@@ -8,6 +8,9 @@ Calling this file from within conf.lua saves main thread start up time by 2.5ms 
 
 require("love.thread") -- required if called from conf.lua
 
+-- todo: Why is this a function? Why not *just* run the code?
+--     It's probably a function so it can be called in mm.lua
+--     Could we just load this file as a chunk instead of forcing it to return a function then?
 return function()
   local path, directoryPath
   if type(love.mintmousse) == "table" then

@@ -3,6 +3,8 @@ local PATH, dirPATH = ...
 love.isMintMousseServerThread = true
 require(PATH .. "mintmousse")(PATH, dirPATH)
 
+local json = love.mintmousse.require("libs.json")
+
 local components = love.mintmousse.require("thread.components")
 components.init()
 
@@ -42,6 +44,53 @@ callbacks.notify = controller.notifyToast
 callbacks.start = function(config)
   if not server then
     server = love.mintmousse.require("thread.server")
+    server.handleIncomingEvent = function(request)
+      if request.type == "text/utf8" or request.type == "application/json" then
+        -- attempt json convert & handle
+        local success, payload = pcall(json.decode, request.payload)
+        if not success then
+          love.mintmousse.warning("WS: Couldn't decode incoming event request via json. Got error: ", payload)
+          return
+        end
+
+        local component
+        if type(payload.id) == "string" and payload.id ~= "" then
+          local _
+          _, _, component = controller.splitWebsiteID(payload.id)
+        end
+
+        if type(payload.event) == "string" and payload.event ~= "" then
+          if not component then
+            love.mintmousse.warning("WS: Incoming event didn't include valid component ID.")
+            return
+          end
+          local componentType = controller.getType(component.type)
+          local event = payload.event:lower()
+          if not event or not componentType.events[event] then
+            love.mintmousse.warning("WS: Incoming event didn't include valid event type["..event.."] for component: ", component.type)
+            return
+          end
+
+          -- Find component's callback field
+          local componentEvent = event:sub(1,1):upper() .. event:sub(2)
+          componentEvent = love.mintmousse.COMPONENT_EVENT_FIELD:format(componentEvent)
+          local callbackID = component[componentEvent]
+
+          if not callbackID then
+            -- love.mintmousse.info("WS: Incoming event component doesn't have event callback for", componentEvent)
+            return
+          end
+
+          -- Dispatch event to main thread to handle callback
+          love.mintmousse.pushEvent(love.mintmousse.EVENT_ENUM_JS_EVENT, component.id, callbackID)
+          return
+        end
+
+        love.mintmousse.warning("WS: Unhandled incoming server event. Successfully converted from json, but wasn't used.")
+        return
+      end
+      love.mintmousse.warning("WS: Unhandled incoming server event! Type:", request.type)
+    end
   end
   if config then
     if type(config.title) == "string" then
@@ -55,6 +104,7 @@ callbacks.start = function(config)
       server.addToWhitelist(config.whitelist)
     end
   end
+
   server.start(config and config.host, config and config.httpPort)
 end
 

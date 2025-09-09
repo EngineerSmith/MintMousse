@@ -1,7 +1,8 @@
 local love = love
+local lfs = love.filesystem
 
 if love.isThread == nil then
-  love.isThread = arg == nil
+  love.isThread = love.path == nil
 end
 
 if not jit then
@@ -17,7 +18,7 @@ require("love.thread")
 require("love.event")
 require("love.timer")
 require("love.data")
-require("love.math") -- todo check if can be removed
+require("love.math")
 
 local createBuffer = function()
   local bufferMetatable = { }
@@ -38,6 +39,7 @@ local createBuffer = function()
       "latest",
       "parent",
       "newTab",
+      "creator",
       "setTitle",
       "children",
       "parentID",
@@ -45,6 +47,7 @@ local createBuffer = function()
       "setIconRaw",
       "setIconRFG",
       "mintmousse",
+      "onEventClick",
       "addComponent",
       "componentAdded",
       "updateComponent",
@@ -57,8 +60,6 @@ local createBuffer = function()
       assert(not lookup[word], "You've duplicated a word in the list! " .. index .. " index was already added")
       lookup[word] = true
     end
-    -- todo!! Add commonly found strings to push into dictionary
-    --   This is unlikely to happen now components are loaded on a thread and checked at the end of this file
 
     channelDictionary:push(dictionary)
   end
@@ -108,7 +109,7 @@ return function(path, directoryPath)
   startThread()
 
   love.mintmousse.read = function(file)
-    return love.filesystem.read(love.mintmousse.directoryPath .. file)
+    return lfs.read(love.mintmousse.directoryPath .. file)
   end
 
   local buffer = createBuffer()
@@ -140,6 +141,12 @@ return function(path, directoryPath)
     end
 
     love.mintmousse.threadID = "MintMousse"
+
+    -- Push events to the main thread to handle
+    --    See love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] function which receives the event
+    love.mintmousse.pushEvent = function(enum, ...)
+      love.event.push(love.mintmousse.THREAD_RESPONSE_QUEUE_ID, enum, ...)
+    end
   end
 
   local threadIDLength = 11
@@ -149,11 +156,7 @@ return function(path, directoryPath)
   end
 
   if not love.isThread then -- main thread
-    love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
-      -- todo; should all events go back to the main thread now that MM supports multithreaded calls?
-        -- implementing event checking on each user thread would require a repeat call
-      error("TODO")
-    end
+    love.mintmousse.threadID = "main"
 
     love.mintmousse.start = function(config)
       local threadChannel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
@@ -190,9 +193,39 @@ return function(path, directoryPath)
       end)
     end
 
-  else
-    love.mintmousse.pushEvent = function(enum, ...)
-      love.event.push(love.mintmousse.THREAD_RESPONSE_QUEUE_ID, enum, ...)
+    local userCallbacks = { }
+    love.mintmousse.addCallback = function(callbackID, callbackFunction)
+      userCallbacks[callbackID] = callbackFunction
+    end
+
+    love.mintmousse.removeCallback = function(callbackID)
+      userCallbacks[callbackID] = nil
+    end
+
+    local callbacks = { }
+    callbacks[love.mintmousse.EVENT_ENUM_JS_EVENT] = function(componentID, callbackID)
+      if type(componentID) ~= "string" or type(callbackID) ~= "string" then
+        love.mintmousse.warning("Event:", love.mintmousse.EVENT_ENUM_JS_EVENT, ": expected two string arguments, instead received:", type(componentID), type(callbackID))
+        return
+      end
+
+      local callbackFunction = userCallbacks[callbackID]
+      if not callbackFunction then
+        return
+      end
+
+      local component = love.mintmousse.get(componentID)
+
+      callbackFunction(component)
+    end
+
+    love.handlers[love.mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
+      local callback = callbacks[enum]
+      if callback then
+        callback(...)
+      else
+        error("Unhandled MintMousse event!", enum, ...)
+      end
     end
   end
 
@@ -211,7 +244,7 @@ return function(path, directoryPath)
 
   local _idCounter = 0
   love.mintmousse.generateID = function()
-    local id = "MM" .. love.mintmousse.threadID .. (_idCounter >= 100 and "_"..string.char(threadIDLength*7, threadIDLength*7, threadIDLength*6-1, 99, 101).."_%x" or "_%x"):format(_idCounter)
+    local id = "MM_" .. love.mintmousse.threadID .. (_idCounter >= 100 and "_"..string.char(threadIDLength*7, threadIDLength*7, threadIDLength*6-1, 99, 101).."_%x" or "_%x"):format(_idCounter)
     _idCounter = _idCounter + 1
     return id
   end
@@ -302,7 +335,7 @@ return function(path, directoryPath)
   hintingComponentRemoved = function(packagedComponent)
     love.mintmousse._hinting.typeMap[packagedComponent.id] = nil
     if packagedComponent.children then
-      for index, child in ipairs(packagedComponent.children) do
+      for _, child in ipairs(packagedComponent.children) do
         hintingComponentRemoved(child)
       end
     end
@@ -472,8 +505,23 @@ return function(path, directoryPath)
       if index == "__raw" then return nil end
       love.mintmousse._metafunctionDepth("entered")
       if index == "type" then
-        love.mintmousse._metafunctionDepth("exited")
         love.mintmousse.error("Proxy Table: You cannot change that index:", "type")
+        love.mintmousse._metafunctionDepth("exited")
+        return
+      end
+      if index == "id" then
+        love.mintmousse.error("Proxy Table: You cannot change that index:", "id")
+        love.mintmousse._metafunctionDepth("exited")
+        return
+      end
+      if index == "parentID" then
+        love.mintmousse.error("Proxy Table: You cannot change that index:", "parentID")
+        love.mintmousse._metafunctionDepth("exited")
+        return
+      end
+      if index == "creator" then
+        love.mintmousse.error("Proxy Table: You cannot change that index:", "creator")
+        love.mintmousse._metafunctionDepth("exited")
         return
       end
       if type(index) == "number" then
@@ -499,9 +547,20 @@ return function(path, directoryPath)
       if componentType == "unknown" or notComplete then
         sendUpdate = true
       else
-        local updates = love.mintmousse._componentTypes[componentType].updates
-        sendUpdate = updates and updates[index] ~= nil
+        local ct = love.mintmousse._componentTypes[componentType]
+        local updates = ct.updates
+        local events = ct.events
+
+        if updates and updates[index] then
+          sendUpdate = true
+        elseif events and type(index) == "string" then
+          local eventName = index:match(love.mintmousse.COMPONENT_EVENT_FIELD_MATCH)
+          if eventName and events[eventName] == true then
+            sendUpdate = true
+          end
+        end
       end
+
       if sendUpdate then
         love.mintmousse.push({
           func = "updateComponent",
@@ -657,7 +716,7 @@ return function(path, directoryPath)
       })
       return
     elseif type(icon) == "string" then
-      if love.filesystem.getInfo(icon, "file") then
+      if lfs.getInfo(icon, "file") then
         local temp = icon:lower()
         if temp:match(".png$") or temp:match(".jpeg$") or temp:match(".jpg$") or temp:match(".svg$") then
           love.mintmousse.push({
@@ -691,7 +750,7 @@ return function(path, directoryPath)
     love.mintmousse.assert(type(filepath) == "string", "Filepath must be type String")
     local temp = filepath:lower()
     love.mintmousse.assert(temp:match("$.zip"), "Invalid file path, must end with .ZIP file extension. Gave:", filepath)
-    love.mintmousse.assert(love.filesystem.getInfo(filepath), "Invalid file path, couldn't reach file with given path. Gave:", filepath)
+    love.mintmousse.assert(lfs.getInfo(filepath), "Invalid file path, couldn't reach file with given path. Gave:", filepath)
     love.mintmousse.push({
       func = "setIconRFG",
       filepath,
@@ -723,15 +782,76 @@ return function(path, directoryPath)
     love.mintmousse.addToLocalHinting(id, "tab")
     love.mintmousse.push({
       func = "newTab",
-      id, title, index,
+      id, title, index, love.mintmousse.threadID,
     })
     return love.mintmousse.createProxyTable({
       id = id,
       title = title,
       parentID = nil,
+      creator = love.mintmousse.threadID,
     })
   end
 
+  local loadComponentLogic = function(componentTypeName, componentType)
+    if not componentType.hasComponentLogic then
+      return -- Nothing to load
+    end
+
+    if componentType.componentLogic then
+      return -- Already loaded
+    end
+
+    local path
+    for i = #componentType.directories, 1, -1 do
+      path = componentType.directories[i] .. componentTypeName .. ".lua"
+      if lfs.getInfo(path, "file") then
+        break
+      else
+        path = nil
+      end
+    end
+    if not path then
+      love.mintmousse.warning("Failed to discover path for component logic( ", componentTypeName, ")which was previous found in one of these directories:", table.concat(componentType.directories, ", "))
+      return nil
+    end
+    local success, chunk, errorMessage = pcall(lfs.load, path)
+    if not success then
+      love.mintmousse.error("Failed to load component logic! For:", componentTypeName, ". Reason:", chunk)
+      return
+    end
+    if not chunk then
+      love.mintmousse.error("Failed to load component logic! For:", componentTypeName, ". Reason:", errorMessage)
+      return
+    end
+
+    local success, componentLogic = pcall(chunk)
+    if not success then
+      love.mintmousse.error("Failed to run componentLogic! For:", componentTypeName, ". Reason:", componentLogic)
+      return
+    end
+    componentType.componentLogic = componentLogic
+
+    if not type(componentType.componentLogic) == "table" then
+      love.mintmousse.warning("Tried to load component logic for", componentTypeName, ", but it didn't return a table type as expected.")
+      componentType.componentLogic = nil
+      componentType.hasComponentLogic = false -- stop it from trying to reload
+      return
+    end
+
+    if type(componentType.componentLogic.onCreate) ~= "function" then
+      componentType.componentLogic.onCreate = nil
+    end
+
+    if componentType.componentLogic.onCreate == nil then
+      love.mintmousse.warning("Failed to load component logic for", componentTypeName, ", as it didn't contain functions for 'onCreate'.")
+      componentType.componentLogic = nil
+      componentType.hasComponentLogic = false -- stop it from trying to reload
+      return
+    end
+  end
+
+  -- Should this be a public function?
+  -- todo: This function allows for circular dependency 
   love.mintmousse.addComponent = function(component, parentID)
     if type(component) == "string" then
       component = {
@@ -750,6 +870,8 @@ return function(path, directoryPath)
       component.id = love.mintmousse.generateID()
     end
 
+    component.creator = love.mintmousse.threadID
+
     local success, errorMessage = love.mintmousse.isValidID(component.id)
     if not success then
       love.mintmousse.error("Gave invalid ID to create component. Reason:", errorMessage)
@@ -757,15 +879,15 @@ return function(path, directoryPath)
     end
 
     if type(component.type) ~= "string" then
-      love.mintmousse.error("Gave invalid componentType to create component. Reason:", "ComponentType isn't type string")
+      love.mintmousse.error("Gave invalid componentType to create component. Reason:", "Component.type isn't type string")
       return
     end
 
     if component.type == "unknown" then
-      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type: 'unknown'. This is a protected keyword.")
+      love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type: 'unknown'. This is a protected keyword")
       return
     elseif component.type == "tab" then
-      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type: 'tab'. Please use love.mintmousse.newTab")
+      love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type: 'tab'. Please use love.mintmousse.newTab")
       return
     end
 
@@ -779,21 +901,38 @@ return function(path, directoryPath)
 
     local componentType = love.mintmousse._componentTypes[component.type]
     if not componentType then
-      love.mintmousse.error("Gave invalid componentType. This type does not exist:", component.type)
+      love.mintmousse.error("Gave invalid componentType. Reason:", "This type does not exist:", component.type)
       return
     end
 
     -- if notComplete; thread will reject it anyway - this just makes the error message more clear
     if not notComplete and not componentType.hasMustacheFile and not componentType.hasNewFunction then
-      love.mintmousse.error("Gave invalid componentType. Cannot create a component with type:", "'"..tostring(component.type).."'.", "As it does not have a construction method (JS or HTML)")
+      love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type:", "'"..tostring(component.type).."'.", "As it does not have a construction method (JS or HTML)")
       return
+    end
+
+    loadComponentLogic(component.type, componentType)
+    if componentType.componentLogic and componentType.componentLogic.onCreate then
+      local componentID, componentTYPE, componentCREATOR = component.id, component.type, component.creator
+
+      componentType.componentLogic.onCreate(component) -- not pcall as the function should handle the error methods
+
+      if component.id ~= componentID then
+        love.mintmousse.error("Tried to change component 'id' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
+      end
+      if component.type ~= componentTYPE then
+        love.mintmousse.error("Tried to change component 'type' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
+      end
+      if component.creator ~= componentCREATOR then
+        love.mintmousse.error("Tried to change component 'creator' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
+      end
     end
 
     love.mintmousse.addToLocalHinting(component.id, component.type)
     love.mintmousse.addToLocalRelationships(parentID, component.id)
     love.mintmousse.push({
       func = "addComponent",
-      component, parentID
+      component, parentID,
     })
 
     component.parentID = parentID
@@ -831,7 +970,7 @@ return function(path, directoryPath)
         break
       end
       love.mintmousse._componentTypes = componentTypesChannel:peek()
-      love.timer.sleep(0.0001) -- 0.1ms
+      love.timer.sleep(0.0005) -- 0.5 ms
     end
 
     if love.mintmousse._componentTypes == nil then
@@ -847,7 +986,7 @@ return function(path, directoryPath)
       local errorMessage = thread:getError()
       if errorMessage then
         -- Decided we want to know as soon as possible if there was a
-        --   thread error than waiting for the event loop to pump
+        --   thread error than waiting for the event loop to pump.
         -- love.event.push("threaderror", thread, errorMessage)
         love.handlers["threaderror"](thread, errorMessage)
       else

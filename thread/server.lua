@@ -3,6 +3,7 @@ if not love.isThread then
 end
 
 local socket = require("socket")
+
 local http = love.mintmousse.require("thread.http")
 local http1_1 = love.mintmousse.require("thread.http1_1")
 
@@ -42,7 +43,12 @@ http.addMethod("GET", "/live-updates", function(request)
 
   -- Calculate sec-websocket-accept
   local keyBD = love.data.newByteData(key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
-  local accept = love.data.hash("data", "sha1", keyBD)
+  local accept
+  if love._version_major >= 12 then
+    accept = love.data.hash("data", "sha1", keyBD)
+  else
+    accept = love.data.hash("sha1", keyBD)
+  end
   accept = love.data.encode("string", "base64", accept)
 
   -- Return 101, Switching Protocols response
@@ -168,8 +174,9 @@ server.newIncomingConnection = function()
                 status = "close"
               elseif request.type == "text/utf8" or request.type == "binary" then
                 -- process request
-                love.mintmousse.warning("TCPServer: TODO WebSocket Response:", request.type, ". Payload length:", #request.payload)
-                
+                if server.handleIncomingEvent then
+                  server.handleIncomingEvent(request)
+                end
               else
                 status = websocket13.handleRequest(client, request)
               end

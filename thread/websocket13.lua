@@ -1,5 +1,7 @@
 local ffi = require("ffi")
 
+local lt = love.timer
+
 -- As bitfield order (LSB or MSB) isn't defined in C standard.
 --   We aim to support both compilers to avoid issues for end users.
 --   We do this by testing how it packs a dummy struct and then defining a struct for that system.
@@ -137,9 +139,14 @@ websocket13.processRequest = function(client)
 
     request.payload = request.payload .. unmaskedPayload
 
-    coroutine.yield(true)
+    if coroutine.running() then
+      coroutine.yield(true)
+    end
     if header.fin == 1 then
       break
+    end
+    if not coroutine.running() then
+      lt.sleep(0.0001)
     end
   end
 
@@ -208,8 +215,8 @@ websocket13.closeConnection = function(client, reason)
 
   websocket13.send(client, 0x8, reason or "Request closing")
 
-  local startTime, timeout = love.timer.getTime(), coroutine.running() and 5 or 1
-  while love.timer.getTime() - startTime < timeout do
+  local startTime, timeout = lt.getTime(), coroutine.running() and 5 or 1
+  while lt.getTime() - startTime < timeout do
     local peek = client.client:receive(1)
     if peek then
       local request, errorMessage = websocket13.processRequest(client, peek)
@@ -222,7 +229,7 @@ websocket13.closeConnection = function(client, reason)
     if coroutine.running() then
       coroutine.yield(true)
     else
-      love.timer.sleep(0.0001)
+      lt.sleep(0.0001)
     end
   end 
   client:close()

@@ -118,9 +118,9 @@ function button_event_click(event) {
   const id = event.currentTarget.id;
   const success = websocketSend({
     id: id,
-    event: "button_click",
+    event: "click",
   });
   if (!success) {
-    console.warn("MM: Button event triggered; but failed ")
+    console.warn("MM: Button event triggered; but failed to send.")
   }
 }

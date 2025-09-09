@@ -25,6 +25,9 @@ local childIdentifier = "child_"
 local updatePattern = updatePrefix .. "(%S+)" .. payloadPattern
 local updateChildPattern = updatePrefix .. childIdentifier .. "(%S+)" .. payloadPattern
 
+local eventPrefix = "_event_"
+local eventPattern = eventPrefix .. "(%S+)" .. "%s*%(%s*event%s*%)"
+
 local newPattern = "_new" .. payloadPattern
 local insertPattern = "_insert" .. payloadPattern
 local removePattern = "_remove" .. payloadPattern
@@ -68,6 +71,14 @@ local findNewInsertRemovePattern = function(script, componentType)
   return foundNewFunction, foundInsertFunction, foundRemoveFunction, foundRemoveChildFunction
 end
 
+local findEventPattern = function(script, componentType, eventsTable)
+  local fullEventPattern = functionPattern .. componentType .. eventPattern
+
+  for variable in script:gmatch(fullEventPattern) do
+    eventsTable[variable] = true
+  end
+end
+
 components.init = function()
   for _, directory in ipairs(love.mintmousse.COMPONENTS_PATHS) do
     local directoryComponentTypes = components.parseComponentTypes(directory)
@@ -80,11 +91,14 @@ components.init = function()
               directories = { directory },
               updates = { },
               childUpdates = { },
+              events = { },
               hasMustacheFile = directoryComponentType.hasMustacheFile,
+              hasComponentLogic = directoryComponentType.hasComponentLogic,
             }
           else
             table.insert(componentType.directories, directory)
             componentType.hasMustacheFile = componentType.hasMustacheFile or directoryComponentType.hasMustacheFile
+            componentType.hasComponentLogic = componentType.hasComponentLogic or directoryComponentType.hasComponentLogic
           end
         else
           love.mintmousse.warning("Components: Found a component type named 'unknown'. This is a protected keyword within MintMousse. Directory:", directory)
@@ -130,11 +144,16 @@ components.parseComponentTypes = function(directory)
       local name, extension = item:match("^(.+)%.(.+)$")
       local nameLower, extension = name:lower(), extension:lower()
       if not lookup[nameLower] then
-        table.insert(componentTypes, { name = name, hasMustacheFile = (extension == "html" or extension == "mustache") })
+        table.insert(componentTypes, {
+          name = name,
+          hasMustacheFile = (extension == "html" or extension == "mustache"),
+          hasComponentLogic = (extension == "lua"),
+        })
         lookup[nameLower] = #componentTypes
       else
         local componentType = componentTypes[lookup[nameLower]]
         componentType.hasMustacheFile = componentType.hasMustacheFile or (extension == "html" or extension == "mustache")
+        componentType.hasComponentLogic = componentType.hasComponentLogic or (extension == "lua")
       end
     end
   end
@@ -177,6 +196,8 @@ components.parseComponentsJavascript = function(components)
         -- New & Remove functions
         componentType.hasNewFunction, componentType.hasInsertFunction,
         componentType.hasRemoveFunction, componentType.hasRemoveChildFunction = findNewInsertRemovePattern(script, componentTypeName)
+        -- Events
+        findEventPattern(script, componentTypeName, componentType.events)
       end
     end
   end

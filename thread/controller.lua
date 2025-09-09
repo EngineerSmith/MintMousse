@@ -54,6 +54,23 @@ controller.getWebsiteID = function(component)
   return ("%s-%s"):format(component.type, component.id)
 end
 
+controller.splitWebsiteID = function(websiteID)
+  local sepPos = string.find(websiteID, "-")
+  if not sepPos then
+    return nil, nil
+  end
+
+  local typePart = websiteID:sub(1, sepPos - 1)
+  local idPart = websiteID:sub(sepPos + 1)
+
+  local component = controller.get(idPart)
+  if not component or component.type ~= typePart then
+    return nil, nil
+  end
+
+  return component.id, component.type, component
+end
+
 local syncSinkExplore
 syncSinkExplore = function(component, typeMap, relationships, target, isInTargetSubtree)
   isInTargetSubtree = isInTargetSubtree or component.id == target
@@ -252,12 +269,16 @@ controller.setIconRFG = function(filepath)
   love.filesystem.unmount(filepath)
 end
 
+controller.getType = function(type_)
+  return controller.componentTypes[type_]
+end
+
 controller.update = function()
   love.mintmousse.warning("Controller: Need to overwrite controller.update callback")
 end
 
 local makeNewPackage = function(component)
-  local componentType = controller.componentTypes[component.type]
+  local componentType = controller.getType(component.type)
 
   local package = {
     func = ("%s_insert"):format(component.parent.type),
@@ -285,7 +306,7 @@ local makeNewPackage = function(component)
   end
 
   if component.parent then
-    local componentParentType = controller.componentTypes[component.parent.type]
+    local componentParentType = controller.getType(component.parent.type)
     if componentParentType.childUpdates then
       for index in pairs(componentParentType.childUpdates) do
         if not package[index] then
@@ -335,7 +356,11 @@ controller.getInitialPayload = function()
   return "["..table.concat(packages, ",").."]"
 end
 
-controller.newTab = function(id, title, index)
+controller.get = function(id)
+  return controller.idMap[id]
+end
+
+controller.newTab = function(id, title, index, threadOwner)
   if not id then
     return love.mintmousse.warning("Controller: newTab: No ID given")
   end
@@ -343,7 +368,7 @@ controller.newTab = function(id, title, index)
     return love.mintmousse.warning("Controller: newTab: Title must be type string")
   end
 
-  if controller.idMap[id] then
+  if controller.get(id) then
     return love.mintmousse.warning("Controller: newTab: Tried to create Tab with pre-existing ID:", id)
   end
 
@@ -354,6 +379,7 @@ controller.newTab = function(id, title, index)
     id = id,
     parent = controller.tabs,
     children = { },
+    creator = threadOwner,
     --
     title = title,
   }
@@ -368,7 +394,7 @@ controller.newTab = function(id, title, index)
   controller.notifySubscribersComponentAdded(tab, index)
 
   controller.update(json.encode({ -- todo index
-    func = controller.componentTypes[tab.type].hasNewFunction and (tab.type.."_new") or love.mintmousse.error("Tell a programmer; tab_new is missing from tab.js"),
+    func = controller.getType(tab.type).hasNewFunction and (tab.type.."_new") or love.mintmousse.error("Tell a programmer; tab_new is missing from tab.js"),
     id = controller.getWebsiteID(tab),
     title = tab.title,
     content = nil,
@@ -376,7 +402,7 @@ controller.newTab = function(id, title, index)
 end
 
 controller.addComponent = function(component, parentID)
-  local componentType = controller.componentTypes[component.type]
+  local componentType = controller.getType(component.type)
   if not componentType then
     love.mintmousse.warning("Controller: Tried to create component with invalid type:", component.type)
     return
@@ -387,8 +413,8 @@ controller.addComponent = function(component, parentID)
     return
   end
 
-  local parent = controller.idMap[parentID]
-  if not controller.componentTypes[parent.type].hasInsertFunction then
+  local parent = controller.get(parentID)
+  if not controller.getType(parent.type).hasInsertFunction then
     love.mintmousse.warning("Controller: Tried to add component to child who can't have children. If you're a developer add the function <type>_insert to your javascript.")
   end
 
@@ -403,12 +429,12 @@ controller.addComponent = function(component, parentID)
 end
 
 controller.updateComponent = function(id, index, value)
-  local component = controller.idMap[id]
+  local component = controller.get(id)
   if not component then
     love.mintmousse.warning("Controller: Tried to update component when component does not exist.")
     return
   end
-  local typeUpdates = controller.componentTypes[component.type].updates
+  local typeUpdates = controller.getType(component.type).updates
   if typeUpdates and typeUpdates[index] then
     component[index] = value
 
@@ -421,12 +447,12 @@ controller.updateComponent = function(id, index, value)
 end
 
 controller.updateParentComponent = function(parentID, childID, index, value)
-  local parentComponent = controller.idMap[parentID]
+  local parentComponent = controller.get(parentID)
   if not parentComponent then
     love.mintmousse.warning("Controller: Tried to update parent component when parent component does not exist.")
     return
   end
-  local childComponent = controller.idMap[childID]
+  local childComponent = controller.get(childID)
   if not childComponent then
     love.mintmousse.warning("Controller: Tried to update component when component does not exist.")
     return
@@ -437,7 +463,7 @@ controller.updateParentComponent = function(parentID, childID, index, value)
     return
   end
 
-  local typeChildUpdates = controller.componentTypes[parentComponent.type].childUpdates
+  local typeChildUpdates = controller.getType(parentComponent.type).childUpdates
   if typeChildUpdates and typeChildUpdates[index] then
     childComponent[index] = value
 
@@ -460,7 +486,7 @@ removeChildren = function(component)
 end
 
 controller.removeComponent = function(id)
-  local component = controller.idMap[id]
+  local component = controller.get(id)
   controller.notifySubscribersComponentRemoved(component)
 
   -- component.parent will hold children if it is the root (controller.tabs)
@@ -479,13 +505,13 @@ controller.removeComponent = function(id)
     id = controller.getWebsiteID(component),
   }
 
-  local componentType = controller.componentTypes[component.type]
+  local componentType = controller.getType(component.type)
   if componentType.hasRemoveFunction then
     package.func = ("%s_remove"):format(component.type)
   end
 
   if component.parent and component.parent.type then
-    local parentComponentType = controller.componentTypes[component.parent.type]
+    local parentComponentType = controller.getType(component.parent.type)
     if parentComponentType and parentComponentType.hasRemoveChildFunction then
       package.func = ("%s_remove_child"):format(component.parent.type)
       package.parentID = controller.getWebsiteID(component.parent)
