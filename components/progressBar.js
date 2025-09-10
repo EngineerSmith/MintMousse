@@ -7,7 +7,7 @@ function progressBar_new(payload) {
   const bgColor = BSColor(payload.color);
 
   const container = document.createElement("div");
-  container.classList.add("progress", "m-1")
+  container.classList.add("progress")
   setAttributes(container, {
     "id": id + "-root",
     "role": "progressbar",
