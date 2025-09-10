@@ -3,17 +3,16 @@ function button_new(payload) {
   const color = BSColor(payload.color) ?? "primary";
   const colorOutline = Boolean(payload.colorOutline ?? false);
   const text = getText(payload.text) ?? "";
-  const isDisabled = Boolean(payload.disable ?? false);
+  const isDisabled = Boolean(payload.isDisable ?? false);
   const widthClass = "w-" + (BSWidth(payload.width) ?? "100");
-  const center = Boolean(payload.center ?? true);
+  const isCentered = Boolean(payload.isCentered ?? true);
 
   const colorClass = colorOutline ? "btn-outline-" + color : "btn-" + color
 
   const button = document.createElement("button");
   button.classList.add("btn", colorClass, widthClass, "d-block"); // est: d-block won't work work buttongroups 
-  if (center === true) {
+  if (isCentered === true)
     button.classList.add("mx-auto");
-  }
   setAttributes(button, {
     "id": id,
     "type": "button",
@@ -78,9 +77,9 @@ function button_update_text(payload) {
   button.innerHTML = text;
 }
 
-function button_update_disable(payload) {
+function button_update_isDisable(payload) {
   const id = payload.id;
-  const isDisabled = Boolean(payload.disable ?? false);
+  const isDisabled = Boolean(payload.isDisable ?? false);
 
   const button = document.getElementById(id);
   button.disable = isDisabled;
@@ -102,12 +101,12 @@ function button_update_width(payload) {
   button.classList.add(widthClass);
 }
 
-function button_update_center(payload) {
+function button_update_isCentered(payload) {
   const id = payload.id;
-  const center = Boolean(payload.center ?? true);
+  const isCentered = Boolean(payload.isCentered ?? true);
 
   const button = document.getElementById(id);
-  if (center === true) {
+  if (isCentered === true) {
     button.classList.add("mx-auto");
   } else {
     button.classList.remove("mx-auto");

@@ -4,11 +4,11 @@ function alert_new(payload) {
   const buttonID = id + "-button";
   const text = getText(payload.text) ?? "UNKNOWN";
   const alertColor = BSColor(payload.color) ?? "warning";
-  const dismissible = Boolean(payload.dismissible ?? true);
+  const isDismissible = Boolean(payload.isDismissible ?? true);
 
   const alert = document.createElement("div");
   alert.classList.add("alert", "fade", "show", "alert-" + alertColor);
-  if (dismissible === true) {
+  if (isDismissible === true) {
     alert.classList.add("alert-dismissible");
   }
   setAttributes(alert, {
@@ -23,7 +23,7 @@ function alert_new(payload) {
 
   alert.append(p);
 
-  if (dismissible === true) {
+  if (isDismissible === true) {
     const dismissButton = document.createElement("button");
     dismissButton.classList.add("btn-close");
     setAttributes(dismissButton, {
@@ -83,10 +83,10 @@ function alert_update_color(payload) {
   alert.classList.add("alert-" + color);
 }
 
-function alert_update_dismissible(payload) {
+function alert_update_isDismissible(payload) {
   const id = payload.id;
   const buttonID = id + "-button";
-  const dismissible = Boolean(payload.dismissible ?? true);
+  const isDismissible = Boolean(payload.isDismissible ?? true);
 
   const alert = document.getElementById(id);
   if (alert === null) {
@@ -95,11 +95,11 @@ function alert_update_dismissible(payload) {
   }
 
   let dismissButton = document.getElementById(buttonID);
-  if ((dismissible === true && dismissButton !== null) || (dismissible === false && dismissButton === null)) {
+  if ((isDismissible === true && dismissButton !== null) || (isDismissible === false && dismissButton === null)) {
     return;
   }
 
-  if (dismissible === true) {
+  if (isDismissible === true) {
     dismissButton = document.createElement("button");
     dismissButton.classList.add("btn-close");
     setAttributes(dismissButton, {
@@ -111,7 +111,7 @@ function alert_update_dismissible(payload) {
 
     alert.append(dismissButton);
 
-  } else if (dismissible === false) {
+  } else if (isDismissible === false) {
     removeElement(dismissButton);
   }
 }

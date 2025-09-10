@@ -1,21 +1,20 @@
 function list_new(payload) {
   const id = payload.id;
-  const isNumbered = Boolean(payload.numbered ?? false);
+  const isNumbered = Boolean(payload.isNumbered ?? false);
 
   const listGroup = document.createElement("ul");
   listGroup.classList.add("list-group");
   listGroup.setAttribute("id", id)
 
-  if (isNumbered === true) {
+  if (isNumbered === true)
     listGroup.classList.add("list-group-numbered");
-  }
 
   return listGroup;
 }
 
-function list_update_numbered(payload) {
+function list_update_isNumbered(payload) {
   const id = payload.id;
-  const isNumbered = Boolean(payload.numbered ?? false);
+  const isNumbered = Boolean(payload.isNumbered ?? false);
 
   const listGroup = document.getElementById(id);
   if (isNumbered === true) {
