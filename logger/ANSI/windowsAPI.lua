@@ -14,7 +14,6 @@ typedef unsigned char BYTE;
 typedef long long intptr_t;
 typedef intptr_t HANDLE;
 typedef int BOOL;
-typedef DWORD* LPDWORD;
 // ---------------------------------------
 
 // --- OS Version Structures and Functions ---
@@ -41,7 +40,7 @@ static const int INVALID_HANDLE_VALUE = -1;
 static const int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0X0004;
 
 HANDLE GetStdHandle(int nStdHandle);
-BOOL GetConsoleMode(HANDLE hConsoleHandle, LPDWORD lpMode);
+BOOL GetConsoleMode(HANDLE hConsoleHandle, DWORD* lpMode);
 BOOL SetConsoleMode(HANDLE hConsoleHandle, DWORD dwMode);
 // ----------------------------------------
 ]]
@@ -74,7 +73,7 @@ windowsAPI.enableVirtualTerminal = function()
     return false -- Not a console/error
   end
 
-  local mode_ptr = ffi.new("LPDWORD")
+  local mode_ptr = ffi.new("DWORD[1]")
   if kernel32.GetConsoleMode(handle, mode_ptr) == 0 then
     return false -- Not a console
   end
@@ -100,11 +99,8 @@ windowsAPI.setupANSIConsole = function()
   end
 
   local success = windowsAPI.enableVirtualTerminal()
-  if not success then
-    return false
-  end
 
-  return true
+  return success
 end
 
 return windowsAPI
