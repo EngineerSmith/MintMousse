@@ -35,6 +35,7 @@ MintMousse would not be possible without the following dependencies:
 ## Kudos
 Special thanks to:
 - **[Immow](https://github.com/Immow)** Suggesting the lua API for defining the components.
+- **[Josh](https://github.com/josh-perry)** For proposing a critical fix to log buffering, which drastically reduced performance overhead (from 1ms per print to negligible time per log call!).
 
 [doclink]: https://github.com/EngineerSmith/MintMousse/wiki
 [git.lustache]: https://github.com/Olivine-Labs/lustache
