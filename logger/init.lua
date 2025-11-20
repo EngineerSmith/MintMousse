@@ -88,6 +88,14 @@ love.mintmousse.logUncaughtError = function(message, tracebackLayer)
   local traceback = debug.traceback("", (tracebackLayer or 1) + 1)
   traceback = love.mintmousse._cleanUpTraceback(traceback)
   dispatchToSinks("fatal", nil, time, nil, message, "\n"..traceback)
+  love.mintmousse.flushLogs()
+end
+
+---- PRINT buffer
+io.stdout:setvbuf("full", 1024)
+
+love.mintmousse.flushLogs = function()
+  io.stdout:flush()
 end
 
 ---- Logging Initialization
