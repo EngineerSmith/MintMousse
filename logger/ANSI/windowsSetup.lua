@@ -14,9 +14,10 @@ typedef unsigned char BYTE;
 typedef long long intptr_t;
 typedef intptr_t HANDLE;
 typedef int BOOL;
+typedef DWORD* LPDWORD;
 // ---------------------------------------
 
-// --- OS Version Structure and Functions ---
+// --- OS Version Structures and Functions ---
 typedef struct {
   DWORD dwOSVersionInfoSize; // Mandatory field: Must be set to the size of the structure before calling the function
   DWORD dwMajorVersion;      // The output field containing the major version (e.g. 10)
@@ -32,7 +33,7 @@ typedef struct {
 } OSVERSIONINFOEXW;
 
 LONG RtlGetVersion(OSVERSIONINFOEXW *lpVersionInformation);
-// ------------------------------------------
+// -------------------------------------------
 
 // --- Console Structures and Functions ---
 static const int STD_OUTPUT_HANDLE = -11;
@@ -40,8 +41,8 @@ static const int INVALID_HANDLE_VALUE = -1;
 static const int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0X0004;
 
 HANDLE GetStdHandle(int nStdHandle);
-BOOL GetConsoleMode(HANDLE hConsoleHandle, int* lpMode);
-BOOL SetConsoleMode(HANDLE hConsoleHandle, int dwMode);
+BOOL GetConsoleMode(HANDLE hConsoleHandle, LPDWORD lpMode);
+BOOL SetConsoleMode(HANDLE hConsoleHandle, DWORD dwMode);
 // ----------------------------------------
 ]]
 
@@ -53,8 +54,7 @@ local bit = require("bit")
 local M = { }
 
 M.getMajorVersion = function()
-  local OSVERSIONINFOEXW = ffi.typeof("OSVERSIONINFOEXW")
-  local versionInfoExW = OSVERSIONINFOEXW()
+  local versionInfoExW = ffi.new("OSVERSIONINFOEXW")
   versionInfoExW.dwOSVersionInfoSize = ffi.sizeof(versionInfoExW)
 
   if ntdll.RtlGetVersion(versionInfoExW) == 0 then
@@ -74,7 +74,7 @@ M.enableVirtualTerminal = function()
     return false -- Not a console/error
   end
 
-  local mode_ptr = ffi.new("int[1]")
+  local mode_ptr = ffi.new("LPDWORD")
   if kernel32.GetConsoleMode(handle, mode_ptr) == 0 then
     return false -- Not a console
   end
