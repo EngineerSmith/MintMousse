@@ -93,8 +93,14 @@ love.mintmousse._cleanUpTraceback = function(traceback)
     end
   end
 
-  local finalTraceback = table.concat(cleanLines, "\n") .. "\n"
+  local finalTraceback = table.concat(cleanLines, "\n")
   finalTraceback = finalTraceback:gsub("stack traceback", "Traceback")
+
+  if love._version_major <= 11 and love._version_minor <= 5 then
+    -- Love 11 and 5 and earlier have a default love.errorhandler that doesn't read
+    --  the traceback correctly. Append a new line to fix.
+    finalTraceback = finalTraceback .. "\n"
+  end
 
   return finalTraceback
 end
