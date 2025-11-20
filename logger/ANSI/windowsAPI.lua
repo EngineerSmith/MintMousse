@@ -51,9 +51,9 @@ local kernel32 = ffi.load("kernel32")
 local C = ffi.C
 local bit = require("bit")
 
-local M = { }
+local windowsAPI = { }
 
-M.getMajorVersion = function()
+windowsAPI.getMajorVersion = function()
   local versionInfoExW = ffi.new("OSVERSIONINFOEXW")
   versionInfoExW.dwOSVersionInfoSize = ffi.sizeof(versionInfoExW)
 
@@ -68,7 +68,7 @@ M.getMajorVersion = function()
   return nil
 end
 
-M.enableVirtualTerminal = function()
+windowsAPI.enableVirtualTerminal = function()
   local handle = kernel32.GetStdHandle(C.STD_OUTPUT_HANDLE)
   if handle == C.INVALID_HANDLE_VALUE or handle == 0 then
     return false -- Not a console/error
@@ -93,4 +93,18 @@ M.enableVirtualTerminal = function()
   return false -- Failed to set mode
 end
 
-return M
+windowsAPI.setupANSIConsole = function()
+  local windowsVersion = windowsAPI.getMajorVersion()
+  if type(windowsVersion) ~= "number" or windowsVersion < 1 then
+    return false
+  end
+
+  local success = windowsAPI.enableVirtualTerminal()
+  if not success then
+    return false
+  end
+
+  return true
+end
+
+return windowsAPI
