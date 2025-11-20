@@ -48,6 +48,11 @@ table.sort(filterPatterns, function(a, b)
   return a.counts > b.counts
 end)
 
+local INDENT = "    "
+local replaceTabsWithSpaces = function(tabs)
+  return INDENT:rep(#tabs)
+end
+
 -- Cleans up a traceback string by removing lines matching specific filters to make the issue much more visible.
 love.mintmousse._cleanUpTraceback = function(traceback)
   if traceback:sub(-1) ~= "\n" then
@@ -56,6 +61,7 @@ love.mintmousse._cleanUpTraceback = function(traceback)
 
   local lines = { }
   for line in (traceback):gmatch("([^\n]+)\n") do
+    line = line:gsub("^\t+", replaceTabsWithSpaces)
     table.insert(lines, line)
   end
 
@@ -97,8 +103,8 @@ love.mintmousse._cleanUpTraceback = function(traceback)
   finalTraceback = finalTraceback:gsub("stack traceback", "Traceback")
 
   if love._version_major <= 11 and love._version_minor <= 5 then
-    -- Love 11 and 5 and earlier have a default love.errorhandler that doesn't read
-    --  the traceback correctly. Append a new line to fix.
+    -- Love 11.5 and earlier have a default love.errorhandler that doesn't read
+    --  the traceback correctly. Append a new line to apply a general fix.
     finalTraceback = finalTraceback .. "\n"
   end
 
