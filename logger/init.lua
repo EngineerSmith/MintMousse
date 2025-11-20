@@ -5,16 +5,9 @@ GLOBAL_print = print
 -- Internal usage
 love.mintmousse._logging = {
   _sinks = { },
-  _logNames = {
-    info    = "INFO ",
-    warning = "WARN ",
-    error   = "ERROR",
-    fatal   = "FATAL",
-    debug   = "DEBUG",
-  },
 }
 
---- Util functions
+---- Util functions
 
 local socket = require("socket")
 local getTime = socket.gettime
@@ -56,7 +49,7 @@ local getDebugInfo = function()
   return debugInfo
 end
 
---- Sinks
+---- Sinks
 
 local dispatchToSinks = function(...)
   love.mintmousse._stackFramePush()
@@ -96,6 +89,11 @@ love.mintmousse.logUncaughtError = function(message, tracebackLayer)
   traceback = love.mintmousse._cleanUpTraceback(traceback)
   dispatchToSinks("fatal", nil, time, nil, message, "\n"..traceback)
 end
+
+---- Logging Initialization
+
+love.mintmousse._require("logger.sinks")
+love.mintmousse._require("logger.traceback")
 
 ---- Logger face
 local colorVal = love.mintmousse._require("logger.color")
@@ -188,8 +186,5 @@ logger.assert = function(self, condition, ...)
     love.mintmousse._stackFramePop()
   end
 end
-
-love.mintmousse._require("logger.sinks")
-love.mintmousse._require("logger.traceback")
 
 return logger

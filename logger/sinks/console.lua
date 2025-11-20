@@ -1,4 +1,10 @@
-local logNames = love.mintmousse._logging._logNames
+local logNames = {
+  info    = "INFO ",
+  warning = "WARN ",
+  error   = "ERROR",
+  fatal   = "FATAL",
+  debug   = "DEBUG",
+}
 
 local wrapBrackets = function(inner)
   return "[" .. inner .. "]"

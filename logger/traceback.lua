@@ -40,7 +40,7 @@ local filterPatterns = {
   { pattern = patterns.boot, counts = -1 }, -- Remove all love internal boot calls
   { pattern = patterns.callbacks, counts = -1 }, -- Remove all love internal callbacks calls
 }
-
+-- Sort filters to reduce number of string matching required
 table.sort(filterPatterns, function(a, b)
   if a.counts == -1 and b.counts == -1 then return false end
   if a.counts == -1 then return true end

@@ -8,16 +8,22 @@ local levelColorMap = {
   debug   = "cyan",
 }
 
-local logNames = love.mintmousse._logging._logNames
+local logNames = {
+  info    = "INFO ",
+  warning = "WARN ",
+  error   = "ERROR",
+  fatal   = "FATAL",
+  debug   = "DEBUG",
+}
 
-local brackets = {
+local logDelimiters = {
   left  = ANSI.applyANSI("bright_black", "["),
   right = ANSI.applyANSI("bright_black", "]"),
   colon = ANSI.applyANSI("bright_black", ":"),
 }
 
 local wrapBrackets = function(inner)
-  return brackets.left .. inner .. brackets.right
+  return logDelimiters.left .. inner .. logDelimiters.right
 end
 
 local sink = function(level, logger, time, debugInfo, ...)
@@ -45,7 +51,7 @@ local sink = function(level, logger, time, debugInfo, ...)
         local colorDef = node.colorDef or "white"
         table.insert(prefixParts, ANSI.applyANSI(colorDef, node.name))
       end
-      local prefixStr = table.concat(prefixParts, brackets.colon)
+      local prefixStr = table.concat(prefixParts, logDelimiters.colon)
       table.insert(parts, wrapBrackets(prefixStr))
     end
   end
