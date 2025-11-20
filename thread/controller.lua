@@ -148,7 +148,7 @@ packageComponent = function(component)
   if #component.children ~= 0 then
     package.children = { }
     for index, child in ipairs(component.children) do
-      package.children[index] = format(child)
+      package.children[index] = packageComponent(child)
     end
   end
   return package
@@ -277,13 +277,26 @@ controller.update = function()
   love.mintmousse.warning("Controller: Need to overwrite controller.update callback")
 end
 
-local makeNewPackage = function(component)
+local makeNewPackage = function(component, parentChildIndex)
   local componentType = controller.getType(component.type)
+
+  if not parentChildIndex then
+    for i, child in ipairs(component.parent.children) do
+      if child == component then
+        parentChildIndex = i
+        break
+      end
+    end
+    if not parentChildIndex then
+      love.mintmousse.warning("Controller: Couldn't find child in parent's children! Tell a programmer:", component.id, ". Parent:", component.parent.id)
+    end
+  end
 
   local package = {
     func = ("%s_insert"):format(component.parent.type),
     parentID = controller.getWebsiteID(component.parent),
     newFunc = componentType.hasNewFunction and ("%s_new"):format(component.type) or nil,
+    index = parentChildIndex,
   }
 
   package.id = controller.getWebsiteID(component)
@@ -321,7 +334,7 @@ local makeNewPackage = function(component)
   end
 
   if not package.newFunc and not package.render then
-    love.mintmousse.error("Controller: Tried to call makeNewPackage; but neither JS or HTML was successful in creating this componentType. Tell a programmer: this should have been caught earlier.")
+    love.mintmousse.error("Controller: Tried to call makeNewPackage; but neither JS or HTML would be successful at creating this componentType. Tell a programmer: this should have been caught earlier.")
     return nil
   end
 
@@ -329,12 +342,12 @@ local makeNewPackage = function(component)
 end
 
 local addPackagesForChildren
-addPackagesForChildren = function(component, packages)
+addPackagesForChildren = function(component, packages, index)
   if component.type ~= "tab" then
-    table.insert(packages, json.encode(makeNewPackage(component)))
+    table.insert(packages, json.encode(makeNewPackage(component, index)))
   end
-  for _, child in ipairs(component.children) do
-    addPackagesForChildren(child, packages)
+  for index, child in ipairs(component.children) do
+    addPackagesForChildren(child, packages, index)
   end
 end
 
@@ -348,10 +361,11 @@ controller.getInitialPayload = function()
     local payload = {
       func = "tab_new",
       id = controller.getWebsiteID(tab),
+      index = index,
       title = tab.title,
     }
     table.insert(packages, index, json.encode(payload))
-    addPackagesForChildren(tab, packages)
+    addPackagesForChildren(tab, packages, index)
   end
   return "["..table.concat(packages, ",").."]"
 end
@@ -384,24 +398,31 @@ controller.newTab = function(id, title, index, threadOwner)
     title = title,
   }
 
-  if not index then
-    index = #controller.tabs + 1
+  local childCount = #controller.tabs
+  if type(index) ~= "number" or index == 0 then
+    index = childCount + 1
   end
 
-  controller.idMap[tab.id] = tab
-  table.insert(controller.tabs, index, tab) 
+  index = math.max(-childCount, math.min(index, childCount + 1))
 
+  if index < 0 then
+    index = childCount + index + 1
+  end
+
+  table.insert(controller.tabs, index, tab)
+  controller.idMap[tab.id] = tab
   controller.notifySubscribersComponentAdded(tab, index)
 
-  controller.update(json.encode({ -- todo index
+  controller.update(json.encode({
     func = controller.getType(tab.type).hasNewFunction and (tab.type.."_new") or love.mintmousse.error("Tell a programmer; tab_new is missing from tab.js"),
     id = controller.getWebsiteID(tab),
+    index = index, -- todo index
     title = tab.title,
     content = nil,
   }))
 end
 
-controller.addComponent = function(component, parentID)
+controller.addComponent = function(component, parentID, index)
   local componentType = controller.getType(component.type)
   if not componentType then
     love.mintmousse.warning("Controller: Tried to create component with invalid type:", component.type)
@@ -418,13 +439,24 @@ controller.addComponent = function(component, parentID)
     love.mintmousse.warning("Controller: Tried to add component to child who can't have children. If you're a developer add the function <type>_insert to your javascript.")
   end
 
+  local childCount = #parent.children
+  if type(index) ~= "number" or index == 0 then
+    index = childCount + 1
+  end
+
+  index = math.max(-childCount, math.min(index, childCount + 1))
+
+  if index < 0 then
+    index = childCount + index + 1
+  end
+
   component.parent = parent
   component.children = { }
-  table.insert(parent.children, component)
+  table.insert(parent.children, index, component)
   controller.idMap[component.id] = component
-  controller.notifySubscribersComponentAdded(component, #parent.children)
+  controller.notifySubscribersComponentAdded(component, index)
 
-  local package = makeNewPackage(component)
+  local package = makeNewPackage(component, index)
   controller.update(json.encode(package))
 end
 

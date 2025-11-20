@@ -1,31 +1,54 @@
-love.mintmousse._isANSISupported = true
+local ANSI = { }
+ANSI.isANSISupported = true
 if jit and jit.os == "Windows" then -- love.system may not be loaded; but `jit` is required for MM and must be loaded
-  local windowsVersion = love.mintmousse._require("logger.getWindowsVersion")
-  love.mintmousse._isANSISupported = type(windowsVersion) == "number" and windowsVersion >= 10
+  local windowsVersion = love.mintmousse._require("logger.ANSI.getWindowsVersion")
+  ANSI.isANSISupported = type(windowsVersion) == "number" and windowsVersion >= 10
 
-  if love.mintmousse._isANSISupported then
+  if ANSI.isANSISupported then
     os.execute("color")
   end
 end
 
-if love.mintmousse._isANSISupported then
-  love.mintmousse._applyANSIColor = function(colorKey, text)
-    local logStyles = love.mintmousse._logging._logStyles
-    return logStyles[colorKey].color .. text .. logStyles["STOP"].color
-  end
-else
-  love.mintmousse._applyANSIColor = function(_, text) -- To support non-colour consoles
+--- Terminal Output (Generating ANSI codes)
+
+local ANSIColors = love.mintmousse._require("logger.ANSI.ANSIColors")
+
+local ANSIStringPattern = "\27[%dm"
+
+local ANSI_RESET = ANSIStringPattern:format(ANSIColors.reset)
+ANSI.applyANSI = function(colorDef, text)
+  if not ANSI.isANSISupported then
     return text
   end
+
+  local fg, bg = "reset", "reset"
+  if type(colorDef) == "string" then
+    fg = colorDef or "reset"
+  else
+    fg = colorDef.fg or "reset"
+    bg = colorDef.bg or "reset"
+  end
+
+  if fg == "reset" and bg == "reset" then
+    return ANSI_RESET .. text .. ANSI_RESET
+  end
+
+  local finalString = ANSI_RESET
+
+  if fg ~= "reset" then
+    finalString = finalString .. ANSIStringPattern:format(ANSIColors.foreground[fg])
+  end
+  if bg ~= "reset" then
+    finalString = finalString .. ANSIStringPattern:format(ANSIColors.background[bg])
+  end
+
+  return finalString .. text .. ANSI_RESET
 end
 
-love.mintmousse._stripANSIColor = function(text)
-  return text:gsub(love.mintmousse._logging._ANSIPattern, "")
-end
+--- Love rendering (Parsing ANSI codes to RGB)
 
 -- ANSI to RGB mapping; based on PuTTY color scheme as it seems the best looking imo
-local ANSIColorMap
-ANSIColorMap = {
+local ANSIColorMap = {
 -- FG
   [30] = { 0  , 0  , 0   }, -- Black
   [31] = { .73, 0  , 0   }, -- Red
@@ -46,8 +69,7 @@ ANSIColorMap = {
   [97] = { 1  , 1  , 1   }, -- Bright White
 -- BG
   [40] = { 0, 0, 0, 0 },   -- Transparent Black
-}
-  -- BG continued
+} -- BG continued
 ANSIColorMap[41] = ANSIColorMap[31] -- Red
 ANSIColorMap[42] = ANSIColorMap[32] -- Green
 ANSIColorMap[43] = ANSIColorMap[33] -- Yellow
@@ -68,7 +90,7 @@ ANSIColorMap[107] = ANSIColorMap[97] -- Bright White
 -- Parses a string containing ANSI Escape codes and converts it to a single, flat
 -- array formatted for use with love.graphics.print's colored text option.
 -- Format: {{R,G,B,A}, "Text 1", {R2,G2,B2,A2}, "Text 2", ...}
-love.mintmousse._convertANSIStringToLoveString = function(ansiString)
+ANSI.convertANSIStringToLoveString = function(ansiString)
   local segments = { }
 
   local baseFG, baseBG = ANSIColorMap[0], ANSIColorMap[40]
@@ -80,7 +102,7 @@ love.mintmousse._convertANSIStringToLoveString = function(ansiString)
 
   local lastPos = 1
   while true do
-    local beginning, finish = ansiString:find(love.mintmousse._logging._ANSIPattern, lastPos)
+    local beginning, finish = ansiString:find("\27%[[%d;]-m", lastPos)
 
     if not beginning then
       break
@@ -124,3 +146,5 @@ love.mintmousse._convertANSIStringToLoveString = function(ansiString)
   end
   return segments
 end
+
+return ANSI

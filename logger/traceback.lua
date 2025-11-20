@@ -93,5 +93,8 @@ love.mintmousse._cleanUpTraceback = function(traceback)
     end
   end
 
-  return table.concat(cleanLines, "\n") .. "\n"
+  local finalTraceback = table.concat(cleanLines, "\n") .. "\n"
+  finalTraceback = finalTraceback:gsub("stack traceback", "Traceback")
+
+  return finalTraceback
 end

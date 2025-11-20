@@ -1,51 +1,44 @@
 # MintMousse
-MintMousse is a simple yet powerful web console for your [Love][love] project, offering live control, monitoring, and interaction. It allows you to create customisable web interfaces with real-time component updates, enhancing the development experience for both headless and traditional Love projects.
+MintMousse is a live web console for your [LÖVE][love] project, giving you real-time control and insight into your project's internals. Instead of relying on countless `print()` statements or clunky in-game debug menus, MintMousse lets you build a real-time dashboard viewable in any browser. From there, you can monitor variables, tweak settings, and interact with code. This makes development a breeze for both headless and traditional [LÖVE][love] projects.
 
-## Key Principles
-**Simplicity and Ease of Use**:
-Designed to be intuitive, making it quick and easy to create web interfaces for your applications. Focuses on a straightforward API, allowing you to easily define and integrate web-based control and monitoring for your Love games and applications.
-
-**Live and Reactive Updates**:
-Leverages WebSockets for instantaneous two-way communication, ensuring a truly live interaction between your Love application and the web console.
-
-**Multi-threading Support**:
-Allows you to build web console interfaces that react to events and data from any thread in your Love application, providing a comprehensive live view for control and monitoring.
-
-**Extensibility and Community Contributions**:
-Designed to be easily extended with custom components, empowering the community to contribute new features and tailor the library to diverse needs using a component-based design.
+With this powerful control panel, you can trigger events, change player stats, or visualise performance metrics with graphs. This provides instance feedback, making it an ideal tool for debugging or managing a game server. This library is thread-safe, allowing you to update the console directly from any thread. Ultimately, it streamlines your workflow and gives you a much clearer picture of what's happening under the hood.
 
 # Quickstart
+First, add the library to your project:
 ```
-cd loveProject
+cd your/love/project/directory
 git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/.
 ```
-### Hello world
+Then, add the "Hello World" example to your `main.lua` file:
 ```lua
 require("libs.MintMousse")
 love.mintmousse.start({
   whitelist = { "127.0.0.1", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12" },
 })
 
-local dashboard = love.mintmousse.newTab("Dashboard", "dashboard")
+local dashboard = love.mintmousse.newTab("Dashboard")
 dashboard:newCard({ size = 5, title = "Hello World!" })
 ```
+Finally, run your project and view the console in your browser at [http://localhost](http://localhost)
 
 # Docs
-Check out our [wiki][doclink]
+Check out our [wiki][doclink]!
 
 # Credits
 ## Dependencies
-Massive thank you to our dependencies! Without them the MintMousse wouldn't exist as it is.
+MintMousse would not be possible without the following dependencies:
 - [Lustache][git.lustache]
-- [Bootstrap][git.bootstrap]
+- [Bootstrap 5.3][git.bootstrap]
 - [Json.lua][git.json]
+- [LuaSocket][luasocket] (Included in [LÖVE][love])
 
 ## Kudos
 Special thanks to:
-- **[Immow](https://github.com/Immow)** Suggesting the lua api for defining the components.
+- **[Immow](https://github.com/Immow)** Suggesting the lua API for defining the components.
 
 [doclink]: https://github.com/EngineerSmith/MintMousse/wiki
 [git.lustache]: https://github.com/Olivine-Labs/lustache
-[git.bootstrap]: https://github.com/twbs
+[git.bootstrap]: https://github.com/twbs/bootstrap
 [git.json]: https://github.com/rxi/json.lua
 [love]: https://love2d.org
+[luasocket]: https://github.com/lunarmodules/luasocket

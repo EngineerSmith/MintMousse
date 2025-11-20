@@ -1,6 +1,6 @@
 local PATH, dirPATH = ...
 
-love.isMintMousseServerThread = true
+love.isMintMousseThread = true
 require(PATH .. "mintmousse")(PATH, dirPATH)
 
 local json = love.mintmousse.require("libs.json")

@@ -1,5 +1,6 @@
 function list_new(payload) {
   const id = payload.id;
+  const parentID = payload.parentID;
   const isNumbered = Boolean(payload.isNumbered ?? false);
 
   const listGroup = document.createElement("ul");
@@ -8,6 +9,10 @@ function list_new(payload) {
 
   if (isNumbered === true)
     listGroup.classList.add("list-group-numbered");
+
+  const parent = document.getElementById(parentID);
+  if (parent && parent.classList.contains("card"))
+    listGroup.classList.add("list-group-flush")
 
   return listGroup;
 }
