@@ -1,6 +1,6 @@
 -- Maps MintMouse's logging color names to ANSI color codes
 return {
-  reset     = 0,
+  reset     =  0,
   foreground = {
     black   = 30,
     red     = 31,

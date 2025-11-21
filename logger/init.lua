@@ -1,16 +1,25 @@
+local PATH = ...
+PATH = PATH:match("^(.*)%.init$") or PATH
+PATH = PATH .. "."
+
 -- Creates global which points to the default print function; to ensure we aren't
 -- being destructive if config `REPLACE_FUNC_PRINT` is active
 GLOBAL_print = print
 
 -- Internal usage
-love.mintmousse._logging = {
-  _sinks = { },
+local logging = {
+  sinks = { }
 }
 
 ---- Util functions
 
 local socket = require("socket")
 local getTime = socket.gettime
+
+local cleanUpTraceback = require(PATH .. "cleanUpTraceback")
+love.mintmousse._cleanUpTraceback = cleanUpTraceback
+
+local loggingColors = require(PATH .. "color")
 
 -- Used to dynamically change the depth required to find the stack trace information (caller file/line).
 local stackFrameOffset = 0
@@ -53,7 +62,7 @@ end
 
 local dispatchToSinks = function(...)
   love.mintmousse._stackFramePush()
-  for _, sink in ipairs(love.mintmousse._logging._sinks) do
+  for _, sink in ipairs(logging.sinks) do
     sink(...)
   end
   love.mintmousse._stackFramePop()
@@ -69,7 +78,7 @@ end
 -- (5) ... (vararg): The log message parts. (strings, numbers)
 love.mintmousse.addLogSink = function(sink)
   assert(type(sink) == "function", "Expected sink type to be function.")
-  table.insert(love.mintmousse._logging._sinks, sink)
+  table.insert(logging.sinks, sink)
 end
 
 love.mintmousse.formatTimestamp = function(time)
@@ -86,26 +95,29 @@ love.mintmousse.logUncaughtError = function(message, tracebackLayer)
   love.mintmousse._insideFatal = true -- FATAL is non-recoverable, so never switch back
 
   local traceback = debug.traceback("", (tracebackLayer or 1) + 1)
-  traceback = love.mintmousse._cleanUpTraceback(traceback)
+  traceback = cleanUpTraceback(traceback)
   dispatchToSinks("fatal", nil, time, nil, message, "\n"..traceback)
-  love.mintmousse.flushLogs()
+  love.mintmousse.flushLogs(true)
 end
 
----- PRINT buffer
-io.stdout:setvbuf("full", 1024)
+---- Log buffer
+-- We buffer all `prints`, both for performance per log, and to avoid thread logs clashing
+io.stdout:setvbuf("full", love.mintmousse.LOG_BUFFER_SIZE)
 
-love.mintmousse.flushLogs = function()
+local LOG_BUFFER_FLUSH_LOCK_CHANNEL = love.thread.getChannel(love.mintmousse.LOCK_LOG_BUFFER_FLUSH)
+local flushStdOut = function()
   io.stdout:flush()
 end
 
----- Logging Initialization
-
-love.mintmousse._require("logger.sinks")
-love.mintmousse._require("logger.traceback")
+love.mintmousse.flushLogs = function(forced)
+  if not forced then
+    LOG_BUFFER_FLUSH_LOCK_CHANNEL:performAtomic(flushStdOut)
+  else
+    flushStdOut()
+  end
+end
 
 ---- Logger face
-local colorVal = love.mintmousse._require("logger.color")
-
 local logger = { }
 logger.__index = logger
 
@@ -117,7 +129,7 @@ logger.extend = function(parent, name, colorDef)
 
   local self = setmetatable({
     name = name,
-    colorDef = colorVal.validateColorDef(colorDef),
+    colorDef = loggingColors.validateColorDef(colorDef),
     parent = parent,
   }, logger)
   -- init

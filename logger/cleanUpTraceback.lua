@@ -54,7 +54,7 @@ local replaceTabsWithSpaces = function(tabs)
 end
 
 -- Cleans up a traceback string by removing lines matching specific filters to make the issue much more visible.
-love.mintmousse._cleanUpTraceback = function(traceback)
+local cleanUpTraceback = function(traceback)
   if traceback:sub(-1) ~= "\n" then
     traceback = traceback .. "\n"
   end
@@ -110,3 +110,5 @@ love.mintmousse._cleanUpTraceback = function(traceback)
 
   return finalTraceback
 end
+
+return cleanUpTraceback

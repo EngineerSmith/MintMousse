@@ -1,9 +1,11 @@
-local ANSIColors = love.mintmousse._require("logger.ANSI.ANSIColors")
-local ANSIStringPattern = "\27[%dm"
+local PATH = (...):match("^(.-)[^%.]+$")
+
+local ANSIColors = require(PATH .. "ANSIColors")
+local ANSIColorPattern = "\27[%dm"
 
 local writer = { }
 
-local ANSI_RESET = ANSIStringPattern:format(ANSIColors.reset)
+local ANSI_RESET = ANSIColorPattern:format(ANSIColors.reset)
 writer.applyANSI = function(colorDef, text)
   local fg, bg = "reset", "reset"
   if type(colorDef) == "string" then
@@ -20,10 +22,10 @@ writer.applyANSI = function(colorDef, text)
   local finalString = ANSI_RESET
 
   if fg ~= "reset" then
-    finalString = finalString .. ANSIStringPattern:format(ANSIColors.foreground[fg])
+    finalString = finalString .. ANSIColorPattern:format(ANSIColors.foreground[fg])
   end
   if bg ~= "reset" then
-    finalString = finalString .. ANSIStringPattern:format(ANSIColors.background[bg])
+    finalString = finalString .. ANSIColorPattern:format(ANSIColors.background[bg])
   end
 
   return finalString .. text .. ANSI_RESET

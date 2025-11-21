@@ -1,4 +1,5 @@
-local ANSI = love.mintmousse._require("logger.ANSI")
+local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
+local ANSI = require(ROOT .. "logger.ANSI")
 
 local levelColorMap = {
   info    = "green",
