@@ -1,5 +1,6 @@
 local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
-local ANSI = require(ROOT .. "logger.ANSI")
+
+local ANSI = require(ROOT .. "logging.ANSI")
 
 local levelColorMap = {
   info    = "green",
