@@ -107,7 +107,6 @@ local cleanupTraceback = function(traceback)
   finalTraceback = finalTraceback:gsub("stack traceback", "Traceback")
 
   if love and love._version_major <= 11 and love._version_minor <= 5 then
-  -- if love and love._version_major <= 12 then -- Waiting for PR to fix love12 #2253
     -- Love 11.5 and earlier have a default love.errorhandler that doesn't read
     --  the traceback correctly. Append a new line to apply a general fix.
     finalTraceback = finalTraceback .. "\n"

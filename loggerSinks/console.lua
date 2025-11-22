@@ -1,4 +1,66 @@
-local logNames = {
+local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
+
+local ANSI = require(ROOT .. "logging.ANSI")
+
+local formatTimestamp
+do
+  local configFormat = love.mintmousse.LOG_TIMESTAMP_FORMAT
+  -- Check if the format ends with the milliseconds token %f
+  -- This is the "fast path" case.
+  if configFormat:sub(-2) == "%f" then
+    local dateFmt = configFormat:sub(1, -3)
+    formatTimestamp = function(time)
+      local seconds = math.floor(time)
+      local milliseconds = math.floor((time - seconds) * 1000)
+      -- Voids using gsub to format string
+      return os.date(dateFmt, seconds) .. ("%03d"):format(milliseconds)
+    end
+  else -- Fallback
+    formatTimestamp = function(time)
+      local seconds = math.floor(time)
+      local milliseconds = math.floor((time - seconds) * 1000)
+      local dateFmt = configFormat:gsub("%%f", ("%03d"):format(milliseconds))
+      return os.date(dateFmt, seconds)
+    end
+  end
+end
+
+local theme = { }
+
+if ANSI.isANSISupported then
+  local colors =  {
+    info    = "green",
+    warning = "yellow",
+    error   = "red",
+    fatal   = { fg = "bright_white", bg = "red" },
+    debug   = "cyan",
+  }
+
+  theme.separator = ANSI.applyANSI("bright_black", ":")
+
+  local grayOpen = ANSI.applyANSI("bright_black", "[")
+  local grayClose = ANSI.applyANSI("bright_black", "]")
+  theme.wrap = function(text)
+    return grayOpen .. text .. grayClose
+  end
+
+  theme.colorize = function(key, text)
+    local color = colors[key] or key or "white"
+    return ANSI.applyANSI(color, text)
+  end
+else
+  theme.separator = ":"
+
+  theme.wrap = function(text)
+    return "[" .. text .. "]"
+  end
+
+  theme.colorize = function(_, text)
+    return text
+  end
+end
+
+local levelDisplayNames = {
   info    = "INFO ",
   warning = "WARN ",
   error   = "ERROR",
@@ -6,22 +68,20 @@ local logNames = {
   debug   = "DEBUG",
 }
 
-local wrapBrackets = function(inner)
-  return "[" .. inner .. "]"
-end
-
 local sink = function(level, logger, time, debugInfo, ...)
+  -- This sink exclusively prints to console
   if not love.mintmousse.LOG_ENABLE_PRINT then
     return
   end
 
   local parts = { }
 
-  table.insert(parts, wrapBrackets(logNames[level]))
+  local levelName = levelDisplayNames[level] or level:upper()
+  table.insert(parts, theme.wrap(theme.colorize(level, levelName)))
 
   if love.mintmousse.LOG_ENABLE_TIMESTAMP then
-    local ts = love.mintmousse.formatTimestamp(time)
-    table.insert(parts, wrapBrackets(ts))
+    local ts = formatTimestamp(time)
+    table.insert(parts, theme.wrap(theme.colorize("bright_blue", ts)))
   end
 
   if logger then
@@ -29,15 +89,18 @@ local sink = function(level, logger, time, debugInfo, ...)
     if #chain > 0 then
       local prefixParts = { }
       for i = #chain, 1, -1 do
-        table.insert(prefixParts, chain[i].name)
+        local node = chain[i]
+        local name = node.name
+        name = theme.colorize(node.colorDef or "white", name)
+        table.insert(prefixParts, name)
       end
-      local prefixStr = table.concat(prefixParts, ":")
-      table.insert(parts, wrapBrackets(prefixStr))
+      local prefixStr = table.concat(prefixParts, theme.separator)
+      table.insert(parts, theme.wrap(prefixStr))
     end
   end
 
   if debugInfo and debugInfo ~= "" then
-    table.insert(parts, wrapBrackets(debugInfo))
+    table.insert(parts, theme.wrap(theme.colorize("cyan", debugInfo)))
   end
 
   local logMessage = table.concat({ ... }, " ")
