@@ -11,12 +11,12 @@ git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/
 ```
 Then, add the "Hello World" example to your `main.lua` file:
 ```lua
-require("libs.MintMousse")
-love.mintmousse.start({
+local mintmousse = require("libs.MintMousse")
+mintmousse.start({
   whitelist = { "127.0.0.1", "192.168.0.0/16", "10.0.0.0/8", "172.16.0.0/12" },
 })
 
-local dashboard = love.mintmousse.newTab("Dashboard")
+local dashboard = mintmousse.newTab("Dashboard")
 dashboard:newCard({ size = 5, title = "Hello World!" })
 ```
 Finally, run your project and view the console in your browser at [http://localhost](http://localhost)
