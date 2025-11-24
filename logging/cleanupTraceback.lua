@@ -1,4 +1,4 @@
-local PATH = (...):match("^(.-)[^%.]+$"):sub(1, -2)
+local PATH = (...):match("^(.-)%.[^%.]+$")
 
 local patterns = {
   boot      = "%[love \"boot%.lua\"%]:%d+:",

@@ -1,5 +1,5 @@
 local PATH = ...
-PATH = PATH:match("^(.*)%.[^%.]+$") or PATH
+PATH = PATH:match("^(.*)[^%.]+$") or PATH
 local ROOT = PATH:match("^(.-)[^%.]+$") or ""
 PATH = PATH .. "."
 
@@ -12,7 +12,7 @@ util.cleanupTraceback = cleanupTraceback
 --   If you have non-standard components, it may help to sanitize to avoid XSS attacks
 --   unless you know you've programmed them correctly.
 util.sanitizeText = function(text)
-  local lustache = love.mintmousse.require("libs.lustache")
+  local lustache = require(ROOT .. "libs.lustache")
   return lustache:render("{{text}}", { text = text })
 end
 

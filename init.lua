@@ -8,6 +8,9 @@ if love.isMintMousseThread then
 end
 
 if not love.isThread then -- is Main thread
+  local errorHandler = require(PATH .. "errorhandler")
+  love.errorhandler = errorHandler
+
   local eventManager = require(PATH .. "eventManager")
 
   -- love.handlers doesn't exist until main.lua; have to setup late

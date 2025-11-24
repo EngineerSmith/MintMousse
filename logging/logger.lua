@@ -1,8 +1,10 @@
-local PATH = (...):match("^(.-)[^%.]+$"):sub(1, -2)
+local PATH = (...):match("^(.-)%.[^%.]+$")
+local ROOT = PATH:match("^(.-)[^%.]+$") or ""
 
 local logger = { }
 logger.__index = logger
 
+local mintmousse = require(ROOT .. ".conf")
 local stack = require(PATH .. ".stack")
 local loggingColors = require(PATH .. ".color")
 
@@ -51,7 +53,7 @@ end
 logger.info = function(self, ...)
   local time = getTime()
   stack.push()
-  dispatchToSinks("info", self, time, love.mintmousse.LOG_INCLUDE_TRACE and stack.getDebugInfo() or nil, ...)
+  dispatchToSinks("info", self, time, mintmousse.LOG_INCLUDE_TRACE and stack.getDebugInfo() or nil, ...)
   stack.pop()
 end
 
@@ -59,11 +61,11 @@ logger.warning = function(self, ...)
   local time = getTime()
   stack.push()
   local debugInfo = nil
-  if love.mintmousse.LOG_INCLUDE_TRACE or love.mintmousse.LOG_WARNINGS_INCLUDE_TRACE then
+  if mintmousse.LOG_INCLUDE_TRACE or mintmousse.LOG_WARNINGS_INCLUDE_TRACE then
     debugInfo = stack.getDebugInfo()
   end
   dispatchToSinks("warning", self, time, debugInfo, ...)
-  if love.mintmousse.LOG_WARNINGS_CAUSE_ERRORS then
+  if mintmousse.LOG_WARNINGS_CAUSE_ERRORS then
     -- Reroute the call to the error handler to raise a clean error
     -- Note, this will call dispatchToSinks again, which is intended.
     self:error("[PROMOTED WARNING]", ...)
@@ -85,7 +87,7 @@ logger.error = function(self, ...)
   -- Always get debug info for errors
   dispatchToSinks("error", self, time, stack.getDebugInfo(), ...)
 
-  if love.mintmousse.LOG_ENABLE_ERROR or love.isMintMousseThread then
+  if mintmousse.LOG_ENABLE_ERROR or love.isMintMousseThread then
     local logMessage = table.concat({ ... }, " ")
     local logging = require(PATH)
     logging.isInsideError = true

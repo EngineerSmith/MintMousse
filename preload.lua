@@ -12,14 +12,16 @@ if love.isThread == nil then
   love.isThread = love.path == nil
 end
 
-if not love.thread then -- We must be in Love's conf.lua boot script, load thread
-  local _
-  _, love.thread = pcall(require, "love.thread")
+if not love.thread then -- We must be in Love's conf.lua boot script, load modules manually
+  assert(pcall(require, "love.thread"), "MintMousse: Library is missing dependency LÖVE's thread module.")
 end
-assert(love.thread ~= nil, "MintMousse: Library is missing dependency LÖVE's thread module.")
 
 if love.isMintMousseThread then
   assert(pcall(require, "love.event"), "MintMousse: Library is missing dependency LÖVE's event module")
+end
+
+if not love.timer then
+  assert(pcall(require, "love.timer"), "MintMousse: Library is missing dependency LÖVE's timer module")
 end
 
 local mintmousse = require(PATH .. "conf")
@@ -63,9 +65,6 @@ if love.isMintMousseThread then
 end
 
 if not love.isThread then -- is main thread
-  local errorHandler = require(PATH .. "errorhandler")
-  love.errorhandle = errorHandler
-
   local threadController = require(PATH .. "threadController")
   mintmousse.start = threadController.start
   mintmousse.stop = threadController.stop

@@ -1,6 +1,8 @@
-local PATH = (...):match("^(.-)[^%.]+$")
+local PATH = (...):match("^(.-)%.[^%.]+$")
+local ROOT = PATH:match("^(.-)[^%.]+$") or ""
+PATH = PATH .. "."
 
-local mintmousse = require(PATH .. "conf")
+local mintmousse = require(ROOT .. "conf")
 
 local id = { }
 

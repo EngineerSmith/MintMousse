@@ -915,40 +915,4 @@ return function(path, directoryPath)
   end
 
 
-  -- if not love.isMintMousseThread then
-  --   -- Wait for component types to be parsed: this is a quick operation, but it is blocking
-
-  --   local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
-
-  --   local start = love.timer.getTime()
-  --   while love.mintmousse._componentTypes == nil do
-  --     if love.timer.getTime() - start >= 3 then -- seconds timeout
-  --       break
-  --     end
-  --     love.mintmousse._componentTypes = componentTypesChannel:peek()
-  --     love.timer.sleep(0.0005) -- 0.5 ms
-  --   end
-
-  --   if love.mintmousse._componentTypes == nil then
-  --     local was = love.mintmousse._logging.enableError
-  --     love.mintmousse._logging.enableError = false
-  --     love.mintmousse.error("Timeout reached while waiting for MM thread. Possible error in thread code. Attempting to manually call love.threaderror")
-  --     love.mintmousse._logging.enableError = was
-  --     local channel = love.thread.getChannel(love.mintmousse.READONLY_THREAD_LOCATION)
-  --     if not channel:peek() then
-  --       return
-  --     end
-  --     local thread = channel:peek()
-  --     local errorMessage = thread:getError()
-  --     if errorMessage then
-  --       -- Decided we want to know as soon as possible if there was a
-  --       --   thread error than waiting for the event loop to pump.
-  --       -- love.event.push("threaderror", thread, errorMessage)
-  --       love.handlers["threaderror"](thread, errorMessage)
-  --     else
-  --       love.mintmousse.warning("There was no error waiting on the thread object. Possible that it is trying to load too many components and timeout needs to be increased. Tell a programmer.")
-  --     end
-  --     return
-  --   end
-  -- end
 end
