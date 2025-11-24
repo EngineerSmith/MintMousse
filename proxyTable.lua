@@ -1,0 +1,258 @@
+local PATH = (...):match("^(.-)[^%.]+$")
+
+local mintmousse = require(PATH .. "conf")
+local loggingStack = require(PATH .. "logging.stack")
+local threadCommunication = require(PATH .. "threadCommunication")
+
+local proxyTableLogger = mintmousse._logger:extend("Proxy Table")
+
+local proxyTableMetatable
+
+local isImmutableIndex = {
+  id       = true,
+  type     = true,
+  creator  = true,
+  children = true,
+  parentID = true,
+}
+setmetatable(isImmutableIndex, {
+  __index = function(tbl, index)
+    if type(index) == "number" then
+      return true
+    end
+    return rawget(tbl, index)
+  end
+})
+
+local proxyTableNewIndex = function(tbl, index, value)
+  if index == "__raw" then return nil end
+  loggingStack.push()
+
+  if isImmutableIndex[index] then
+    proxyTableLogger:error("You cannot change that index:", tostring(index))
+    loggingStack.pop()
+    return
+  end
+  local self = rawget(tbl, "__raw")
+  if rawget(self, index) == value then -- attempted to set index to the value it already is
+    loggingStack.pop()
+    return
+  end
+  rawset(self, index, value)
+  local id = rawget(self, "id")
+  local componentType = rawget(self, "type")
+
+  local notComplete = love.mintmousse._checkTypeCompleteness()
+
+  local sendUpdate = componentType == "unknown" or notComplete == true
+  if not sendUpdate then
+    local ct = love.mintmousse._componentTypes[componentType]
+    local updates = ct.updates
+    local events = ct.events
+
+    sendUpdate = type(updates) == "table" and updates[index] ~= nil
+    if not sendUpdate and type(events) == "table" and type(index) == "string" then
+      local eventName = index:match(mintmousse.COMPONENT_EVENT_FIELD_MATCH)
+      sendUpdate = type(eventName) == "string" and events[eventName] == true
+    end
+  end
+
+  if sendUpdate then
+    threadCommunication.push({
+      func = "updateComponent",
+      id, index, value,
+    })
+  end
+
+  -- check if parent requires the update
+  local parentID = rawget(self, "parentID")
+  if not parentID then
+    loggingStack.pop()
+    return
+  end
+
+  local parentComponentType = mintmousse.get(parentID).type
+  local sendChildUpdate = parentComponentType == "unknown" or notComplete == true
+  if not sendChildUpdate then
+    local childUpdates = love.mintmousse._componentTypes[parentComponentType].childUpdates
+    sendChildUpdate = type(childUpdates) == "table" and childUpdates[index] ~= nil
+  end
+
+  if sendChildUpdate then
+    threadCommunication.push({
+      func = "updateParentComponent",
+      parentID, id, index, value,
+    })
+  end
+
+  loggingStack.pop()
+end
+
+local proxyTableNew = function(parent, component)
+  local parentID = rawget(parent, "__raw").id
+  return love.mintmousse._addComponent(component, parentID)
+end
+
+local proxyTableAdd = function(parent, component)
+  local parentID = rawget(parent, "__raw").id
+  love.mintmousse._addComponent(component, parentID)
+  return parent
+end
+
+local proxyTableRemoveSelf = function(tbl)
+  local self = rawget(tbl, "__raw")
+  local id = rawget(self, "id")
+  return love.mintmousse.removeComponent(id)
+end
+
+local childrenMetatable
+childrenMetatable = {
+  __index = function(tbl, index)
+    if index == "length" or index == "len" then
+      return childrenMetatable.__len(tbl)
+    end
+    if type(index) ~= "number" then
+      return nil
+    end
+    local self = rawget(tbl, "__raw")
+    return self[index]
+  end,
+  __newindex = function(tbl, index, value)
+    loggingStack.push()
+    proxyTableLogger:error("You cannot change that index:", tostring(index), ". Children are readonly.")
+    loggingStack.pop()
+    return
+  end,
+  __len = function(tbl)
+    local self = rawget(tbl, "__raw")
+    return #self
+  end,
+}
+
+local proxyTableGetChildren = function(raw)
+  return setmetatable({
+    __raw = raw,
+  }, childrenMetatable)
+end
+
+local cachedCreationMethods = {
+  new = { },
+  add = { }
+}
+
+local getNewMethod = function(componentType)
+  local cachedNewMethods = cachedCreationMethods["new"]
+  if not cachedNewMethods[componentType] then
+    cachedNewMethods[componentType] = function(tbl, component)
+      component = component or { }
+      component.type = componentType
+      return proxyTableNew(tbl, component)
+    end
+  end
+  return cachedNewMethods[componentType]
+end
+
+local getAddMethod = function(componentType)
+  local cachedAddMethods = cachedCreationMethods["add"]
+  if not cachedAddMethods[componentType] then
+    cachedAddMethods[componentType] = function(tbl, component)
+      component = component or { }
+      component.type = componentType
+      return proxyTableAdd(tbl, component)
+    end
+  end
+  return cachedAddMethods[componentType]
+end
+
+local knownIndices
+knownIndices = {
+  parent = function(self, _)
+    return mintmousse.get(self.parentID)
+  end,
+  back = function(...)
+    return knownIndices["parent"](...)
+  end,
+  remove = function(_, _)
+    return proxyTableRemoveSelf
+  end,
+  type = function(self, _)
+    return self.type or "unknown"
+  end,
+  children = function(self, _)
+    if not self.children then
+      self.children = proxyTableGetChildren(self)
+    end
+    return self.children
+  end,
+  new = function(_, _)
+    return proxyTableNew
+  end,
+  add = function(_, _)
+    return proxyTableAdd
+  end,
+  length = function(_, tbl)
+    return proxyTableMetatable.__len(tbl)
+  end,
+  len = function(...)
+    return knownIndices["length"](...)
+  end,
+}
+
+local proxyTableIndex = function(tbl, index)
+  if index == "__raw" then return nil end
+  loggingStack.push()
+
+  local result = nil
+  local self = rawget(tbl, "__raw")
+
+  -- Check fixed keys
+  local handler = knownIndices[index]
+  if handler then
+    loggingStack.push()
+    result = handler(self, tbl)
+    loggingStack.pop()
+  
+  -- Check numeric keys for children
+  elseif type(index) == "number" then
+    result = self[index]
+
+  -- Check dynamic keys
+  elseif type(index) == "string" and #index > 3 then
+    local sub = index:sub(1, 3):lower()
+    local componentType = index:sub(4)
+    -- ComponentType name must be in camelCase
+    componentType = componentType:gsub("^(.)", function(c) return c:lower() end, 1)
+
+    if sub == "new" then
+      result = getNewMethod(componentType)
+    elseif sub == "add" then
+      result = getAddMethod(componentType)
+    end
+  end
+
+  -- 4. Fallback
+  if result == nil then
+    result = rawget(self, index)
+  end
+
+  loggingStack.pop()
+  return result
+end
+
+local proxyTableLen = function(tbl)
+  local self = rawget(tbl, "__raw")
+  return #self
+end
+
+proxyTableMetatable = {
+  __newindex = proxyTableNewIndex,
+  __index = proxyTableIndex,
+  __len = proxyTableLen,
+}
+
+local createProxyTable = function(raw)
+  setmetatable(raw, nil)
+  return setmetatable({ __raw = raw }, proxyTableMetatable)
+end
+
+return createProxyTable
