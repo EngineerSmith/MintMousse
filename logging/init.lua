@@ -6,9 +6,7 @@ local socket = require("socket")
 local stack = require(PATH .. "stack")
 local logger = require(PATH .. "logger")
 
-local cleanupTraceback = require(PATH .. "cleanupTraceback")
-
--- Snapshot the default print to prevent recursion if config REPLACE_FUNC_PRINT is used
+-- Snapshot the default print to prevent recursion if print is replaced
 GLOBAL_print = print
 
 local logging = {
@@ -28,8 +26,23 @@ local dispatchToSinks = function(...)
   stack.pop()
 end
 
+-- Inject core dependencies into logger
+logger.setup({
+  dispatch = dispatchToSinks,
+  getTime  = getTime,
+})
+
 local flushStdOut = function()
   io.stdout:flush()
+end
+
+local cleanupTraceback = require(PATH .. "cleanupTraceback")
+logging.enableCleanupTraceback = function(bool)
+  if bool and not cleanupTraceback then
+    cleanupTraceback = require(PATH .. "cleanupTraceback")
+  elseif not bool and cleanupTraceback then
+    cleanupTraceback = nil
+  end
 end
 
 local bufferLockChannel
@@ -62,7 +75,6 @@ logging.addLogSink = function(sink)
   table.insert(logging.sinks, sink)
 end
 
-
 --- Explicitly logs an uncaught error and forces a flush.
 -- This enters a fatal state.
 logging.logUncaughtError = function(message, tracebackLayer)
@@ -71,18 +83,14 @@ logging.logUncaughtError = function(message, tracebackLayer)
 
   stack.push()
   local traceback = debug.traceback("", 1 + stack.frameOffset + (tracebackLayer or 0))
-  traceback = cleanupTraceback(traceback)
+  if cleanupTraceback then
+    traceback = cleanupTraceback(traceback)
+  end
 
   dispatchToSinks("fatal", nil, time, nil, message, "\n"..traceback)
   logging.flushLogs(true)
 
   stack.pop()
 end
-
--- Inject core dependencies into logger
-logger.setup({
-  dispatch = dispatchToSinks,
-  getTime = getTime,
-})
 
 return logging

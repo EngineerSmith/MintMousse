@@ -1,5 +1,4 @@
-local PATH = ...
-PATH = PATH:match("^(.*)%.init$") or PATH
+local PATH = (...):match("^(.*)%.init$") or ...
 PATH = PATH .. "."
 
 local ANSI = { }

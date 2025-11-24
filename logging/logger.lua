@@ -51,14 +51,18 @@ end
 logger.info = function(self, ...)
   local time = getTime()
   stack.push()
-  dispatchToSinks("info", self, time, nil, ...)
+  dispatchToSinks("info", self, time, love.mintmousse.LOG_INCLUDE_TRACE and stack.getDebugInfo() or nil, ...)
   stack.pop()
 end
 
 logger.warning = function(self, ...)
   local time = getTime()
   stack.push()
-  dispatchToSinks("warning", self, time, nil, ...)
+  local debugInfo = nil
+  if love.mintmousse.LOG_INCLUDE_TRACE or love.mintmousse.LOG_WARNINGS_INCLUDE_TRACE then
+    debugInfo = stack.getDebugInfo()
+  end
+  dispatchToSinks("warning", self, time, debugInfo, ...)
   if love.mintmousse.LOG_WARNINGS_CAUSE_ERRORS then
     -- Reroute the call to the error handler to raise a clean error
     -- Note, this will call dispatchToSinks again, which is intended.
