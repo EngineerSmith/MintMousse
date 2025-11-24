@@ -1,10 +1,11 @@
 local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
 
 local ANSI = require(ROOT .. "logging.ANSI")
+local mintmousse = require(ROOT .. "conf")
 
 local formatTimestamp
 do
-  local configFormat = love.mintmousse.LOG_TIMESTAMP_FORMAT
+  local configFormat = mintmousse.LOG_TIMESTAMP_FORMAT
   -- Check if the format ends with the milliseconds token %f
   -- This is the "fast path" case.
   if configFormat:sub(-2) == "%f" then
@@ -70,7 +71,7 @@ local levelDisplayNames = {
 
 local sink = function(level, logger, time, debugInfo, ...)
   -- This sink exclusively prints to console
-  if not love.mintmousse.LOG_ENABLE_PRINT then
+  if not mintmousse.LOG_ENABLE_PRINT then
     return
   end
 
@@ -79,7 +80,7 @@ local sink = function(level, logger, time, debugInfo, ...)
   local levelName = levelDisplayNames[level] or level:upper()
   table.insert(parts, theme.wrap(theme.colorize(level, levelName)))
 
-  if love.mintmousse.LOG_ENABLE_TIMESTAMP then
+  if mintmousse.LOG_ENABLE_TIMESTAMP then
     local ts = formatTimestamp(time)
     table.insert(parts, theme.wrap(theme.colorize("bright_blue", ts)))
   end

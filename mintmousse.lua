@@ -904,7 +904,7 @@ return function(path, directoryPath)
   end
 
   love.mintmousse.notify = function(message)
-    love.mintmousse.assert(type(message) == "table", "Message must be type Table")
+    love.mintmousse.assert(type(message) == "table", "Message must be type Table") -- todo send as text if string
     if not message.title and not message.text then
       return -- If we have nothing to send; why send it?
     end

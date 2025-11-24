@@ -107,9 +107,9 @@ components.init = function()
     end
   end
   local channel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
-  components.componentTypes["unknown"] = true
-  channel:push(components.componentTypes) -- All threads await for this push; releases block
-  components.componentTypes["unknown"] = nil
+  -- components.componentTypes["unknown"] = true
+  -- channel:push(components.componentTypes) -- All threads await for this push; releases block
+  -- components.componentTypes["unknown"] = nil
 
   -- ==== --
 
@@ -117,7 +117,7 @@ components.init = function()
 
   -- Push final types, and their updated values
   channel:performAtomic(function()
-    channel:pop()
+    channel:clear()
     channel:push(components.componentTypes)
   end)
 
