@@ -64,7 +64,7 @@ if love.isMintMousseThread then
   return mintmousse
 end
 
-if not love.isThread then -- is main thread
+if not love.isThread then -- is Main thread
   local threadController = require(PATH .. "threadController")
   mintmousse.start = threadController.start
   mintmousse.stop = threadController.stop

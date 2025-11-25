@@ -3,23 +3,25 @@ PATH = PATH .. "."
 
 local mintmousse = require(PATH .. "preload")
 
-if love.isMintMousseThread then
-  return
+if love.isThread then
+  return mintmousse
 end
+-- is Main thread
 
-if not love.isThread then -- is Main thread
-  local errorHandler = require(PATH .. "errorhandler")
-  love.errorhandler = errorHandler
+-- TODO; what if we're still in conf? and user has done `require("mintmousse")` inside conf.lua
+-- Uhh - I need to think about it
 
-  local eventManager = require(PATH .. "eventManager")
+-- These love values can't be changed in conf; so we have to delay their addition until we get to main
+local errorHandler = require(PATH .. "errorhandler")
+love.errorhandler = errorHandler
 
-  -- love.handlers doesn't exist until main.lua; have to setup late
-  love.handlers[mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
-    if enum == mintmousse.EVENT_ENUM_JS_EVENT then
-      eventManager.jsEvent(...)
-    else
-      mintmousse._logger:warning("Unhandled MintMousse event!", enum)
-    end
+local eventManager = require(PATH .. "eventManager")
+
+love.handlers[mintmousse.THREAD_RESPONSE_QUEUE_ID] = function(enum, ...)
+  if enum == mintmousse.EVENT_ENUM_JS_EVENT then
+    eventManager.jsEvent(...)
+  else
+    mintmousse._logger:warning("Unhandled MintMousse event!", enum)
   end
 end
 
