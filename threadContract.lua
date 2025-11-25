@@ -2,7 +2,7 @@ local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
 local threadCommunication = require(PATH .. "threadCommunication")
-local createProxyTable = require(PATH .. "proxyTable")
+local proxyTable = require(PATH .. "proxyTable")
 local utilID = require(PATH .. "util.id")
 
 local lfs = love.filesystem
@@ -165,15 +165,16 @@ local autocorrectID = function(preferredID)
   return preferredID -- ID isn't in known-use
 end
 
-threadContract.addComponent = function(component, parentID)
+threadContract.addComponent = function(component, parentID, index)
   if type(component) == "string" then
     component = {
       type = component,
     }
   end
 
-  loggerComponent:assert(type(component) == "table", "Component must be ComponentType(string) or a Component(table).")
+  loggerComponent:assert(type(component) == "table", "Component must be type String (ComponentType), or Table (Component).")
   loggerComponent:assert(type(parentID) == "string", "ParentID is required to create Component.")
+  loggerComponent:assert(type(index) == "nil" or type(index) == "number", "Index must be type Number, or Nil.")
 
   if not component.id then
     component.id = utilID.generateID()
@@ -215,11 +216,11 @@ threadContract.addComponent = function(component, parentID)
   component.parentID = nil
   threadCommunication.push({
       func = "addComponent",
-      component, parentID, mintmousse._threadID,
+      component, parentID, index, mintmousse._threadID,
     })
   component.parentID = parentID
 
-  return createProxyTable(component)
+  return proxyTable.createProxyTable(component)
 end
 
 threadContract.newTab = function(title, id, index)
@@ -235,7 +236,7 @@ threadContract.newTab = function(title, id, index)
       id, title, index, mintmousse._threadID,
     })
 
-  return createProxyTable({
+  return proxyTable.createProxyTable({
       id = id,
       title = title,
       parentID = nil,
