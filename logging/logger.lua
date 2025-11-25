@@ -4,7 +4,7 @@ local ROOT = PATH:match("^(.-)[^%.]+$") or ""
 local logger = { }
 logger.__index = logger
 
-local mintmousse = require(ROOT .. ".conf")
+local mintmousse = require(ROOT .. ".conf") -- the last coupling to mintmousse? Do we need to fully decouple?
 local stack = require(PATH .. ".stack")
 local loggingColors = require(PATH .. ".color")
 

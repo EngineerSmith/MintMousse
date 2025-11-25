@@ -8,21 +8,7 @@ assert(love ~= nil, "MintMousse: Library is missing dependency LÖVE")
 assert(jit ~= nil, "MintMousse: Library is missing dependency LuaJIT. This is usually packaged with LÖVE.")
 assert(pcall(require, "string.buffer"), "MintMousse: Library is missing dependency LuaJIT's String Buffer Library. This is packaged with LÖVE from 11.4.")
 
-if love.isThread == nil then
-  love.isThread = love.path == nil
-end
-
-if not love.thread then -- We must be in Love's conf.lua boot script, load modules manually
-  assert(pcall(require, "love.thread"), "MintMousse: Library is missing dependency LÖVE's thread module.")
-end
-
-if love.isMintMousseThread then
-  assert(pcall(require, "love.event"), "MintMousse: Library is missing dependency LÖVE's event module")
-end
-
-if not love.timer then
-  assert(pcall(require, "love.timer"), "MintMousse: Library is missing dependency LÖVE's timer module")
-end
+require(PATH .. "setupLove")
 
 local mintmousse = require(PATH .. "conf")
 mintmousse._setupLogging()
