@@ -13,14 +13,14 @@
 --   error("Library MintMousse requires lua jit with string buffer; update your love version or supply your own lua.dll/lua.so that it includes it.")
 -- end
 
--- Load love modules that may be disabled, because we need them.
-require("love.thread")
-require("love.event")
--- require("love.timer")
-require("love.data")
-require("love.math")
+-- -- Load love modules that may be disabled, because we need them.
+-- require("love.thread")
+-- require("love.event")
+-- -- require("love.timer")
+-- require("love.data")
+-- require("love.math")
 
-return function(path, directoryPath)
+-- return function(path, directoryPath)
   -- if love.mintmousse then
   --   local err = type(love.mintmousse) == "table" and love.mintmousse.error or error
   --   return err("mintmousse/mintmousse.lua has already been ran, or there is a conflict in namespace with love.mintmousse")
@@ -404,20 +404,20 @@ return function(path, directoryPath)
   --   return love.mintmousse.removeComponent(id)
   -- end
 
-  local proxyTableSwap = function(tbl, i, j)
-    -- TODO FINISH
-    if i > j then
-      i, j = j, i
-    end
-    local self = rawget(tbl, "__raw")
-    local id = rawget(self, "id")
-    local children = tbl.children
-    local iChild = children[i]
+  -- local proxyTableSwap = function(tbl, i, j)
+  --   -- TODO FINISH
+  --   if i > j then
+  --     i, j = j, i
+  --   end
+  --   local self = rawget(tbl, "__raw")
+  --   local id = rawget(self, "id")
+  --   local children = tbl.children
+  --   local iChild = children[i]
 
-    love.mintmousse.push({
+  --   love.mintmousse.push({
 
-    })
-  end
+  --   })
+  -- end
 
   -- local proxyTableGetChildren = function(id)
   --   return setmetatable({
@@ -728,191 +728,191 @@ return function(path, directoryPath)
   --   return proxyTable or love.mintmousse.createProxyTable({ id = id })
   -- end
 
-  love.mintmousse.newTab = function(title, id, index) -- todo index
-    if not id then
-      id = love.mintmousse.generateID()
-    end
-    local success, errorMessage = love.mintmousse.isValidID(id)
-    if not success then
-      love.mintmousse.error("Couldn't create tab with given ID. Reason:", errorMessage)
-      return
-    end
-    love.mintmousse.addToLocalHinting(id, "tab")
-    love.mintmousse.push({
-      func = "newTab",
-      id, title, index, love.mintmousse._threadID,
-    })
-    return love.mintmousse.createProxyTable({
-      id = id,
-      title = title,
-      parentID = nil,
-      creator = love.mintmousse._threadID,
-    })
-  end
+  -- love.mintmousse.newTab = function(title, id, index) -- todo index
+  --   if not id then
+  --     id = love.mintmousse.generateID()
+  --   end
+  --   local success, errorMessage = love.mintmousse.isValidID(id)
+  --   if not success then
+  --     love.mintmousse.error("Couldn't create tab with given ID. Reason:", errorMessage)
+  --     return
+  --   end
+  --   love.mintmousse.addToLocalHinting(id, "tab")
+  --   love.mintmousse.push({
+  --     func = "newTab",
+  --     id, title, index, love.mintmousse._threadID,
+  --   })
+  --   return love.mintmousse.createProxyTable({
+  --     id = id,
+  --     title = title,
+  --     parentID = nil,
+  --     creator = love.mintmousse._threadID,
+  --   })
+  -- end
 
-  local loadComponentLogic = function(componentTypeName, componentType)
-    if not componentType.hasComponentLogic then
-      return -- Nothing to load
-    end
+  -- local loadComponentLogic = function(componentTypeName, componentType)
+  --   if not componentType.hasComponentLogic then
+  --     return -- Nothing to load
+  --   end
 
-    if componentType.componentLogic then
-      return -- Already loaded
-    end
+  --   if componentType.componentLogic then
+  --     return -- Already loaded
+  --   end
 
-    local path
-    for i = #componentType.directories, 1, -1 do
-      path = componentType.directories[i] .. componentTypeName .. ".lua"
-      if lfs.getInfo(path, "file") then
-        break
-      else
-        path = nil
-      end
-    end
-    if not path then
-      love.mintmousse.warning("Failed to discover path for component logic( ", componentTypeName, ")which was previous found in one of these directories:", table.concat(componentType.directories, ", "))
-      return nil
-    end
-    local success, chunk, errorMessage = pcall(lfs.load, path)
-    if not success then
-      love.mintmousse.error("Failed to load component logic! For:", componentTypeName, ". Reason:", chunk)
-      return
-    end
-    if not chunk then
-      love.mintmousse.error("Failed to load component logic! For:", componentTypeName, ". Reason:", errorMessage)
-      return
-    end
+  --   local path
+  --   for i = #componentType.directories, 1, -1 do
+  --     path = componentType.directories[i] .. componentTypeName .. ".lua"
+  --     if lfs.getInfo(path, "file") then
+  --       break
+  --     else
+  --       path = nil
+  --     end
+  --   end
+  --   if not path then
+  --     love.mintmousse.warning("Failed to discover path for component logic( ", componentTypeName, ")which was previous found in one of these directories:", table.concat(componentType.directories, ", "))
+  --     return nil
+  --   end
+  --   local success, chunk, errorMessage = pcall(lfs.load, path)
+  --   if not success then
+  --     love.mintmousse.error("Failed to load component logic! For:", componentTypeName, ". Reason:", chunk)
+  --     return
+  --   end
+  --   if not chunk then
+  --     love.mintmousse.error("Failed to load component logic! For:", componentTypeName, ". Reason:", errorMessage)
+  --     return
+  --   end
 
-    local success, componentLogic = pcall(chunk)
-    if not success then
-      love.mintmousse.error("Failed to run componentLogic! For:", componentTypeName, ". Reason:", componentLogic)
-      return
-    end
-    componentType.componentLogic = componentLogic
+  --   local success, componentLogic = pcall(chunk)
+  --   if not success then
+  --     love.mintmousse.error("Failed to run componentLogic! For:", componentTypeName, ". Reason:", componentLogic)
+  --     return
+  --   end
+  --   componentType.componentLogic = componentLogic
 
-    if not type(componentType.componentLogic) == "table" then
-      love.mintmousse.warning("Tried to load component logic for", componentTypeName, ", but it didn't return a table type as expected.")
-      componentType.componentLogic = nil
-      componentType.hasComponentLogic = false -- stop it from trying to reload
-      return
-    end
+  --   if not type(componentType.componentLogic) == "table" then
+  --     love.mintmousse.warning("Tried to load component logic for", componentTypeName, ", but it didn't return a table type as expected.")
+  --     componentType.componentLogic = nil
+  --     componentType.hasComponentLogic = false -- stop it from trying to reload
+  --     return
+  --   end
 
-    if type(componentType.componentLogic.onCreate) ~= "function" then
-      componentType.componentLogic.onCreate = nil
-    end
+  --   if type(componentType.componentLogic.onCreate) ~= "function" then
+  --     componentType.componentLogic.onCreate = nil
+  --   end
 
-    if componentType.componentLogic.onCreate == nil then
-      love.mintmousse.warning("Failed to load component logic for", componentTypeName, ", as it didn't contain functions for 'onCreate'.")
-      componentType.componentLogic = nil
-      componentType.hasComponentLogic = false -- stop it from trying to reload
-      return
-    end
-  end
+  --   if componentType.componentLogic.onCreate == nil then
+  --     love.mintmousse.warning("Failed to load component logic for", componentTypeName, ", as it didn't contain functions for 'onCreate'.")
+  --     componentType.componentLogic = nil
+  --     componentType.hasComponentLogic = false -- stop it from trying to reload
+  --     return
+  --   end
+  -- end
 
-  love.mintmousse._addComponent = function(component, parentID)
-    if type(component) == "string" then
-      component = {
-        type = component,
-      }
-    elseif type(component) ~= "table" then
-      love.mintmousse.error("Component must be componentType (string) or a component (table)")
-      return
-    end
-    if type(parentID) ~= "string" then
-      love.mintmousse.error("ParentID is required to create component")
-      return
-    end
+  -- love.mintmousse._addComponent = function(component, parentID)
+  --   if type(component) == "string" then
+  --     component = {
+  --       type = component,
+  --     }
+  --   elseif type(component) ~= "table" then
+  --     love.mintmousse.error("Component must be componentType (string) or a component (table)")
+  --     return
+  --   end
+  --   if type(parentID) ~= "string" then
+  --     love.mintmousse.error("ParentID is required to create component")
+  --     return
+  --   end
 
-    if not component.id then
-      component.id = love.mintmousse.generateID()
-    end
+  --   if not component.id then
+  --     component.id = love.mintmousse.generateID()
+  --   end
 
-    component.creator = love.mintmousse._threadID
+  --   component.creator = love.mintmousse._threadID
 
-    local success, errorMessage = love.mintmousse.isValidID(component.id)
-    if not success then
-      love.mintmousse.error("Gave invalid ID to create component. Reason:", errorMessage)
-      return
-    end
+  --   local success, errorMessage = love.mintmousse.isValidID(component.id)
+  --   if not success then
+  --     love.mintmousse.error("Gave invalid ID to create component. Reason:", errorMessage)
+  --     return
+  --   end
 
-    if type(component.type) ~= "string" then
-      love.mintmousse.error("Gave invalid componentType to create component. Reason:", "Component.type isn't type string")
-      return
-    end
+  --   if type(component.type) ~= "string" then
+  --     love.mintmousse.error("Gave invalid componentType to create component. Reason:", "Component.type isn't type string")
+  --     return
+  --   end
 
-    if component.type == "unknown" then
-      love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type: 'unknown'. This is a protected keyword")
-      return
-    elseif component.type == "tab" then
-      love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type: 'tab'. Please use love.mintmousse.newTab")
-      return
-    end
+  --   if component.type == "unknown" then
+  --     love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type: 'unknown'. This is a protected keyword")
+  --     return
+  --   elseif component.type == "tab" then
+  --     love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type: 'tab'. Please use love.mintmousse.newTab")
+  --     return
+  --   end
 
-    -- Get latest componentTyping information
-    -- local notComplete = love.mintmousse._componentTypes["unknown"]
-    -- if notComplete then
-    --   local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
-    --   love.mintmousse._componentTypes = componentTypesChannel:peek()
-    --   notComplete = love.mintmousse._componentTypes["unknown"]
-    -- end
+  --   -- Get latest componentTyping information
+  --   -- local notComplete = love.mintmousse._componentTypes["unknown"]
+  --   -- if notComplete then
+  --   --   local componentTypesChannel = love.thread.getChannel(love.mintmousse.READONLY_BASIC_TYPES_ID)
+  --   --   love.mintmousse._componentTypes = componentTypesChannel:peek()
+  --   --   notComplete = love.mintmousse._componentTypes["unknown"]
+  --   -- end
 
-    local componentType = love.mintmousse._componentTypes[component.type]
-    if not componentType then
-      love.mintmousse.error("Gave invalid componentType. Reason:", "This type does not exist:", component.type)
-      return
-    end
+  --   local componentType = love.mintmousse._componentTypes[component.type]
+  --   if not componentType then
+  --     love.mintmousse.error("Gave invalid componentType. Reason:", "This type does not exist:", component.type)
+  --     return
+  --   end
 
-    -- if notComplete; thread will reject it anyway - this just makes the error message more clear
-    if not notComplete and not componentType.hasMustacheFile and not componentType.hasNewFunction then
-      love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type:", "'"..tostring(component.type).."'.", "As it does not have a construction method (JS or HTML)")
-      return
-    end
+  --   -- if notComplete; thread will reject it anyway - this just makes the error message more clear
+  --   if not notComplete and not componentType.hasMustacheFile and not componentType.hasNewFunction then
+  --     love.mintmousse.error("Gave invalid componentType. Reason:", "Cannot create a component with type:", "'"..tostring(component.type).."'.", "As it does not have a construction method (JS or HTML)")
+  --     return
+  --   end
 
-    loadComponentLogic(component.type, componentType)
-    if componentType.componentLogic and componentType.componentLogic.onCreate then
-      local componentID, componentTYPE, componentCREATOR = component.id, component.type, component.creator
+  --   loadComponentLogic(component.type, componentType)
+  --   if componentType.componentLogic and componentType.componentLogic.onCreate then
+  --     local componentID, componentTYPE, componentCREATOR = component.id, component.type, component.creator
 
-      componentType.componentLogic.onCreate(component) -- not pcall as the function should handle the error methods
+  --     componentType.componentLogic.onCreate(component) -- not pcall as the function should handle the error methods
 
-      if component.id ~= componentID then
-        love.mintmousse.error("Tried to change component 'id' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
-      end
-      if component.type ~= componentTYPE then
-        love.mintmousse.error("Tried to change component 'type' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
-      end
-      if component.creator ~= componentCREATOR then
-        love.mintmousse.error("Tried to change component 'creator' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
-      end
-    end
+  --     if component.id ~= componentID then
+  --       love.mintmousse.error("Tried to change component 'id' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
+  --     end
+  --     if component.type ~= componentTYPE then
+  --       love.mintmousse.error("Tried to change component 'type' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
+  --     end
+  --     if component.creator ~= componentCREATOR then
+  --       love.mintmousse.error("Tried to change component 'creator' within 'onCreate' componentLogic, type:", componentType, ". This is a protected value at this stage of creation.")
+  --     end
+  --   end
 
-    love.mintmousse.addToLocalHinting(component.id, component.type)
-    love.mintmousse.addToLocalRelationships(parentID, component.id)
-    love.mintmousse.push({
-      func = "addComponent",
-      component, parentID,
-    })
+  --   love.mintmousse.addToLocalHinting(component.id, component.type)
+  --   love.mintmousse.addToLocalRelationships(parentID, component.id)
+  --   love.mintmousse.push({
+  --     func = "addComponent",
+  --     component, parentID,
+  --   })
 
-    component.parentID = parentID
-    return love.mintmousse.createProxyTable(component)
-  end
+  --   component.parentID = parentID
+  --   return love.mintmousse.createProxyTable(component)
+  -- end
 
-  love.mintmousse.removeComponent = function(id)
-    localHintingRemove(id);
-    love.mintmousse.push({
-      func = "removeComponent",
-      id,
-    })
-  end
+  -- love.mintmousse.removeComponent = function(id)
+  --   localHintingRemove(id);
+  --   love.mintmousse.push({
+  --     func = "removeComponent",
+  --     id,
+  --   })
+  -- end
 
-  love.mintmousse.notify = function(message)
-    love.mintmousse.assert(type(message) == "table", "Message must be type Table") -- todo send as text if string
-    if not message.title and not message.text then
-      return -- If we have nothing to send; why send it?
-    end
-    love.mintmousse.push({
-      func = "notify",
-      message,
-    })
-  end
+  -- love.mintmousse.notify = function(message)
+  --   love.mintmousse.assert(type(message) == "table", "Message must be type Table") -- todo send as text if string
+  --   if not message.title and not message.text then
+  --     return -- If we have nothing to send; why send it?
+  --   end
+  --   love.mintmousse.push({
+  --     func = "notify",
+  --     message,
+  --   })
+  -- end
 
 
-end
+-- end

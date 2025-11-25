@@ -1,10 +1,17 @@
 local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
-local loggingStack = require(PATH .. "logging.stack")
 local threadCommunication = require(PATH .. "threadCommunication")
+local threadContract
+local loggingStack = require(PATH .. "logging.stack")
+local utilID = require(PATH .. "util.id")
 
 local proxyTableLogger = mintmousse._logger:extend("Proxy Table")
+
+local proxyTable = { }
+proxyTable.loadThreadContract = function()
+  threadContract = require(PATH .. "threadContract")
+end
 
 local proxyTableMetatable
 
@@ -42,11 +49,9 @@ local proxyTableNewIndex = function(tbl, index, value)
   local id = rawget(self, "id")
   local componentType = rawget(self, "type")
 
-  local notComplete = love.mintmousse._checkTypeCompleteness()
-
-  local sendUpdate = componentType == "unknown" or notComplete == true
+  local sendUpdate = componentType == "unknown"
   if not sendUpdate then
-    local ct = love.mintmousse._componentTypes[componentType]
+    local ct = threadContract.componentTypes[componentType]
     local updates = ct.updates
     local events = ct.events
 
@@ -72,9 +77,9 @@ local proxyTableNewIndex = function(tbl, index, value)
   end
 
   local parentComponentType = mintmousse.get(parentID).type
-  local sendChildUpdate = parentComponentType == "unknown" or notComplete == true
+  local sendChildUpdate = parentComponentType == "unknown"
   if not sendChildUpdate then
-    local childUpdates = love.mintmousse._componentTypes[parentComponentType].childUpdates
+    local childUpdates = threadContract.componentTypes[parentComponentType].childUpdates
     sendChildUpdate = type(childUpdates) == "table" and childUpdates[index] ~= nil
   end
 
@@ -88,21 +93,87 @@ local proxyTableNewIndex = function(tbl, index, value)
   loggingStack.pop()
 end
 
-local proxyTableNew = function(parent, component)
+local proxyTableNew = function(parent, component, index)
   local parentID = rawget(parent, "__raw").id
-  return love.mintmousse._addComponent(component, parentID)
+  return threadContract.addComponent(component, parentID, index)
 end
 
-local proxyTableAdd = function(parent, component)
+local proxyTableAdd = function(parent, component, index)
   local parentID = rawget(parent, "__raw").id
-  love.mintmousse._addComponent(component, parentID)
+  threadContract.addComponent(component, parentID, index)
   return parent
 end
 
 local proxyTableRemoveSelf = function(tbl)
-  local self = rawget(tbl, "__raw")
-  local id = rawget(self, "id")
-  return love.mintmousse.removeComponent(id)
+  local id = rawget(tbl, "__raw").id
+  return threadContract.removeComponent(id)
+end
+
+local validateSwapArg = function(val, argName)
+  local t = type(val)
+  if t == "number" then
+    if val < 1 then
+      return false, argName .. " cannot be less than 1."
+    end
+    return true
+  elseif t == "string" then
+    local success, errorMessage = utilID.isValidID(val)
+    if not success then
+      return false, argName .. " is an invalid ID. Reason: " .. errorMessage
+    end
+    return true
+  end
+  return false, argName .. " must be a type String (id), or Number (index)"
+end
+
+local proxyTableSwap = function(tbl, indexA, indexB)
+  loggingStack.push()
+  local okA, errA = validateSwapArg(indexA, "IndexA")
+  if not okA then
+    proxyTableLogger:warning("Swap failed:", errA)
+    loggingStack.pop()
+    return tbl
+  end
+
+  local okB, errB = validateSwapArg(indexB, "IndexB")
+  if not okB then
+    proxyTableLogger:warning("Swap failed:", errB)
+    loggingStack.pop()
+    return tbl
+  end
+
+  local id = rawget(tbl, "__raw").id
+  threadCommunication.push({
+    func = "swapChildren",
+    id, indexA, indexB,
+  })
+  loggingStack.pop()
+  return tbl
+end
+
+local proxyTableReorder = function(tbl, newOrderArray)
+  loggingStack.push()
+  if type(newOrderArray) ~= "table" then
+    proxyTableLogger:warning("Reorder failed:", "NewOrderArray must be type Table")
+    loggingStack.pop()
+    return tbl
+  end
+  for index, value in ipairs(newOrderArray) do
+    local ok, err = validateSwapArg(value, "newOrderArray["..index.."]")
+    if not ok then
+      proxyTable:warning("Reorder failed:", err)
+      loggingStack.pop()
+      return tbl
+    end
+  end
+
+  local id = rawget(tbl, "__raw").id
+  threadCommunication.push({
+    func = "reorderChildren",
+    id, newOrderArray,
+  })
+  loggingStack.pop()
+  return tbl
 end
 
 local childrenMetatable
@@ -190,6 +261,12 @@ knownIndices = {
   add = function(_, _)
     return proxyTableAdd
   end,
+  swap = function(_, _)
+    return proxyTableSwap
+  end,
+  reorder = function(_, _)
+    return proxyTableReorder
+  end,
   length = function(_, tbl)
     return proxyTableMetatable.__len(tbl)
   end,
@@ -250,9 +327,9 @@ proxyTableMetatable = {
   __len = proxyTableLen,
 }
 
-local createProxyTable = function(raw)
+proxyTable.createProxyTable = function(raw)
   setmetatable(raw, nil)
   return setmetatable({ __raw = raw }, proxyTableMetatable)
 end
 
-return createProxyTable
+return proxyTable

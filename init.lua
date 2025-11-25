@@ -15,6 +15,7 @@ if not love.isThread and not love.handlers then
 end
 PATH_RAW = nil
 
+-- Run preload if it hasn't been ran yet, or just grab the return
 local mintmousse = require(PATH .. "preload")
 
 if love.isThread then
