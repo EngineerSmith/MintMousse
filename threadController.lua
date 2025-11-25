@@ -106,4 +106,20 @@ threadController.setTile = function(title)
   })
 end
 
+threadController.notify = function(message)
+  if type(message) == "string" then
+    message = {
+      text = message,
+    }
+  end
+  controllerLogger:assert(type(message) == "table", "Message must be type Table")
+  if not message.title and not message.text then
+    return -- If we have nothing to send; why send it?
+  end
+  threadCommunication.push({
+    func = "notify",
+    message,
+  })
+end
+
 return threadController

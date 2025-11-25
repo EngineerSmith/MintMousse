@@ -62,33 +62,38 @@ if not love.isThread then -- is Main thread
 
   mintmousse.setTitle = threadController.setTitle
 
+  mintmousse.notify = threadController.notify
+
   local eventManager = require(PATH .. "eventManager")
   mintmousse.addCallback = eventManager.addCallback
   mintmousse.removeCallback = eventManager.removeCallback
 end
 
-local createProxyTable = require(PATH .. "proxyTable")
+local proxyTable = require(PATH .. "proxyTable")
+proxyTable.loadThreadContract() -- prevent circular dependency
+
 mintmousse._proxyComponents = { }
 mintmousse.get = function(id, componentTypeHint)
   if type(componentTypeHint) == "string" then
-    love.mintmousse.addToLocalHinting(id, componentTypeHint)
+    -- love.mintmousse.addToLocalHinting(id, componentTypeHint)
   end
   local proxyTable = mintmousse._proxyComponents[id]
   if proxyTable then
     return proxyTable
   end
-  proxyTable = createProxyTable({ id = id })
+  proxyTable = proxyTable.createProxyTable({ id = id })
   mintmousse._proxyComponents[id] = proxyTable
   return proxyTable
 end
 
 local threadContract = require(PATH .. "threadContract")
 mintmousse.addLocalType = threadContract.addLocalType
-mintmousse.addComponent = threadContract.addComponent
+-- mintmousse.addComponent = threadContract.addComponent
 mintmousse.newTab = threadContract.newTab
 mintmousse.removeComponent = threadContract.removeComponent
 
--- require(PATH .. "threadHinting")
+local threadHinting = require(PATH .. "threadHinting")
+mintmousse.poll = threadHinting.poll
 
 
 threadContract.blockUntilComplete()
