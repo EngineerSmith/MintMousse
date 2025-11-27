@@ -46,6 +46,7 @@ mintmousse.newLogger = logging.newLogger
 mintmousse.addLogSink = logging.addLogSink
 mintmousse.logUncaughtError = logging.logUncaughtError
 
+mintmousse.flushLogs()
 if love.isMintMousseThread then
   return mintmousse
 end
@@ -72,14 +73,20 @@ end
 local proxyTable = require(PATH .. "proxyTable")
 proxyTable.loadThreadContract() -- prevent circular dependency
 
-local threadContract = require(PATH .. "threadContract")
-mintmousse.addLocalType = threadContract.addLocalType
--- mintmousse.addComponent = threadContract.addComponent
-mintmousse.newTab = threadContract.newTab
-mintmousse.get = threadContract.get
-mintmousse.removeComponent = threadContract.removeComponent
-mintmousse.poll = threadContract.poll
+local componentManager = require(PATH .. "componentManager")
+-- mintmousse.addComponent = componentManager.addComponent -- Do we need to expose this?
+mintmousse.newTab = componentManager.newTab
+mintmousse.get = componentManager.get
+mintmousse.removeComponent = componentManager.removeComponent
 
-threadContract.blockUntilComplete()
+local syncPoll = require(PATH .. "syncPoll")
+mintmousse.poll = syncPoll.poll
+
+mintmousse.flushLogs()
+
+local contract = require(PATH .. "contract")
+contract.blockUntilComplete() --todo more descriptive name
+
+mintmousse.flushLogs()
 
 return mintmousse

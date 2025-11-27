@@ -2,6 +2,7 @@ local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
 
 local ANSI = require(ROOT .. "logging.ANSI")
 local mintmousse = require(ROOT .. "conf")
+local logging = require(ROOT .. "logging")
 
 local formatTimestamp
 do
@@ -70,6 +71,7 @@ local levelDisplayNames = {
 
 local errBufferLockChannel = love.thread.getChannel(mintmousse.LOCK_LOG_BUFFER_ERR)
 local stderrOut = function(_, message)
+  logging.flushLogs() -- flush stdout to keep logs in-order
   io.stderr:write(message)
   io.stderr:flush()
 end

@@ -143,7 +143,7 @@ mintmousse._setupLogging = function()
     GLOBAL_print = print
 
     local stack = require(PATH .. "logging.stack")
-    local color = "white"
+    local color = "bright_magenta"
     if love.isMintMousseThread then
       color = "magenta"
     elseif love.isThread then
