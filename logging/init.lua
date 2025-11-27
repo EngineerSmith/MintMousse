@@ -6,9 +6,6 @@ local socket = require("socket")
 local stack = require(PATH .. "stack")
 local logger = require(PATH .. "logger")
 
--- Snapshot the default print to prevent recursion if print is replaced
-GLOBAL_print = print
-
 local logging = {
   logger = logger,
   isInsideError = false,

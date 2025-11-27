@@ -7,13 +7,12 @@ local formatTimestamp
 do
   local configFormat = mintmousse.LOG_TIMESTAMP_FORMAT
   -- Check if the format ends with the milliseconds token %f
-  -- This is the "fast path" case.
+  -- This is the fast path; so we can avoid using gsub unless necessary
   if configFormat:sub(-2) == "%f" then
     local dateFmt = configFormat:sub(1, -3)
     formatTimestamp = function(time)
       local seconds = math.floor(time)
       local milliseconds = math.floor((time - seconds) * 1000)
-      -- Voids using gsub to format string
       return os.date(dateFmt, seconds) .. ("%03d"):format(milliseconds)
     end
   else -- Fallback
@@ -69,6 +68,12 @@ local levelDisplayNames = {
   debug   = "DEBUG",
 }
 
+local errBufferLockChannel = love.thread.getChannel(mintmousse.LOCK_LOG_BUFFER_ERR)
+local stderrOut = function(_, message)
+  io.stderr:write(message)
+  io.stderr:flush()
+end
+
 local sink = function(level, logger, time, debugInfo, ...)
   -- This sink exclusively prints to console
   if not mintmousse.LOG_ENABLE_PRINT then
@@ -107,7 +112,13 @@ local sink = function(level, logger, time, debugInfo, ...)
   local logMessage = table.concat({ ... }, " ")
   table.insert(parts, logMessage)
 
-  GLOBAL_print(table.concat(parts, " "))
+  local finalMessage = table.concat(parts, " ") .. "\n"
+
+  if level == "error" or level == "warning" then
+    errBufferLockChannel:performAtomic(stderrOut, finalMessage)
+  else
+    io.stdout:write(finalMessage)
+  end
 end
 
 return sink

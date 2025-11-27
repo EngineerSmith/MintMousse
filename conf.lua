@@ -96,6 +96,7 @@ local mintmousse = {
   THREAD_COMPONENT_UPDATES_ID   = "MintMousseUpdate_%s", -- Appended with love.mintmousse._threadID
   READONLY_BASIC_TYPES_ID       = "MintMousseComponentTypes",
   LOCK_LOG_BUFFER_FLUSH         = "MintMousseLogBufferFlush",
+  LOCK_LOG_BUFFER_ERR           = "MintMousseLogBufferErr",
 
   -- IDs used for love.event handlers.
   -- Only change these if they conflict with IDs already in use in your project.
@@ -138,6 +139,9 @@ mintmousse._setupLogging = function()
   require(PATH .. "loggerSinks")
 
   if mintmousse.REPLACE_FUNC_PRINT then
+    -- Snapshot the default print for users who want to use it
+    GLOBAL_print = print
+
     local stack = require(PATH .. "logging.stack")
     local color = "white"
     if love.isMintMousseThread then
@@ -147,7 +151,7 @@ mintmousse._setupLogging = function()
     end
     local printLogger = logging.newLogger("Print", color)
     -- Overrides global print and redirects it to logger.debug;
-    -- global print can still be access via `GLOBAL_print` variable set in `logger.lua`
+    -- global print can still be access via `GLOBAL_print`
     print = function(...)
       stack.push()
       printLogger:debug(...)

@@ -21,7 +21,7 @@ threadHinting.poll = function()
       local parentProxy = mintmousse._proxyComponents[parentID]
       if parentProxy then
         local childrenProxy = parentProxy.children
-        local rawChildren = rawget(childrenProxy, "__raw")#
+        local rawChildren = rawget(childrenProxy, "__raw")
 
         for i, childID in ipairs(childrenIDs) do
           local childProxy = mintmousse._proxyComponents[childID]
@@ -36,7 +36,7 @@ threadHinting.poll = function()
         for i = #childrenIDs + 1, #rawChildren do
           rawChildren[i] = nil
         end
-        
+
       end
     else
       hintingLogger:warning("Unhandled MintMousse hinting event!", package.type)
