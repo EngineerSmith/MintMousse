@@ -5,4 +5,6 @@ PATH = PATH .. "."
 
 local logging = require(ROOT .. "logging")
 
-logging.addLogSink(require(PATH .. "console"))
+if mintmousse.LOG_ENABLE_CONSOLE_OUT then
+  logging.addLogSink(require(PATH .. "console"))
+end

@@ -75,10 +75,7 @@ local stderrOut = function(_, message)
 end
 
 local sink = function(level, logger, time, debugInfo, ...)
-  -- This sink exclusively prints to console
-  if not mintmousse.LOG_ENABLE_PRINT then
-    return
-  end
+  -- This sink exclusively writes output using io.stdout and io.stderr
 
   local parts = { }
 

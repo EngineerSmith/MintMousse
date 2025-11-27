@@ -45,14 +45,14 @@ local mintmousse = {
   -- If true, prefixes all log messages with a timestamp
   LOG_ENABLE_TIMESTAMP = true,
 
-  -- The format string for the timestamp, based on Lua's os.date() format codes.
-  -- The non-standard '%f' placeholder is supported for milliseconds, and will
-  -- be replaced by a 3-digit padding number. (E.g. '042')
+  -- The format string for the timestamp, based on Lua's os.date() format codes. The non-standard '%f'
+  -- placeholder is support for milliseconds, and will be replaced by a 3-digit padding number. (E.g. '042').
+  -- There is a performance benefit to having milliseconds at the end of the format.
   LOG_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f",
 
-  -- If true, enabled the standard sink that calls the global 'print' function for output
-  -- (messages sent to the console).
-  LOG_ENABLE_PRINT = true,
+  -- If true, enable the library's logging sink that writes logs to io.stdout and io.stderr.
+  -- The logs will appear on the screen, similar to using the global 'print' function.
+  LOG_ENABLE_CONSOLE_OUT = true,
 
   -- If true, ERROR level logs will call the global 'error' function, causing the application to
   -- halt and display a traceback. Setting this to false prevents fatal crashes on errors, but may result
