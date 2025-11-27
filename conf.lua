@@ -27,10 +27,6 @@ local mintmousse = {
   -- For more information, see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control
   CACHE_CONTROL_HEADER = "no-store",
 
-  -- The maximum number of updates to read from the subscription queue in a single poll.
-  -- This is a runtime-editable (per thread) setting to ensure non-blocking behaviour.
-  SUBSCRIPTION_MAX_QUEUE_READ = 6,
-
   -- The maximum time (seconds) a thread will actively poll and block for the MintMousse thread
   -- to complete mandatory component type parsing. This synchronous wait can be significantly reduced
   -- or eliminated by calling the preload script from your project's conf.lua, giving the
@@ -88,6 +84,10 @@ local mintmousse = {
 
   -- Thread communication settings
   -----------------------------------------------------------------------------------------------------------------
+  -- The maximum number of updates to read from the subscription queue in a single poll.
+  -- This is a runtime-editable (per thread) setting to ensure non-blocking behaviour.
+  SUBSCRIPTION_MAX_QUEUE_READ = 6,
+
   -- IDs used for love.thread Channels.
   -- Only change these if they conflict with IDs already in use in your project.
   READONLY_THREAD_LOCATION      = "MintMousseThread",

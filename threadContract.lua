@@ -8,7 +8,8 @@ local codec = require(PATH .. "codec")
 
 local lfs = love.filesystem
 
-local loggerComponent = mintmousse._logger:extend("Component")
+local logger = mintmousse._logger
+local loggerComponent = logger:extend("Component")
 local loggerLogic = loggerComponent:extend("Logic")
 local loggerPoll = loggerComponent:extend("Poll")
 
@@ -24,15 +25,15 @@ threadContract.blockUntilComplete = function()
   if threadContract.componentTypes ~= nil then
     -- Components are already loaded and ready to go
     if not love.isThread then -- is Main thread
-      mintmousse._logger:info("MintMousse components successfully loaded")
+      logger:info("MintMousse components successfully loaded")
     end
     return
   end
 
   local thread = love.thread.getChannel(mintmousse.READONLY_THREAD_LOCATION):peek()
-  mintmousse._logger:assert(thread, "MintMousse Thread object is unexpectedly missing.")
+  logger:assert(thread, "MintMousse Thread object is unexpectedly missing.")
 
-  mintmousse._logger:info("Blocking thread to load MintMousse components.")
+  logger:info("Blocking thread to load MintMousse components.")
   local success, timeout = false, false
 
   local start = love.timer.getTime()
@@ -47,18 +48,18 @@ threadContract.blockUntilComplete = function()
   local timeElapsed = love.timer.getTime() - start
 
   if success then
-    mintmousse._logger:info("MintMousse components successfully loaded",
+    logger:info("MintMousse components successfully loaded",
       ("(took %.2fms)."):format(timeElapsed*1000))
     return
   end
 
   if timeout then
-    mintmousse._logger:warning("Timeout reached ("..timeoutValue.."s) while waiting for MintMousse Thread to load components.",
+    logger:warning("Timeout reached ("..timeoutValue.."s) while waiting for MintMousse Thread to load components.",
       "Consider increasing the timeout ("..timeoutValue.."s).")
   end
 
   if not thread:isRunning() then
-    mintmousse._logger:warning("Thread isn't running while waiting for componentTypes. Checking for errors.")
+    logger:warning("Thread isn't running while waiting for componentTypes. Checking for errors.")
     local errorMessage = thread:getError()
     if errorMessage then
       if type(love.handlers) == "table" and love.handlers["threaderror"] then
@@ -66,41 +67,13 @@ threadContract.blockUntilComplete = function()
       elseif love.event then
         love.event.push("threaderrror", thread, errorMessage)
       end
-      mintmousse._logger:error("MintMousse's thread encountered an error:", errorMessage)
+      logger:error("MintMousse's thread encountered an error:", errorMessage)
     else
-      mintmousse._logger:warning("The thread object reported no error.",
+      logger:warning("The thread object reported no error.",
         "This suggests the MintMousse Thread is stuck or overloaded.",
         "Consider increasing the timeout ("..timeoutValue.."s).")
     end
   end
-end
-
-threadContract.addLocalType = function(id, componentType)
-  local success, errorMessage = utilID.isValidID(id)
-  if not success then
-    loggerComponent:error("Gave invalid ID. Gave:", id, ". Reason:", errorMessage)
-    return
-  end
-
-  if not threadContract.componentTypes[componentType] then
-    loggerComponent:warning("Gave invalid componentType. This type does not exist:",
-      componentType, ". Tried to assign to:", id)
-    return
-  end
-
-  local component = mintmousse.get(id)
-  local self = rawget(component, "__raw")
-  local currentType = rawget(self, "type")
-
-  if currentType == nil then
-    rawset(self, "type", componentType)
-  elseif currentType ~= componentType then
-    loggerComponent:warning("Tried to set componentType of component that already has a type ("..currentType.."). ID:",
-      id, ". Requested type:", componentType)
-  end
-  -- if currentType == componentType; silent pass
-
-  return component
 end
 
 local loadComponentLogic = function(componentTypeName, componentType)
