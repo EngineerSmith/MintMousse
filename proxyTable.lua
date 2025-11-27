@@ -109,6 +109,12 @@ local proxyTableRemoveSelf = function(tbl)
   return threadContract.removeComponent(id)
 end
 
+local proxyTableMarkRemoved = function(tbl)
+  local self = rawget(tbl, "__raw")
+  self.removed = true -- todo change metatable to "removed" metatable
+  -- This metatable should error on any index, or newIndex call
+end
+
 local validateSwapArg = function(val, argName)
   local t = type(val)
   if t == "number" then
@@ -245,6 +251,9 @@ knownIndices = {
   end,
   remove = function(_, _)
     return proxyTableRemoveSelf
+  end,
+  _markRemoved = function(_, _)
+    return proxyTableMarkRemoved
   end,
   type = function(self, _)
     return self.type or "unknown"

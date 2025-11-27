@@ -74,9 +74,8 @@ local stderrOut = function(_, message)
   io.stderr:flush()
 end
 
+-- This sink exclusively writes output using io.stdout and io.stderr
 local sink = function(level, logger, time, debugInfo, ...)
-  -- This sink exclusively writes output using io.stdout and io.stderr
-
   local parts = { }
 
   local levelName = levelDisplayNames[level] or level:upper()

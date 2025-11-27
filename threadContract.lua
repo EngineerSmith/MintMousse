@@ -4,13 +4,16 @@ local mintmousse = require(PATH .. "conf")
 local threadCommunication = require(PATH .. "threadCommunication")
 local proxyTable = require(PATH .. "proxyTable")
 local utilID = require(PATH .. "util.id")
+local codec = require(PATH .. "codec")
 
 local lfs = love.filesystem
 
 local loggerComponent = mintmousse._logger:extend("Component")
 local loggerLogic = loggerComponent:extend("Logic")
+local loggerPoll = loggerComponent:extend("Poll")
 
 local threadContract = {
+  proxyComponents = { },
   componentTypes = nil, -- Set with threadContract.blockUntilComplete
 }
 
@@ -156,7 +159,7 @@ end
 local autocorrectIDIssueMsg = "ID clash detected locally. ID '%s' is already in use. Automatically assigning unique ID: %s. This may cause issues with hard coded mintmousse.get() calls."
 -- Checks if an ID is in use locally and returns a unique ID if it clashes.
 local autocorrectID = function(preferredID)
-  if mintmousse._proxyComponents[preferredID] then
+  if threadContract.proxyComponents[preferredID] then
     local newID = utilID.generateID()
     loggerComponent:warning(autocorrectIDIssueMsg:format(preferredID, newID))
     return newID
@@ -244,6 +247,19 @@ threadContract.newTab = function(title, id, index)
     })
 end
 
+threadContract.get = function(id, componentTypeHint)
+  local proxy = threadContract.proxyComponents[id]
+  if proxy then
+    return proxy
+  end
+  if type(componentTypeHint) ~= "string" or threadContract.componentTypes[componentTypeHint] == nil then
+    componentTypeHint = nil
+  end
+  local proxy = proxyTable.createProxyTable({ id = id, type = componentTypeHint })
+  threadContract.proxyComponents[id] = proxy
+  return proxy
+end
+
 threadContract.removeComponent = function(id)
   local success, errorMessage = utilID.isValidID(id)
   loggerComponent:assert(success, "Gave invalid ID for removal. Gave:", id, ". Reason:", errorMessage)
@@ -252,6 +268,55 @@ threadContract.removeComponent = function(id)
     func = "removeComponent",
     id,
   })
+  threadContract.cleanupProxy(id)
+end
+
+threadContract.cleanupProxy = function(id)
+  local proxy = threadContract.proxyComponents[id]
+  if not proxy then
+    return
+  end
+  threadContract.proxyComponents[id] = nil
+  proxy:_markRemoved()
+end
+
+local COMPONENT_UPDATES_QUEUE = love.thread.getChannel(mintmousse.THREAD_COMMAND_QUEUE_ID:format(mintmousse._threadID))
+threadContract.poll = function()
+  local package = COMPONENT_UPDATES_QUEUE:pop()
+  while package do
+    package = codec.decode(package)
+    if package.type == "latestChildren" then
+      local parentID = package.id
+      local childrenIDs = package.children -- Array of IDs e.g. { "foo", "bar" }
+
+      local parentProxy = threadContract.proxyComponents[parentID]
+      if parentProxy then
+        local childrenProxy = parentProxy.children
+        local rawChildren = rawget(childrenProxy, "__raw")
+
+        for i, childID in ipairs(childrenIDs) do
+          local childProxy = threadContract.proxyComponents[childID]
+          if childProxy then
+            rawChildren[i] = childProxy
+          else
+            rawChildren[i] = childID
+          end
+        end
+
+        -- Trim children
+        for i = #childrenIDs + 1, #rawChildren do
+          rawChildren[i] = nil
+        end
+
+      end
+    elseif package.type == "componentRemoved" then
+      local componentID = package.id
+      threadContract.cleanupProxy(componentID)
+    else
+      loggerPoll:warning("Unhandled MintMousse hinting event!", package.type)
+    end
+    package = COMPONENT_UPDATES_QUEUE:pop()
+  end
 end
 
 return threadContract
