@@ -48,7 +48,7 @@ local mintmousse = {
 
   -- If true, enable the library's logging sink that writes logs to io.stdout and io.stderr.
   -- The logs will appear on the screen, similar to using the global 'print' function.
-  LOG_ENABLE_CONSOLE_OUT = true,
+  LOG_ENABLE_STREAM_OUT = true,
 
   -- If true, ERROR level logs will call the global 'error' function, causing the application to
   -- halt and display a traceback. Setting this to false prevents fatal crashes on errors, but may result

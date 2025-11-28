@@ -8,7 +8,7 @@ local contract = { }
 
 local componentTypesChannel = love.thread.getChannel(mintmousse.READONLY_BASIC_TYPES_ID)
 local timeoutValue = mintmousse.COMPONENT_PARSE_TIMEOUT
-contract.blockUntilComplete = function()
+contract.waitForComponents = function()
   contract.componentTypes = componentTypesChannel:peek()
   if contract.componentTypes ~= nil then
     -- Components are already loaded and ready to go

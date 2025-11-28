@@ -74,7 +74,6 @@ local proxyTable = require(PATH .. "proxyTable")
 proxyTable.loadComponentManager() -- prevent circular dependency
 
 local componentManager = require(PATH .. "componentManager")
--- mintmousse.addComponent = componentManager.addComponent -- Do we need to expose this?
 mintmousse.newTab = componentManager.newTab
 mintmousse.get = componentManager.get
 mintmousse.removeComponent = componentManager.removeComponent
@@ -85,7 +84,7 @@ mintmousse.poll = syncPoll.poll
 mintmousse.flushLogs()
 
 local contract = require(PATH .. "contract")
-contract.blockUntilComplete() --todo more descriptive name
+contract.waitForComponents()
 
 mintmousse.flushLogs()
 

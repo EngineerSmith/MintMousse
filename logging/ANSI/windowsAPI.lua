@@ -92,14 +92,20 @@ windowsAPI.enableVirtualTerminal = function()
   return false -- Failed to set mode
 end
 
-windowsAPI.setupANSIConsole = function()
+windowsAPI.isANSISupported = function()
   local windowsVersion = windowsAPI.getMajorVersion()
-  if type(windowsVersion) ~= "number" or windowsVersion < 1 then
+  if type(windowsVersion) ~= "number" or windowsVersion < 10 then
+    return false
+  end
+  return true
+end
+
+windowsAPI.setupANSIConsole = function()
+  if not windowsAPI.isANSISupported() then
     return false
   end
 
   local success = windowsAPI.enableVirtualTerminal()
-
   return success
 end
 

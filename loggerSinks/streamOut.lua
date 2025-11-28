@@ -1,8 +1,65 @@
 local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
 
+local ffi = require("ffi")
+
 local ANSI = require(ROOT .. "logging.ANSI")
 local mintmousse = require(ROOT .. "conf")
 local logging = require(ROOT .. "logging")
+
+if jit.os == "Windows" then
+  ffi.cdef[[ int _isatty(int fd); ]]
+else
+  ffi.cdef[[ int isatty(int fd); ]]
+end
+
+local checkIsTTY = function(fd)
+  if jit.os == "Windows" then
+    return ffi.C._isatty(fd) ~= 0
+  else
+    return ffi.C.isatty(fd) ~= 0
+  end
+end
+
+local isStdOutTTY = checkIsTTY(1)
+local isStdErrTTY = checkIsTTY(2)
+
+local theme = { }
+local themePlain = {
+  separator = ":",
+  wrap = function(text) return "[" .. text .. "]" end,
+  colorize = function(_, text) return text end,
+}
+
+local themeColored = {
+  separator = ANSI.applyANSI("bright_black", ":"),
+  grayOpen  = ANSI.applyANSI("bright_black", "["),
+  grayClose = ANSI.applyANSI("bright_black", "]"),
+}
+
+themeColored.wrap = function(text)
+  return themeColored.grayOpen .. text .. themeColored.grayClose
+end
+
+local colors =  {
+  info    = "green",
+  warning = "yellow",
+  error   = "red",
+  fatal   = { fg = "bright_white", bg = "red" },
+  debug   = "cyan",
+}
+
+themeColored.colorize = function(key, text)
+  local color = colors[key] or key or "white"
+  return ANSI.applyANSI(color, text)
+end
+
+local globalANSISupport = ANSI.isANSISupported
+if jit.os == "Windows" then
+  globalANSISupport = ANSI.setupANSIConsole()
+end
+
+local stdOutTheme = (globalANSISupport and isStdOutTTY) and themeColored or themePlain
+local stdErrTheme = (globalANSISupport and isStdErrTTY) and themeColored or themePlain
 
 local formatTimestamp
 do
@@ -26,41 +83,6 @@ do
   end
 end
 
-local theme = { }
-
-if ANSI.isANSISupported then
-  local colors =  {
-    info    = "green",
-    warning = "yellow",
-    error   = "red",
-    fatal   = { fg = "bright_white", bg = "red" },
-    debug   = "cyan",
-  }
-
-  theme.separator = ANSI.applyANSI("bright_black", ":")
-
-  local grayOpen = ANSI.applyANSI("bright_black", "[")
-  local grayClose = ANSI.applyANSI("bright_black", "]")
-  theme.wrap = function(text)
-    return grayOpen .. text .. grayClose
-  end
-
-  theme.colorize = function(key, text)
-    local color = colors[key] or key or "white"
-    return ANSI.applyANSI(color, text)
-  end
-else
-  theme.separator = ":"
-
-  theme.wrap = function(text)
-    return "[" .. text .. "]"
-  end
-
-  theme.colorize = function(_, text)
-    return text
-  end
-end
-
 local levelDisplayNames = {
   info    = "INFO ",
   warning = "WARN ",
@@ -78,6 +100,9 @@ end
 
 -- This sink exclusively writes output using io.stdout and io.stderr
 local sink = function(level, logger, time, debugInfo, ...)
+  local isErrorStream = level == "error" or level == "warning" or level == "fatal"
+  local theme = isErrorStream and stdErrTheme or stdOutTheme
+
   local parts = { }
 
   local levelName = levelDisplayNames[level] or level:upper()
@@ -112,7 +137,7 @@ local sink = function(level, logger, time, debugInfo, ...)
 
   local finalMessage = table.concat(parts, " ") .. "\n"
 
-  if level == "error" or level == "warning" then
+  if isErrorStream then
     errBufferLockChannel:performAtomic(stderrOut, finalMessage)
   else
     io.stdout:write(finalMessage)
