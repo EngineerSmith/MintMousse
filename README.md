@@ -1,13 +1,17 @@
 # MintMousse
 MintMousse is a live web console for your [LÖVE][love] project, giving you real-time control and insight into your project's internals. Instead of relying on countless `print()` statements or clunky in-game debug menus, MintMousse lets you build a real-time dashboard viewable in any browser. From there, you can monitor variables, tweak settings, and interact with code. This makes development a breeze for both headless and traditional [LÖVE][love] projects.
 
-With this powerful control panel, you can trigger events, change player stats, or visualise performance metrics with graphs. This provides instance feedback, making it an ideal tool for debugging or managing a game server. This library is thread-safe, allowing you to update the console directly from any thread. Ultimately, it streamlines your workflow and gives you a much clearer picture of what's happening under the hood.
+With this control panel, you can trigger events, change player stats, or visualise performance metrics with graphs. This provides instance feedback, making it a tool for debugging or managing a game server. This library is thread-safe, allowing you to update the console directly from any thread.
 
 # Quickstart
 First, add the library to your project:
 ```
 cd your/love/project/directory
 git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/.
+```
+Next, add the preload script to your `conf.lua` file:
+```lua
+require("libs.MintMousse.preload")
 ```
 Then, add the "Hello World" example to your `main.lua` file:
 ```lua

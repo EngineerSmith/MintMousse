@@ -2,15 +2,16 @@ local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
 local threadCommunication = require(PATH .. "threadCommunication")
-local threadContract
+local componentManager
 local loggingStack = require(PATH .. "logging.stack")
+local contract = require(PATH .. "contract")
 local utilID = require(PATH .. "util.id")
 
 local proxyTableLogger = mintmousse._logger:extend("Proxy Table")
 
 local proxyTable = { }
-proxyTable.loadThreadContract = function()
-  threadContract = require(PATH .. "threadContract")
+proxyTable.loadComponentManager = function()
+  componentManager = require(PATH .. "componentManager")
 end
 
 local proxyTableMetatable
@@ -51,7 +52,7 @@ local proxyTableNewIndex = function(tbl, index, value)
 
   local sendUpdate = componentType == "unknown"
   if not sendUpdate then
-    local ct = threadContract.componentTypes[componentType]
+    local ct = contract.componentTypes[componentType]
     local updates = ct.updates
     local events = ct.events
 
@@ -79,7 +80,7 @@ local proxyTableNewIndex = function(tbl, index, value)
   local parentComponentType = mintmousse.get(parentID).type
   local sendChildUpdate = parentComponentType == "unknown"
   if not sendChildUpdate then
-    local childUpdates = threadContract.componentTypes[parentComponentType].childUpdates
+    local childUpdates = contract.componentTypes[parentComponentType].childUpdates
     sendChildUpdate = type(childUpdates) == "table" and childUpdates[index] ~= nil
   end
 
@@ -95,18 +96,18 @@ end
 
 local proxyTableNew = function(parent, component, index)
   local parentID = rawget(parent, "__raw").id
-  return threadContract.addComponent(component, parentID, index)
+  return componentManager.addComponent(component, parentID, index)
 end
 
 local proxyTableAdd = function(parent, component, index)
   local parentID = rawget(parent, "__raw").id
-  threadContract.addComponent(component, parentID, index)
+  componentManager.addComponent(component, parentID, index)
   return parent
 end
 
 local proxyTableRemoveSelf = function(tbl)
   local id = rawget(tbl, "__raw").id
-  return threadContract.removeComponent(id)
+  return componentManager.removeComponent(id)
 end
 
 local proxyTableMarkRemoved = function(tbl)

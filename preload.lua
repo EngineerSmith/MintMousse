@@ -16,7 +16,7 @@ mintmousse._setupLogging()
 if not love.isThread then
   local channel = love.thread.getChannel(mintmousse.READONLY_THREAD_LOCATION)
   local thread = love.thread.newThread(DIRECTORY_PATH .. "thread/init.lua")
-  -- thread:start(PATH, DIRECTORY_PATH) -- disabled for refactoring; do we really need to pass PATH and DIR into the thread? Can't it work that out itself?
+  -- thread:start(PATH .. "thread.") -- disabled for refactoring
   channel:performAtomic(function()
     channel:clear()
     channel:push(thread)
@@ -71,7 +71,7 @@ if not love.isThread then -- is Main thread
 end
 
 local proxyTable = require(PATH .. "proxyTable")
-proxyTable.loadThreadContract() -- prevent circular dependency
+proxyTable.loadComponentManager() -- prevent circular dependency
 
 local componentManager = require(PATH .. "componentManager")
 -- mintmousse.addComponent = componentManager.addComponent -- Do we need to expose this?

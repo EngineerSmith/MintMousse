@@ -84,9 +84,9 @@ local mintmousse = {
 
   -- Thread communication settings
   -----------------------------------------------------------------------------------------------------------------
-  -- The maximum number of updates to read from the subscription queue in a single poll.
-  -- This is a runtime-editable (per thread) setting to ensure non-blocking behaviour.
-  SUBSCRIPTION_MAX_QUEUE_READ = 6,
+  -- The maximum number of updates to read from the poll queue to prevent blocking behaviour.
+  -- This is a runtime-editable (per thread) setting.
+  POLL_MAX_READ = 50,
 
   -- IDs used for love.thread Channels.
   -- Only change these if they conflict with IDs already in use in your project.
@@ -113,10 +113,6 @@ local mintmousse = {
   COMPONENT_EVENT_FIELD = "onEvent%s", -- Appended with event type, e.g. "Click" -> "onEventClick"
   COMPONENT_EVENT_FIELD_MATCH = "^onEvent(.+)",
 }
-
--- Remove these if they're never used; currently implemented for refactoring
-mintmousse._PATH = PATH
-mintmousse._DIRECTORY_PATH = DIRECTORY_PATH
 
 -- Setup logging
 mintmousse._setupLogging = function()
