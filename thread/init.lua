@@ -1,17 +1,21 @@
-local PATH, dirPATH = ...
+local ROOT = ...
 
 love.isMintMousseThread = true
-require(PATH .. "mintmousse")(PATH, dirPATH)
+local mintmousse = require(ROOT:sub(1, -2))
+local threadCommunication = require(ROOT .. "threadCommunication")
 
-local json = love.mintmousse.require("libs.json")
+local json = require(ROOT .. "libs.json")
 
-local components = love.mintmousse.require("thread.components")
+local components = require(ROOT .. "thread.components")
 components.init()
 
-local http = love.mintmousse.require("thread.http")
+local http = require(ROOT .. "thread.http")
 local server = nil -- deferred require until server needs to start
-local controller = love.mintmousse.require("thread.controller")
-local websocket13 = love.mintmousse.require("thread.websocket13")
+local controller = require(ROOT .. "thread.controller")
+local websocket13 = require(ROOT .. "thread.websocket13")
+local whitelist = require(ROOT .. "thread.server.whitelist")
+
+require(ROOT .. "thread.routes")
 
 -- Set defaults
 controller.setTitle("MintMousse")
@@ -43,13 +47,14 @@ callbacks.notify = controller.notifyToast
 
 callbacks.start = function(config)
   if not server then
-    server = love.mintmousse.require("thread.server")
+    server = require(ROOT .. "thread.server")
+    local loggerWebsocket = mintmousse._logger:extend("WebSocket")
     server.handleIncomingEvent = function(request)
       if request.type == "text/utf8" or request.type == "application/json" then
         -- attempt json convert & handle
         local success, payload = pcall(json.decode, request.payload)
         if not success then
-          love.mintmousse.warning("WS: Couldn't decode incoming event request via json. Got error: ", payload)
+          loggerWebsocket:warning("Couldn't decode incoming event request via json. Got error: ", payload)
           return
         end
 
@@ -61,19 +66,19 @@ callbacks.start = function(config)
 
         if type(payload.event) == "string" and payload.event ~= "" then
           if not component then
-            love.mintmousse.warning("WS: Incoming event didn't include valid component ID.")
+            loggerWebsocket:warning("Incoming event didn't include valid component ID.")
             return
           end
           local componentType = controller.getType(component.type)
           local event = payload.event:lower()
           if not event or not componentType.events[event] then
-            love.mintmousse.warning("WS: Incoming event didn't include valid event type["..event.."] for component: ", component.type)
+            loggerWebsocket:warning("Incoming event didn't include valid event type["..event.."] for component: ", component.type)
             return
           end
 
           -- Find component's callback field
           local componentEvent = event:sub(1,1):upper() .. event:sub(2)
-          componentEvent = love.mintmousse.COMPONENT_EVENT_FIELD:format(componentEvent)
+          componentEvent = mintmousse.COMPONENT_EVENT_FIELD:format(componentEvent)
           local callbackID = component[componentEvent]
 
           if not callbackID then
@@ -82,14 +87,14 @@ callbacks.start = function(config)
           end
 
           -- Dispatch event to main thread to handle callback
-          love.mintmousse.pushEvent(love.mintmousse.EVENT_ENUM_JS_EVENT, component.id, callbackID)
+          threadCommunication.pushEvent(mintmousse.EVENT_ENUM_JS_EVENT, component.id, callbackID)
           return
         end
 
-        love.mintmousse.warning("WS: Unhandled incoming server event. Successfully converted from json, but wasn't used.")
+        loggerWebsocket:warning("Unhandled incoming server event. Successfully converted from json, but wasn't used.")
         return
       end
-      love.mintmousse.warning("WS: Unhandled incoming server event! Type:", request.type)
+      loggerWebsocket:warning("Unhandled incoming server event! Type:", request.type)
     end
   end
   if config then
@@ -97,11 +102,11 @@ callbacks.start = function(config)
       callbacks.setTitle(config.title)
     end
     if type(config.whitelist) == "table" then
-      for _, v in ipairs(config.whitelist) do
-        server.addToWhitelist(v)
+      for _, rule in ipairs(config.whitelist) do
+        whitelist.add(rule)
       end
     elseif type(config.whitelist) == "string" then
-      server.addToWhitelist(config.whitelist)
+      whitelist.add(config.whitelist)
     end
   end
 
@@ -110,31 +115,26 @@ end
 
 http.addMethod("GET", "/index", function(request)
   return 200, {
-    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["cache-control"] = mintmousse.CACHE_CONTROL_HEADER,
     ["content-type"] = "text/html; charset=utf8",
   }, controller.getIndex()
 end)
 
 http.addMethod("GET", "/index.js", function(request)
   return 200, {
-    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["cache-control"] = mintmousse.CACHE_CONTROL_HEADER,
     ["content-type"] = "text/javascript; charset=utf8",
   }, controller.javascript
 end)
 
 http.addMethod("GET", "/index.css", function(request)
   return 200, {
-    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["cache-control"] = mintmousse.CACHE_CONTROL_HEADER,
     ["content-type"] = "text/css; charset=utf8",
   }, controller.css
 end)
 
-http.addMethod("GET", "/api/ping", function(request)
-  return 204, {
-    ["cache-control"] = "no-store",
-  }, nil
-end)
-
+-- Callback; todo rename onNewConnection
 websocket13.newConnection = function(client)
   local array = controller.getInitialPayload()
   table.insert(client.queue, {
@@ -143,6 +143,7 @@ websocket13.newConnection = function(client)
   })
 end
 
+-- Callback; todo rename - called when webpage has an update to push
 controller.update = function(jsonPayload)
   if not server or not server.isRunning() then
     return
@@ -175,10 +176,10 @@ while true do
       if type(func) == "function" then
         local success, errorMessage = pcall(func, unpack(message))
         if not success then
-          love.mintmousse.warning("Failed to process message:", message.func, ". Error:", errorMessage)
+          mintmousse._logger:warning("Failed to process message:", message.func, ". Error:", errorMessage)
         end
       else
-        love.mintmousse.warning("Could not find callback for:", message.func)
+        mintmousse._logger:warning("Could not find callback for:", message.func)
       end
     end
   end

@@ -8,9 +8,6 @@ local util = { }
 local cleanupTraceback = require(ROOT .. "logging.cleanupTraceback")
 util.cleanupTraceback = cleanupTraceback
 
--- Only use this if necessary. All MintMousse components will handle sanitizing for you.
---   If you have non-standard components, it may help to sanitize to avoid XSS attacks
---   unless you know you've programmed them correctly.
 util.sanitizeText = function(text)
   local lustache = require(ROOT .. "libs.lustache")
   return lustache:render("{{text}}", { text = text })

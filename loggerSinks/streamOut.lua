@@ -6,16 +6,15 @@ local ANSI = require(ROOT .. "logging.ANSI")
 local mintmousse = require(ROOT .. "conf")
 local logging = require(ROOT .. "logging")
 
+local checkIsTTY
 if jit.os == "Windows" then
   ffi.cdef[[ int _isatty(int fd); ]]
+  checkIsTTY = function(fd)
+    return ffi.C._isatty(fd) ~= 0
+  end
 else
   ffi.cdef[[ int isatty(int fd); ]]
-end
-
-local checkIsTTY = function(fd)
-  if jit.os == "Windows" then
-    return ffi.C._isatty(fd) ~= 0
-  else
+  checkIsTTY = function(fd)
     return ffi.C.isatty(fd) ~= 0
   end
 end

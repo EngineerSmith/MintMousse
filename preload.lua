@@ -38,7 +38,7 @@ end
 
 local util = require(PATH .. "util")
 mintmousse.cleanupTraceback = util.cleanupTraceback
-mintmousse.sanitizeText = util.sanitizeText
+-- mintmousse.sanitizeText = util.sanitizeText -- Do users need access to this? Or have I programmed good
 
 local logging = require(PATH .. "logging")
 mintmousse.flushLogs = logging.flushLogs
