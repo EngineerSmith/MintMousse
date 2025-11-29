@@ -1,9 +1,10 @@
---[[
+local ROOT = (...):match("^(.-)[^%.]+%.[^%.]+$") or ""
 
-This was added as a wrapper for ease of implementing TLS/SSL later
+local mintmousse = require(ROOT .. "mintmousse")
 
-]]
+local loggerClient = mintmousse._logger:extend("Client")
 
+-- Wrapper for LuaSocket TCPsocket
 local client = { }
 client.__index = client
 
@@ -31,69 +32,84 @@ client.getsockname = function(self)
   return self.client:getsockname()
 end
 
--- Check if there is something in the client buffer; this method is used because client:dirty does not work
 client.peek = function(self, length)
-  local peeking = self.client:receive(length or 1)
-  if not peeking then
-    return false
+  length = length or 1
+  local currentBufferLen = #(self.buffer or "")
+  if currentBufferLen >= needed then
+    return true
   end
 
-  self.buffer = (self.buffer or "") .. peeking
-
-  return true
+  local missing = needed - currentBufferLen
+  local data, err = self.client:receive(missing)
+  if data then
+    self.buffer = (self.buffer or "") .. data
+    return true
+  end
+  return false
 end
 
-client.receive = function(self, pattern, prefix)
-  -- todo; max number of tries? Timer?
-  if prefix or self.buffer then
-    prefix = (prefix or "")..(self.buffer.."")
-    self.buffer = nil
+client.hasData = function(self)
+  local data, errorMessage = self.client:receive(1)
+
+  if data then
+    self.buffer = (self.buffer or "") .. data
+    return true
+  elseif errorMessage == "timeout" then
+    return false
+  else
+    loggerClient:warning("Unhandled error message during hasData check:", errorMessage)
+    return false
   end
-  while true do
-    local data, errorMessage = self.client:receive(pattern, prefix)
-    if not data then
-      if errorMessage == "timeout" then
-        coroutine.yield(true) -- if timeout; wait
-      elseif errorMessage == "closed" then
-        coroutine.yield(nil)
-      else
-        -- documentation only mentions "timeout" and "closed" events, but we can never be sure
-        love.mintmousse.warning("CLIENT: Receive unhandled error message! Tell a programmer:", errorMessage)
-        return nil
-      end
-    else
+end
+
+client.receive = function(self, pattern)
+  if self.buffer and #self.buffer > 0 then
+    if type(pattern) == "number" and #self.buffer >= pattern then
+      local data = self.buffer:sub(1, pattern)
+      self.buffer = self.buffer:sub(pattern + 1)
       return data
+    end
+  end
+
+  while true do
+    local data, errorMessage = self.client:receive(pattern)
+    if data then
+      return data
+    end
+
+    if errorMessage == "timeout" then
+      coroutine.yield(true) -- if timeout; wait
+    elseif errorMessage == "closed" then
+      coroutine.yield(nil) -- if closed; finish coroutine
+    else
+      -- Handle unexpected errors
+      loggerClient:warning("Unhandled error message during receive:", errorMessage)
+      return nil
     end
   end
 end
 
-client.send = function(self, data, i, j)
+client.send = function(self, data)
   local i, size = 1, #data
-  while i < size do
-    local j, errorMessage, k = self.client:send(data, i)
-    if not j then
+  while i <= size do
+    local sentCount, errorMessage, indexUnsent = self.client:send(data, i)
+    if sentCount then
+      i = i + sentCount
+    else
       if errorMessage == "closed" then
         if coroutine.running() then
           coroutine.yield(nil)
         end
         return
-      else
-        print("TODO HIT ERROR:", errorMessage)
+      elseif errorMessage ~= "timeout" then
+        loggerClient:warning("Unhandled error during send:", errorMessage)
+        return
       end
-      i = k + 1
-    else
-      i = i + j
     end
-    if coroutine.running() then
-      coroutine.yield(true)
-    end
+    coroutine.yield(true)
   end
-end
 
--- TCPSocket:dirty is broken and doesn't work. Use receive directly; and add it back as a prefix.
---    Tip: the prefix length is included in the size check no need to alter the size you want by the length of the prefix
--- client.isBufferEmpty = function(self)
---   return not self.client:dirty()
--- end
+  return true
+end
 
 return client
