@@ -1,47 +1,56 @@
 # MintMousse
-MintMousse is a live web console for your [LÖVE][love] project, giving you real-time control and insight into your project's internals. Instead of relying on countless `print()` statements or clunky in-game debug menus, MintMousse lets you build a real-time dashboard viewable in any browser. From there, you can monitor variables, tweak settings, and interact with code. This makes development a breeze for both headless and traditional [LÖVE][love] projects.
+MintMousse is a web console for [LÖVE][love] that lets you monitor and interact with your project through a browser.
 
-With this control panel, you can trigger events, change player stats, or visualise performance metrics with graphs. This provides instance feedback, making it a tool for debugging or managing a game server. This library is thread-safe, allowing you to update the console directly from any thread.
+It runs a local web server alongside your game, providing a dedicated space to inspect values, tweak game states, and visualise data in real-time. It's built to solve the clutter of `print`s and thrown together in-game UI elements.
 
-# Quickstart
+### Key Features
+- **Visual Debugging** - Move past `print` statements with a fully featured coloured logging system
+- **Live Interaction** - Trigger events or toggle flags with buttons and sliders in the browser while the game is running
+- **Thread Support** - Update your dashboard and log from any thread without worrying about conflicts
+- **Headless Support** - Manage and monitor dedicated servers or windowless projects seamlessly across network
+- **Extendable Components** - Add your own custom components, allowing you to make the dashboard work for you
+
+## Quickstart
 First, add the library to your project:
 ```
 cd your/love/project/directory
 git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/.
 ```
-Next, add the preload script to your `conf.lua` file:
+Next, add the preload script to `conf.lua`:
 ```lua
 require("libs.MintMousse.preload")
 ```
-Then, add the "Hello World" example to your `main.lua` file:
+Then, add the "Hello World" example to `main.lua`:
 ```lua
 local mintmousse = require("libs.MintMousse")
 mintmousse.start()
 
 local dashboard = mintmousse.newTab("Dashboard")
-dashboard:newCard({ size = 5, title = "Hello World!" })
+dashboard:newCard({ text = "Hello World!" })
 ```
-Finally, run your project and view the console in your browser at [http://localhost](http://localhost)
+Finally, run your project and view the console in your browser at [http://localhost:8080](http://localhost:8080) (or the port shown in your console)
 
-# Docs
-Check out our [wiki][doclink]!
+## Docs
+Check out our [wiki][doclink] to get going!
 
-# Credits
-## Dependencies
-MintMousse would not be possible without the following dependencies:
-- [Lustache][git.lustache]
+---
+### Dependencies
+MintMousse utilises the following libraries:
 - [Bootstrap 5.3][git.bootstrap]
+- [DOMPurify][git.dompurify]
+- [LuaSocket][luasocket]
+- [Lustache][git.lustache]
 - [Json.lua][git.json]
-- [LuaSocket][luasocket] (Included in [LÖVE][love])
 
-## Kudos
+### Kudos
 Special thanks to:
-- **[Immow](https://github.com/Immow)** Suggesting the lua API for defining the components.
-- **[Josh](https://github.com/josh-perry)** For proposing a critical fix to log buffering, which drastically reduced performance overhead (from 1ms per print to negligible time per log call!).
+- **[Immow](https://github.com/Immow)** Suggesting the lua API structure for defining the components.
+- **[Josh](https://github.com/josh-perry)** For a fix to log buffering that reduced logging overhead to negligible levels.
 
 [doclink]: https://github.com/EngineerSmith/MintMousse/wiki
 [git.lustache]: https://github.com/Olivine-Labs/lustache
 [git.bootstrap]: https://github.com/twbs/bootstrap
+[git.dompurify]: https://github.com/cure53/DOMPurify
 [git.json]: https://github.com/rxi/json.lua
 [love]: https://love2d.org
 [luasocket]: https://github.com/lunarmodules/luasocket
