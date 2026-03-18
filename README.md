@@ -14,7 +14,7 @@ It runs a local web server alongside your game, providing a dedicated space to i
 First, add the library to your project:
 ```
 cd your/love/project/directory
-git clone https://github.com/EngineerSmith/MintMousse --recurse-submodules libs/.
+git clone https://github.com/EngineerSmith/MintMousse libs/.
 ```
 Next, add the preload script to `conf.lua`:
 ```lua
@@ -23,7 +23,7 @@ require("libs.MintMousse.preload")
 Then, add the "Hello World" example to `main.lua`:
 ```lua
 local mintmousse = require("libs.MintMousse")
-mintmousse.start()
+mintmousse.start({ whitelist = "localhost" })
 
 local dashboard = mintmousse.newTab("Dashboard")
 dashboard:newCard({ text = "Hello World!" })
