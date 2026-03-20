@@ -4,8 +4,8 @@ site_url: https://mintmousse.engineersmith.net
 
 theme:
   name: material
-  logo: assets/icon.svg
-  favicon: assets/icon.svg
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
   palette:
     - scheme: slate
       primary: teal
