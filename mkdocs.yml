@@ -4,7 +4,7 @@ site_url: https://EngineerSmith.github.io/MintMousse
 
 theme:
   name: material
-  palette: 
+  palette:
     - scheme: slate
       primary: teal
       accent: cyan
@@ -17,7 +17,6 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
-  
   features:
     - content.code.copy
     - navigation.expand
@@ -30,8 +29,8 @@ theme:
 
 markdown_extensions:
   - pymdownx.highlight:
-    anchor_linenums: true
-    guest_syntax: lua
+      anchor_linenums: true
+      guest_syntax: lua
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
@@ -39,7 +38,7 @@ markdown_extensions:
 plugins:
   - search
   - mike:
-    version_selector: true
+      version_selector: true
 
 extra:
   version:
