@@ -1,125 +1,74 @@
-function button_new(payload) {
-  const id = payload.id;
-  const color = BSColor(payload.color) ?? "primary";
-  const colorOutline = Boolean(payload.colorOutline ?? false);
-  const text = getText(payload.text) ?? "";
-  const isDisabled = Boolean(payload.isDisable ?? false);
-  const widthClass = "w-" + (BSWidth(payload.width) ?? "100");
-  const isCentered = Boolean(payload.isCentered ?? true);
+componentRegistry.register({
+  typeName: "Button",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const colorClass = colorOutline ? "btn-outline-" + color : "btn-" + color
+    instance.state = {
+      color: helper.getColor(payload.values.color, "primary"),
+      colorOutline: helper.getBoolean(payload.values.colorOutline, false),
+      width: helper.getWidth(payload.values.width, "100"),
+      isCentered: helper.getBoolean(payload.values.isCentered, true),
+    };
 
-  const button = document.createElement("button");
-  button.classList.add("btn", colorClass, widthClass, "d-block"); // est: d-block won't work work buttongroups 
-  if (isCentered === true)
-    button.classList.add("mx-auto");
-  setAttributes(button, {
-    "id": id,
-    "type": "button",
-  });
-  button.dataset.mmColor = color;
-  button.dataset.mmColorOutline = colorOutline ? "true" : "false";
-  button.innerHTML = text;
-  button.disabled = isDisabled;
+    const root = document.createElement("button");
+    root.type = "button";
+    instance.element = root;
 
-  button.addEventListener('click', button_event_click);
+    root.addEventListener('click', this.event_click.bind(this));
 
-  return button;
-}
+    this.update_text(payload);
+    this._updateVisuals(instance);
+    this.update_isDisabled(payload);
 
-function button_update_color(payload) {
-  const id = payload.id;
-  const color = BSColor(payload.color) ?? "primary";
+    return instance;
+  },
 
-  const button = document.getElementById(id);
-  const colorOutline = button.dataset.mmColorOutline === "true";
+  _updateVisuals: function(instance) {
+    const { element, state } = instance;
 
-  let currentColor;
-  if (colorOutline === true) {
-    currentColor = getColorClass(button, "btn-outline-");
-  } else {
-    currentColor = getColorClass(button, "btn-");
-  }
-  if (currentColor !== null)
-    button.classList.remove(currentColor);
+    const colorPrefix = state.colorOutline ? "btn-outline" : "btn";
+    const colorClass = `${colorPrefix}-${state.color}`;
 
-  const colorClass = colorOutline ? "btn-outline-" + color : "btn-" + color
-  button.classList.add(colorClass);
-  button.dataset.mmColor = color;
-}
+    element.className = `btn ${colorClass} w-${state.width} d-block ${state.isCentered ? "mx-auto" : ""}`;
+  },
 
-function button_update_colorOutline(payload) {
-  const id = payload.id;
-  const colorOutline = Boolean(payload.colorOutline ?? false);
+  update_color: function(instance, payload) {
+    instance.state.color = helper.getColor(payload.values.color, "primary");
+    this._updateVisuals(instance);
+  },
 
-  const button = document.getElementById(id);
+  update_colorOutline: function(instance, payload) {
+    instance.state.colorOutline = helper.getBoolean(payload.values.colorOutline, false);
+    this._updateVisuals(instance);
+  },
 
-  let currentColor;
-  if (button.dataset.mmColorOutline === "true") {
-    currentColor = getColorClass(button, "btn-outline-");
-  } else {
-    currentColor = getColorClass(button, "btn-");
-  }
-  if (currentColor !== null)
-    button.classList.remove(currentColor);
+  update_text: function(instance, payload) {
+    let text = helper.getText(payload.values.text, "");
+    if (text.includes("\n"))
+      text = text.replace(/\n/g, "<br/>");
 
-  const color = button.dataset.mmColor;
-  const colorClass = colorOutline ? "btn-outline-" + color : "btn-" + color;
-  button.classList.add(colorClass);
-  button.dataset.mmColorOutline = colorOutline;
-}
+    instance.element.innerHTML = text;
+  },
 
-function button_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text) ?? "";
+  update_isDisabled: (instance, payload) => instance.element.disabled = helper.getBoolean(payload.values.isDisabled, false),
 
-  const button = document.getElementById(id);
-  button.innerHTML = text;
-}
+  update_width: function(instance, payload) {
+    instance.state.width = helper.getWidth(payload.values.width, "100");
+    this._updateVisuals(instance);
+  },
 
-function button_update_isDisable(payload) {
-  const id = payload.id;
-  const isDisabled = Boolean(payload.isDisable ?? false);
+  update_isCentered: function(instance, payload) {
+    instance.state.isCentered = helper.getBoolean(payload.values.isCentered, true);
+    this._updateVisuals(instance);
+  },
 
-  const button = document.getElementById(id);
-  button.disable = isDisabled;
-}
+  event_click: function(event) {
+    const id = event.currentTarget.id;
+    const success = Network.send({ id: id, event: "click", });
 
-function button_update_width(payload) {
-  const id = payload.id;
-  const widthClass = "w-" + (BSWidth(payload.width) ?? "100");
+    if (!success) {
+      console.warn("MM: Button event triggered; but failed to send.")
+    }
+  },
 
-  const button = document.getElementById(id);
-  const currentWidthClass = getClassWithPrefix(button, "w-");
-
-  if (widthClass === currentWidthClass) {
-    return;
-  }
-
-  if (currentWidthClass)
-    button.classList.remove(currentWidthClass);
-  button.classList.add(widthClass);
-}
-
-function button_update_isCentered(payload) {
-  const id = payload.id;
-  const isCentered = Boolean(payload.isCentered ?? true);
-
-  const button = document.getElementById(id);
-  if (isCentered === true) {
-    button.classList.add("mx-auto");
-  } else {
-    button.classList.remove("mx-auto");
-  }
-}
-
-function button_event_click(event) {
-  const id = event.currentTarget.id;
-  const success = websocketSend({
-    id: id,
-    event: "click",
-  });
-  if (!success) {
-    console.warn("MM: Button event triggered; but failed to send.")
-  }
-}
+});

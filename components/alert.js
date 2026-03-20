@@ -1,126 +1,66 @@
-function alert_new(payload) {
-  const id = payload.id;
-  const pID = id + "-p";
-  const buttonID = id + "-button";
-  const text = getText(payload.text) ?? "UNKNOWN";
-  const alertColor = BSColor(payload.color) ?? "warning";
-  const isDismissible = Boolean(payload.isDismissible ?? true);
+componentRegistry.register({
+  typeName: "Alert",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const alert = document.createElement("div");
-  alert.classList.add("alert", "fade", "show", "alert-" + alertColor);
-  if (isDismissible === true) {
-    alert.classList.add("alert-dismissible");
-  }
-  setAttributes(alert, {
-    "id": id,
-    "role": "alert",
-  });
+    instance.state.color = helper.getColor(payload.values.color, "warning");
+    instance.state.isDismissible = helper.getBoolean(payload.values.isDismissible, true);
 
-  const p = document.createElement("p");
-  p.classList.add("mb-0")
-  p.setAttribute("id", pID);
-  p.innerHTML = text;
+    const root = document.createElement("div");
+    root.className = `alert fade show alert-${instance.state.color}`;
+    root.setAttribute("role", "alert");
 
-  alert.append(p);
+    const p = document.createElement("p");
+    p.className = "mb-0";
+    root.append(p);
 
-  if (isDismissible === true) {
-    const dismissButton = document.createElement("button");
-    dismissButton.classList.add("btn-close");
-    setAttributes(dismissButton, {
-      "id": buttonID,
-      "type": "button",
-      "data-bs-dismiss": "alert",
-      "aria-label": "Close",
-    });
+    instance.element = root;
+    instance.parts.text = p;
 
-    alert.append(dismissButton);
-  }
+    // Init sync
+    this.update_text(payload);
+    this.update_isDismissible(payload);
 
-  if (typeof payload.parentID === "string") {
-    const hyphenIndex = payload.parentID.indexOf("-");
-    if (hyphenIndex !== -1) {
-      const type = payload.parentID.substring(0, hyphenIndex);
-      const type_remove_child = window[type + "_remove_child"];
-      if (typeof type_remove_child === "function") {
-        alert.addEventListener("closed.bs.alert", () => {
-          type_remove_child(payload); // payload is reused than creating an object with parentID & id
-        });
-      }
+    root.addEventListener("closed.bs.alert", () => helper.removeInstance(payload.id));
+
+    return instance;
+  },
+
+  update_text: (instance, payload) => instance.parts.text.innerHTML = helper.getText(payload.values.text, "UNKNOWN"),
+
+  update_color: function(instance, payload) {
+    const newColor = helper.getColor(payload.values.color, "warning");
+    const oldColor = instance.state.color;
+    if (oldColor === newColor) return;
+
+    instance.element.classList.replace(`alert-${oldColor}`, `alert-${newColor}`);
+    instance.state.color = newColor;
+  },
+
+  update_isDismissible: function(instance, payload) {
+    const shouldBeDismissible = helper.getBoolean(payload.values.isDismissible, true);
+    
+    if (instance.state.isDismissible === shouldBeDismissible && instance.parts.dismissBtn) return;
+
+    if (shouldBeDismissible) {
+      instance.element.classList.add("alert-dismissible");
+      const btn = document.createElement("button");
+      btn.className = "btn-close";
+      helper.setAttributes(btn, {
+        "type": "button",
+        "data-bs-dismiss": "alert",
+      });
+
+      instance.element.append(btn);
+      instance.parts.dismissBtn = btn;
+    } else {
+      instance.element.classList.remove("alert-dismissible");
+      instance.parts.dismissBtn?.remove();
+
+      instance.parts.dismissBtn = null;
     }
-  }
 
-  return alert;
-}
+    instance.state.isDismissible = shouldBeDismissible;
+  },
 
-function alert_update_text(payload) {
-  const id = payload.id;
-  const pID = id + "-p";
-  const text = getText(payload.text) ?? "UNKNOWN";
-
-  const alert = document.getElementById(id);
-  if (alert === null) {
-    console.log("MM: Tried to update alert that has been dismissed:", id, "TEXT to:", text)
-    return; // todo Element has been dismissed by user - should it recreate the alert on update?
-  }
-
-  const p = document.getElementById(pID);
-  p.innerHTML = text;
-}
-
-function alert_update_color(payload) {
-  const id = payload.id;
-  const color = BSColor(payload.color) ?? "warning";
-
-  const alert = document.getElementById(id);
-  if (alert === null) {
-    console.log("MM: Tried to update alert that has been dismissed:", id, "COLOR to:", color);
-    return; // todo Element has been dismissed by user - should it recreate the alert on update?
-  }
-
-  const currentColor = getColorClass(alert, "alert-");
-  if (currentColor)
-    alert.classList.remove(currentColor);
-  alert.classList.add("alert-" + color);
-}
-
-function alert_update_isDismissible(payload) {
-  const id = payload.id;
-  const buttonID = id + "-button";
-  const isDismissible = Boolean(payload.isDismissible ?? true);
-
-  const alert = document.getElementById(id);
-  if (alert === null) {
-    console.log("MM: Tried to update alert that has been dismissed:", id, "DISMISSIBLE to:", dismissible);
-    return; // todo Element has been dismissed by user - should it recreate the alert on update?
-  }
-
-  let dismissButton = document.getElementById(buttonID);
-  if ((isDismissible === true && dismissButton !== null) || (isDismissible === false && dismissButton === null)) {
-    return;
-  }
-
-  if (isDismissible === true) {
-    dismissButton = document.createElement("button");
-    dismissButton.classList.add("btn-close");
-    setAttributes(dismissButton, {
-      "id": buttonID,
-      "type": "button",
-      "data-bs-dismiss": "alert",
-      "aria-label": "Close",
-    });
-
-    alert.append(dismissButton);
-
-  } else if (isDismissible === false) {
-    removeElement(dismissButton);
-  }
-}
-
-function alert_remove(payload) {
-  const id = payload.id;
-
-  const alert = document.getElementById(id);
-  if (alert !== null) { // Alert could of been dismissed by user
-    removeElement(alert);
-  }
-}
+});

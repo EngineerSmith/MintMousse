@@ -1,17 +1,14 @@
-function container_new(payload) {
-  const id = payload.id;
+componentRegistry.register({
+  typeName: "Container",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const container = document.createElement("div");
-  container.setAttribute("id", id);
+    const root = document.createElement("div");
 
-  return container;
-}
+    instance.element = root;
 
-function container_insert(payload) {
-  const id = payload.parentID;
-  
-  const container = document.getElementById(id);
-  insertPayload(container, payload);
+    return instance;
+  },
 
-  eventInit();
-}
+  insert: (parentInstance, payload) => helper.insertNewChild(parentInstance.element, payload),
+});

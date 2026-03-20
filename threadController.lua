@@ -1,10 +1,10 @@
 local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
-local threadCommunication = require(PATH .. "threadCommunication")
+local threadCommand = require(PATH .. "threadCommand")
 
-local controllerLogger = mintmousse._logger:extend("Controller")
-local iconLogger = controllerLogger:extend("Icon")
+local loggerController = mintmousse._logger:extend("Controller")
+local iconLogger = loggerController:extend("Icon")
 
 local threadController = {
   threadChannel = love.thread.getChannel(mintmousse.READONLY_THREAD_LOCATION)
@@ -13,21 +13,50 @@ local threadController = {
 threadController.start = function(config)
   local thread = threadController.threadChannel:peek()
   if not thread:isRunning() then
-    thread:start(mintmousse._PATH, mintmousse._DIRECTORY_PATH)
+    thread:start(PATH)
   end
-  -- todo config validation
-  threadCommunication.push({
-    func = "start",
-    config,
+
+  if config then
+    if config.title ~= nil and type(config.title) ~= "string" then
+      loggerController:warning("config.title expected to be type string")
+      config.title = nil
+    end
+
+    if config.host ~= nil and type(config.host) ~= "string" then
+      loggerController:warning("config.host expected to be type string")
+      config.host = nil
+    end
+
+    if config.port ~= nil and type(config.port) ~= "number" then
+      loggerController:warning("config.port expected to be type number")
+      config.port = nil
+    end
+
+    if config.autoIncrement ~= nil then
+      config.autoIncrement = config.autoIncrement == true
+    end
+
+    if config.whitelist ~= nil then
+      threadController.addToWhitelist(config.whitelist, "config.whitelist")
+    end
+  end
+
+  local whitelist
+  if config then
+    whitelist, config.whitelist = config.whitelist, nil
+  end
+  threadCommand.call("start", {
+    config = config,
   })
+  if config then
+    config.whitelist = whitelist
+  end
 end
 
 threadController.stop = function(noWait)
-  threadCommunication.commandQueue(function(channel)
+  threadCommand.commandQueue(function(channel)
     channel:clear()
-    threadCommunication.push({
-      func = "quit",
-    })
+    threadCommand.call("quit")
   end)
   if not noWait then
     threadController.wait()
@@ -41,6 +70,51 @@ threadController.wait = function()
   end)
 end
 
+threadController.addToWhitelist = function(additions, context)
+  if additions == nil then return end
+
+  local source = context or "additions"
+
+  if type(additions) == "table" then
+    if #additions == 0 then return end
+
+    for i, addition in ipairs(additions) do
+      if type(addition) ~= "string" then
+        loggerController:warning(source .. "[" .. tostring(i) .. "] expected to be type string")
+        return
+      end
+    end
+  elseif type(additions) ~= "string" then
+    loggerController:warning(source, "expected to be type table or string")
+    return
+  end
+
+  threadCommand.call("addToWhitelist", { additions = additions })
+end
+
+threadController.removeFromWhitelist = function(removals)
+  if removals == nil then return end
+
+  if type(removals) == "table" then
+    if #removals == 0 then return end
+    for i, removal in ipairs(removals) do
+      if type(removal) ~= "string" then
+        loggerController:warning("removals[" .. tostring(i) .. "] expected to be type string")
+        return
+      end
+    end
+  elseif type(removals) ~= "string" then
+    loggerController:warning("removals expected to be type table or string")
+    return
+  end
+
+  threadCommand.call("removeFromWhitelist", { removals = removals })
+end
+
+threadController.clearWhitelist = function()
+  threadCommand.call("clearWhitelist")
+end
+
 local pngMagicNumber = string.char(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)
 local jpegMagicNumber = string.char(0xff, 0xd8, 0xff)
 
@@ -51,19 +125,18 @@ threadController.setIcon = function(icon)
     end
   end
   if type(icon) == "table" then
-    icon = require(PATH .. "icon.svg_icon")(icon)
-    threadCommunication.push({
-      func = "setSVGIcon",
-      icon,
+    threadCommand.call("setSchemaIcon", {
+      icon = icon,
     })
     return
   elseif type(icon) == "string" then
     if lfs.getInfo(icon, "file") then
       local temp = icon:lower()
-      if temp:match("%.png$") or temp:match("%.jpeg$") or temp:match("%.jpg$") or temp:match("%.svg$") then
-        threadCommunication.push({
-          func = "setIconFromFile",
-          icon,
+      local extension = icon:lower():match("%.(%w+)$")
+      if extension == "png" or extension == "jpeg" or extension == "jpg" or
+         extension == "svg" or extension == "ico" then
+        threadCommand.call("setIconFromFile", {
+          filepath = icon,
         })
         return
       end
@@ -77,32 +150,30 @@ threadController.setIcon = function(icon)
       return
     end
   end
-  iconLogger:warning("Invalid icon provided. Please supply either an SVG table, a file path to a .PNG, .JPEG, .JPG, or .SVG image, or raw PNG or JPEG image data (identified by their magic numbers).")
+  iconLogger:warning("Invalid icon provided. Please supply either an SVG schema table, a file path to a .PNG, .JPEG, .JPG, or .SVG image, or raw PNG or JPEG image data (identified by their magic numbers).")
 end
 
 threadController.setIconRaw = function(icon, iconType)
-  threadCommunication.push({
-    func = "setIconRaw",
-    icon, iconType,
+  threadCommand.call("setIconRaw", {
+    icon = icon,
+    iconType = iconType,
   })
 end
 
--- https://realfavicongenerator.net @ 2025 Q1
+-- https://realfavicongenerator.net @ 2026 Q1
 threadController.setIconRFG = function(filepath)
-  iconLogger:assert(type(filepath == "string", "Filepath must be type String"))
+  iconLogger:assert(type(filepath) == "string", "Filepath must be type String")
   iconLogger:assert(filepath:lower():match("%.zip$"), "Invalid filepath, must end with .ZIP file extension. Gave:", filepath)
   iconLogger:assert(love.filesystem.getInfo(filepath), "Invalid filepath, couldn't find file at given path. Gave:", filepath)
-  threadCommunication.push({
-    func = "setIconRFG",
-    filepath,
+  threadCommand.call("setIconRFG", {
+    filepath = filepath,
   })
 end
 
 threadController.setTile = function(title)
-  controllerLogger:assert(type(title) == "string", "Title must be type String")
-  threadCommunication.push({
-    func = "setTitle",
-    title,
+  loggerController:assert(type(title) == "string", "Title must be type String")
+  threadCommand.call("setTitle", {
+    title = title,
   })
 end
 
@@ -112,13 +183,12 @@ threadController.notify = function(message)
       text = message,
     }
   end
-  controllerLogger:assert(type(message) == "table", "Message must be type Table")
+  loggerController:assert(type(message) == "table", "Message must be type Table")
   if not message.title and not message.text then
     return -- If we have nothing to send; why send it?
   end
-  threadCommunication.push({
-    func = "notify",
-    message,
+  threadCommand.call("notify", {
+    message = message,
   })
 end
 

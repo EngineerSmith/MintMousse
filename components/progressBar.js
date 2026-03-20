@@ -1,97 +1,82 @@
-function progressBar_new(payload) {
-  const id = payload.id;
-  const percentage = getText(payload.percentage) ?? "0";
-  const showLabel = Boolean(payload.showLabel ?? false);
-  const ariaLabel = getText(payload.ariaLabel) ?? "Unknown";
-  const isStriped = Boolean(payload.isStriped ?? false);
-  const bgColor = BSColor(payload.color);
+componentRegistry.register({
+  typeName: "ProgressBar",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const container = document.createElement("div");
-  container.classList.add("progress")
-  setAttributes(container, {
-    "id": id + "-root",
-    "role": "progressbar",
-    "aria-valuemin": "0",
-    "aria-valuemax": "100",
-    "aria-valuenow": percentage,
-    "aria-label": ariaLabel,
-  });
+    instance.state.percentage = helper.getFloat(payload.values.percentage);
+    instance.state.showLabel = helper.getBoolean(payload.values.showLabel, false);
+    instance.state.ariaLabel = helper.getText(payload.values.ariaLabel);
+    instance.state.isStriped = helper.getBoolean(payload.values.isStripped, false);
+    instance.colorBG = helper.getColor(payload.values.color);
 
-  const progressBar = document.createElement("div");
-  progressBar.classList.add("progress-bar");
-  if (bgColor !== null)
-    progressBar.classList.add("text-bg-" + bgColor)
+    const root = document.createElement("div");
+    root.className = "progress";
 
-  setAttributes(progressBar, {
-    "id": id,
-  });
-  progressBar.style["width"] = percentage + "%";
-  progressBar.dataset.showLabel = String(showLabel);
+    helper.setAttributes(root, {
+      "role": "progressbar",
+      "aria-valuemin": "0",
+      "aria-valuemax": "100",
+    });
 
-  if (progressBar.dataset.showLabel === "true")
-    progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
+    const bar = document.createElement("div");
+    bar.className = "progress-bar";
 
-  if (isStriped)
-    progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
+    root.append(bar);
 
-  container.append(progressBar);
+    instance.element = root;
+    instance.parts.bar = bar;
 
-  return container;
-}
+    this._updateVisuals(instance);
 
-function progressBar_update_percentage(payload) {
-  const id = payload.id;
-  const percentage = getText(payload.percentage) ?? "0";
+    return instance;
+  },
 
-  const progressBar = document.getElementById(id);
-  progressBar.style["width"] = percentage + "%";
+  _updateVisuals: function(instance) {
+    const { element, parts, state } = instance;
+    const bar = parts.bar;
 
-  if (progressBar.dataset.showLabel === "true")
-    progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
+    const percentageTrunc = String(Math.round(state.percentage * 100) / 100);
 
-  const container = document.getElementById(id + "-root");
-  container.setAttribute("aria-valuenow", percentage);
-}
+    helper.setAttributes(element, {
+      "aria-label": state.ariaLabel || null,
+      "aria-valuenow": percentageTrunc,
+    });
 
-function progressBar_update_showLabel(payload) {
-  const id = payload.id;
-  const showLabel = Boolean(payload.showLabel ?? false);
+    bar.style.width = `${state.percentage}%`;
+    bar.textContent = state.showLabel ? `${percentageTrunc}%` : "";
 
-  const progressBar = document.getElementById(id);
-  progressBar.dataset.showLabel = String(showLabel);
+    bar.className = bar.className.replace(/\btext-bg-\S+/g, "").trim();
+    if (state.colorBG) {
+      bar.classList.add(`text-bg-${state.colorBG}`);
+    }
 
-  payload.percentage = progressBar.style["width"].slice(0, -1);
-  progressBar_update_percentage(payload);
-}
+    element.classList.toggle("progress-bar-striped", state.isStriped);
+    element.classList.toggle("progress-bar-animated", state.isStriped);
+  },
 
-function progressBar_update_ariaLabel(payload) {
-  const id = payload.id;
-  const ariaLabel = getText(payload.ariaLabel) ?? "Unknown";
+  update_percentage: function(instance, payload) {
+    instance.state.percentage = helper.getFloat(payload.values.percentage);
+    this._updateVisuals(instance);
+  },
 
-  const container = document.getElementById(id + "-root");
-  container.setAttribute("aria-label") = ariaLabel;
-}
+  update_showLabel: function(instance, payload) {
+    instance.state.showLabel = helper.getBoolean(payload.values.showLabel, false);
+    this._updateVisuals(instance);
+  },
 
-function progressBar_update_isStriped(payload) {
-  const id = payload.id;
-  const isStriped = Boolean(payload.isStriped ?? false);
+  update_ariaLabel: function(instance, payload) {
+    instance.state.ariaLabel = helper.getText(payload.values.ariaLabel);
+    this._updateVisuals(instance);
+  },
 
-  const progressBar = document.getElementById(id);
-  if (isStriped) {
-    progressBar.classList.add("progress-bar-striped", "progress-bar-animated");
-  } else {
-    progressBar.classList.remove("progress-bar-striped", "progress-bar-animated");
-  }
-}
+  update_isStriped: function(instance, payload) {
+    instance.state.isStriped = helper.getBoolean(payload.values.isStriped, false);
+    this._updateVisuals(instance);
+  },
 
-function progressBar_update_color(payload) {
-  const id = payload.id;
-  const bgColor = BSColor(payload.color);
+  update_color: function(instance, payload) {
+    instance.state.colorBG = helper.getColor(payload.values.color);
+    this._updateVisuals(instance);
+  },
 
-  const progressBar = document.getElementById(id);
-  const currentBGColor = getColorClass(progressBar, "text-bg-");
-  if (currentBGColor)
-    progressBar.classList.remove(currentBGColor);
-  if (bgColor)
-    progressBar.classList.add("text-bg-" + bgColor);
-}
+});

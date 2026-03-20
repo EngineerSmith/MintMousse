@@ -131,7 +131,12 @@ local sink = function(level, logger, time, debugInfo, ...)
     table.insert(parts, theme.wrap(theme.colorize("cyan", debugInfo)))
   end
 
-  local logMessage = table.concat({ ... }, " ")
+  local argCount = select("#", ...)
+  local messageParts = { }
+  for i = 1, argCount do
+    messageParts[i] = tostring(select(i, ...))
+  end
+  local logMessage = table.concat(messageParts, " ")
   table.insert(parts, logMessage)
 
   local finalMessage = table.concat(parts, " ") .. "\n"

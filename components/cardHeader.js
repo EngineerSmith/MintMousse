@@ -1,37 +1,29 @@
-function cardHeader_new(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
-  const isTransparent = Boolean(payload.isTransparent ?? false);
+componentRegistry.register({
+  typeName: "CardHeader",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const header = document.createElement("h4");
-  header.classList.add("card-header");
-  if (isTransparent === true)
-    header.classList.add("bg-transparent");
+    const root = document.createElement("div");
+    root.className = "card-header";
 
-  header.setAttribute("id", id);
-  header.innerHTML = text;
-  header.hidden = text === null;
+    instance.element = root;
 
-  return header;
-}
+    this.update_text(payload);
+    this.update_isTransparent(payload);
 
-function cardHeader_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+    return instance;
+  },
 
-  const header = document.getElementById(id);
-  header.innerHTML = text;
-  header.hidden = text === null;
-}
+  update_text: function(instance, payload){
+    const text = helper.getText(payload.values.text);
 
-function cardHeader_update_isTransparent(payload) {
-  const id = payload.id;
-  const isTransparent = Boolean(payload.isTransparent ?? false);
+    instance.element.innerHTML = text;
+    instance.element.hidden = !text;
+  },
 
-  const header = document.getElementById(id);
-  if (isTransparent === true) {
-    header.classList.add("bg-transparent");
-  } else {
-    header.classList.remove("bg-transparent");
-  }
-}
+  update_isTransparent: function(instance, payload) {
+    const isTransparent = helper.getBoolean(payload.values.isTransparent, false);
+    instance.element.classList.toggle("bg-transparent", isTransparent);
+  },
+
+});

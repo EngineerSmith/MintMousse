@@ -1,21 +1,23 @@
-function cardText_new(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+componentRegistry.register({
+  typeName: "CardText",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const p = document.createElement("p");
-  p.classList.add("card-text");
-  p.setAttribute("id", id);
-  p.innerHTML = text
-  p.hidden = text === null;
+    const root = document.createElement("p");
+    root.className = "card-text";
 
-  return p;
-}
+    instance.element = root;
 
-function cardText_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+    this.update_text(payload);
 
-  const p = document.getElementById(id);
-  p.innerHTML = text;
-  p.hidden = text === null;
-}
+    return instance;
+  },
+
+  update_text: function(instance, payload){
+    const text = helper.getText(payload.values.text);
+
+    instance.element.innerHTML = text;
+    instance.element.hidden = !text;
+  },
+
+});

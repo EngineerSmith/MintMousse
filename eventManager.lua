@@ -18,7 +18,7 @@ end
 
 eventManager.jsEvent = function(componentID, callbackID)
   if type(componentID) ~= "string" or type(callbackID) ~= "string" then
-    eventLogger:warning(mintmousse.EVENT_ENUM_JS_EVENT, ": expected two string arguments, instead received:", type(componentID), type(callbackID))
+    eventLogger:warning("MintMousseJSEvent: expected two string arguments, instead received:", type(componentID), type(callbackID))
     return
   end
 

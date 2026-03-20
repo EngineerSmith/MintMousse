@@ -1,21 +1,17 @@
-function buttonGroup_new(payload) {
-  const id = payload.id;
+componentRegistry.register({
+  typeName: "ButtonGroup",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const buttonGroup = document.createElement("div");
-  buttonGroup.classList.add("btn-group");
-  setAttributes(buttonGroup, {
-    "id": id,
-    "role": "group",
-  });
+    const root = document.createElement("div");
+    root.className = "btn-group";
+    root.setAttribute("type", "group");
 
-  return buttonGroup;
-}
+    instance.element = root;
 
-function buttonGroup_insert(payload) {
-  const id = payload.parentID;
+    return instance;
+  },
 
-  const buttonGroup = document.getElementById(id);
-  insertPayload(buttonGroup, payload);
+  insert: (parentInstance, payload) => helper.insertNewChild(parentInstance.element, payload),
 
-  eventInit();
-}
+});

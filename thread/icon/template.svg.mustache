@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="32" height="32" viewBox="0 0 32 32">
+
+  {{!
+    Background shape
+      - If rx =  0; square
+      - If rx = 45; circle
+  }}
+  <rect
+    x="2" y="2" width="28" height="28"
+    rx="{{borderRadius}}"
+    fill="{{fillColor}}"
+    stroke="{{strokeColor}}"
+    stroke-width="{{strokeWidth}}"
+    shape-rendering="crispEdges"
+  />
+  {{!
+    Emoji
+  }}
+  <text
+    x="16" y="14.5"
+    font-size="24"
+    text-anchor="middle"
+    dominant-baseline="central"
+    fill="#ffffff"
+    text-rendering="optimizeQuality"
+    font-family="'Segoe UI Emoji', 'Twemoji Mozilla', 'Apple Color Emoji', emoji, sans-serif"
+    style="paint-order: stroke fill; stroke: #2c3e50; stroke-width: 1.5px; stroke-linejoin: round;"
+  >
+    {{emoji}}
+  </text>
+</svg>

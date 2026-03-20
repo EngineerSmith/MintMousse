@@ -5,12 +5,15 @@ PATH = PATH .. "."
 local socket = require("socket")
 local stack = require(PATH .. "stack")
 local logger = require(PATH .. "logger")
+local inspector = require(PATH .. "inspector")
 
 local logging = {
   logger = logger,
   isInsideError = false,
   isInsideFatal = false,
   sinks = { },
+
+  inspect = inspector.inspect,
 }
 
 local getTime = socket.gettime
@@ -28,6 +31,7 @@ logger.setup({
   dispatch = dispatchToSinks,
   getTime  = getTime,
 })
+logger.inspect = inspector.inspect
 
 local flushStdOut = function()
   io.stdout:flush()
@@ -51,7 +55,7 @@ logging.setupBuffer = function(bufferSize, lockChannel)
 end
 
 --- Flushes the log buffer to stdout.
--- @param forced (boolean) If true, bypasses the thread lock (useful for fatal errors)
+-- forced (boolean) If true, bypasses the thread lock (useful for fatal errors)
 logging.flushLogs = function(forced)
   if not forced and bufferLockChannel then
     bufferLockChannel:performAtomic(flushStdOut)

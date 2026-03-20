@@ -1,61 +1,99 @@
-local PATH = (...):match("^(.*)routes$")
+local json = require(PATH .. "libs.json")
 
-local http = require(PATH .. "http")
-local http1_1 = require(PATH .. "http1_1")
+local controller = require(PATH .. "thread.controller")
+local store = require(PATH .. "thread.store")
+local http = require(PATH .. "thread.server.protocol.http")
+local websocket = require(PATH .. "thread.server.protocol.websocket13")
 
--- We only support HTTP/1.1 for now
-local upgradeValue = "HTTP/1.1" --"HTTP/1.1, HTTP/2"
-http1_1.upgradeValue = upgradeValue
+local loggerRoutes = require(PATH .. "thread.server.logger"):extend("Routes")
 
-local function validateWebSocketKey(key)
-  if type(key) ~= "string" or not key:match("^[%u%l%d+/]+=*$") then
-    return false
-  end
+http.addMethod("GET", "/index", function(request, _)
+  return 200, {
+    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["content-type"] = "text/html; charset=utf8",
+  }, store.getHTML()
+end)
 
-  local success, decodedKey = pcall(love.data.decode, "string", "base64", key)
-  return success and #decodedKey == 16
-end
+http.addMethod("GET", "/index.js", function(request, _)
+  return 200, {
+    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["content-type"] = "text/javascript; charset=utf8",
+  }, store.getJavascript()
+end)
 
-http.addMethod("GET", "/live-updates", function(request)
-  -- Check for websocket upgrade headers
+http.addMethod("GET", "/index.css", function(request, _)
+  return 200, {
+    ["cache-control"] = love.mintmousse.CACHE_CONTROL_HEADER,
+    ["content-type"] = "text/css; charset=utf8",
+  }, store.getCSS()
+end)
+
+http.addMethod("GET", "/api/ping", function(request, _)
+  return 204, {
+    ["cache-control"] = "no-store"
+  }, nil
+end)
+
+http.addMethod("GET", "/live-updates", function(request, client)
   if not request.headerSet["upgrade"]               or not request.headerSet["upgrade"]["websocket"] or
-     not request.headerSet["connection"]            or not request.headerSet["connection"]["upgrade"] or
-     not request.headerSet["sec-websocket-version"] or not request.headerSet["sec-websocket-version"]["13"] then
-      return 426, { ["upgrade"] = "websocket", ["connection"] = "upgrade", ["sec-websocket-version"] = "13" }, nil
+      not request.headerSet["connection"]            or not request.headerSet["connection"]["upgrade"] or
+      not request.headerSet["sec-websocket-version"] or not request.headerSet["sec-websocket-version"]["13"] then
+      return 426, {
+        ["upgrade"] = "websocket",
+        ["connection"] = "upgrade",
+        ["sec-websocket-version"] = "13"
+      }, nil
   end
 
-  -- Check for sec-websocket-key header
   if not request.headers["sec-websocket-key"] then
     return 400, { ["content-type"] = "text/plain" }, "Missing Sec-WebSocket-Key header"
   end
 
-  -- Validate Key
   local key = request.headers["sec-websocket-key"][1]
-  if not validateWebSocketKey(key) then
+  if not websocket.validateWebSocketKey(key) then
     return 400, { ["content-type"] = "text/plain" }, "Invalid Sec-WebSocket-Key"
   end
 
-  -- Calculate sec-websocket-accept
-  local keyBD = love.data.newByteData(key .. "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
-  local accept
-  if love._version_major >= 12 then
-    accept = love.data.hash("data", "sha1", keyBD)
-  else
-    accept = love.data.hash("sha1", keyBD)
-  end
-  accept = love.data.encode("string", "base64", accept)
+  local acceptKey = websocket.getWebSocketAcceptKey(key)
 
-  -- Return 101, Switching Protocols response
+  client.connection = websocket
+  websocket.emit("newConnection", client)
+
   return 101, {
-    ["Sec-WebSocket-Accept"] = accept,
+    ["Sec-WebSocket-Accept"] = acceptKey,
     ["sec-websocket-version"] = "13",
     ["connection"] = "upgrade",
     ["upgrade"] = "websocket",
+
   }, nil
 end)
 
-http.addMethod("GET", "/api/ping", function(request)
-  return 204, {
-    ["cache-control"] = "no-store",
-  }, nil
+local queue = function(client, message)
+  table.insert(client.outgoing, message)
+end
+
+websocket.on("newConnection", function(client)
+  client.outgoing = { }
+  client.queue = queue
+
+  client:queue({
+    action = "limits",
+    maxFrameSize = love.mintmousse.MAX_WEBSOCKET_FRAME_SIZE,
+    maxMessageSize = love.mintmousse.MAX_WEBSOCKET_MESSAGE_SIZE,
+  })
+
+  store.sendInitialPayload(client)
+end)
+
+websocket.on("message", function(client, request)
+  if request.type ~= "text/utf8" and request.type ~= "application/json" then
+    return
+  end
+
+  local success, payload = pcall(json.decode, request.payload)
+  if not success then
+    return
+  end
+
+  --controller.handleIncomingEvent(client, request)
 end)

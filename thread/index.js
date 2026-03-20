@@ -1,338 +1,701 @@
-var tabMasonry = new Map();
-const masonryOptions = {
-  "itemSelector": ".grid-item",
-  "columnWidth": ".grid-sizer",
-  "gutter": ".gutter-sizer",
-  "percentPosition": true,
-  "transitionDuration": "0.2s",
-};
+const instances = { };
+const tabMasonry = new Map();
 
-function resizeMasonry() {
-  tabMasonry.forEach(function(value, _) {
-    value.layout();
-  });
-}
+const isLowEndMachine = (function() {
+  const ua = navigator.userAgent;
+  const isMobile = /(Android|iPhone|iPad|iPod)/.test(ua)
 
-// https://getbootstrap.com/docs/5.3/utilities/colors/
-const validBootstrapColors = [
-  "primary", "secondary",
-  "success", "danger",
-  "warning", "info",
-  "light", "dark",
-  "white", "black",
-  "body",
-]
-function BSColor(color) {
-  if (color === undefined || color === null)
-    return null;
+  const lowMemory = (navigator.deviceMemory || 8) < 2;
 
-  const colorLower = String(color).toLowerCase();
+  const lowCPU = (navigator.hardwareConcurrency || 8) <= 4;
 
-  if (validBootstrapColors.includes(colorLower))
-    return colorLower;
+  if (isMobile)
+    return lowMemory || lowCPU;
+  // Desktop
+  return lowCPU;
+})();
 
-  return null;
-}
+const UI = {
+  setStatus: (connected) => {
+    const c = document.getElementById("connected-status");
+    const d = document.getElementById("disconnected-status");
+    const dt = document.getElementById("disconnected-status-text");
 
-const validBootstrapWidths = [
-  "25", "50", "75", "100", "auto"
-]
-function BSWidth(width) {
-  if (width === undefined || width === null)
-    return null;
+    c.style.display = connected ? "inline-block" : "none";
+    d.style.display = connected ? "none" : "inline-block";
+    dt.style.display = connected ? "none" : "inline-block";
 
-  const widthLower = String(width).toLowerCase();
+    if (!connected) {
+      UI.disconnected.startTime = Date.now();
 
-  if (validBootstrapWidths.includes(widthLower))
-    return widthLower;
+      dt.setAttribute("data-bs-toggle", "tooltip");
 
-  return null;
-}
+      if (UI.disconnected.tooltip)
+        UI.disconnected.tooltip.dispose();
+      UI.disconnected.tooltip = new bootstrap.Tooltip(dt, { placement: "bottom", html: true });
 
-function getColorClass(element, prefix) {
-  if (!element || !element.classList)
-    return null;
-
-  for (const className of element.classList) {
-    if (className.startsWith(prefix)) {
-      const colorPart = className.substring(prefix.length);
-      if (validBootstrapColors.includes(colorPart)) {
-        return className
-      }
-    }
-  }
-  return null;
-}
-
-function getClassWithPrefix(element, prefix) {
-  if (!element || !element.classList)
-    return null;
-
-  for (const className of element.classList) {
-    if (className.startsWith(prefix)) {
-      return className;
-    }
-  }
-  return null;
-}
-
-function getText(text) {
-  if (text === null || text === undefined) {
-    return null;
-  }
-  return String(text);
-}
-
-function truncateToTwoDecimalPlaces(str) {
-  const decimalIndex = str.indexOf('.');
-  if (decimalIndex === -1)
-    return str;
-  return str.slice(0, decimalIndex + 3);
-}
-
-var isLowEndMachine = false;
-{
-  const userAgent = navigator.userAgent;
-  if (userAgent.match(/(Android|iPhone|iPad|iPod)/)) {
-    // check RAM
-    isLowEndMachine = navigator.deviceMemory < 1024;
-  } else {
-    // check CPU
-    isLowEndMachine = navigator.cpuClass < "medium";
-  }
-}
-
-const connectedStatus = document.getElementById("connected-status");
-const disconnectedStatus = document.getElementById("disconnected-status");
-const disconnectedStatusText = document.getElementById("disconnected-status-text");
-
-function setConnectedStatus() {
-  connectedStatus.style.display = "inline-block";
-  disconnectedStatus.style.display = "none";
-  disconnectedStatusText.style.display = "none";
-}
-
-function setDisconnectedStatus() {
-  connectedStatus.style.display = "none";
-  disconnectedStatus.style.display = "inline-block";
-  disconnectedStatusText.style.display = "inline-block";
-}
-
-function hideSpinner() {
-  const spinnerElement = document.getElementById("loadingSpinner");
-  spinnerElement.style.display = "none";
-}
-
-function showNoContentText() {
-  const noContentContainer = document.getElementById("noContentContainer");
-  noContentContainer.style.setProperty("display", "flex", "important");
-}
-
-function hideNoContentText() {
-  const noContentContainer = document.getElementById("noContentContainer");
-  noContentContainer.style.setProperty("display", "none", "important");
-}
-
-function hasEvent(element, eventType) {
-  const listeners = element.addEventListener ? element.addEventListener._listeners : element._listeners;
-  return listeners && listeners[eventType] !== undefined;
-}
-
-function eventInit() {
-  for (const element of document.getElementsByClassName("collapse")) {
-    if (hasEvent(element, "show.bs.collapse"))
-      continue;
-    if (!isLowEndMachine)
-      element.addEventListener("hide.bs.collapse", resizeMasonry);
-    element.addEventListener("hidden.bs.collapse", resizeMasonry);
-    if (!isLowEndMachine)
-      element.addEventListener("show.bs.collapse", resizeMasonry);
-    element.addEventListener("shown.bs.collapse", resizeMasonry);
-  }
-}
-
-function setAttributes(element, attributes) {
-  for(const key in attributes){
-    element.setAttribute(key, attributes[key]);
-  }
-}
-
-function getSizeClass(element) {
-  if (!element)
-    return null;
-
-  for (const className of element.classList) {
-    if (/^grid-item-[1-5]$/.test(className))
-      return className;
-  }
-  return null;
-}
-
-function insertPayload(target, payload) {
-  if (typeof payload.render === "string") {
-    target.insertAdjacentHTML("beforeend", payload.render)
-    return target.lastElementChild;
-  } else if (typeof payload.newFunc === "string") {
-    const func = window[payload.newFunc];
-    if (typeof func === "function") {
-      const element = func(payload);
-      target.insertAdjacentElement("beforeend", element);
-      return element;
+      UI.disconnected.updateTooltipContent();
+      UI._startDisconnectTooltipUpdater();
     } else {
-      console.error("MM: Could not find ", payload.newFunc, " function to create element for insertion!");
-      return null;
+      if (UI.disconnected.tooltip) {
+        UI.disconnected.tooltip.dispose();
+        UI.disconnected.tooltip = null;
+      }
+      if (UI.disconnected.timerID) {
+        clearTimeout(UI.disconnected.timerID);
+        UI.disconnected.timerID = null;
+      }
+      UI.disconnected.startTime = null;
     }
-  }
-  return null;
-}
+  },
 
-function removeElement(element) { // todo what if a child has a _remove pattern that needs to be called? e.g. cleaning up a callback
-  if (typeof element.remove === "function")
-    element.remove()
-  else
-    element.parentNode.removeChild(element)
-}
+  disconnected: {
+    startTime: null,
+    tooltip: null,
+    timerID: null,
 
-function removeComponent(payload) {
-  const id = payload.id;
+    updateTooltipContent: function() {
+      if (!this.tooltip || !this.startTime) return;
+      const full = UI.Toast._getFullTimestamp(this.startTime);
+      const rel = UI.relativeTime(this.startTime);
+      const html = `${full}<br/><small>${rel}</small>`;
+      this.tooltip.setContent({ ".tooltip-inner": html });
+    }
+  },
 
-  const elementRoot = document.getElementById(id+"-root");
-  if (elementRoot) {
-    removeElement(elementRoot);
-    return;
-  }
+  _startDisconnectTooltipUpdater: function() {
+    if (UI.disconnected.timerID) return;
 
-  const element = document.getElementById(id);
-  removeElement(element);
-}
+    const tick = () => {
+      UI.disconnected.updateTooltipContent();
 
-function notify(payload) {
-  const type = payload.type;
-  const funcName = type + "_notify";
+      const sec = Math.floor((Date.now() - UI.disconnected.startTime) / 1000);
+      let delay = 1000;
+      if (sec >= 60 && sec < 3600) delay = (60 - (sec % 60)) * 1000 + 100;
+      else if (sec >= 3600)        delay = (3600 - (sec % 3600)) * 1000 + 100;
 
-  const func = window[funcName];
-  if (typeof func === "function") {
-    func(payload);
-  } else {
-    console.error("MM: Couldn't find notify function for type:", type);
-  }
-}
+      UI.disconnected.timerID = setTimeout(tick, delay);
+    };
+    UI.disconnected.timerID = setTimeout(tick, 800);
+  },
 
-// https://stackoverflow.com/a/57888548
-const fetchTimeout = (url, ms, { signal, ...options } = {}) => {
-  const controller = new AbortController();
-  const promise = fetch(url, { signal: controller.signal, ...options });
-  if (signal) signal.addEventListener("abort", () => controller.abort());
-  const timeout = setTimeout(() => controller.abort(), ms);
-  return promise.finally(() => clearTimeout(timeout));
-};
+  setLoading: (isLoading) => document.getElementById("loadingSpinner").style.display = isLoading ? "block" : "none",
 
-function startConnectionMonitor(pingIntervalSeconds = 1) {
-  const interval = Math.max(0.5, pingIntervalSeconds) * 1000;
+  toggleNoContent: () => {
+    const hasContent = !!document.querySelector(".nav-link");
+    const container = document.getElementById("noContentContainer");
+    container.style.setProperty("display", hasContent ? "none" : "flex", "important");
+  },
 
-  setInterval(() => {
-    fetchTimeout('/api/ping', interval - 100)
-      .then(response => {
-        if (response.status === 204) {
-          console.log("MM: Server is alive, reloading page.");
-          window.location.reload()
-        } else {
-          console.error(`MM: Ping failed with returned status: ${response.status}`);
-        }
+  Toast: {
+    defaults: { animation: true, autohide: true, delay: 12000 },
+
+    show: function(payload) {
+      const h = componentHelper;
+
+      const title = h.getText(payload.title);
+      const text = h.getText(payload.text);
+      const sentTime = Date.now();
+
+      const options = {
+        ...this.defaults,
+        animation: h.getBoolean(payload.animatedFade, this.defaults.animation),
+        autohide: h.getBoolean(payload.autoHide, this.defaults.autohide),
+        delay: h.getInt(payload.hideDelay, this.defaults.delay),
+      };
+
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      h.setAttributes(toast, {
+        "role": "alert",
+        "aria-live": "assertive",
+        "aria-atomic": "true",
       });
-  }, interval);
-}
 
-function createWebSocketConnection() {
-  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const host = window.location.hostname;
-  const port = window.location.port ? `:${window.location.port}` : "";
-  const websocketEndpoint = "/live-updates";
-  const websocketUrl = `${protocol}//${host}${port}${websocketEndpoint}`;
+      const header = document.createElement("div");
+      header.className = "toast-header";
 
-  const websocket = new WebSocket(websocketUrl);
+      const headerTitle = Object.assign(document.createElement("strong"), { className: "me-auto", innerHTML: title });
 
-  websocket.onopen = () => {
-    console.log("WebSocket: Connection opened");
-    setConnectedStatus();
-  };
+      const timestamp = document.createElement("small");
+      const preciseTime = this._getFullTimestamp(sentTime);
+      h.setAttributes(timestamp, {
+        "data-bs-toggle": "tooltip",
+        "data-bs-title": preciseTime,
+      });
+      const timestampTooltip = new bootstrap.Tooltip(timestamp);
 
-  websocket.onmessage = (event) => {
-    if (typeof event.data === "string") {
-      const receivedString = event.data;
-      if (receivedString.trim().length !== 0) {
-        try {
-          const payload = JSON.parse(receivedString);
-          //console.log("WebSocket: Received JSON data:", payload); // For debugging
-          for (let i = 0; i < payload.length; i++) {
-            try {
-              const func = window[payload[i].func];
-              if (typeof func === "function") {
-                func(payload[i]);
-              } else {
-                console.error("MM: Error while processing payload. Couldn't find function:", payload[i].func);
-              }
-            } catch (error) {
-              console.error("MM: Error in processing payload loop:", error);
-            }
-          }
-        } catch (error) {
-          console.log("WebSocket: Received text data:", receivedString);
-          console.error("MM: Error parsing JSON:", error);
+      const closeBtn = Object.assign(document.createElement("button"), { className: "btn-close" });
+      h.setAttributes(closeBtn, {
+        "type": "button",
+        "data-bs-dismiss": "toast",
+        "aria-label": "Close",
+      });
+
+      header.append(headerTitle, timestamp, closeBtn);
+
+      const body = Object.assign(document.createElement("div"), { className: "toast-body", innerHTML: text });
+      body.hidden = !text;
+
+      toast.append(header, body);
+
+      const timerState = { active: true };
+      this._startSmartTimer(timestamp, sentTime, timerState);
+
+      toast.addEventListener("hidden.bs.toast", () => {
+        timerState.active = false;
+        clearTimeout(timerState.timerId);
+
+        timestampTooltip.dispose();
+
+        const bsToast = bootstrap.Toast.getInstance(toast);
+        if (bsToast) {
+          bsToast.dispose();
         }
+
+        toast.remove();
+      });
+
+      document.getElementById("toastContainer")?.append(toast);
+      const bsToast = new bootstrap.Toast(toast, options);
+      bsToast.show();
+    },
+
+    _getFullTimestamp: (function() {
+      try {
+        const locale = document.documentElement.lang || "en";
+        const options = {
+          year: "numeric", month: "short", day: "numeric",
+          hour: "2-digit", minute: "2-digit", second: "2-digit",
+          hour12: false,
+        };
+        const dtf = new Intl.DateTimeFormat(locale, options);
+        return (time) => dtf.format(time);
+      } catch (e) { // fallback
+        return (time) => new Date(time).toISOString().replace("T", " ").split(".")[0];
       }
-    } else if (event.data instanceof Blob) {
-      console.log("WebSocket: Received binary data (Blob):", event.data);
-    } else if (event.data instanceof ArrayBuffer) {
-      console.log("WebSocket: Received binary data (ArrayBuffer):", event.data);
-    } else {
-      console.log("WebSocket: Received unknown data type:", event.data);
+    })(),
+
+    _startSmartTimer: function(element, start, state) {
+      if (!state?.active || !element?.isConnected) return;
+
+      const sec = this._updateTimestamp(element, start);
+
+      let nextDelay;
+      if (sec < 60) nextDelay = 1000;
+      else if (sec < 3600) nextDelay = (60 - (sec % 60)) * 1000 + 100;
+      else nextDelay = (3600 - (sec % 3600)) * 1000 + 100;
+
+      state.timerId = setTimeout(() => this._startSmartTimer(element, start, state), nextDelay);
+    },
+
+    _updateTimestamp: (function() {
+      const rtf = (typeof Intl !== "undefined" && Intl.RelativeTimeFormat)
+        ? new Intl.RelativeTimeFormat(document.documentElement.lang || "en", { numeric: "auto" })
+        : null;
+
+      const units = [
+        { max:       60, name: "second", div:     1 },
+        { max:     3600, name: "minute", div:    60 },
+        { max:    86400, name: "hour",   div:  3600 },
+        { max: Infinity, name: "day",    div: 86400 },
+      ];
+
+      return function(element, start) {
+        const sec = Math.floor((Date.now() - start) / 1000);
+        const unit = units.find(u => sec < u.max) || units[units.length - 1];
+        const value = Math.floor(sec / unit.div);
+
+        if (element)
+          element.textContent = rtf
+            ? rtf.format(-value, unit.name)
+            : `${value} ${unit.name}${value === 1 ? '' : 's'} ago`; // This solution is locked to English, but it's a fallback
+
+        return sec;
+      };
+    })(),
+
+  },
+
+  relativeTime: (function() {
+      const rtf = (typeof Intl !== "undefined" && Intl.RelativeTimeFormat)
+        ? new Intl.RelativeTimeFormat(document.documentElement.lang || "en", { numeric: "auto" })
+        : null;
+
+      const units = [
+        { max:       60, name: "second", div:     1 },
+        { max:     3600, name: "minute", div:    60 },
+        { max:    86400, name: "hour",   div:  3600 },
+        { max: Infinity, name: "day",    div: 86400 },
+      ];
+
+      return function(start) {
+        const sec = Math.floor((Date.now() - start) / 1000);
+        const unit = units.find(u => sec < u.max) || units[units.length - 1];
+        const value = Math.floor(sec / unit.div);
+
+        return rtf
+          ? rtf.format(-value, unit.name)
+          : `${value} ${unit.name}${value === 1 ? '' : 's'} ago`; // This solution is locked to English, but it's a fallback
+      };
+    })(),
+
+};
+
+const componentRegistry = {
+  register: function(component) {
+    const { typeName } = component;
+    this[typeName] = component;
+
+    for (let key in component) {
+      if (typeof component[key] !== "function") continue;
+
+      const originalFn = component[key];
+
+      if (key.startsWith("update_")) {
+        component[key] = (payload) => {
+          const instance = componentHelper.getInstance(payload.id);
+          if (componentHelper.isValidInstance(instance, typeName)) {
+            originalFn.call(component, instance, payload);
+          }
+        };
+      } else if (key === "insert") {
+        component[key] = (parentInstance, payload) => {
+          originalFn.call(component, parentInstance, payload);
+          componentHelper.eventInit();
+        };
+      } else if (key === "remove") {
+        component[key] = (instance) => {
+          originalFn.call(component, instance);
+        };
+      }
     }
-    hideSpinner();
-    if (document.querySelector('.nav-link')) {
-      hideNoContentText();
-    } else {
-      showNoContentText();
-    }
-  };
-
-  websocket.onclose = () => {
-    console.log("WebSocket: Connection closed");
-    setDisconnectedStatus();
-    startConnectionMonitor(2);
-  };
-
-  websocket.onerror = (error) => {
-    console.log("WebSocket Error:", error);
-    setDisconnectedStatus();
-    startConnectionMonitor(2);
-  };
-
-  return websocket;
+  },
 }
 
-let appWebSocket;
-document.addEventListener("DOMContentLoaded", () => {
-  new bootstrap.Tooltip(document.getElementById("connected-status"));
+let debouncedLayoutFn = null;
 
-  appWebSocket = createWebSocketConnection();
+const componentHelper = Object.freeze({
+  getInstance: (id) => (instances[id] ??={
+    id, type: null, parentID: null, element: null,
+    children: [ ], state: { }, parts: { },
+  }),
+
+  getParentOfInstance: (instance) => {
+    return instances[instance.parentID];
+  },
+
+  prepareInstance: function(id, typeName, parentID) {
+    if (instances[id]?.element) this.removeInstance(id);
+    const instance = this.getInstance(id);
+    instance.type = typeName;
+    instance.parentID = parentID;
+    return instance;
+  },
+
+  isValidInstance: (instance, type) => !!(instance?.element && (!type || instance.type === type)),
+
+  removeInstance: function(id) {
+    const instance = instances[id];
+    if (!instance) return;
+
+    if (instance.parentID) {
+      const parent = instances[instance.parentID];
+      if (this.isValidInstance(parent)) {
+        componentRegistry[parent.type]?.remove_child?.(parent, instance);
+        const index = parent.children.indexOf(instance);
+        if (index !== -1) parent.children.splice(index, 1);
+      }
+    }
+    while (instance.children?.length > 0) {
+      this.removeInstance(instance.children[0].id);
+    }
+
+    componentRegistry[instance.type]?.remove?.(instance);
+
+    instance.element?.remove();
+    instance.element = null;
+    instance.children = null;
+    instance.state = null;
+    instance.parts = null;
+
+    delete instances[id];
+  },
+
+  insertNewChild: function(parentInstance, payload) {
+    const component = componentRegistry[payload.childType];
+    if (!component) return;
+
+    const childInstance = component.create(payload);
+    const children = parentInstance.children;
+    const targetIndex =  this.getIntInRange(payload.childPosition, 1, children.length + 1, children.length + 1) - 1;
+
+    children.splice(targetIndex, 0, childInstance);
+
+    if (targetIndex >= children.length - 1) {
+      parentInstance.element.append(childInstance.element);
+    } else {
+      children[targetIndex + 1].element.before(childInstance.element);
+    }
+    return childInstance;
+  },
+
+  moveChild: function(parentInstance, payload) {
+    const children = parentInstance.children;
+    const oldIndex = this.getIntInRange(payload.oldIndex, 1, children.length) - 1;
+    const newIndex = this.getIntInRange(payload.newIndex, 1, children.length) - 1;
+    if (oldIndex === newIndex) return;
+
+    const [ movingChild ] = children.splice(oldIndex, 1);
+    children.splice(newIndex, 0, movingChild);
+
+    if (newIndex >= children.length - 1) {
+      parentInstance.element.append(movingChild.element);
+    } else {
+      children[newIndex + 1].element.before(movingChild.element);
+    }
+  },
+
+  moveTab: function(instance, payload) {
+    const navbar = document.getElementById("tabNavBar");
+    if (!navbar || !instance.parts?.li) return;
+
+    const li = instance.parts.li;
+    const numTabs = navbar.children.length;
+
+    const oldIndex = this.getIntInRange(payload.oldIndex, 1, numTabs) - 1;
+    const newIndex = this.getIntInRange(payload.newIndex, 1, numTabs) - 1;
+    if (oldIndex == newIndex) return;
+
+    li.remove()
+
+    const adjusted = (oldIndex < newIndex) ? newIndex - 1 : newIndex;
+    if (adjusted >= navbar.children.length) {
+      navbar.append(li);
+    } else {
+      navbar.children[adjusted].before(li);
+    }
+  },
+
+  reorderChildren: function(parentInstance, payload) {
+    if (!Array.isArray(payload.newOrder)) return;
+    const oldChildren = parentInstance.children;
+
+    parentInstance.children = payload.newOrder.map(pos => {
+      return oldChildren[this.getIntInRange(pos, 1, oldChildren.length) - 1];
+    });
+
+    const elements = parentInstance.children.map(c => c.element).filter(Boolean);
+    parentInstance.element.replaceChildren(...elements);
+  },
+
+  reorderTabs: function(payload) {
+    if (!Array.isArray(payload.newOrder)) return;
+
+    const navbar = document.getElementById("tabNavbar");
+    if (!navbar) return;
+
+    const oldList = Array.from(navbar.children);
+    const numTabs = oldList.length;
+
+    const newList = payload.newOrder.map(pos => {
+      const index = this.getIntInRange(pos, 1, numTabs) - 1;
+      return oldList[index];
+    }).filter(Boolean);
+
+    navbar.replaceChildren(...newList);
+  },
+
+  debounce: function(func, wait) {
+    let timeout;
+    return function(...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+  },
+
+  eventInit: function() {
+    if (!debouncedLayoutFn) {
+      const delay = isLowEndMachine ? 200 : 100;
+      debouncedLayoutFn = this.debounce(() => {
+        tabMasonry.forEach(masonryInstance => masonryInstance.layout());
+      }, delay);
+    }
+
+    const collapses = document.getElementsByClassName("collapse");
+    for (const element of collapses) {
+      if (element.dataset.mmObserved) continue;
+      element.dataset.mmObserved = "true";
+
+      const events = isLowEndMachine
+        ? [ "hidden.bs.collapse", "shown.bs.collapse" ]
+        : [ "hide.bs.collapse", "hidden.bs.collapse", "show.bs.collapse", "shown.bs.collapse"];
+      
+      events.forEach(event => element.addEventListener(event, debouncedLayoutFn));
+    }
+  },
+
+  // Getters
+  getInt: (val, fb = 0) => {
+    if (val == null || val === "") return fb;
+    const num = Number(val);
+    return isNaN(num) ? fb : num;
+  },
+  getIntInRange: function(val, min, max, fb) {
+    const n = this.getInt(val, fb);
+    return Math.max(min, Math.min(n, max));
+  },
+  getFloat: (val, fb = 0.0) => {
+    if (val == null || val === "") return fb;
+    const num = parseFloat(val);
+    return isNaN(num) ? fb : num;
+  },
+  getText: (function() {
+    const options = {
+      ALLOWED_TAGS: ['b', 'i', 'strong', 'em', 'code', 'span', 'br', 'div'],
+      ALLOWED_ATTR: ['class', 'style'],
+      KEEP_CONTENT: true,
+    };
+    return function(text, fb = null) {
+      if (!text) return fb;
+      return DOMPurify.sanitize(text.replace(/\n/g, "<br/>"), options);
+    };
+  })(),
+  setAttributes: (el, attrs) => Object.entries(attrs).forEach(([k, v]) => v != null && el.setAttribute(k, v)),
+  getBoolean: (function() {
+    const truthy = new Set(['true', '1', 'yes']);
+    const falsy = new Set(['false', '0', 'no']);
+    return function(bool, fb = null) {
+      if (typeof bool === 'boolean') return bool;
+      if (bool == null) return fb;
+
+      const lower = String(bool).toLowerCase().trim();
+      if (truthy.has(lower)) return true;
+      if (falsy.has(lower)) return false;
+      return fb;
+    };
+  })(),
+  getColor: (function() {
+    // https://getbootstrap.com/docs/5.3/utilities/colors/
+    const validBootstrapColors = new Set([
+      "primary", "secondary",
+      "success", "danger",
+      "warning", "info",
+      "light", "dark",
+      "white", "black",
+      "body",
+    ]);
+    return function(color, fb = null) {
+      if (color == null) return fb;
+      if (validBootstrapColors.has(color)) return color;
+      const lower = String(color).toLowerCase().trim();
+      return validBootstrapColors.has(lower) ? lower : fb;
+    };
+  })(),
+  getWidth: (function() {
+    const validBootstrapWidths = new Set([
+      "25", "50", "75", "100", "auto"
+    ]);
+    return function(width, fb = "100") {
+      if (width == null) return fb;
+      if (validBootstrapWidths.has(width)) return width;
+      const lower = String(width).toLowerCase().trim();
+      return validBootstrapWidths.has(lower) ? lower : fb;
+    };
+  })(),
 });
 
-function websocketSend(data) {
-  if (!appWebSocket) {
-    console.error("MM: Tried to send data while websocket isn't initialized.")
-    return false;
-  }
-  if (appWebSocket.readyState !== WebSocket.OPEN) {
-    console.error("MM: Tried to send data while websocket wasn't open.")
-    return false;
-  }
+const ActionProcessor = {
+  process: function(messages) {
+    if (!Array.isArray(messages)) return;
 
-  try {
-    appWebSocket.send(JSON.stringify(data));
+    messages.forEach(payload => {
+      try {
+        if (payload.action === "toast") {
+          UI.Toast.show(payload);
+          return;
+        }
+
+        const handler = this.actions[payload.action];
+        if (handler) {
+          handler(payload);
+        } else {
+          console.error(`MM: Unknown action '${payload.action}'`, payload);
+        }
+      } catch (e) {
+        console.error("MM: Dispatcher error:", e, payload);
+      }
+    });
+
+    UI.toggleNoContent();
+    UI.setLoading(false);
+  },
+
+  actions: {
+    "limits": (payload) => {
+      if (Network._receivedLimits)
+        return
+      Network.limits = {
+        maxFrameSize: payload.maxFrameSize,
+        maxMessageSize: payload.maxMessageSize,
+      };
+      Network._receivedLimits = true;
+    },
+
+    "new": (payload) => componentRegistry["Tab"]?.create(payload),
+
+    "insert": (payload) => {
+      const parent = componentHelper.getInstance(payload.parentID);
+      const comp = componentRegistry[parent.type];
+      if (comp?.insert) {
+        comp.insert(parent, payload)
+        componentHelper.eventInit();
+      }
+    },
+
+    "update": (payload) => {
+      const instance = componentHelper.getInstance(payload.id);
+      const parent = componentHelper.getInstance(instance.parentID);
+      const parentComp = componentRegistry[parent.type];
+      
+      const parentFunc = `update_child_${payload.field}`;
+      if (parentComp && typeof parentComp[parentFunc] === "function") {
+        parentComp[parentFunc](payload);
+        return;
+      }
+
+      const comp = componentRegistry[instance.type];
+      const func = `update_${payload.field}`;
+      if (comp && typeof comp[func] === "function") {
+        comp[func](payload);
+      }
+    },
+
+    "move": (payload) => {
+      const instance = componentHelper.getInstance(payload.id);
+
+      if (instance.parentID == null && instance.type == "Tab") {
+        componentHelper.moveTab(instance, payload);
+        return;
+      }
+
+      const parent = componentHelper.getInstance(instance.parentID);
+      const comp = componentRegistry[parent.type];
+      (comp?.moveChild || componentHelper.moveChild)(parent, payload);
+    },
+
+    "reorder": (payload) => {
+      if (payload.id == null) {
+        componentHelper.reorderTabs(payload);
+        return;
+      }
+      
+      const parent = componentHelper.getInstance(payload.id);
+      const comp = componentRegistry[parent.type];
+      (comp?.reorderChildren || componentHelper.reorderChildren)(parent, payload);
+    },
+
+    "remove": (payload) => componentHelper.removeInstance(payload.id),
+
+    "setTitle": (payload) => {
+      const title = componentHelper.getText(payload.title);
+      document.title = title;
+
+      const element = document.querySelector("nav .navbar-brand.h1");
+      if (element) {
+        element.textContent = title;
+      }
+    },
+  },
+};
+
+const Network = {
+  socket: null,
+  _monitoring: false,
+  limits: { maxFrameSize: 0, maxMessageSize: 0 },
+  _receivedLimits: false,
+
+  connect: function() {
+    const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    const url = `${protocol}//${location.host}/live-updates`;
+
+    this.socket = new WebSocket(url);
+
+    this.socket.onopen = () => UI.setStatus(true);
+    this.socket.onclose = () => { UI.setStatus(false); this.monitor(); };
+    this.socket.onerror = () => UI.setStatus(false); // Should we try to reopen the socket?
+
+    this.socket.onmessage = (e) => {
+      if (typeof e.data !== "string") return;
+      try {
+        const json = JSON.parse(e.data);
+
+        ActionProcessor.process(json);
+      } catch (e) {
+        console.error("MM: Socket Parse Error", e);
+      }
+    };
+  },
+
+  send: function(data) {
+    if (this.socket?.readyState !== WebSocket.OPEN) {
+      return false;
+    }
+
+    const payload = JSON.stringify(data);
+    const size = payload.length;
+
+    if (this._receivedLimits && size > this.limits.maxMessageSize) {
+      console.warn(`MM: Message too big (${size} > ${this.limits.maxMessageSize}). Chunk it or reduce payload.`);
+      return false;
+    }
+
+    this.socket.send(payload);
     return true;
-  } catch (error) {
-    console.error("WebSocket: Error sending data:", error, data)
-    return false;
-  }
-}
+  },
+
+  _fetchTimeout: function(url, ms, options = { }) {
+    const controller = new AbortController();
+    const promise = fetch(url, { signal: controller.signal, ...options });
+
+    if (options.signal) {
+      options.signal.addEventListener("abort", () => controller.abort());
+    }
+
+    const timeoutId = setTimeout(() => controller.abort(), ms);
+    return promise.finally(() => clearTimeout(timeoutId));
+  },
+
+  monitor: function() {
+    if (this._monitoring) return;
+    this._monitoring = true;
+
+    const check = () => {
+      this._fetchTimeout("/api/ping", 1900)
+        .then(r => {
+          if (r.status === 204) {
+            location.reload();
+          } else {
+            setTimeout(check, 2000);
+          }
+        })
+        .catch(() => setTimeout(check, 2000));
+    };
+    check();
+  },
+};
+
+// INIT
+document.addEventListener("DOMContentLoaded", () => {
+  new bootstrap.Tooltip(document.getElementById("connected-status"));
+  Network.connect();
+});
+
+// Component Loading (Mustache)
+// Ignore any IDE errors
+{{#components}}
+(function(helper, registry) {
+{{&.}}
+})(componentHelper, componentRegistry);
+{{/components}}

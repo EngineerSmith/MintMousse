@@ -37,7 +37,7 @@ componentLogic.loadComponentLogic = function(componentTypeName)
     return
   end
 
-  local componentLogicLoadFail = "Failed to load component logic! For: " .. componentTypeName .. ". Reason:"
+  local componentLogicLoadFail = "Failed to load component logic! For '" .. componentTypeName .. "'. Reason:"
 
   local success, chunk, errorMessage = pcall(lfs.load, path)
   loggerLogic:assert(success, componentLogicLoadFail, chunk)
@@ -55,12 +55,12 @@ componentLogic.loadComponentLogic = function(componentTypeName)
   end
 
   -- Per function
-  if type(componentType.componentLogic.onCreate) ~= "function" then
+  if componentType.componentLogic.onCreate ~= nil and type(componentType.componentLogic.onCreate) ~= "function" then
     loggerLogic:warning(componentLogicLoadFail, "'onCreate' wasn't type function.")
     componentType.componentLogic.onCreate = nil
   end
 
-  if type(componentType.componentLogic.onChildCreate) ~= "function" then
+  if componentType.componentLogic.onChildCreate ~= nil and type(componentType.componentLogic.onChildCreate) ~= "function" then
     loggerLogic:warning(componentLogicLoadFail, "'onChildCreate' wasn't type function.")
     componentType.componentLogic.onChildCreate = nil
   end
@@ -131,6 +131,10 @@ componentLogic.run = function(component, parentComponent)
   end
 
   -- Parent
+  if not parentComponent then
+    return
+  end
+
   if parentComponent.type == "unknown" then
     return
   end

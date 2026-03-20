@@ -132,8 +132,8 @@ action.newTab = function(id, title, index, threadOwner)
   -- TODO replace with the equivalent controller.update
   local tabType = -- todo see other component Type comments
   controller.update(json.encode({
-    func = tabType.hasNewFunction and "tab_new" or NTLogger:error("Unreachable code; tab_new is missing from tab.js"),
-    id = state.toWebsiteID(tab),
+    func  = tabType.hasNewFunction and "tab_new" or NTLogger:error("Unreachable code; tab_new is missing from tab.js"),
+    id    = state.toWebsiteID(tab),
     index = index,
     title = tab.title,
   }))
@@ -191,8 +191,8 @@ action.updateComponent = function(id, index, value)
     component[index] = value
 
     controller.update(json.encode({ -- todo replace controller.update
-      func = ("%s_update_%s"):format(component.type, index),
-      id = state.toWebsiteID(component),
+      func    = ("%s_update_%s"):format(component.type, index),
+      id      = state.toWebsiteID(component),
       [index] = type(value) == "string" and util.sanitizeText(value) or value,
     }))
   end
@@ -222,10 +222,10 @@ action.updateParentComponent = function(parentID, childID, index, value)
     childComponent[index] = value
 
     controller.update(json.encode({ -- todo replace controller.update
-      func = ("%s_update_child_%s"):format(parentComponent.type, index),
+      func     = ("%s_update_child_%s"):format(parentComponent.type, index),
       parentID = state.toWebsiteID(parentComponent),
-      id = state.toWebsiteID(childComponent),
-      [index] = type(value) == "string" and util.sanitizeText(value) or value,
+      id       = state.toWebsiteID(childComponent),
+      [index]  = type(value) == "string" and util.sanitizeText(value) or value,
     }))
   end
 end
@@ -255,7 +255,7 @@ action.removeChildren = function(id)
 
   local package = {
     func = "removeComponent",
-    id = state.toWebsiteID(component),
+    id   = state.toWebsiteID(component),
   }
 
   local componentType = -- todo see type comments

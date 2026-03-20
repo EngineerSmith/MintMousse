@@ -87,7 +87,7 @@ logger.error = function(self, ...)
   -- Always get debug info for errors
   dispatchToSinks("error", self, time, stack.getDebugInfo(), ...)
 
-  if mintmousse.LOG_ENABLE_ERROR or love.isMintMousseThread then
+  if mintmousse.LOG_ENABLE_ERROR or isMintMousseThread then
     local logMessage = table.concat({ ... }, " ")
     local logging = require(PATH)
     logging.isInsideError = true

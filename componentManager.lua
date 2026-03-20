@@ -1,7 +1,7 @@
 local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
-local threadCommunication = require(PATH .. "threadCommunication")
+local threadCommand = require(PATH .. "threadCommand")
 local componentLogic = require(PATH .. "componentLogic")
 local proxyTable = require(PATH .. "proxyTable")
 local contract = require(PATH .. "contract")
@@ -43,7 +43,6 @@ componentManager.addComponent = function(component, parentID, index)
   component.id = autocorrectID(component.id)
 
   component.parentID = parentID
-  component.creator = mintmousse._threadID
 
   local success, errorMessage = utilID.isValidID(component.id)
   loggerComponent:assert(success, "Gave invalid ID. Reason:", errorMessage)
@@ -52,21 +51,19 @@ componentManager.addComponent = function(component, parentID, index)
   loggerComponent:assert(type(component.type) == "string", componentTypeIssue, "Component.type isn't type string")
 
   local cannotCreateType = "Cannot create a component with type:"
-  loggerComponent:assert(component.type == "unknown", componentTypeIssue, cannotCreateType, "'unknown'. This is a protected keyword.")
-  loggerComponent:assert(component.type == "tab", componentTypeIssue, cannotCreateType, "'tab'. Please use mintmousse.newTab().")
+  loggerComponent:assert(component.type ~= "unknown", componentTypeIssue, cannotCreateType, "'unknown'. This is a protected keyword.")
+  loggerComponent:assert(component.type ~= "tab", componentTypeIssue, cannotCreateType, "'tab'. Please use mintmousse.newTab().")
 
   local componentType = contract.componentTypes[component.type]
   loggerComponent:assert(componentType, componentTypeIssue, "This type does not exist:", component.type)
-  loggerComponent:assert(componentType.hasMustacheFile or componentType.hasNewFunction, componentTypeIssue, "Cannot create a component with type:", "'"..component.type.."'.", "As it does not have a construction method (JS or HTML).")
+  loggerComponent:assert(componentType.hasCreateFunction, componentTypeIssue, "Cannot create a component with type:", "'"..component.type.."'.", "As it does not have a construction method (Couldn't find a JS function named 'create').")
 
   componentLogic.run(component)
 
-  component.parentID = nil
-  threadCommunication.push({
-      func = "addComponent",
-      component, parentID, index, mintmousse._threadID,
-    })
-  component.parentID = parentID
+  threadCommand.call("addComponent", {
+    component = component,
+    index = index,
+  })
 
   return componentManager._createProxyTable(component)
 end
@@ -75,22 +72,22 @@ componentManager.newTab = function(title, id, index)
   id = id or utilID.generateID()
 
   local success, errorMessage = utilID.isValidID(id)
-  loggerComponent:assert(success, "Couldn't create tab with given ID. Reason:", errorMessage)
+  loggerComponent:assert(success, "Couldn't create tab with given ID:", id, ". Reason:", errorMessage)
 
   local component = {
     id = id,
-    type = "tab",
+    type = "Tab",
     title = title,
     parentID = nil,
-    creator = mintmousse._threadID,
   }
 
   componentLogic.run(component)
 
-  threadCommunication.push({
-      func = "newTab",
-      id, title, index, mintmousse._threadID,
-    })
+  threadCommand.call("newTab", {
+    id = id,
+    title = title,
+    index = index,
+  })
 
   return componentManager._createProxyTable(component)
 end
@@ -116,9 +113,8 @@ componentManager.removeComponent = function(id)
   local success, errorMessage = utilID.isValidID(id)
   loggerComponent:assert(success, "Gave invalid ID for removal. Gave:", id, ". Reason:", errorMessage)
 
-  threadCommunication.push({
-    func = "removeComponent",
-    id,
+  threadCommand.call("removeComponent", {
+    id = id,
   })
   componentManager.cleanupProxy(id)
 end

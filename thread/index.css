@@ -1,11 +1,25 @@
-@keyframes pulse {
-  0% { opacity: 0.7; transform: scale(1); background-color: #4cd164; }
- 50% { opacity: 1; transform: scale(1.2); background-color: #28a745; }
-100% { opacity: 0.7; transform: scale(1); background-color: #4cd164; }
+#connected-status,
+#disconnected-status {
+  padding: 0 !important;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse-glow {
+  0% { transform: scale(0.92); box-shadow: 0 0 0 0   rgba(76, 209, 100, 0.8); background-color: #28a745; }
+ 70% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(76, 209, 100, 0.0); background-color: #4cd164; }
+100% { transform: scale(0.92); box-shadow: 0 0 0 0   rgba(76, 209, 100, 0.0); background-color: #28a745; }
 }
 
 #connected-status.pulsing {
-  animation: pulse 1.5s infinite alternate;
+  animation: pulse-glow 1.8s infinite ease-in-out;
+}
+
+#disconnected-status-text {
+  font-size: 0.75rem;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .centered-spinner {
@@ -13,6 +27,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.toast-header small[data-bs-toggle="tooltip"] {
+  cursor: help;
+  text-decoration: underline dotted #6c757d;
 }
 
 body {
@@ -48,3 +67,10 @@ body {
 
   .gutter-sizer { width: 2%; }
 }
+
+/* Component Loading (Mustache) */
+/* Ignore any IDE errors */
+{{#components}}
+{{&.}}
+
+{{/components}}

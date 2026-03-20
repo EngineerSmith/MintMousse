@@ -1,21 +1,23 @@
-function cardTitle_new(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+componentRegistry.register({
+  typeName: "CardTitle",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const title = document.createElement("h4");
-  title.classList.add("card-title");
-  title.setAttribute("id", id);
-  title.innerHTML = text;
-  title.hidden = text === null;
+    const root = document.createElement("h4");
+    root.className = "card-title";
 
-  return title;
-}
+    instance.element = root;
 
-function cardTitle_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+    this.update_text(payload);
 
-  const title = document.getElementById(id);
-  title.innerHTML = text;
-  title.hidden = text === null;
-}
+    return instance;
+  },
+
+  update_text: function(instance, payload){
+    const text = helper.getText(payload.values.text);
+
+    instance.element.innerHTML = text;
+    instance.element.hidden = !text;
+  },
+
+});

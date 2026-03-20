@@ -1,20 +1,23 @@
-function cardSubtitle_new(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+componentRegistry.register({
+  typeName: "CardSubtitle",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const subtitle = document.createElement("h5");
-  subtitle.classList.add("card-subtitle", "text-body-secondary");
-  subtitle.setAttribute("id", id);
-  subtitle.innerHTML = text;
-  subtitle.hidden = text === null;
+    const root = document.createElement("h5");
+    root.className = "card-subtitle text-body-secondary";
 
-  return subtitle;
-}
+    instance.element = root;
 
-function cardSubtitle_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+    this.update_text(payload);
 
-  const subtitle = document.getElementById(id);
-  subtitle.innerHTML = text;
-}
+    return instance;
+  },
+
+  update_text: function(instance, payload){
+    const text = helper.getText(payload.values.text);
+
+    instance.element.innerHTML = text;
+    instance.element.hidden = !text;
+  },
+
+});

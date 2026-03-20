@@ -1,7 +1,13 @@
-function text_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text) ?? "";
+componentRegistry.register({
+  typeName: "Text",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const p = document.getElementById(id);
-  p.innerHTML = text;
-}
+    instance.element = document.createElement("p");
+
+    this.update_text(payload);
+
+    return instance;
+  },
+  update_text: (instance, payload) => instance.element.innerHTML = helper.getText(payload.values.text, ""),
+});

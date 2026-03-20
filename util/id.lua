@@ -30,11 +30,28 @@ id.generateID = function()
   return newID
 end
 
+local threadCounterChannel = love.thread.getChannel(mintmousse.THREAD_ID_COUNTER)
+-- init channel
+threadCounterChannel:performAtomic(function()
+  if threadCounterChannel:getCount() == 0 then
+    threadCounterChannel:push(0)
+  end
+end)
+
+id.getNewThreadID = function()
+  local id
+  threadCounterChannel:performAtomic(function()
+    id = threadCounterChannel:pop()
+    threadCounterChannel:push(id + 1)
+  end)
+  return id
+end
+
 local protectedKeywords = {
   ["all"]     = true,
   ["unknown"] = true,
 }
-local invalidPattern = "[^w%._,:;@]"
+local invalidPattern = "[^%w%._,:;@-]"
 
 id.isValidID = function(str)
   if type(str) ~= "string" then

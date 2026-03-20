@@ -1,6 +1,7 @@
 local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
+local codec = require(PATH .. "codec")
 
 local loggerContract = mintmousse._logger:extend("Contract")
 
@@ -21,23 +22,30 @@ contract.waitForComponents = function()
   local thread = love.thread.getChannel(mintmousse.READONLY_THREAD_LOCATION):peek()
   loggerContract:assert(thread, "MintMousse Thread object is unexpectedly missing.")
 
-  loggerContract:info("Blocking thread to load MintMousse components.")
-  local success, timeout = false, false
+  loggerContract:info("Blocking thread to wait for MintMousse component load.")
+  local timeout = false
 
   local start = love.timer.getTime()
-  while not success and not timeout and thread:isRunning() do
-    love.timer.sleep(1e-3)
-
+  while thread:isRunning() do
     contract.componentTypes = componentTypesChannel:peek()
+    if contract.componentTypes ~= nil then
+      break
+    end
 
-    success = contract.componentTypes ~= nil
-    timeout = love.timer.getTime() - start >= timeoutValue
+    if love.timer.getTime() - start >= timeoutValue then
+      timeout = true
+      break
+    end
+
+    love.timer.sleep(5e-4)
   end
   local timeElapsed = love.timer.getTime() - start
 
-  if success then
+  if contract.componentTypes ~= nil then
+    contract.componentTypes = codec.decode(contract.componentTypes)
+
     loggerContract:info("MintMousse components successfully loaded",
-      ("(took %.2fms)."):format(timeElapsed*1000))
+      ("(blocked main thread for %.2fms)."):format(timeElapsed*1000))
     return
   end
 

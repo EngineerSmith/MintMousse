@@ -1,37 +1,29 @@
-function cardFooter_new(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
-  const isTransparent = Boolean(payload.isTransparent ?? false);
+componentRegistry.register({
+  typeName: "CardFooter",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const footer = document.createElement("div")
-  footer.classList.add("card-footer", "text-body-secondary");
-  if (isTransparent)
-    footer.classList.add("bg-transparent");
+    const root = document.createElement("div");
+    root.className = "card-footer text-body-secondary";
 
-  footer.setAttribute("id", id);
-  footer.innerHTML = text;
-  footer.hidden = text === null;
+    instance.element = root;
 
-  return footer
-}
+    this.update_text(payload);
+    this.update_isTransparent(payload);
 
-function cardFooter_update_text(payload) {
-  const id = payload.id;
-  const text = getText(payload.text);
+    return instance;
+  },
 
-  const footer = document.getElementById(id);
-  footer.innerHTML = text;
-  footer.hidden = text === null;
-}
+  update_text: function(instance, payload){
+    const text = helper.getText(payload.values.text);
 
-function cardFooter_update_isTransparent(payload) {
-  const id = payload.id;
-  const isTransparent = Boolean(payload.isTransparent ?? false);
+    instance.element.innerHTML = text;
+    instance.element.hidden = !text;
+  },
 
-  const footer = document.getElementById(id);
-  if (isTransparent) {
-    footer.classList.add("bg-transparent");
-  } else {
-    footer.classList.remove("bg-transparent");
-  }
-}
+  update_isTransparent: function(instance, payload) {
+    const isTransparent = helper.getBoolean(payload.values.isTransparent, false);
+    instance.element.classList.toggle("bg-transparent", isTransparent);
+  },
+
+});

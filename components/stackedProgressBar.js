@@ -1,67 +1,56 @@
-function stackedProgressBar_new(payload) {
-  const id = payload.id;
+componentRegistry.register({
+  typeName: "StackedProgressBar",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const stackedProgressBar = document.createElement("div");
-  stackedProgressBar.classList.add("progress-stacked");
-  setAttributes(stackedProgressBar, {
-    "id": id,
-    "progressBarCounter": 0,
-  })
+    const root = document.createElement("div");
+    root.className = "progress-stacked";
+    
+    instance.element = root;
 
-  return stackedProgressBar;
-}
+    return instance;
+  },
 
-function stackedProgressBar_insert(payload) {
-  const id = payload.parentID;
-  const childID = payload.id;
+  insert: function(instance, payload) {
+    helper.insertNewChild(instance, payload);
+    this._refreshLayout(instance);
+  },
 
-  let percentage = getText(payload.percentage) ?? "0";
+  reorderChildren: function(instance, payload) {
+    helper.reorderChildren(instance, payload);
+    this._refreshLayout(instance);
+  },
 
-  const stackedProgressBar = document.getElementById(id);
-  const childContainer = insertPayload(stackedProgressBar, payload);
-  if (!childContainer.classList.contains("progress"))
-    return;
+  moveChild: function(instance, payload) {
+    helper.moveChild(instance, payload);
+    this._refreshLayout(instance);
+  },
 
-  let count = parseInt(stackedProgressBar.getAttribute("progressBarCounter"));
-  count++;
-  stackedProgressBar.setAttribute("progressBarCounter", count);
+  _refreshLayout: function(instance) {
+    const children = instance.children;
+    const progressBars = children.filter(c => c.type === "ProgressBar");
 
-  childContainer.setAttribute("aria-valuenow", percentage);
+    const totalPossibleValue = progressBars.length * 100;
 
-  const progressBarContainers = stackedProgressBar.querySelectorAll(".progress");
+    progressBars.forEach(child => {
+      const childRoot = child.element;
+      const childBar = child.parts.bar;
 
-  count *= 100;
-  progressBarContainers.forEach(bar => {
-    let percentage = parseInt(bar.getAttribute("aria-valuenow"));
-    percentage = String((percentage / count) * 100);
-    bar.style["width"] = percentage + "%";
-  });
+      const percentage = parseFloat(child.state.percentage) || 0;
+      const scaledWidth = (percentage / totalPossibleValue) * 100;
 
-  const child = document.getElementById(childID);
-  child.style["width"] = "";
+      childRoot.style.width = `${scaledWidth}%`;
+      if (childBar) {
+        childBar.style.width = "100%";
+      }
+    })
+  },
 
-  eventInit();
-}
+  update_child_percentage: function(childInstance, payload) {
+    childInstance.state.percentage = helper.getText(payload.values.percentage, "0");
 
-function stackedProgressBar_update_child_percentage(payload) {
-  const id = payload.parentID;
-  const childID = payload.id;
-  const childContainerID = childID + "-root";
+    componentRegistry["ProgressBar"]._updateVisuals(childInstance);
+    this._refreshLayout(helper.getParentOfInstance(childInstance));
+  },
 
-  const percentage = getText(payload.percentage) ?? "0";
-
-  const childContainer = document.getElementById(childContainerID);
-  if (!childContainer || !childContainer.classList.contains("progress"))
-    return; // non-progressBar container
-
-  const stackedProgressBar = document.getElementById(id);
-  const count = parseInt(stackedProgressBar.getAttribute("progressBarCounter"));
-
-  childContainer.style["width"] = String((parseInt(percentage) / (count * 100)) * 100) + "%";
-  childContainer.setAttribute("aria-valuenow", percentage);
-
-  const progressBar = document.getElementById(childID);
-  progressBar.style["width"] = "";
-  if (progressBar.dataset.showLabel === "true")
-    progressBar.textContent = truncateToTwoDecimalPlaces(percentage) + "%";
-}
+});

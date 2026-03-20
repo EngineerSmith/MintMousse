@@ -1,6 +1,6 @@
 -- Provides a custom, replacement implementation of love.errorhandler.
 -- This handler is based on Love's default logic, copied from 'callbacks.lua' 
--- at commit hash 2afa36f from November 2025 (love12).
+-- at commit hash 5670df1 from December 2025 (love12-unreleased).
 --
 -- The goal for this error handler was to inject MintMousse without changing the default
 -- function and it's behaviour. There are many ways to improve this error handler.
@@ -130,7 +130,7 @@ local errorhandler = function(msg)
 
     for e, a, b, c in love.event.poll() do
       if e == "quit" then
-        return 1
+        return a or 1, b
       elseif e == "keypressed" and a == "escape" then
         return 1
       elseif e == "keypressed" and a == "c" and love.keyboard.isDown("lctrl", "rctrl") then

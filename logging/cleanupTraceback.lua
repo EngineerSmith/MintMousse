@@ -18,6 +18,14 @@ local filterPatterns = {
     end,
     counts = 1,
   },
+  { -- Remove the 'logger.assert' instance call
+    pattern = "/logging/logger%.lua:%d+: in function 'assert'",
+    condition = function(lines, i)
+      local logging = require(PATH)
+      return logging.isInsideError and match(lines[i-1], "/logging/logger%.lua:%d+: in function 'error'")
+    end,
+    counts = 1,
+  },
   { -- Remove the `love.errorhandler` call
     pattern = "%.lua:%d+: in function 'handler'",
     condition = function(lines, i)

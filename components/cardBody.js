@@ -1,18 +1,16 @@
-function cardBody_new(payload) {
-  const id = payload.id;
+componentRegistry.register({
+  typeName: "CardBody",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const body = document.createElement("div");
-  body.classList.add("card-body");
-  body.setAttribute("id", id);
+    const root = document.createElement("div");
+    root.className = "card-body";
 
-  return body
-}
+    instance.element = root;
 
-function cardBody_insert(payload) {
-  const id = payload.parentID;
+    return instance;
+  },
 
-  const body = document.getElementById(id);
-  insertPayload(body, payload);
+  insert: (parentInstance, payload) => helper.insertNewChild(parentInstance.element, payload),
 
-  eventInit();
-}
+});

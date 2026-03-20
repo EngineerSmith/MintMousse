@@ -1,117 +1,87 @@
 --- Configuration for MintMousse Web Console Library.
--- These settings are primarily loaded at startup and should not be changed at runtime.
--- Expect runtime changes to not affect threads unless explicitly noted in the documentation.
--- Access these options via `love.mintmousse.<NAME>`, e.g. `love.mintmousse.SUBSCRIPTION_MAX_QUEUE_READ`.
+-- Primarily loaded at startup; runtime changes usually have no effect unless noted.
+-- Access via `mintmousse.<NAME>`, e.g. `mintmousse.MAX_HTTP_RECEIVE_SIZE`.
+
 local PATH = (...):match("^(.-)[^%.]+$") or ""
 local DIRECTORY_PATH = PATH:gsub("%.", "/")
 
 local mintmousse = {
   -- File paths and locations
   -----------------------------------------------------------------------------------------------------------------
-  -- Component paths. Later directories in the list will override same-named components from earlier directories.
-  COMPONENTS_PATHS = { DIRECTORY_PATH .. "components/" },
-  -- Default paths for base web page files.
-  DEFAULT_INDEX_HTML = DIRECTORY_PATH .. "thread/index.html", -- Location of the webpage's HTML file.
-  DEFAULT_INDEX_JS   = DIRECTORY_PATH .. "thread/index.js",     -- Location of the webpage's JavaScript file.
-  DEFAULT_INDEX_CSS  = DIRECTORY_PATH .. "thread/index.css",   -- Location of the webpage's CSS file.
+  COMPONENTS_PATHS = { DIRECTORY_PATH .. "components/" }, -- Directory searched for components (later entries override earlier)
 
-  -- General settings
+  -- File location for primary resources
+  DEFAULT_INDEX_HTML = DIRECTORY_PATH .. "thread/index.html",
+  DEFAULT_INDEX_JS   = DIRECTORY_PATH .. "thread/index.js",
+  DEFAULT_INDEX_CSS  = DIRECTORY_PATH .. "thread/index.css",
+
+  ZIP_MOUNT_LOCATION = ".MintMousse/", -- Directory for mounting archives (e.g. ZIPs with RFG.net icons).
+  FAVICON_PATH = "/favicon", -- HTTP endpoint for the icon - this should match 'favicon path' when using RFG.net icons
+
+  -- Network and Server settings
   -----------------------------------------------------------------------------------------------------------------
-  -- Maximum allowed size (in bytes) for incoming HTTP request bodies. Requests exceeding this limit will be rejected.
-  MAX_DATA_RECEIVE_SIZE = 50000,
+  SOCKET_BACKLOG = 32,                 -- Listen backlog. Max pending connections the OS will queue before refusing new ones.
 
-  TEMP_MOUNT_LOCATION = ".temp/MintMousse/", -- Directory for temporary zip file mounting.
+  MAX_HTTP_RECEIVE_SIZE = 2^16,       -- 65Kb: Max incoming HTTP body size. Rejects larger requests.
+  MAX_WEBSOCKET_FRAME_SIZE = 2^19,    -- 512Kb: Max size of a single WebSocket frame.
+  MAX_WEBSOCKET_MESSAGE_SIZE = 2^21,  -- 2Mb: Max total size of a fragmented WebSocket message
 
-  -- The Cache-Control HTTP header for static assets.
-  -- Use "no-store" for active development. For production, consider using a public cache with a long max-age.
-  -- For more information, see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control
-  CACHE_CONTROL_HEADER = "no-store",
+  CACHE_CONTROL_HEADER = "no-store",  -- Cache-Control header for static assets ("no-store" for dev in library) -- "public, max-age=3600"
 
-  -- The maximum time (seconds) a thread will actively poll and block for the MintMousse thread
-  -- to complete mandatory component type parsing. This synchronous wait can be significantly reduced
-  -- or eliminated by calling the preload script from your project's conf.lua, giving the
-  -- MintMousse thread a background head start.
-  COMPONENT_PARSE_TIMEOUT = 3,
+  COMPONENT_PARSE_TIMEOUT = 3,        -- Seconds: Max wait for component type parsing. Use preload script to reduce blocking.
 
-  -- If true, set's the error handler to one that contains 
-  REPLACE_DEFAULT_ERROR_HANDLER = true,
+  REPLACE_DEFAULT_ERROR_HANDLER = true, -- Replace Love's error handler with MintMousse's (adds logging & cleaned stack traces).
+
+  MAX_PORT_ATTEMPTS = 100,            -- Max sequential port bind attempts before aborting.
+
+  TIMEOUT_HTTP = 30,                  -- Seconds: Idle timeout for HTTP connections (sends 408).
+  TIMEOUT_WEBSOCKET = 60,             -- Seconds: Max idle time for WebSocket connections (includes pongs).
+  PING_WEBSOCKET = 30,                -- Seconds: Interval to send WebSocket ping frames for heartbeat.
 
   -- Logging settings
   -----------------------------------------------------------------------------------------------------------------
-  -- If true, prefixes all log messages with a timestamp
-  LOG_ENABLE_TIMESTAMP = true,
+  LOG_ENABLE_TIMESTAMP = true,        -- Prefix log messages with timestamp
+  LOG_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f", -- Timestamp format (supports %f for ms)
 
-  -- The format string for the timestamp, based on Lua's os.date() format codes. The non-standard '%f'
-  -- placeholder is support for milliseconds, and will be replaced by a 3-digit padding number. (E.g. '042').
-  -- There is a performance benefit to having milliseconds at the end of the format.
-  LOG_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S.%f",
+  LOG_ENABLE_STREAM_OUT = true,       -- Enable logging to stdout/stderr (mimics print; strips ANSI in files).
+  LOG_ENABLE_ERROR = true,            -- Call error() on ERROR logs (halts with traceback).
+  LOG_INCLUDE_TRACE = false,          -- Include `file:line` in all log levels (performance cost)
 
-  -- If true, enable the library's logging sink that writes logs to io.stdout and io.stderr.
-  -- The logs will appear on the screen, similar to using the global 'print' function.
-  LOG_ENABLE_STREAM_OUT = true,
+  LOG_WARNINGS_CAUSE_ERRORS = false,  -- Promote WARNINGs to ERRORs (halts if LOG_ENABLE_ERROR == true).
+  LOG_WARNINGS_INCLUDE_TRACE = false, -- Include `file:line` in WARNING logs without effecting other levels.
 
-  -- If true, ERROR level logs will call the global 'error' function, causing the application to
-  -- halt and display a traceback. Setting this to false prevents fatal crashes on errors, but may result
-  -- in unexpected code flow states.
-  LOG_ENABLE_ERROR = true,
+  REPLACE_FUNC_PRINT = true,          -- Replace global print with logger.debug (original available as GLOBAL_print)
+                             -- Warning: GLOBAL_print is not thread-safe and may cause interleaved/garbled output in multi-threaded code.
 
-  -- If true, include source location information (file and line number) in all levels of logs.
-  -- This helps trace where the log was called from, but can have an adverse effect on performance.
-  LOG_INCLUDE_TRACE = false,
+  LOG_CLEAR_UP_TRACEBACK = true,      -- Clean internal MintMousse & Love calls from tracebacks in logs & error handler.
 
-  -- If true, all WARNING level logs will be promoted to ERRORS, causing the application to halt
-  -- and traceback (assuming LOG_ENABLED_ERROR is also true). Useful for strict enforcement.
-  LOG_WARNINGS_CAUSE_ERRORS = false,
+  LOG_BUFFER_SIZE = 2^20,             -- 1Mb: Stdout buffer size. Increase if output garbles; call mintmousse.flushLogs() as needed.
 
-  -- If true, includes source location information (file and line number) in all WARNING level logs.
-  -- This helps trace where the warning was called from.
-  LOG_WARNINGS_INCLUDE_TRACE = false,
-
-  -- If true, replaces the global 'print' function with a wrapper that directs output to `logger.debug`.
-  -- The original function can still be access via `GLOBAL_print` global variable created by logger.lua
-  REPLACE_FUNC_PRINT = true,
-
-  -- If true, MintMousse's traceback cleanup function is applied to tracebacks processed by its internal
-  -- logging sink (FATAL level) and the custom `love.errorhandler`. This removes internal library calls and
-  -- Love framework noise from the callstack. Note: This does not affect user-added sinks.
-  LOG_CLEAR_UP_TRACEBACK = true,
-
-  -- Size (in bytes) for the stdout buffer. Critical for performance (removes I/O latency)
-  -- and thread safety (prevents interleaved writes)
-  -- WARNING: Overflow triggers an uncontrolled flush, bypassing thread locks.
-  -- Increase this size if you experience garbled output, or add more calls to `love.mintmousse.flushLogs`
-  LOG_BUFFER_SIZE = 1024 * 1024, -- 1MB
-
-  -- Thread communication settings
+  -- Thread settings
   -----------------------------------------------------------------------------------------------------------------
-  -- The maximum number of updates to read from the poll queue to prevent blocking behaviour.
-  -- This is a runtime-editable (per thread) setting.
-  POLL_MAX_READ = 50,
+  POLL_MAX_READ = 50,                 -- Max messages read per poll operation (runtime-editable per thread)
 
-  -- IDs used for love.thread Channels.
+  MAX_THREAD_MESSAGES = 100,          -- Max commands processed per MintMousse thread loop.
+
+  THREAD_SLEEP = 1e-4,                -- Seconds: Sleep time between thread loop iterations.
+
+  -- Channel / Event IDs
+  -----------------------------------------------------------------------------------------------------------------
   -- Only change these if they conflict with IDs already in use in your project.
+
+  -- Channel
   READONLY_THREAD_LOCATION      = "MintMousseThread",
   THREAD_COMMAND_QUEUE_ID       = "MintMousse",
   READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary",
-  THREAD_COMPONENT_UPDATES_ID   = "MintMousseUpdate_%s", -- Appended with love.mintmousse._threadID
+  THREAD_ID_COUNTER             = "MintMousseThreadCounter",
+  THREAD_COMPONENT_UPDATES_ID   = "MintMousseUpdate_%s", -- %s == thread ID
   READONLY_BASIC_TYPES_ID       = "MintMousseComponentTypes",
   LOCK_LOG_BUFFER_FLUSH         = "MintMousseLogBufferFlush",
   LOCK_LOG_BUFFER_ERR           = "MintMousseLogBufferErr",
 
-  -- IDs used for love.event handlers.
-  -- Only change these if they conflict with IDs already in use in your project.
+  -- Event
   THREAD_RESPONSE_QUEUE_ID      = "MintMousse",
 
-  -- Enums
-  -----------------------------------------------------------------------------------------------------------------
-  -- Enum for the thread response event handler (THREAD_RESPONSE_QUEUE_ID)
-  EVENT_ENUM_JS_EVENT = "MintMousseJSEvent",
-
-  -- Component Fields
-  -----------------------------------------------------------------------------------------------------------------
-  -- The field name pattern for component event handler.
-  COMPONENT_EVENT_FIELD = "onEvent%s", -- Appended with event type, e.g. "Click" -> "onEventClick"
-  COMPONENT_EVENT_FIELD_MATCH = "^onEvent(.+)",
 }
 
 -- Setup logging
@@ -122,7 +92,7 @@ mintmousse._setupLogging = function()
 
   local libraryLogger = logging.newLogger("MintMousse", "bright_green")
   local internalLogger
-  if love.isMintMousseThread then -- Library's own thread
+  if isMintMousseThread then      -- Library's own thread
     internalLogger = libraryLogger:extend("Thread", "magenta")
   elseif love.isThread then       -- Library user's thread
     internalLogger = libraryLogger:extend("Worker", "cyan")
@@ -132,22 +102,22 @@ mintmousse._setupLogging = function()
   mintmousse._logger = internalLogger
   libraryLogger, internalLogger = nil, nil
 
+  mintmousse._loggerComponents = mintmousse._logger:extend("Components")
+
   require(PATH .. "loggerSinks")
 
   if mintmousse.REPLACE_FUNC_PRINT then
-    -- Snapshot the default print for users who want to use it
     GLOBAL_print = print
 
-    local stack = require(PATH .. "logging.stack")
     local color = "bright_magenta"
-    if love.isMintMousseThread then
+    if isMintMousseThread then
       color = "magenta"
     elseif love.isThread then
       color = "cyan"
     end
     local printLogger = logging.newLogger("Print", color)
-    -- Overrides global print and redirects it to logger.debug;
-    -- global print can still be access via `GLOBAL_print`
+    local stack = require(PATH .. "logging.stack")
+
     print = function(...)
       stack.push()
       printLogger:debug(...)
@@ -155,7 +125,11 @@ mintmousse._setupLogging = function()
     end
   end
 
-  mintmousse._logger:info("MintMousse Config loaded")
+  if not love.isThread then
+    mintmousse._logger:info("MintMousse Config loaded")
+  else
+    mintmousse._logger:info("MintMouse Thread loaded")
+  end
   mintmousse._setupLogging = nil
 end
 

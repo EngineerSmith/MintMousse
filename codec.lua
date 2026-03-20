@@ -4,42 +4,56 @@ local mintmousse = require(PATH .. "conf")
 
 local getDictionary = function()
   return {
-    "id",
-    "type",
-    "func",
-    "quit",
-    "size",
-    "text",
-    "start",
-    "style",
-    "color",
-    "update",
-    "latest",
+  -- Protocol & Structure
+  "id", "func", "args", "mintmousse", "batch",
+
+  -- Commands
+  "addComponent", "newTab", "removeComponent", -- componentManager
+  "updateComponent", "reorderChildren", "moveChild", -- proxyTable
+  "start", "quit", "setSVGIcon", "setIconRaw", "setIconRFG", "setTitle", "notify", -- threadController
+
+  -- Component/UI Keys
+  "type", "parentID", "children",
+  "color", "size", "text", "title", "icon", "config",
+
+  -- State & Lifecycle
+  "update", -- is this needed?
+
+-- old
+    --"id",
+    --"type",
+    --"func",
+    --"quit",
+    --"size",
+    --text",
+    --"start",
+    -- "style",
+    --"color",
+    --"update",
+    -- "latest",
     "parent",
-    "newTab",
-    "creator",
-    "setTitle",
-    "children",
-    "parentID",
-    "setSVGIcon",
-    "setIconRaw",
-    "setIconRFG",
-    "mintmousse",
-    "onEventClick",
-    "addComponent",
-    "componentAdded",
-    "updateComponent",
-    "removeComponent",
+    --"newTab",
+    --"setTitle",
+    --"children",
+    --"parentID",
+    --"setSVGIcon",
+    --"setIconRaw",
+    --"setIconRFG",
+    --"mintmousse",
+    -- "onEventClick",
+    --"addComponent",
+    -- "componentAdded",
+    --"updateComponent",
+    --"removeComponent",
     "setIconFromFile",
     "componentRemoved",
-    "updateSubscription",
+    -- "updateSubscription",
   }
 end
 
 local createBuffer = function()
-  local bufferMetatable = { }
-
   local channelDictionary = love.thread.getChannel(mintmousse.READONLY_BUFFER_DICTIONARY_ID)
+
   if not channelDictionary:peek() then
     local dictionary, lookup = getDictionary(), { }
     for index, word in ipairs(dictionary) do
@@ -52,7 +66,6 @@ local createBuffer = function()
 
   local buffer = require("string.buffer").new({
     dict = channelDictionary:peek(),
-    metatable = bufferMetatable,
   })
 
   return buffer

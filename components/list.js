@@ -1,54 +1,101 @@
-function list_new(payload) {
-  const id = payload.id;
-  const parentID = payload.parentID;
-  const isNumbered = Boolean(payload.isNumbered ?? false);
+componentRegistry.register({
+  typeName: "List",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-  const listGroup = document.createElement("ul");
-  listGroup.classList.add("list-group");
-  listGroup.setAttribute("id", id)
+    instance.state.isNumbered = helper.getBoolean(payload.values.isNumbered, false);
 
-  if (isNumbered === true)
-    listGroup.classList.add("list-group-numbered");
+    const root = document.createElement("ul");
+    root.className = "list-group";
 
-  const parent = document.getElementById(parentID);
-  if (parent && parent.classList.contains("card"))
-    listGroup.classList.add("list-group-flush")
+    instance.element = root;
+    instance.parts.wrappers = new Map();
 
-  return listGroup;
-}
+    this._updateVisuals(instance);
 
-function list_update_isNumbered(payload) {
-  const id = payload.id;
-  const isNumbered = Boolean(payload.isNumbered ?? false);
+    return instance;
+  },
 
-  const listGroup = document.getElementById(id);
-  if (isNumbered === true) {
-    listGroup.classList.add("list-group-numbered");
-  } else {
-    listGroup.classList.remove("list-group-numbered");
-  }
-}
+  insert: function(instance, payload) {
+    const childComponent = componentRegistry[payload.childType];
+    if (!childComponent) return;
 
-function list_insert(payload) {
-  const id = payload.parentID;
-  const childID = id + "-" + payload.id;
+    const listItem = document.createElement("li");
+    listItem.className = "list-group-item d-flex";
+    instance.parts.wrappers.set(payload.id, listItem);
 
-  const listItem = document.createElement("li");
-  listItem.classList.add("list-group-item", "d-flex");
-  listItem.setAttribute("id", childID);
+    const childInstance = childComponent.create(payload);
+    listItem.append(childInstance.element);
 
-  insertPayload(listItem, payload);
+    const children = instance.children;
+    const targetIndex = helper.getIntInRange(payload.childPosition, 1, children.length + 1, children.length + 1) - 1;
+    children.splice(targetIndex, 0, childInstance);
 
-  const listGroup = document.getElementById(id);
-  listGroup.append(listItem);
+    if (targetIndex >= children.length - 1) {
+      instance.element.append(listItem);
+    } else {
+      const neighborID = children[targetIndex + 1].id;
+      const neighborWrapper = instance.parts.wrappers.get(neighborID);
+      neighborWrapper.before(listItem);
+    }
+  },
 
-  eventInit();
-}
+  _updateVisuals: function(instance) {
+    const { element, state, parentID } = instance;
 
-function list_remove_child(payload) {
-  const id = payload.parentID;
-  const childID = id + "-" + payload.id;
+    element.classList.toggle("list-group-numbered", state.isNumbered);
 
-  const listItem = document.getElementById(childID);
-  removeElement(listItem);
-}
+    const parentInstance = helper.getInstance(parentID);
+    element.classList.toggle("list-group-flush", parentInstance?.type === "Card");
+  },
+
+  reorderChildren: function(instance, payload) {
+    const oldChildren = instance.children;
+    const newIndices = payload.newOrder;
+    if (!Array.isArray(newIndices)) return;
+
+    const newChildren = newIndices.map(pos => {
+      const oldIndex = helper.getIntInRange(pos, 1, oldChildren.length) - 1;
+      return oldChildren[oldIndex];
+    });
+    instance.children = newChildren;
+
+    const wrappersToAppend = newChildren
+      .map(child => instance.parts.wrappers.get(child.id))
+      .filter(Boolean);
+
+    instance.element.replaceChildren(...wrappersToAppend);
+  },
+
+  moveChild: function(instance, payload) {
+    const children = instance.children;
+    const oldIndex = helper.getIntInRange(payload.oldIndex, 1, children.length) - 1;
+    const newIndex = helper.getIntInRange(payload.newIndex, 1, children.length) - 1;
+
+    if (oldIndex === newIndex) return;
+
+    const [movingChild] = children.splice(oldIndex, 1);
+    children.splice(newIndex, 0, movingChild);
+
+    const movingWrapper = instance.parts.wrappers.get(movingChild.id);
+
+    if (newIndex >= children.length - 1) {
+      instance.element.append(movingWrapper);
+    } else {
+      const neighborID = children[newIndex + 1].id;
+      const neighborWrapper = instance.parts.wrappers.get(neighborID);
+      neighborWrapper.before(movingWrapper);
+    }
+  },
+
+  remove_child: function(instance, childInstance) {
+    const wrapper = instance.parts.wrappers.get(childInstance.id);
+    wrapper?.remove();
+    instance.parts.wrappers.delete(childInstance.id);
+  },
+
+  update_isNumbered: function(instance, payload) {
+    instance.state.isNumbered = helper.getBoolean(payload.values.isNumbered, false);
+    this._updateVisuals(instance);
+  },
+});

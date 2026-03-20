@@ -1,7 +1,7 @@
 local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
-local threadCommunication = require(PATH .. "threadCommunication")
+local threadCommand = require(PATH .. "threadCommand")
 local componentManager
 local loggingStack = require(PATH .. "logging.stack")
 local contract = require(PATH .. "contract")
@@ -58,15 +58,16 @@ local proxyTableNewIndex = function(tbl, index, value)
 
     sendUpdate = type(updates) == "table" and updates[index] ~= nil
     if not sendUpdate and type(events) == "table" and type(index) == "string" then
-      local eventName = index:match(mintmousse.COMPONENT_EVENT_FIELD_MATCH)
+      local eventName = index:match("^onEvent(.+)")
       sendUpdate = type(eventName) == "string" and events[eventName] == true
     end
   end
 
   if sendUpdate then
-    threadCommunication.push({
-      func = "updateComponent",
-      id, index, value,
+    threadCommand.call("updateComponent", {
+      id = id,
+      index = index,
+      value = value,
     })
   end
 
@@ -85,9 +86,10 @@ local proxyTableNewIndex = function(tbl, index, value)
   end
 
   if sendChildUpdate then
-    threadCommunication.push({
-      func = "updateParentComponent",
-      parentID, id, index, value,
+    threadCommand.call("updateComponent", {
+      id = id,
+      index = index,
+      value = value,
     })
   end
 
@@ -133,31 +135,6 @@ local validateSwapArg = function(val, argName)
   return false, argName .. " must be a type String (id), or Number (index)"
 end
 
-local proxyTableSwap = function(tbl, indexA, indexB)
-  loggingStack.push()
-  local okA, errA = validateSwapArg(indexA, "IndexA")
-  if not okA then
-    proxyTableLogger:warning("Swap failed:", errA)
-    loggingStack.pop()
-    return tbl
-  end
-
-  local okB, errB = validateSwapArg(indexB, "IndexB")
-  if not okB then
-    proxyTableLogger:warning("Swap failed:", errB)
-    loggingStack.pop()
-    return tbl
-  end
-
-  local id = rawget(tbl, "__raw").id
-  threadCommunication.push({
-    func = "swapChildren",
-    id, indexA, indexB,
-  })
-  loggingStack.pop()
-  return tbl
-end
-
 local proxyTableReorder = function(tbl, newOrderArray)
   loggingStack.push()
   if type(newOrderArray) ~= "table" then
@@ -175,10 +152,26 @@ local proxyTableReorder = function(tbl, newOrderArray)
   end
 
   local id = rawget(tbl, "__raw").id
-  threadCommunication.push({
-    func = "reorderChildren",
-    id, newOrderArray,
+  threadCommand.call("reorderChildren", {
+    id = id,
+    newOrderArray = newOrderArray,
   })
+  loggingStack.pop()
+  return tbl
+end
+
+local proxyTableMove = function(tbl, newIndex)
+  loggingStack.push()
+  
+  local id = rawget(tbl, "__raw").id
+
+  -- We can't validate index here, because we might not know all the indices
+
+  threadCommand.call("moveComponent", {
+    id = id,
+    newIndex = newIndex,
+  })
+
   loggingStack.pop()
   return tbl
 end
@@ -221,7 +214,7 @@ local cachedCreationMethods = {
 local getNewMethod = function(componentType)
   local cachedNewMethods = cachedCreationMethods["new"]
   if not cachedNewMethods[componentType] then
-    cachedNewMethods[componentType] = function(tbl, component)
+    cachedNewMethods[componentType] = function(tbl, component, index)
       component = component or { }
       component.type = componentType
       return proxyTableNew(tbl, component)
@@ -271,11 +264,11 @@ knownIndices = {
   add = function(_, _)
     return proxyTableAdd
   end,
-  swap = function(_, _)
-    return proxyTableSwap
-  end,
   reorder = function(_, _)
     return proxyTableReorder
+  end,
+  move = function(_, _)
+    return proxyTableMove
   end,
   length = function(_, tbl)
     return proxyTableMetatable.__len(tbl)
@@ -307,8 +300,6 @@ local proxyTableIndex = function(tbl, index)
   elseif type(index) == "string" and #index > 3 then
     local sub = index:sub(1, 3):lower()
     local componentType = index:sub(4)
-    -- ComponentType name must be in camelCase
-    componentType = componentType:gsub("^(.)", function(c) return c:lower() end, 1)
 
     if sub == "new" then
       result = getNewMethod(componentType)
