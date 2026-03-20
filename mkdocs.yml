@@ -1,0 +1,46 @@
+site_name: MintMousse
+repo_url: https://github.com/EngineerSmith/MintMousse
+site_url: https://EngineerSmith.github.io/MintMousse
+
+theme:
+  name: material
+  palette: 
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+  
+  features:
+    - content.code.copy
+    - navigation.expand
+    - navigation.top
+    - navigation.tabs
+    - navigation.sections
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - pymdownx.highlight:
+    anchor_linenums: true
+    guest_syntax: lua
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - search
+  - mike:
+    version_selector: true
+
+extra:
+  version:
+    provider: mike

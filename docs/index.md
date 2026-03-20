@@ -29,28 +29,3 @@ local dashboard = mintmousse.newTab("Dashboard")
 dashboard:newCard({ text = "Hello World!" })
 ```
 Finally, run your project and view the console in your browser at [http://localhost:8080](http://localhost:8080) (or the port shown in your console)
-
-## Docs
-Check out our [wiki][doclink] to get going!
-
----
-### Dependencies
-MintMousse utilises the following libraries:
-- [Bootstrap 5.3][git.bootstrap]
-- [DOMPurify][git.dompurify]
-- [LuaSocket][luasocket]
-- [Lustache][git.lustache]
-- [Json.lua][git.json]
-
-### Kudos
-Special thanks to:
-- **[Immow](https://github.com/Immow)** Suggesting the lua API structure for defining the components.
-- **[Josh](https://github.com/josh-perry)** For a fix to log buffering that reduced logging overhead to negligible levels.
-
-[doclink]: https://github.com/EngineerSmith/MintMousse/wiki
-[git.lustache]: https://github.com/Olivine-Labs/lustache
-[git.bootstrap]: https://github.com/twbs/bootstrap
-[git.dompurify]: https://github.com/cure53/DOMPurify
-[git.json]: https://github.com/rxi/json.lua
-[love]: https://love2d.org
-[luasocket]: https://github.com/lunarmodules/luasocket
