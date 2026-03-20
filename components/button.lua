@@ -1,42 +1,14 @@
-local defaultStyle = {
-  color = "primary",
-  outline = false
-}
+local mintmousse = ... -- passed in since this file is loaded with `lfs.load`. Instead of typical require args
 
-return function(settings, helper)
-  -- body
-  if settings.text then
-    settings.text = helper.formatText(settings.text)
-  end
-  if not (type(settings.disabled) == "boolean" or type(settings.disabled) == "nil") then -- if not bool or nil then set bool to true
-    settings.disabled = true -- must be boolean or nil
-  end
-  -- style
-  if not settings.style then
-    settings.style = defaultStyle
-  else
-    local style = settings.style
-    for k, v in pairs(defaultStyle) do
-      if not style[k] then
-        style[k] = v
-      end
-    end
+-- Can we make this easier? It's hard since custom components would have their own dedicated newLogger;
+-- Only way I can think that custom component libraries to add their own "simple" logger would be via globals - not the worst.
+local loggerButton = mintmousse._loggerComponents:extend("Button")
 
-    if type(style.color) == "number" then
-      style.color = helper.getColor(style.color)
-    end
-  end
+local button = { }
 
-    -- child to render
-    local children
-    if settings.beforeText or settings.afterText then
-      children = {}
-    end
-    if settings.beforeText then
-      table.insert(children, settings.beforeText)
-    end
-    if settings.afterText then
-      table.insert(children, settings.afterText)
-    end
-    return children
+-- Ran on the thread of creation
+button.onCreate = function(component)
+
 end
+
+return button

@@ -1,0 +1,76 @@
+#connected-status,
+#disconnected-status {
+  padding: 0 !important;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse-glow {
+  0% { transform: scale(0.92); box-shadow: 0 0 0 0   rgba(76, 209, 100, 0.8); background-color: #28a745; }
+ 70% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(76, 209, 100, 0.0); background-color: #4cd164; }
+100% { transform: scale(0.92); box-shadow: 0 0 0 0   rgba(76, 209, 100, 0.0); background-color: #28a745; }
+}
+
+#connected-status.pulsing {
+  animation: pulse-glow 1.8s infinite ease-in-out;
+}
+
+#disconnected-status-text {
+  font-size: 0.75rem;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.centered-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.toast-header small[data-bs-toggle="tooltip"] {
+  cursor: help;
+  text-decoration: underline dotted #6c757d;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#noContentContainer {
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid-sizer,
+.grid-item,
+.grid-item-1 { width: 24%; margin-bottom: 1%; }
+.grid-item-2 { width: 49%; }
+.grid-item-3 { width: 74%; }
+.grid-item-4 { width: 99%; }
+.grid-item-5 { width: 99%; }
+
+.gutter-sizer { width: 1%; }
+
+@media screen and (min-width: 768px) {
+  .grid-sizer,
+  .grid-item,
+  .grid-item-1 { width: 18.4%; margin-bottom: 2%; }
+  .grid-item-2 { width: 38.8%; }
+  .grid-item-3 { width: 59.2%; }
+  .grid-item-4 { width: 79.6%; }
+  .grid-item-5 { width: 100%; }
+
+  .gutter-sizer { width: 2%; }
+}
+
+/* Component Loading (Mustache) */
+/* Ignore any IDE errors */
+{{#components}}
+{{&.}}
+
+{{/components}}

@@ -1,30 +1,74 @@
-function buttonPressed(button) { 
-  var request = new XMLHttpRequest();
-  request.open("POST", "api/event", true);
-  var body = "event=" + encodeURIComponent(button.getAttribute("event"));
-  var variable = button.getAttribute("variable");
-  if (variable != null) {
-    body += "&variable=" + encodeURIComponent(variable);
-  }
-  request.send(body);
-}
+componentRegistry.register({
+  typeName: "Button",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-function button_update_disabled(element, value) {
-  if (value) { // ensure bool
-    element.disabled = true;
-  } else {
-    element.disabled = false;
-  }
-}
+    instance.state = {
+      color: helper.getColor(payload.values.color, "primary"),
+      colorOutline: helper.getBoolean(payload.values.colorOutline, false),
+      width: helper.getWidth(payload.values.width, "100"),
+      isCentered: helper.getBoolean(payload.values.isCentered, true),
+    };
 
-function button_update_text(element, value) {
-  element.textContent = value;
-}
+    const root = document.createElement("button");
+    root.type = "button";
+    instance.element = root;
 
-function button_update_event(element, value) {
-  element.setAttribute("event", value);
-}
+    root.addEventListener('click', this.event_click.bind(this));
 
-function button_update_variable(element, value) {
-  element.setAttribute("variable", value);
-}
+    this.update_text(payload);
+    this._updateVisuals(instance);
+    this.update_isDisabled(payload);
+
+    return instance;
+  },
+
+  _updateVisuals: function(instance) {
+    const { element, state } = instance;
+
+    const colorPrefix = state.colorOutline ? "btn-outline" : "btn";
+    const colorClass = `${colorPrefix}-${state.color}`;
+
+    element.className = `btn ${colorClass} w-${state.width} d-block ${state.isCentered ? "mx-auto" : ""}`;
+  },
+
+  update_color: function(instance, payload) {
+    instance.state.color = helper.getColor(payload.values.color, "primary");
+    this._updateVisuals(instance);
+  },
+
+  update_colorOutline: function(instance, payload) {
+    instance.state.colorOutline = helper.getBoolean(payload.values.colorOutline, false);
+    this._updateVisuals(instance);
+  },
+
+  update_text: function(instance, payload) {
+    let text = helper.getText(payload.values.text, "");
+    if (text.includes("\n"))
+      text = text.replace(/\n/g, "<br/>");
+
+    instance.element.innerHTML = text;
+  },
+
+  update_isDisabled: (instance, payload) => instance.element.disabled = helper.getBoolean(payload.values.isDisabled, false),
+
+  update_width: function(instance, payload) {
+    instance.state.width = helper.getWidth(payload.values.width, "100");
+    this._updateVisuals(instance);
+  },
+
+  update_isCentered: function(instance, payload) {
+    instance.state.isCentered = helper.getBoolean(payload.values.isCentered, true);
+    this._updateVisuals(instance);
+  },
+
+  event_click: function(event) {
+    const id = event.currentTarget.id;
+    const success = Network.send({ id: id, event: "click", });
+
+    if (!success) {
+      console.warn("MM: Button event triggered; but failed to send.")
+    }
+  },
+
+});

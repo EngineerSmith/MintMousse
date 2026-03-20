@@ -1,0 +1,7 @@
+.list-group-item p:last-child {
+  margin-bottom: 0;
+}
+
+.list-group-numbered li > :first-child {
+  margin-left: 0.5rem;
+}

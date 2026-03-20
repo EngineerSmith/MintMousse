@@ -1,119 +1,105 @@
-function getSizeClass(element) {
-  const classList = element.classList;
-  if (classList.contains('grid-item-1'))
-    return 'grid-item-1';
-  if (classList.contains('grid-item-2'))
-    return 'grid-item-2';
-  if (classList.contains('grid-item-3'))
-    return 'grid-item-3';
-  if (classList.contains('grid-item-4'))
-    return 'grid-item-4';
-  if (classList.contains('grid-item-5'))
-    return 'grid-item-5';
-  return null;
-}
+componentRegistry.register({
+  typeName: "Card",
+  create: function(payload) {
+    const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-// function card_update_size(element, value) { // removed due to being buggy with the grid system, kept for reference
-//   element = element.parentNode;
-//   const sizeClass = getSizeClass(element);
-//   const size = sizeClass ? parseInt(sizeClass.slice(9)) : null;
-//   if (size == value) 
-//     return;
+    instance.state.colorBG = helper.getColor(payload.values.color);
+    instance.state.isContentCenter = helper.getBoolean(payload.values.isContentCenter, false);
+    instance.state.colorBorder = helper.getColor(payload.values.borderColor);
 
-//   element.classList.remove(sizeClass);
-//   if (value)
-//     element.classList.add('grid-item-' + value);
-// }
+    const root = document.createElement("div");
 
-function setElementVisibility(element, bool) {
-  if (bool) {
-    element.classList.remove('invisible');
-  } else {
-    element.classList.add('invisible');
-  }
-}
+    const body = document.createElement("div");
+    body.className = "card-body";
 
-function setCardText(textElement, value) {
-  if (textElement) {
-    textElement.textContent = value;
-    setElementVisibility(element, value);
-  }
-}
+    const title = document.createElement("h4");
+    title.className = "card-title";
 
-function card_update_imgTop(element, value) {
-  const imgTop = element.querySelector('.card-img-top');
-  if (value) {
-    if (!imgTop) {
-      imgTop = document.createElement("img");
-      imgTop.classList.add("card-img-top");
-      imgTop.src = value;
-      const header = element.querySelector('.card-header');
-      if (header)
-        element.insertAfter(imgTop, header);
-      else
-        element.append(imgTop);
+    const text = document.createElement("p");
+    text.className = "card-text";
+
+    body.append(title, text);
+    root.append(body);
+
+    instance.element = root;
+    instance.parts.body = body;
+    instance.parts.title = title;
+    instance.parts.text = text;
+
+    this.update_title(payload);
+    this.update_text(payload);
+    this._updateVisuals(instance);
+
+    return instance;
+  },
+
+  insert: function(instance, payload) {
+    const childInstance = helper.insertNewChild(instance, payload);
+
+    if (childInstance) {
+      const element = childInstance.element;
+      if (element.classList.contains("card-header") || element.classList.contains("card-footer")) {
+        element.className = element.className.replace(/\bborder-\S+/g, "").trim();
+        if (instance.state.colorBorder) {
+          element.classList.add(`border-${instance.state.colorBorder}`);
+        }
+      }
     }
-    imgTop.src = value;
-  } else if (imgTop)
-    imgTop.remove();
-}
+  },
 
-function card_update_imgBottom(element, value) {
-  const imgBottom = element.querySelector('.card-img-bottom');
-  if (value) {
-    if (!imgBottom) {
-      imgBottom = document.createElement("img");
-      imgBottom.classList.add("card-img-bottom");
-      const footer = element.querySelector('.card-footer');
-      if (footer)
-        element.insertBefore(imgBottom, footer);
-      else
-        element.append(imgBottom);
-    }
-    imgBottom.src = value;
-  } else if (imgBottom)
-    imgBottom.remove();
-}
+  _updateVisuals: function(instance) {
+    const { element, state } = instance;
 
-function card_update_header(element, value) {
-  const header = element.querySelector('.card-header');
-  const isTitle = element.dataset.headerTitle == "true" ? "h4" : "div";
+    let classes = ["card"];
+    if (state.colorBG) classes.push(`text-bg-${state.colorBG}`);
+    if (state.isContentCenter) classes.push("text-center");
+    if (state.colorBorder) classes.push(`border-${state.colorBorder}`);
 
-  if (value) {
-    if (header)
-      header.textContent = value;
-    else {
-      const header = document.createElement(isTitle);
-      header.classList.add("card-header");
-      header.textContent = value;
-      element.prepend(header);
-    }
-  } else if (header)
-    header.remove();
-}
+    element.className = classes.join(" ");
 
-function card_update_footer(element, value) {
-  const footer = element.querySelector('.card-footer');
-  const isSmall = element.dataset.smallFooter == "true"
+    Array.from(element.children).forEach(child => {
+      if (child.classList.contains("card-header") || child.classList.contains("card-footer")) {
+        child.className = child.className.replace(/\bborder-\S+/g, "").trim();
+        if (state.colorBorder) {
+          child.classList.add(`border-${state.colorBorder}`);
+        }
+      }
+    });
+  },
 
-  if (value) {
-    if (footer) {
-      if (isSmall)
-        footer.querySelector('.text-body-secondary').textContent = value;
-      else
-        footer.textContent = value;
-    } else {
-      const footer = document.createElement("div");
-      footer.classList.add("card-footer");
-      if (isSmall) {
-        const small = document.createElement("small");
-        small.classList.add("text-body-secondary");
-        small.textContent = value;
-        footer.append(small);
-      } else
-        footer.textContent = value;
-      element.append(footer);
-    }
-  } else if (footer)
-    footer.remove();
-}
+  update_color: function(instance, payload) {
+    instance.state.colorBG = helper.getColor(payload.values.color);
+    this._updateVisuals(instance);
+  },
+
+  update_isContentCenter: function(instance, payload) {
+    instance.state.isContentCenter = helper.getBoolean(payload.values.isContentCenter, false);
+    this._updateVisuals(instance);
+  },
+
+  update_borderColor: function(instance, payload) {
+    instance.state.colorBorder = helper.getColor(payload.values.borderColor);
+    this._updateVisuals(instance);
+  },
+
+  update_title: function(instance, payload) {
+    const titleText = helper.getText(payload.values.title);
+    const { body, title, text } = instance.parts;
+
+    title.innerHTML = titleText;
+    title.hidden = !titleText;
+
+    body.hidden = title.hidden && text.hidden;
+  },
+
+  update_text: function(instance, payload) {
+    const textContent = helper.getText(payload.values.text);
+    const { body, title, text } = instance.parts;
+
+    text.innerHTML = textContent;
+    text.hidden = !textContent;
+
+    body.hidden = title.hidden && text.hidden;
+  },
+
+});
