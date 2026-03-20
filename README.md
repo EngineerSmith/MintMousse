@@ -10,6 +10,9 @@ It runs a local web server alongside your game, providing a dedicated space to i
 - **Headless Support** - Manage and monitor dedicated servers or windowless projects seamlessly across the network with full IPv6/dual-stack support
 - **Extendable Components** - Add your own custom components, allowing you to make the dashboard work for you
 
+## Docs
+Check out our [wiki][doclink] to get going!
+
 ## Quickstart
 First, add the library to your project:
 ```bash
@@ -29,9 +32,6 @@ local dashboard = mintmousse.newTab("Dashboard")
 dashboard:newCard({ text = "Hello World!" })
 ```
 Finally, run your project and view the console in your browser at [http://localhost:8080](http://localhost:8080) (or the port shown in your console)
-
-## Docs
-Check out our [wiki][doclink] to get going!
 
 ---
 ### Dependencies
