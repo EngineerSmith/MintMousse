@@ -30,7 +30,6 @@ theme:
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
-      guest_syntax: lua
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
