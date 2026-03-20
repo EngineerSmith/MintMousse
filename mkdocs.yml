@@ -1,6 +1,6 @@
 site_name: MintMousse
 repo_url: https://github.com/EngineerSmith/MintMousse
-site_url: https://EngineerSmith.github.io/MintMousse
+site_url: https://mintmousse.engineersmith.net
 
 theme:
   name: material
