@@ -39,5 +39,5 @@ while not shouldQuit do
   -- Process network
   server.update()
 
-  love.timer.sleep(love.mintmousse.THREAD_SLEEP) -- Should this be subtractive? E.g. measure time taken by the loop itself?
+  love.timer.sleep(love.mintmousse.THREAD_SLEEP)
 end

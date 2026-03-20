@@ -3,10 +3,10 @@ local PATH_RAW = ...
 local PATH = PATH_RAW:match("^(.-)[^%.]+$")
 local DIRECTORY_PATH = PATH:gsub("%.", "/")
 
-local attemptError = function(message)
-  error(errMsg, 3)
-  assert(false, errMsg) -- if error was overridden, try to use assert
-  return errMsg -- if all else fails, try to return the error
+local attemptError = function(errorMessage)
+  error(errorMessage, 3)
+  assert(false, errorMessage) -- if error was overridden, try to use assert
+  return errorMessage -- if all else fails, try to return the error
 end
 
 if PATH_RAW:find("[[/\\]") then
