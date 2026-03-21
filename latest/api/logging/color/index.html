@@ -562,6 +562,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -651,6 +662,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -672,11 +694,11 @@
 
 
 <h1 id="logging-colors">Logging Colors</h1>
-<p>The <code>color</code> field within the logging module expects either a <code>string</code>, or a <code>table</code> with two fields <code>fg</code> (foreground, e.g. text) and <code>bg</code> (background, e.g. a 'highlight').</p>
-<p>For Windows PCs, terminal doesn't support until Windows 10. So, expect white output if you're running an older version.</p>
+<p>The <code>color</code> field within the logging module expects either a <code>string</code>, or a <code>table</code> with two fields <code>fg</code> (foreground, e.g. text) and <code>bg</code> (background, e.g. a 'highlight'). If just a <code>string</code> is passed, it is used like the <code>fg</code> argument, and <code>bg</code> will default to the console's background.</p>
+<p>ANSI color support in Windows Console only became reliable with Windows 10 build 10586 (late 2015) and later; older versions (or very old Windows 7/8) usually show plain white/gray output.</p>
 <h2 id="constants">Constants</h2>
 <p>The following are string fields that are allowed. Their exact HEX color depends on the rendering console, but here are <em>approximate</em> PuTTY colors:</p>
-<ul>
+<ul class="color-list">
   <li><span class="color-swatch" style="background:#000000;"></span><b>black</b></li>
   <li><span class="color-swatch" style="background:#bb0000;"></span><b>red</b></li>
   <li><span class="color-swatch" style="background:#00bb00;"></span><b>green</b></li>
@@ -684,16 +706,39 @@
   <li><span class="color-swatch" style="background:#0000bb;"></span><b>blue</b></li>
   <li><span class="color-swatch" style="background:#bb00bb;"></span><b>magenta</b></li>
   <li><span class="color-swatch" style="background:#00bbbb;"></span><b>cyan</b></li>
-  <li><span class="color-swatch" style="background:#bbbbbb;"></span><b>white</b> (light gray)</li>
-  <li><span class="color-swatch" style="background:#555555;"></span><b>bright_black</b> (dark gray)</li>
-  <li><span class="color-swatch" style="background:#ff5555;"></span><b>bright_red<b/></li>
-  <li><span class="color-swatch" style="background:#55ff55;"></span><b>bright_green<b/></li>
-  <li><span class="color-swatch" style="background:#ffff55;"></span><b>bright_yellow<b/></li>
-  <li><span class="color-swatch" style="background:#5555ff;"></span><b>bright_blue<b/></li>
-  <li><span class="color-swatch" style="background:#ff55ff;"></span><b>bright_magenta<b/></li>
-  <li><span class="color-swatch" style="background:#55ffff;"></span><b>bright_cyan<b/></li>
-  <li><span class="color-swatch has-border" style="background:#ffffff;"></span> **bright_white**</li>
+  <li><span class="color-swatch" style="background:#bbbbbb;"></span><b>white</b></li>
+
+  <li><span class="color-swatch" style="background:#555555;"></span><b>bright_black</b></li>
+  <li><span class="color-swatch" style="background:#ff5555;"></span><b>bright_red</b></li>
+  <li><span class="color-swatch" style="background:#55ff55;"></span><b>bright_green</b></li>
+  <li><span class="color-swatch" style="background:#ffff55;"></span><b>bright_yellow</b></li>
+  <li><span class="color-swatch" style="background:#5555ff;"></span><b>bright_blue</b></li>
+  <li><span class="color-swatch" style="background:#ff55ff;"></span><b>bright_magenta</b></li>
+  <li><span class="color-swatch" style="background:#55ffff;"></span><b>bright_cyan</b></li>
+  <li><span class="color-swatch" style="background:#ffffff;"></span><b>bright_white</b></li>
+<br/>
+  <li><span class="color-swatch" style="background:#00000000;"></span><b>reset</b></li>
 </ul>
+
+<p>!!! note "<code>reset</code>"</p>
+<div class="highlight"><pre><span></span><code>`reset` is a special &#39;color&#39;, which reverts to what the default is of your console, for example usually `white` text for foreground, or `black` background.
+</code></pre></div>
+<p>!!! tip "Quick tip: <code>white</code> vs <code>bright_white</code>"</p>
+<div class="highlight"><pre><span></span><code>In many terminals, `white` renders as silvery gray (`~#bbbbbb`), while `bright_white` is pure white (`#ffffff`).
+For regular log text, most people find `white` more comfortable on the eyes - especially on OLED/AMOLED screens or when reading for long periods. Reserve `bright_white` for emphasis, errors, or when you need maximum contrast (e.g. white text on a red background).
+</code></pre></div>
+<h2 id="examples">Examples</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">local</span><span class="w"> </span><span class="nv">loggerBar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">logger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">loggerFatal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">&quot;FATAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">fg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bright_white&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">bg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;red&quot;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kd">local</span><span class="w"> </span><span class="nv">loggerInvert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">loggerFatal</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;Inverted&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nv">fg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nv">bg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bright_white&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">})</span>
+</code></pre></div>
 
 
 
