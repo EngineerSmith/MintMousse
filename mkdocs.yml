@@ -44,3 +44,6 @@ plugins:
 extra:
   version:
     provider: mike
+
+extra_css:
+  - assets/stylesheets/extra.css
