@@ -35,17 +35,17 @@ mintmousse.addLogSink(function(level, logger, time, debugInfo, ...)
 end)
 ```
 
-The `:extend` method (see [Logger:extend](logger.md#logger:extend)) automatically builds the `[module:submodule:minor]` prefix to quickly organise your logs.
+The [`(Logger):extend`](logger/extend.md) method automatically builds the `[module:submodule:minor]` prefix to quickly organise your logs.
 
 ## Types
-| | |
+|Type|Description|
 |---|---|
 |[Logger](logger/index.md)|Logging instance|
 
 ## Functions
 |Function|Description|
 |---|---|
-|[`mintmousse.newLogger`](newLogger.md)|Create a named, coloured logger object|
+|[`mintmousse.newLogger`](newLogger.md)|Create a new named, colored logger object|
 |[`mintmousse.flushLogs`](flushLogs.md)|Flush the log buffer (thread-safe)|
 |[`mintmousse.logUncaughtError`](logUncaughtError.md)|Catch errors in [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler)|
 |[`mintmousse.addLogSink`](addLogSink.md)|Register a custom destination for all log messages|

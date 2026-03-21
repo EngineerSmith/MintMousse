@@ -4,7 +4,7 @@ MintMousse is a web console for [LÖVE][love] that lets you monitor and interact
 It runs a local web server alongside your game, providing a dedicated space to inspect values, tweak game states, and visualise data in real-time. It's built to replace the cluttered `print` statements and make-shift in-game UIs, while acting as a remote interface for headless servers.
 
 ### Key Features
-- **Visual Debugging** - Move past `print` statements with a fully featured coloured logging system
+- **Visual Debugging** - Move past `print` statements with a fully featured colored logging system
 - **Live Interaction** - Trigger events or toggle flags with buttons and sliders in the browser while the game is running
 - **Thread Support** - Update your dashboard and log from any thread without worrying about conflicts
 - **Headless Support** - Manage and monitor dedicated servers or windowless projects seamlessly across the network with full IPv6/dual-stack support

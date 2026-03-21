@@ -66,7 +66,7 @@ inspector.inspect = function(value, level)
     return inspectLight(value)
   elseif level == "deep" then
     return inspectDeep(value, 3)
-  elseif level == "number" then
+  elseif type(level) == "number" then
     return inspectDeep(value, level)
   else
     error("Inspect: level must be 'light', 'deep', or a number (depth). Got: " .. tostring(level), 2)

@@ -134,7 +134,11 @@ local sink = function(level, logger, time, debugInfo, ...)
   local argCount = select("#", ...)
   local messageParts = { }
   for i = 1, argCount do
-    messageParts[i] = tostring(select(i, ...))
+    local value = select(i, ...)
+    if type(value) == "table" and logger then
+      value = logger.inspect(value, "deep")
+    end
+    messageParts[i] = tostring(value)
   end
   local logMessage = table.concat(messageParts, " ")
   table.insert(parts, logMessage)
