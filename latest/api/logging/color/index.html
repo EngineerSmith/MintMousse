@@ -720,13 +720,15 @@
   <li><span class="color-swatch" style="background:#00000000;"></span><b>reset</b></li>
 </ul>
 
-<p>!!! note "reset"</p>
-<div class="highlight"><pre><span></span><code>`reset` is a special &#39;color&#39;, which reverts to what the default is of your console, for example usually `white` text for foreground, or `black` background.
-</code></pre></div>
-<p>!!! tip "Quick tip: white vs bright_white"</p>
-<div class="highlight"><pre><span></span><code>In many terminals, `white` renders as silvery gray (`~#bbbbbb`), while `bright_white` is pure white (`#ffffff`).
-For regular log text, most people find `white` more comfortable on the eyes - especially on OLED/AMOLED screens or when reading for long periods. Reserve `bright_white` for emphasis, errors, or when you need maximum contrast (e.g. white text on a red background).
-</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">reset</p>
+<p><code>reset</code> is a special 'color', which reverts to what the default is of your console, for example usually <code>white</code> text for foreground, or <code>black</code> background.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Quick tip: white vs bright_white</p>
+<p>In many terminals, <code>white</code> renders as silvery gray (<code>~#bbbbbb</code>), while <code>bright_white</code> is pure white (<code>#ffffff</code>).
+For regular log text, most people find <code>white</code> more comfortable on the eyes - especially on OLED/AMOLED screens or when reading for long periods. Reserve <code>bright_white</code> for emphasis, errors, or when you need maximum contrast (e.g. white text on a red background).</p>
+</div>
 <h2 id="examples">Examples</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
