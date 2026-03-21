@@ -9,11 +9,63 @@
          <lastmod>2026-03-21</lastmod>
     </url>
     <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/addLogSink/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
          <loc>https://mintmousse.engineersmith.net/latest/logging/color/</loc>
          <lastmod>2026-03-21</lastmod>
     </url>
     <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/flushLogs/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/level/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logUncaughtError/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/newLogger/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
          <loc>https://mintmousse.engineersmith.net/latest/logging/logger/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/assert/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/debug/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/error/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/extend/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/getAncestry/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/info/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/inspect/</loc>
+         <lastmod>2026-03-21</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/logger/warning/</loc>
          <lastmod>2026-03-21</lastmod>
     </url>
 </urlset>
