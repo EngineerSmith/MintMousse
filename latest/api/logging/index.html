@@ -14,6 +14,8 @@
         <link rel="prev" href="../..">
       
       
+        <link rel="next" href="color/">
+      
       
         
       
@@ -48,6 +50,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -246,6 +250,15 @@
   
     
     
+      
+  
+  
+  
+    
+  
+  
+    
+    
       <li class="md-tabs__item md-tabs__item--active">
         <a href="./" class="md-tabs__link">
           
@@ -257,6 +270,9 @@
 
         </a>
       </li>
+    
+  
+
     
   
 
@@ -401,16 +417,39 @@
   
   
   
-    <li class="md-nav__item md-nav__item--active">
+    
+    
       
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
+        
+          
+        
       
         
       
+        
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
+    
+    
+    
+      
+      
+        
           
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
   
   
   <span class="md-ellipsis">
@@ -424,17 +463,43 @@
   
   
 
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_2_1" id="__nav_2_1_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Logging
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="color/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Logging
+    Color
   
 
     
@@ -443,92 +508,41 @@
   
 
       </a>
-      
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+              
+            
+              
+                
   
   
   
+  
+    <li class="md-nav__item">
+      <a href="logger/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
     
   
+    Logger
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#module-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Module functions
-      
-    </span>
-  </a>
+
+    
+  </span>
   
-    <nav class="md-nav" aria-label="Module functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#mintmoussenewlogger" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mintmousse.newLogger
-      
-    </span>
-  </a>
   
-    <nav class="md-nav" aria-label="mintmousse.newLogger">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#synopsis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Synopsis
-      
-    </span>
-  </a>
+
+      </a>
+    </li>
   
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Returns
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -569,18 +583,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#module-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Module functions
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Module functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
   <a href="#mintmoussenewlogger" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -629,6 +631,51 @@
     </nav>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#mintmousseflushlogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.flushLogs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="mintmousse.flushLogs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#synopsis_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Synopsis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#returns_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Returns
+      
+    </span>
+  </a>
+  
+</li>
         
       </ul>
     </nav>
@@ -656,24 +703,34 @@
 
 
 <h1 id="logging">Logging</h1>
-<p>Included in MintMousse is a rather powerful and flexible logging system</p>
-<h2 id="module-functions">Module functions</h2>
-<h3 id="mintmoussenewlogger">mintmousse.newLogger</h3>
+<p>Included in MintMousse is a rather powerful and flexible logging system. From customising <a href="logger/">logger</a> instances to show a link-listed name </p>
+<h2 id="mintmoussenewlogger"><code>mintmousse.newLogger</code></h2>
 <p>Creates a new logger instance</p>
-<h4 id="synopsis">Synopsis</h4>
+<h3 id="synopsis">Synopsis</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="nv">name</span><span class="p">,</span><span class="w"> </span><span class="nv">color</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="parameters">Parameters</h4>
+<h3 id="parameters">Parameters</h3>
 <p><code>name</code> <em>string</em></p>
 <dd>Identifier shown in the logs</dd>
 
-<p><code>color</code> <em>string</em></p>
-<dd>Colour used to highlight the name in consoles that support colour highlighting</dd>
+<p><code>color</code> <em><a href="color/">color</a></em></p>
+<dd>Color used to highlight the name in consoles that support color highlighting</dd>
 
-<h4 id="returns">Returns</h4>
-<p><code>logger</code> <em>logger</em></p>
+<h3 id="returns">Returns</h3>
+<p><code>logger</code> <em><a href="logger/">logger</a></em></p>
 <dd>A new instance of a logger</dd>
 
+<h2 id="mintmousseflushlogs"><code>mintmousse.flushLogs</code></h2>
+<p>Thread-safe function to flush io buffer for the base implemented logging sink.</p>
+<h3 id="synopsis_1">Synopsis</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">flushLogs</span><span class="p">(</span><span class="nv">forced</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="parameters_1">Parameters</h3>
+<p><code>forced</code> <em>boolean</em> (<strong>false</strong>)</p>
+<dd>Used to override the thread lock and immediately flush the buffer</dd>
+
+<h3 id="returns_1">Returns</h3>
+<p>Nothing.</p>
 <hr />
 <p>mintmousse.newLogger(name : string, color : string) : logger
 mintmousse.flushLogs(forced : boolean false)
@@ -687,6 +744,8 @@ logger:error(message...)
 logger:assert(condition : boolean false, message...)
 logger:getAncestry() : table
 logger.inspect(tbl : table, level : number)</p>
+<hr />
+<p>Colors:</p>
 
 
 
