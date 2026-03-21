@@ -1,4 +1,7 @@
-# Logging Colors
+---
+title: Logging Colors
+---
+# Color
 The `color` field within the logging module expects either a `string`, or a `table` with two fields `fg` (foreground, e.g. text) and `bg` (background, e.g. a 'highlight'). If just a `string` is passed, it is used like the `fg` argument, and `bg` will default to the console's background.
 
 ANSI color support in Windows Console only became reliable with Windows 10 build 10586 (late 2015) and later; older versions (or very old Windows 7/8) usually show plain white/gray output.

@@ -20,10 +20,10 @@ mintmousse.addLogSink( sink )
 <dd>The logger that created the log, see _[logger:getAncestry](logger.md#logger:getAncestry)_ to get the </dd>
 
 `time` _number_
-<dd>UNIX time in seconds, with microseconds. By default, this value is obtained by `socket.gettime` to get an actuate system time.</dd>
+<dd>UNIX time in seconds, with microseconds. By default, this value is obtained by `socket.gettime` to get an accurate system time.</dd>
 
 `debugInfo` _string_ or _nil_
-<dd>Depending on the level, and the config, a simple traceback string is passed along the lines of `funcName@fileName#lineNumber`, this format isn't guaranteed, for example code in the file scope will be `fileName#lineNumber` as they aren't contained within a named function.</dd>
+<dd>Depending on the level, and the config -- TODO link, a simple traceback string is passed along the lines of `funcName@fileName#lineNumber`, this format isn't guaranteed, for example code in the file scope will be `fileName#lineNumber` as they aren't contained within a named function.</dd>
 
 `message...` _ANY_
 <dd>The varargs of the message passed from the log function</dd>
