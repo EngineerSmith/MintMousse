@@ -29,3 +29,24 @@ h3 + pre, h3 + p {
 .md-typeset dd p {
   margin-bottom: 0px;
 }
+
+/* For logging/color.md */
+.color-swatch {
+  display: inline-block;
+  width: 1.6em;
+  height: 1.1em;
+  margin: 0 0.5em 0.1em 0;
+  vertical-align: middle;
+  border-radius: 0.5em;
+  border: 1px solid #8882;
+  box-shadow: 0 1px 3px #00000022;
+  flex-shrink: 0;
+}
+
+.color-swatch.has-border {
+  border: 2px solid #aaa8;
+}
+
+[data-md-color-scheme="slate"] .color-swatch {
+  border-color: #ccc6;
+}
