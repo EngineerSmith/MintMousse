@@ -1,9 +1,9 @@
-h2 {
+.md-typeset h2 {
   margin-top: 1.5em;
   margin-bottom: 0.2em;
 }
 
-h3 {
+.md-typeset h3 {
   margin-top: 0.5em;
   margin-bottom: 0.1em;
   font-size: 0.9em;
