@@ -16,11 +16,16 @@ h3 + pre, h3 + p {
   margin-top: 0px !important;
 }
 
-p:has(+ dd) {
+.md-typeset p:has(+ dd) {
   margin-bottom: 0.1rem;
+  font-weight: 600;
 }
 
-dd {
+.md-typeset dd {
   margin-top: 0rem;
   margin-bottom: 0.3rem;
+}
+
+.md-typeset dd p {
+  margin-bottom: 0px;
 }
