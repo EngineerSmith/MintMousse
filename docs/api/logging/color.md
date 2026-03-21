@@ -27,11 +27,11 @@ The following are string fields that are allowed. Their exact HEX color depends 
   <li><span class="color-swatch" style="background:#00000000;"></span><b>reset</b></li>
 </ul>
 
-!!! note "`reset`"
+!!! note "reset"
 
     `reset` is a special 'color', which reverts to what the default is of your console, for example usually `white` text for foreground, or `black` background.
 
-!!! tip "Quick tip: `white` vs `bright_white`"
+!!! tip "Quick tip: white vs bright_white"
 
     In many terminals, `white` renders as silvery gray (`~#bbbbbb`), while `bright_white` is pure white (`#ffffff`).
     For regular log text, most people find `white` more comfortable on the eyes - especially on OLED/AMOLED screens or when reading for long periods. Reserve `bright_white` for emphasis, errors, or when you need maximum contrast (e.g. white text on a red background).
