@@ -508,6 +508,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function signature
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1054,6 +1071,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-signature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Function signature
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1105,25 +1139,23 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="w"> </span><span class="nv">sink</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
-<p><code>sink</code> <em>function</em></p>
-<dd>A function, with the signature `(level, logger, time, debugInfo, message...)`</dd>
-
-<hr />
-<p><code>level</code> <em><a href="../level/">level</a></em></p>
-<dd>A string indicating the level of the log, `"info"`, `"warning"`, `"error"`, `"fatal"`, `"debug"`</dd>
-
-<p><code>logger</code> <em><a href="logger.md">logger</a></em></p>
-<dd>The logger that created the log, see _[logger:getAncestry](logger.md#logger:getAncestry)_ to get the </dd>
-
-<p><code>time</code> <em>number</em></p>
-<dd>UNIX time in seconds, with microseconds. By default, this value is obtained by `socket.gettime` to get an accurate system time.</dd>
-
-<p><code>debugInfo</code> <em>string</em> or <em>nil</em></p>
-<dd>Depending on the level, and the config -- TODO link, a simple traceback string is passed along the lines of `funcName@fileName#lineNumber`, this format isn't guaranteed, for example code in the file scope will be `fileName#lineNumber` as they aren't contained within a named function.</dd>
-
-<p><code>message...</code> <em>ANY</em></p>
-<dd>The varargs of the message passed from the log function</dd>
-
+<dl>
+<dt><code>sink</code> <em>function</em></dt>
+<dd>A function, with the signature <code>(level, logger, time, debugInfo, message...)</code>. See below for details</dd>
+</dl>
+<h3 id="function-signature">Function signature</h3>
+<dl>
+<dt><code>level</code> <em><a href="../level/">level</a></em></dt>
+<dd>A string indicating the level of the log, <code>"info"</code>, <code>"warning"</code>, <code>"error"</code>, <code>"fatal"</code>, <code>"debug"</code>.</dd>
+<dt><code>logger</code> <em><a href="logger.md">logger</a></em></dt>
+<dd>The logger that created the log, see <em><a href="../logger/getAncestry/">logger:getAncestry</a></em> to get a list of the logger's hierarchy.</dd>
+<dt><code>time</code> <em>number</em></dt>
+<dd>UNIX time in seconds, with microseconds. By default, this value is obtained by <code>socket.gettime</code> to get an accurate system time.</dd>
+<dt><code>debugInfo</code> <em>string</em> or <em>nil</em></dt>
+<dd>Depending on the level, and the config -- TODO link, a simple traceback string is passed along the lines of <code>funcName@fileName#lineNumber</code>, this format isn't guaranteed, for example code in the file scope will be <code>fileName#lineNumber</code> as they aren't contained within a named function.</dd>
+<dt><code>message...</code> <em>ANY</em></dt>
+<dd>The varargs of the message passed from the log function.</dd>
+</dl>
 <h2 id="returns">Returns</h2>
 <p>Nothing.</p>
 <h2 id="examples">Examples</h2>

@@ -1129,9 +1129,10 @@
 <h2 id="parameters">Parameters</h2>
 <p>None.</p>
 <h2 id="returns">Returns</h2>
-<p><code>chain</code> <em>table</em></p>
-<dd>An array of the current logger [1], until the parent is `nil`.</dd>
-
+<dl>
+<dt><code>chain</code> <em>table</em></dt>
+<dd>An array of the current logger [1], until the parent is <code>nil</code>.</dd>
+</dl>
 <h2 id="examples">Examples</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">chain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">Logger</span><span class="p">:</span><span class="nf">getAncestry</span><span class="p">()</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">local</span><span class="w"> </span><span class="nv">prefixParts</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>

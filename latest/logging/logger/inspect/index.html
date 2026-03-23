@@ -1130,16 +1130,17 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">Logger</span><span class="p">.</span><span class="nf">inspector</span><span class="p">(</span><span class="w"> </span><span class="nv">value</span><span class="p">,</span><span class="w"> </span><span class="nv">level</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
-<p><code>value</code> <em>ANY</em></p>
-<dd>If a non-table type is given, it will return it using `tostring`.</dd>
-
-<p><code>level</code> <a href="#"><em>depth</em></a> or <em>number</em> (<strong>"light"</strong>)</p>
-<dd>The maximum recursive depth to look into a table if it contains tables. `"light"` goes a depth of 1, `"deep"` goes a depth of 3, and `number` lets you fine tune how much depth.</dd>
-
+<dl>
+<dt><code>value</code> <em>ANY</em></dt>
+<dd>If a non-table type is given, it will return it using <code>tostring</code>.</dd>
+<dt><code>level</code> <a href="#"><em>depth</em></a> or <em>number</em> (<strong>"light"</strong>)</dt>
+<dd>The maximum recursive depth to look into a table if it contains tables. <code>"light"</code> goes a depth of 1, <code>"deep"</code> goes a depth of 3, and <code>number</code> lets you fine tune how much depth.</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p><code>str</code> <em>string</em></p>
+<dl>
+<dt><code>str</code> <em>string</em></dt>
 <dd>A formatted string of the given table, or non-table value, to the specified depth.</dd>
-
+</dl>
 <h2 id="examples">Examples</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">tbl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nv">foo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="p">,</span>
