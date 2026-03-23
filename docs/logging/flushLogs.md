@@ -8,7 +8,7 @@ mintmousse.flushLogs( forced )
 
 ## Parameters
 `forced` _boolean_ (**false**)
-<dd>Used to override the thread lock and immediately flush the buffer. This parameter is used internally during a crash state, and not recommended to be used.</dd>
+:   Used to override the thread lock and immediately flush the buffer. This parameter is used internally during a crash state, and not recommended to be used.
 
 ## Returns
 Nothing.

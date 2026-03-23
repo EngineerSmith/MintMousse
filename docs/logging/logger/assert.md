@@ -8,10 +8,10 @@ Logger:assert( condition, message... )
 
 ## Parameters
 `condition` _boolean_
-<dd>If condition is false, the message is promoted to an [`error`](../level.md)</dd>
+:   If condition is false, the message is promoted to an [`error`](../level.md)
 
 `message...` _ANY_
-<dd>The varargs of the message passed to all the sinks. If you pass in a table, it will only print to a maximum depth of 3 tables.</dd>
+:   The varargs of the message passed to all the sinks. If you pass in a table, it will only print to a maximum depth of 3 tables.
 
 ## Returns
 Nothing.

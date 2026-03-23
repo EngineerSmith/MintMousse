@@ -16,10 +16,10 @@ mintmousse.logUncaughtError( message, tracebackLayer )
 
 ## Parameters
 `message` _string_
-<dd>The reported error message</dd>
+:   The reported error message</dd>
 
 `tracebackLayer` _number_ (**0**)
-<dd>Increase to reduce the generated traceback to correctly report the cause of the crash. 'layer' 0 is when it is directly called within `love.errorhandler`.</dd>
+:   Increase to reduce the generated traceback to correctly report the cause of the crash. 'layer' 0 is when it is directly called within `love.errorhandler`.
 
 ## Returns
 Nothing.

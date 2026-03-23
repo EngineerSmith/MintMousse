@@ -9,14 +9,14 @@ logger = Logger:extend( name, color )
 ```
 ## Parameters
 `name` _string_
-<dd>Identifier shown in the logs.</dd>
+:   Identifier shown in the logs.
 
 `color` _[color](../color.md)_ (**"white"**)
-<dd>Color used to highlight the name in consoles that support color highlighting.</dd>
+:   Color used to highlight the name in consoles that support color highlighting.
 
 ## Returns
 `logger` _[logger](logger/index.md)_
-<dd>A new object of a logger.</dd>
+:   A new object of a logger.
 
 ## Examples
 ```lua

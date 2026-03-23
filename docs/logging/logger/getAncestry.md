@@ -13,7 +13,7 @@ None.
 
 ## Returns
 `chain` _table_
-<dd>An array of the current logger [1], until the parent is `nil`.</dd>
+:   An array of the current logger [1], until the parent is `nil`.
 
 ## Examples
 ```lua

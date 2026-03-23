@@ -12,14 +12,14 @@ str = Logger.inspector( value, level )
 
 ## Parameters
 `value` _ANY_
-<dd>If a non-table type is given, it will return it using `tostring`.</dd>
+:   If a non-table type is given, it will return it using `tostring`.
 
 `level` [_depth_](#) or _number_ (**"light"**)
-<dd>The maximum recursive depth to look into a table if it contains tables. `"light"` goes a depth of 1, `"deep"` goes a depth of 3, and `number` lets you fine tune how much depth.</dd>
+:   The maximum recursive depth to look into a table if it contains tables. `"light"` goes a depth of 1, `"deep"` goes a depth of 3, and `number` lets you fine tune how much depth.
 
 ## Returns
 `str` _string_
-<dd>A formatted string of the given table, or non-table value, to the specified depth.</dd>
+:   A formatted string of the given table, or non-table value, to the specified depth.
 
 ## Examples
 ```lua

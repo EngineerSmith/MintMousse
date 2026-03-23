@@ -37,6 +37,8 @@ markdown_extensions:
   - pymdownx.superfences
   - admonition
   - pymdownx.details
+  - md_in_html
+  - def_list
 
 plugins:
   - search

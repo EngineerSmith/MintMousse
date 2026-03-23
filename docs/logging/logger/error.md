@@ -8,8 +8,7 @@ Logger:error( message... )
 
 ## Parameters
 `message...` _ANY_
-<dd>The varargs of the message passed to all the sinks. If you pass in a table, it will only print to a maximum depth of 3 tables.</dd>
-
+:   The varargs of the message passed to all the sinks. If you pass in a table, it will only print to a maximum depth of 3 tables.
 ## Returns
 Nothing.
 
