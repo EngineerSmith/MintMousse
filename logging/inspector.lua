@@ -7,6 +7,23 @@ local safeRepresent = function(x)
   return tostring(x)
 end
 
+local pathKey = function(k)
+  if type(k) == "string" and k:match("^[%a_][%w_]*$") then
+    return k -- "foo" no quotes/periods
+  end
+  return "[" .. safeRepresent(k) .. "]" -- "[1]", "["\"weird key\"]", etc.
+end
+
+local buildSubPath = function(currentPath, k)
+  local seg = pathKey(k)
+  if currentPath == "" then
+    return seg
+  elseif seg:sub(1,1) == "[" then
+    return currentPath .. seg
+  end
+  return currentPath .. "." .. seg
+end
+
 local inspectLight = function(tbl)
   local messageParts = { }
   for k, v in pairs(tbl) do
@@ -19,17 +36,23 @@ local inspectLight = function(tbl)
 end
 
 local inspectDeep
-inspectDeep = function(tbl, maxDepth, indentLevel, seen)
+inspectDeep = function(tbl, maxDepth, indentLevel, seen, path)
   maxDepth = maxDepth or 3
   if maxDepth <= 0 then
     return "{ ... (depth limit reached) }"
   end
   indentLevel = indentLevel or 0
   seen = seen or { }
+  path = path or ""
+
   if seen[tbl] then
-    return "{ <cycle> }"
+    local cycleRef = seen[tbl]
+    if cycleRef == "" then
+      cycleRef = "(root)"
+    end
+    return "{ <cycle> " .. cycleRef .. "}"
   end
-  seen[tbl] = true
+  seen[tbl] = path
 
   local parts = { }
   local indent = string.rep("  ", indentLevel)
@@ -39,7 +62,8 @@ inspectDeep = function(tbl, maxDepth, indentLevel, seen)
 
     local valStr
     if type(v) == "table" then
-      valStr = inspectDeep(v, maxDepth - 1, indentLevel + 1, seen)
+      local subPath = buildSubPath(path, k)
+      valStr = inspectDeep(v, maxDepth - 1, indentLevel + 1, seen, subPath)
     else
       valStr = safeRepresent(v)
     end

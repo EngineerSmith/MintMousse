@@ -34,6 +34,13 @@ print(str)
 Logger:info(Logger.inspect(tbl, "deep"))
 
 Logger:info(Logger.inspect(tbl, 3))
+
+local a = { }
+local b = { }
+a["b"] = b
+b["a"] = a
+
+Logger:warning(Logger.inspect(a, "deep"))
 ```
 
 ## See Also

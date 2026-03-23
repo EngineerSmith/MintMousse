@@ -13,7 +13,7 @@ local moduleLogger = mintmousse.newLogger("module", "cyan")
 moduleLogger:info("Module initialized")
 
 local subLogger = moduleLogger:extend("submodule", "bright_blue")
-subLogger:warning("You're getting the hang of it now")
+subLogger:warning("You're getting the hang of it now", 5, { ["foo"] = "bar" })
 
 local minorLogger = subLogger:extend("minor")
 minorLogger:debug("I print the line I'm on - useful during development!")
