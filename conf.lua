@@ -59,8 +59,6 @@ local mintmousse = {
 
   -- Thread settings
   -----------------------------------------------------------------------------------------------------------------
-  POLL_MAX_READ = 50,                 -- Max messages read per poll operation (runtime-editable per thread)
-
   MAX_THREAD_MESSAGES = 100,          -- Max commands processed per MintMousse thread loop.
 
   THREAD_SLEEP = 1e-4,                -- Seconds: Sleep time between thread loop iterations.
@@ -71,16 +69,15 @@ local mintmousse = {
 
   -- Channel
   READONLY_THREAD_LOCATION      = "MintMousseThread",
-  THREAD_COMMAND_QUEUE_ID       = "MintMousse",
+  THREAD_COMMAND_QUEUE_ID       = "MintMousseCommand",
   READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary",
   THREAD_ID_COUNTER             = "MintMousseThreadCounter",
-  THREAD_COMPONENT_UPDATES_ID   = "MintMousseUpdate_%s", -- %s == thread ID
   READONLY_BASIC_TYPES_ID       = "MintMousseComponentTypes",
-  LOCK_LOG_BUFFER_FLUSH         = "MintMousseLogBufferFlush",
+  LOCK_LOG_BUFFER_FLUSH         = "MintMousseLogBufferFlush", -- When a log sink is defined, should it be able to define flush functions?
   LOCK_LOG_BUFFER_ERR           = "MintMousseLogBufferErr",
 
   -- Event
-  THREAD_RESPONSE_QUEUE_ID      = "MintMousse",
+  THREAD_RESPONSE_QUEUE_ID      = "MintMousseEvent",
 
 }
 

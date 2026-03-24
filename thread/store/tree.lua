@@ -5,7 +5,7 @@ local signal = require(PATH .. "thread.signal")
 return function(store, logger)
   local loggerTree = logger:extend("Tree")
 
-  local M = { }
+  local tree = { }
 
   local validateID = function(id)
     local success, reason = idUtil.isValidID(id)
@@ -32,7 +32,7 @@ return function(store, logger)
     return t
   end
 
-  M.newTab = function(id, title, index)
+  tree.newTab = function(id, title, index)
     id = id or idUtil.generateID()
     if not validateID(id) then return end
 
@@ -60,7 +60,7 @@ return function(store, logger)
     })
   end
 
-  M.addComponent = function(component, insertIndex)
+  tree.addComponent = function(component, insertIndex)
     -- Normalise and validate
     component.id = component.id or idUtil.generateID()
     component.children = { }
@@ -72,7 +72,7 @@ return function(store, logger)
       return
     end
     if not component.parentID then
-      loggerTree:warning("Missing parentID on", component.id)
+      loggerTree:warning("treeissing parentID on", component.id)
       return
     end
 
@@ -126,7 +126,7 @@ return function(store, logger)
   end
 
   local _sendInitialPayloadComponent
-  M.sendInitialPayload = function(client)
+  tree.sendInitialPayload = function(client)
     if not client.queue then return end
     for i, tab in ipairs(store.root) do
       client:queue({
@@ -170,7 +170,7 @@ return function(store, logger)
   end
 
   local _removeComponentChildren
-  M.removeComponent = function(id)
+  tree.removeComponent = function(id)
     local component = store.idLookUp[id]
     if not component then return end
 
@@ -194,7 +194,7 @@ return function(store, logger)
     component.children = nil
   end
 
-  M.updateComponent = function(id, index, value)
+  tree.updateComponent = function(id, index, value)
     -- Validate
     local component = store.idLookUp[id]
     if not component then return end
@@ -230,7 +230,7 @@ return function(store, logger)
     })
   end
 
-  M.moveComponent = function(id, newIndex)
+  tree.moveComponent = function(id, newIndex)
     -- Validate
     local component = store.idLookUp[id]
     if not component then return end
@@ -276,7 +276,7 @@ return function(store, logger)
     })
   end
 
-  M.reorderChildren = function(id, newOrderArray)
+  tree.reorderChildren = function(id, newOrderArray)
     -- Validate
     local parent = store.idLookUp[id]
     if not parent then
@@ -329,5 +329,5 @@ return function(store, logger)
     })
   end
 
-  return M
+  return tree
 end

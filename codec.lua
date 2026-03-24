@@ -3,69 +3,84 @@ local PATH = (...):match("^(.-)[^%.]+$")
 local mintmousse = require(PATH .. "conf")
 
 local getDictionary = function()
-  return {
-  -- Protocol & Structure
-  "id", "func", "args", "mintmousse", "batch",
+  -- These don't need to be perfect, but a rough idea is good enough
+  local words = {
+    "mintmousse",
 
-  -- Commands
-  "addComponent", "newTab", "removeComponent", -- componentManager
-  "updateComponent", "reorderChildren", "moveChild", -- proxyTable
-  "start", "quit", "setSVGIcon", "setIconRaw", "setIconRFG", "setTitle", "notify", -- threadController
+    -- Commands
+    "func", "args", "batch",
+      -- Proxy commands, and their arguments
+    "updateComponent", "id", "index", "value",
+    "removeComponent", "id",
+    "setChildrenOrder", "id", "newOrder",
+    "moveBefore", "id", "siblingID",
+    "moveAfter", "id", "siblingID",
+    "moveToFront", "id",
+    "moveToBack", "id",
+    "addComponent", "component",
+    "newTab", "id", "title", "index",
 
-  -- Component/UI Keys
-  "type", "parentID", "children",
-  "color", "size", "text", "title", "icon", "config",
+      -- ThreadController commands, and their arguments
+    "start", "config",
+    "quit",
+    "addToWhitelist", "additions",
+    "removeFromWhitelist", "removals",
+    "clearWhitelist",
+    "setSchemaIcon", "icon",
+    "setIconFromFile", "filepath",
+    "setIconRaw", "icon", "iconType",
+    "setIconRFG", "filepath",
+    "setTitle", "title",
+    "notify", "message", "title", "text",
 
-  -- State & Lifecycle
-  "update", -- is this needed?
-
--- old
-    --"id",
-    --"type",
-    --"func",
-    --"quit",
-    --"size",
-    --text",
-    --"start",
-    -- "style",
-    --"color",
-    --"update",
-    -- "latest",
-    "parent",
-    --"newTab",
-    --"setTitle",
-    --"children",
-    --"parentID",
-    --"setSVGIcon",
-    --"setIconRaw",
-    --"setIconRFG",
-    --"mintmousse",
-    -- "onEventClick",
-    --"addComponent",
-    -- "componentAdded",
-    --"updateComponent",
-    --"removeComponent",
-    "setIconFromFile",
-    "componentRemoved",
-    -- "updateSubscription",
+    -- Common Component/UI Keys
+    "title", -- accordion
+    "text", "color", "isDismissible", -- alert
+    "color", "colorOutline", "text", "isDisabled", "width", "isCentered", "click", -- button
+    "color", "isContentCenter", "borderColor", "title", "text", -- card
+    "text", "isTransparent", -- cardFooter
+    "text", "isTransparent", -- cardHeader
+    "text", -- cardSubtitle,
+    "text", -- cardText
+    "text", -- cardTitle
+    "isNumbered", -- list
+    "percentage", "showLabel", "ariaLabel", "isStriped", "color", -- progressBar
+    "columnWidth", -- row
+    "percentage", -- stackedProgressBar,
+    "title", "size", -- tab,
+    "text", -- text
   }
+
+  local proxy = require(PATH .. "proxy")
+  for _, word in ipairs(proxy.getProtectedKeys()) do -- order isn't guaranteed
+    table.insert(words, word)
+  end
+
+  -- Remove repeating
+  local dictionary, lookup = { }, { }
+  for index, word in ipairs(words) do
+    if not lookup[word] then
+      lookup[word] = true
+      table.insert(dictionary, word)
+    end
+  end
+
+  return dictionary
 end
 
 local createBuffer = function()
   local channelDictionary = love.thread.getChannel(mintmousse.READONLY_BUFFER_DICTIONARY_ID)
 
-  if not channelDictionary:peek() then
-    local dictionary, lookup = getDictionary(), { }
-    for index, word in ipairs(dictionary) do
-      assert(not lookup[word], "You've duplicated a word in the list! " .. index .. " index was already added")
-      lookup[word] = true
+  channelDictionary:performAtomic(function()
+    if not channelDictionary:peek() then
+      local dictionary = getDictionary()
+      channelDictionary:push(dictionary)
     end
-
-    channelDictionary:push(dictionary)
-  end
+  end)
+  local dictionary = channelDictionary:peek()
 
   local buffer = require("string.buffer").new({
-    dict = channelDictionary:peek(),
+    dict = dictionary,
   })
 
   return buffer
@@ -73,13 +88,16 @@ end
 
 local codec = { }
 
-local buffer = createBuffer()
+local bufferEnc
 codec.encode = function(message)
-  return buffer:reset():encode(message):get()
+  if not bufferEnc then bufferEnc = createBuffer() end
+  return bufferEnc:reset():encode(message):get()
 end
 
+local bufferDec
 codec.decode = function(encodedMessage)
-  return buffer:set(encodedMessage):decode()
+  if not bufferDec then bufferDec = createBuffer() end
+  return bufferDec:set(encodedMessage):decode()
 end
 
 return codec

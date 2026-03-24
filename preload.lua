@@ -49,6 +49,11 @@ end
 local util = require(PATH .. "util")
 mintmousse.cleanupTraceback = util.cleanupTraceback
 
+local codec = require(PATH .. "codec") -- init buffers
+if codec.decode(codec.encode("mintmousse")) ~= "mintmousse" then
+  logger:error("Codec didn't initialise correctly.")
+end
+
 local logging = require(PATH .. "logging")
 mintmousse.flushLogs = logging.flushLogs
 mintmousse.newLogger = logging.newLogger
@@ -92,16 +97,10 @@ if not love.isThread then -- is Main thread
   mintmousse.removeCallback = eventManager.removeCallback
 end
 
-local proxyTable = require(PATH .. "proxyTable")
-proxyTable.loadComponentManager() -- prevent circular dependency
-
-local componentManager = require(PATH .. "componentManager")
-mintmousse.newTab = componentManager.newTab
-mintmousse.get = componentManager.get
-mintmousse.removeComponent = componentManager.removeComponent
-
-local syncPoll = require(PATH .. "syncPoll")
-mintmousse.poll = syncPoll.poll
+local proxy = require(PATH .. "proxy")
+mintmousse.newTab = proxy.newTab
+mintmousse.get = proxy.get
+mintmousse.removeComponent = proxy.removeComponent
 
 mintmousse.flushLogs()
 

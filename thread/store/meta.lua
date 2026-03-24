@@ -16,47 +16,47 @@ return function(store, logger)
     return content
   end
 
-  local M = { }
+  local meta = { }
 
-  M.setTitle = function(title)
+  meta.setTitle = function(title)
     store.meta.title = title or ""
     store.meta.dirty = true
     signal.emit("broadcast", { action = "setTitle", title = title })
   end
 
-  M.setIconHTML = function(icon)
+  meta.setIconHTML = function(icon)
     store.meta.icon = icon
     store.meta.dirty = true
   end
 
-  M.renderHTML = function()
+  meta.renderHTML = function()
     local template = readTemplate(love.mintmousse.DEFAULT_INDEX_HTML)
     store.resources.html = lustache:render(template, store.meta)
     store.meta.dirty = false
   end
 
-  M.getHTML = function()
-    if store.meta.dirty then M.renderHTML() end
+  meta.getHTML = function()
+    if store.meta.dirty then meta.renderHTML() end
     return store.resources.html
   end
 
-  M.renderJavascript = function(scripts)
+  meta.renderJavascript = function(scripts)
     local template = readTemplate(love.mintmousse.DEFAULT_INDEX_JS)
     store.resources.javascript = lustache:render(template, { components = scripts })
   end
 
-  M.getJavascript = function()
+  meta.getJavascript = function()
     return store.resources.javascript
   end
 
-  M.renderCSS = function(styles)
+  meta.renderCSS = function(styles)
     local template = readTemplate(love.mintmousse.DEFAULT_INDEX_CSS)
     store.resources.css = lustache:render(template, { components = styles })
   end
 
-  M.getCSS = function()
+  meta.getCSS = function()
     return store.resources.css
   end
 
-  return M
+  return meta
 end
