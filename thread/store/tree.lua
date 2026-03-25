@@ -276,6 +276,7 @@ return function(store, logger)
     })
   end
 
+  -- TODO remove this function, i.e. make tree.setChildrenOrder the only 'moveChildren' function
   tree.reorderChildren = function(id, newOrderArray)
     -- Validate
     local parent = store.idLookUp[id]
@@ -327,6 +328,120 @@ return function(store, logger)
       id       = id,
       newOrder = newOrderArray,
     })
+  end
+
+  tree.setChildrenOrder = function(parentID, newOrder)
+    local parent = store.idLookUp[parentID]
+    if not parent then
+      loggerTree:warning("Parent not found for setChildrenOrder", parentID)
+      return
+    end
+
+    local children = parent.children or { }
+    local numChildren = #children
+    if numChildren == 0 then return end
+
+    local seen = { }
+    local finalIDs = { }
+
+    for _, id in ipairs(newOrder) do
+      if type(id) == "string" then
+        local comp = store.idLookUp[id]
+        if comp and comp.parentID == parentID and not seen[id] then
+          table.insert(finalIDs, id)
+          seen[id] = true
+        end
+      end
+    end
+    for _, child in ipairs(children) do
+      if not seen[child.id] then
+        table.insert(finalIDs, child.id)
+        seen[child.id] = true
+      end
+    end
+
+    local oldIndexByID = { }
+    for i, child in ipairs(children) do
+      oldIndexByID[child.id] = i
+    end
+
+    local newOrderArray = { }
+    for _, id in ipairs(finalIDs) do
+      table.insert(newOrderArray, oldIndexByID[id])
+    end
+
+    tree.reorderChildren(parentID, newOrderArray)
+  end
+
+  local calculateMoveTarget = function(parent, component, siblingID, after)
+    local oldIndex, siblingIndex
+    for i, child in ipairs(parent.children) do
+      if child == component then
+        oldIndex = i
+      elseif child.id == siblingID then
+        siblingIndex = i
+      end
+      if oldIndex and siblingIndex then break end
+    end
+    if not oldIndex or not siblingIndex or oldIndex == siblingIndex then
+      return nil
+    end
+    if oldIndex < siblingIndex then
+      siblingIndex = siblingIndex - 1
+    end
+    return after and siblingIndex + 1 or siblingIndex
+  end
+
+  tree.moveBefore = function(id, siblingID)
+    if id == siblingID then return end
+
+    local component = store.idLookUp[id]
+    if not component then return end
+
+    local parent = store.idLookUp[component.parentID]
+    if not parent then
+      loggerTree:warning("Parent not found", component.parentID, "for", component.id)
+      return
+    end
+    if component.id == siblingID then return end
+
+    local target = calculateMoveTarget(parent, component, siblingID, false)
+    if target then
+      tree.moveComponent(id, target)
+    else
+      loggerTree:warning("Invalid sibling for moveBefore", siblingID, "of", id)
+      return
+    end
+  end
+
+  tree.moveAfter = function(id, siblingID)
+    if id == siblingID then return end
+
+    local component = store.idLookUp[id]
+    if not component then return end
+
+    local parent = store.idLookUp[component.parentID]
+    if not parent then
+      loggerTree:warning("Parent not found", component.parentID, "for", component.id)
+      return
+    end
+    if component.id == siblingID then return end
+
+    local target = calculateMoveTarget(parent, component, siblingID, true)
+    if target then
+      tree.moveComponent(id, target)
+    else
+      loggerTree:warning("Invalid sibling for moveAfter", siblingID, "of", id)
+      return
+    end
+  end
+
+  tree.moveToFront = function(id)
+    tree.moveComponent(id, 1)
+  end
+
+  tree.moveToBack = function(id)
+    tree.moveComponent(id, -1)
   end
 
   return tree

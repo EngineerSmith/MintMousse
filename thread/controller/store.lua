@@ -27,7 +27,7 @@ end)
 
 signal.on("addComponent", function(args)
   local comp = arg(args, "component")
-  if comp then store.addComponent(comp, arg(args, "index", "number")) end
+  if comp then store.addComponent(comp) end
 end)
 
 signal.on("removeComponent", function(args)
@@ -43,18 +43,36 @@ signal.on("updateComponent", function(args)
   end
 end)
 
-signal.on("reorderChildren", function(args)
-  local id   = arg(args, "id")
-  local arr  = arg(args, "newOrderArray", "table")
-  if id and arr and #arr > 0 then
-    store.reorderChildren(id, arr)
+signal.on("setChildrenOrder", function(args)
+  local id    = arg(args, "id")
+  local array = arg(args, "newOrder", "table")
+  if id and array and #array > 0 then
+    store.setChildrenOrder(id, array)
   end
 end)
 
-signal.on("moveComponent", function(args)
-  local id       = arg(args, "id")
-  local newIndex = arg(args, "newIndex", "number")
-  if id and newIndex then
-    store.moveComponent(id, newIndex)
+signal.on("moveBefore", function(args)
+  local id        = arg(args, "id", "string")
+  local siblingID = arg(args, "siblingID", "string")
+  if id and siblingID then
+    store.moveBefore(id, siblingID)
   end
+end)
+
+signal.on("moveAfter", function(args)
+  local id        = arg(args, "id", "string")
+  local siblingID = arg(args, "siblingID", "string")
+  if id and siblingID then
+    store.moveAfter(id, siblingID)
+  end
+end)
+
+signal.on("moveToFront", function(args)
+  local id = arg(args, "id", "string")
+  if id then store.moveToFront(id) end
+end)
+
+signal.on("moveToBack", function(args)
+  local id = arg(args, "id", "string")
+  if id then store.moveToBack(id) end
 end)
