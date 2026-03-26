@@ -512,10 +512,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-signature" class="md-nav__link">
+  <a href="#sink-function-signature" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function signature
+        Sink Function Signature
       
     </span>
   </a>
@@ -1075,10 +1075,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-signature" class="md-nav__link">
+  <a href="#sink-function-signature" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function signature
+        Sink Function Signature
       
     </span>
   </a>
@@ -1133,22 +1133,30 @@
 
 
 <h1 id="mintmousseaddlogsink"><code>mintmousse.addLogSink</code></h1>
-<p>Used to add a custom sink to direct log messages to where ever you want, for example if you wanted to send them to a REST API endpoint.</p>
+<p>Used to add a custom sink to direct log messages to where ever you want, for the current thread that the function is ran on.</p>
 <p>I recommend checking out the logging sinks that the library implements to fully understand how you can implement your own.</p>
+<p>!!! warning "Thread behaviour</p>
+<div class="highlight"><pre><span></span><code>This function is used to route logs of the thread that this function is ran on. If you just want to set a logging sink once, and handle all logs from all threads see [`mintmousse.addGlobalLogSink`](addGlobalLogSink.md). This function is recommended over global sinks for performance.
+</code></pre></div>
 <h2 id="synopsis">Synopsis</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="w"> </span><span class="nv">sink</span><span class="w"> </span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="w"> </span><span class="nv">sink</span><span class="p">,</span><span class="w"> </span><span class="nv">flushFunc</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><code>sink</code> <em>function</em></dt>
 <dd>A function, with the signature <code>(level, logger, time, debugInfo, message...)</code>. See below for details</dd>
+<dt><code>flushFunc</code> <em>function</em></dt>
+<dd>A function, with the signature <code>(forced)</code>. See <a href="../flushLogs/"><code>mintmousse.flushLogs</code></a> for details</dd>
 </dl>
-<h3 id="function-signature">Function signature</h3>
+<h3 id="sink-function-signature">Sink Function Signature</h3>
 <dl>
 <dt><code>level</code> <em><a href="../level/">level</a></em></dt>
 <dd>A string indicating the level of the log, <code>"info"</code>, <code>"warning"</code>, <code>"error"</code>, <code>"fatal"</code>, <code>"debug"</code>.</dd>
 <dt><code>logger</code> <em><a href="logger.md">logger</a></em></dt>
-<dd>The logger that created the log, see <em><a href="../logger/getAncestry/">logger:getAncestry</a></em> to get a list of the logger's hierarchy.</dd>
+<dd>
+<p>The logger that created the log.</p>
+<p>You shouldn't try to use any other function of the logger when it is in a sink other than <a href="../logger/getAncestry/"><code>(Logger):getAncestry</code></a> and <a href="../logger/inspect/"><code>(Logger).inspect</code></a>.</p>
+</dd>
 <dt><code>time</code> <em>number</em></dt>
 <dd>UNIX time in seconds, with microseconds. By default, this value is obtained by <code>socket.gettime</code> to get an accurate system time.</dd>
 <dt><code>debugInfo</code> <em>string</em> or <em>nil</em></dt>
@@ -1159,17 +1167,29 @@
 <h2 id="returns">Returns</h2>
 <p>Nothing.</p>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="kr">function</span><span class="p">(</span><span class="nv">level</span><span class="p">,</span><span class="w"> </span><span class="nv">logger</span><span class="p">,</span><span class="w"> </span><span class="nv">time</span><span class="p">,</span><span class="w"> </span><span class="nv">debugInfo</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="kr">if</span><span class="w"> </span><span class="p">(</span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;info&quot;</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="nv">info</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;warning&quot;</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">      </span><span class="nv">logger</span><span class="p">.</span><span class="py">name</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="nb">math.floor</span><span class="p">(</span><span class="nv">time</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">debugInfo</span><span class="w"> </span><span class="kr">then</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="kd">local</span><span class="w"> </span><span class="nv">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">select</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nb">io.stdout</span><span class="p">:</span><span class="nf">write</span><span class="p">(</span><span class="nv">num</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="kr">end</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="kr">end</span><span class="p">)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nv">logger</span><span class="p">:</span><span class="nf">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;World&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">-- 6\n</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="nv">logger</span><span class="p">:</span><span class="nf">warning</span><span class="p">(</span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- 2\n</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="kr">function</span><span class="p">(</span><span class="nv">level</span><span class="p">,</span><span class="w"> </span><span class="nv">logger</span><span class="p">,</span><span class="w"> </span><span class="nv">time</span><span class="p">,</span><span class="w"> </span><span class="nv">debugInfo</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span><span class="c1">-- Sink function</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="p">(</span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;info&quot;</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="nv">info</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;warning&quot;</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="ow">and</span><span class="w"> </span><span class="nb">math.floor</span><span class="p">(</span><span class="nv">time</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">debugInfo</span><span class="w"> </span><span class="kr">then</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="kd">local</span><span class="w"> </span><span class="nv">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">select</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nb">io.stdout</span><span class="p">:</span><span class="nf">write</span><span class="p">(</span><span class="nv">num</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="kr">end</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="kr">end</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="kr">function</span><span class="p">(</span><span class="nv">forced</span><span class="p">)</span><span class="w"> </span><span class="c1">-- Flush function</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nb">io.stdout</span><span class="p">:</span><span class="nf">flush</span><span class="p">()</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="kr">end</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="nv">logger</span><span class="p">:</span><span class="nf">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;World&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">-- 6\n</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nv">logger</span><span class="p">:</span><span class="nf">warning</span><span class="p">(</span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- 2\n</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">flushLogs</span><span class="p">()</span>
 </code></pre></div>
+<h1 id="see-also">See Also</h1>
+<ul>
+<li><a href="../../">Logging</a></li>
+<li><a href="addGlobalLogSink.md">`mintmousse.addGlobalLogSink</a></li>
+</ul>
 
 
 

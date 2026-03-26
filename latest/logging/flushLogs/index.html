@@ -1099,14 +1099,14 @@
 
 
 <h1 id="mintmousseflushlogs"><code>mintmousse.flushLogs</code></h1>
-<p>Thread-safe function to flush io buffer for the base implemented logging sink.</p>
+<p>Thread-safe function to call flush function callbacks per sink. On the main thread, it also processes <a href="addGlobalLogSink.md">global sinks</a>.</p>
 <h2 id="synopsis">Synopsis</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">flushLogs</span><span class="p">(</span><span class="w"> </span><span class="nv">forced</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><code>forced</code> <em>boolean</em> (<strong>false</strong>)</dt>
-<dd>Used to override the thread lock and immediately flush the buffer. This parameter is used internally during a crash state, and not recommended to be used.</dd>
+<dd>Used to override the thread lock and immediately flush the buffer. This parameter is used internally during a crash state, and not recommended to be used in practice.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>Nothing.</p>
