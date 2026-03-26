@@ -126,6 +126,10 @@ local errorhandler = function(msg)
   end
 
   return function()
+    if mintmousse.flushLogs then
+      mintmousse.flushLogs() -- Continues to flush logs
+    end
+
     love.event.pump(0.1)
 
     for e, a, b, c in love.event.poll() do
