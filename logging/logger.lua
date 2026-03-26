@@ -21,33 +21,37 @@ logger.extend = function(parent, name, colorDef)
   end
 
   local self = setmetatable({
-    name = name,
+    parent   = parent,
+    name     = name,
     colorDef = loggingColors.validateColorDef(colorDef),
-    parent = parent,
   }, logger)
-  -- init
+
+  -- precache
   self:getAncestry()
 
   return self
 end
 
 logger.getAncestry = function(self)
-  if self.chain then
-    return self.chain
+  if self.ancestryData then
+    return self.ancestryData
   end
 
-  local chain = { }
+  local ancestryData = { }
 
   local current = self
   while current do
     if type(current.name) == "string" then
-      table.insert(chain, current)
+      table.insert(ancestryData, 1, {
+        name     = current.name,
+        colorDef = current.colorDef,
+      })
     end
     current = current.parent
   end
 
-  self.chain = chain
-  return self.chain
+  self.ancestryData = ancestryData
+  return self.ancestryData
 end
 
 logger.info = function(self, ...)

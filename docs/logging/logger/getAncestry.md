@@ -12,15 +12,16 @@ chain = Logger:getAncestry()
 None.
 
 ## Returns
-`chain` _table_
-:   An array of the current logger [1], until the parent is `nil`.
+`ancestryData` _table_
+:   An array of the logger's ancestry information. `ancestryData[1]` will be the upmost root, `ancestryData[#ancestryData]` will be the Logger that called the function.
+
+    Each entry in the table, is a table with the two fields `name` _string_ and `colorDef` _[color](../color.md)_
 
 ## Examples
 ```lua
-local chain = Logger:getAncestry()
+local ancestryData = Logger:getAncestry()
 local prefixParts = { }
-for i = #chain, 1, -1 do
-  local node = chain[i]
+for _, node in ipairs(ancestryData) do
   table.insert(prefixParts, node.name)
 end
 print(table.concat(prefixParts, ":"))

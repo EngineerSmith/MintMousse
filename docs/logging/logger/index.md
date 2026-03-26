@@ -5,11 +5,11 @@ The object to be able to log messages out.
 |Constructors|Description|
 |---|---|
 |[`mintmousse.newLogger`](../newLogger.md)|Create a new named, colored logger object|
+|[`(Logger):extend`](extend.md)|Create a new named, colored logger object with the parent object appearing before it|
 
 ## Functions
 |Function|Description|
 |---|---|
-|[`(Logger):extend`](extend.md)|Create a new named, colored logger object with the parent object appearing before it|
 |[`(Logger):info`](info.md)|Log an `info` level message|
 |[`(Logger):warning`](warning.md)|Log a `warning` level message|
 |[`(Logger):debug`](debug.md)|Log a `debug` level message|

@@ -57,6 +57,8 @@ local mintmousse = {
 
   LOG_BUFFER_SIZE = 2^20,             -- 1Mb: Stdout buffer size. Increase if output garbles; call mintmousse.flushLogs() as needed.
 
+  LOG_MAX_PENDING_LOGS_PER_FLUSH = 512-- Max number of logs global sinks can process per flush
+
   -- Thread settings
   -----------------------------------------------------------------------------------------------------------------
   MAX_THREAD_MESSAGES = 100,          -- Max commands processed per MintMousse thread loop.
@@ -73,8 +75,9 @@ local mintmousse = {
   READONLY_BUFFER_DICTIONARY_ID = "MintMousseDictionary",
   THREAD_ID_COUNTER             = "MintMousseThreadCounter",
   READONLY_BASIC_TYPES_ID       = "MintMousseComponentTypes",
-  LOCK_LOG_BUFFER_FLUSH         = "MintMousseLogBufferFlush", -- When a log sink is defined, should it be able to define flush functions?
+  LOCK_LOG_BUFFER_FLUSH         = "MintMousseLogBufferFlush",
   LOCK_LOG_BUFFER_ERR           = "MintMousseLogBufferErr",
+  LOG_EVENT_CHANNEL             = "MintMousseLogEvents",
 
   -- Event
   THREAD_RESPONSE_QUEUE_ID      = "MintMousseEvent",
@@ -84,7 +87,6 @@ local mintmousse = {
 -- Setup logging
 mintmousse._setupLogging = function()
   local logging = require(PATH .. "logging")
-  logging.setupBuffer(mintmousse.LOG_BUFFER_SIZE, mintmousse.LOCK_LOG_BUFFER_FLUSH)
   logging.enableCleanupTraceback(mintmousse.LOG_CLEAR_UP_TRACEBACK)
 
   local libraryLogger = logging.newLogger("MintMousse", "bright_green")

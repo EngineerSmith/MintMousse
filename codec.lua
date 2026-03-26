@@ -49,6 +49,15 @@ local getDictionary = function()
     "percentage", -- stackedProgressBar,
     "title", "size", -- tab,
     "text", -- text
+
+    -- Logging
+      -- Level
+    "info", "warning", "debug", "error", "fatal",
+      -- Color
+    "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
+    "bright_black", "bright_red", "bright_green", "bright_yellow", "bright_blue", "bright_magenta", "bright_cyan", "bright_white",
+      -- Logger ancestry data
+    "name", "colorDef"
   }
 
   local proxy = require(PATH .. "proxy")

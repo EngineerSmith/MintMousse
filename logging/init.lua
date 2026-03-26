@@ -1,28 +1,50 @@
 local PATH = ...
 PATH = PATH:match("^(.*)%.init$") or PATH
+local ROOT = PATH:match("^(.-)[^%.]+$") or ""
 PATH = PATH .. "."
 
 local socket = require("socket")
-local stack = require(PATH .. "stack")
-local logger = require(PATH .. "logger")
+
+local mintmousse = require(ROOT .. "conf")
+local codec      = require(ROOT .. "codec")
+
+local stack     = require(PATH .. "stack")
+local logger    = require(PATH .. "logger")
 local inspector = require(PATH .. "inspector")
 
 local logging = {
   logger = logger,
   isInsideError = false,
   isInsideFatal = false,
-  sinks = { },
+  sinks = { }, -- per thread
+  globalSinks = { },
+  flushFuncs = { },
+  globalFlushFuncs = { },
 
   inspect = inspector.inspect,
 }
 
 local getTime = socket.gettime
+local logChannel = love.thread.getChannel(mintmousse.LOG_EVENT_CHANNEL)
 
-local dispatchToSinks = function(...)
+local dispatchToSinks = function(level, logger, time, debugInfo, ...)
   stack.push()
   for _, sink in ipairs(logging.sinks) do
-    sink(...)
+    sink(level, logger, time, debugInfo, ...)
   end
+
+  if love.isThread then
+    local ancestry = logger and logger:getAncestry() or nil
+
+    local args, argCount = { }, select("#", ...)
+    for i = 1, argCount do
+      args[i] = select(i, ...)
+    end
+    args.n = argCount
+
+    logChannel:push(codec.encode({ level, ancestry, time, debugInfo, args }))
+  end
+
   stack.pop()
 end
 
@@ -31,10 +53,37 @@ logger.setup({
   dispatch = dispatchToSinks,
   getTime  = getTime,
 })
-logger.inspect = inspector.inspect
+logger.inspect = logging.inspect
 
-local flushStdOut = function()
-  io.stdout:flush()
+local dummyLogger = {
+  getAncestry = function(self) return self.ancestryData end,
+  inspect = logging.inspect,
+}
+
+logging.processPendingLogs = function()
+  if love.isThread or #logging.globalSinks == 0 then
+    return
+  end
+  stack.push()
+
+  local processed = 0
+  while processed <= mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH do
+    local rawEvent = logChannel:pop()
+    if not rawEvent then break end
+
+    local event = codec.decode(rawEvent)
+    local level, ancestry, time, debugInfo, args = event[1], event[2], event[3], event[4], event[5]
+
+    dummyLogger.ancestryData = ancestry
+    for _, sink in ipairs(logging.globalSinks) do
+      sink(level, ancestry and dummyLogger or nil, time, debugInfo, table.unpack(args, 1, args.n))
+    end
+
+    processed = processed + 1
+  end
+  dummyLogger.ancestryData = nil -- clean up
+
+  stack.pop()
 end
 
 local cleanupTraceback = require(PATH .. "cleanupTraceback")
@@ -46,21 +95,18 @@ logging.enableCleanupTraceback = function(bool)
   end
 end
 
-local bufferLockChannel
-
---- Config the stdout buffer and thread locking channel
-logging.setupBuffer = function(bufferSize, lockChannel)
-  io.stdout:setvbuf("full", bufferSize)
-  bufferLockChannel = love.thread.getChannel(lockChannel)
-end
-
---- Flushes the log buffer to stdout.
--- forced (boolean) If true, bypasses the thread lock (useful for fatal errors)
+--- Calls the flush callbacks for each sink
+-- forced (boolean) If true, bypasses the thread lock (useful for fatal errors) when implemented for flush callbacks
 logging.flushLogs = function(forced)
-  if not forced and bufferLockChannel then
-    bufferLockChannel:performAtomic(flushStdOut)
-  else
-    flushStdOut()
+  if not love.isThread then
+    logging.processPendingLogs()
+  end
+
+  for _, func in ipairs(logging.flushFuncs) do
+    func(forced)
+  end
+  for _, func in ipairs(logging.globalFlushFuncs) do
+    func(forced)
   end
 end
 
@@ -71,9 +117,30 @@ end
 
 --- Registers a new sink function to receive log events.
 -- Arguments passed to sink: (level, loggerInstance, time, debugInfo, ...)
-logging.addLogSink = function(sink)
+logging.addLogSink = function(sink, flushFunc)
   assert(type(sink) == "function", "Expected sink type to be function.")
+  if flushFunc then
+    assert(type(flushFunc) == "function", "Expected flushFunc type to be a function or nil")
+  end
+
   table.insert(logging.sinks, sink)
+  if flushFunc then
+    table.insert(logging.flushFuncs, flushFunc)
+  end
+end
+
+-- Registers a new sink that runs *once* in  the main thread and receives logs from ALL threads
+logging.addGlobalLogSink = function(sink, flushFunc)
+  assert(not love.isThread, "addGlobalLogSink can only be called from the main thread")
+  assert(type(sink) == "function", "Expected sink type to be function")
+  if flushFunc then
+    assert(type(flushFunc) == "function", "Expected flushFunc type to be a function or nil")
+  end
+
+  table.insert(logging.globalSinks, sink)
+  if flushFunc then
+    table.insert(logging.globalFlushFuncs, flushFunc)
+  end
 end
 
 --- Explicitly logs an uncaught error and forces a flush.

@@ -48,7 +48,8 @@ The [`(Logger):extend`](logger/extend.md) method automatically builds the `[modu
 |[`mintmousse.newLogger`](newLogger.md)|Create a new named, colored logger object|
 |[`mintmousse.flushLogs`](flushLogs.md)|Flush the log buffer (thread-safe)|
 |[`mintmousse.logUncaughtError`](logUncaughtError.md)|Catch errors in [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler)|
-|[`mintmousse.addLogSink`](addLogSink.md)|Register a custom destination for all log messages|
+|[`mintmousse.addLogSink`](addLogSink.md)|Register a custom destination for all log messages on the current thread|
+|[`mintmousse.addGlobalLogSink`](addGlobalLogSink.md)|Register a custom destination for all log messages across the program|
 
 ## Enums
 |Enum|Description|

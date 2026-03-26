@@ -7,5 +7,6 @@ local mintmousse = require(ROOT .. "conf")
 local logging = require(ROOT .. "logging")
 
 if mintmousse.LOG_ENABLE_STREAM_OUT then
-  logging.addLogSink(require(PATH .. "streamOut"))
+  local streamOut = require(PATH .. "streamOut")
+  logging.addLogSink(streamOut.sink, streamOut.flush)
 end

@@ -113,11 +113,10 @@ local sink = function(level, logger, time, debugInfo, ...)
   end
 
   if logger then
-    local chain = logger:getAncestry()
-    if #chain > 0 then
+    local ancestryData = logger:getAncestry()
+    if #ancestryData > 0 then
       local prefixParts = { }
-      for i = #chain, 1, -1 do
-        local node = chain[i]
+      for _, node in ipairs(ancestryData) do
         local name = node.name
         name = theme.colorize(node.colorDef or "white", name)
         table.insert(prefixParts, name)
@@ -152,4 +151,20 @@ local sink = function(level, logger, time, debugInfo, ...)
   end
 end
 
-return sink
+local bufferLockChannel = love.thread.getChannel(mintmousse.LOCK_LOG_BUFFER_FLUSH)
+
+io.stdout:setvbuf("full", mintmousse.LOG_BUFFER_SIZE)
+
+local flushStdOut = function()
+  io.stdout:flush()
+end
+
+local flush = function(forced)
+  if not forced and bufferLockChannel then
+    bufferLockChannel:performAtomic(flushStdOut)
+  else
+    flushStdOut()
+  end
+end
+
+return { sink = sink, flush = flush }

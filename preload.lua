@@ -58,6 +58,7 @@ local logging = require(PATH .. "logging")
 mintmousse.flushLogs = logging.flushLogs
 mintmousse.newLogger = logging.newLogger
 mintmousse.addLogSink = logging.addLogSink
+mintmousse.addGlobalLogSink = logging.addGlobalLogSink
 mintmousse.logUncaughtError = logging.logUncaughtError
 
 local threadCommand = require(PATH .. "threadCommand")
@@ -101,6 +102,9 @@ local proxy = require(PATH .. "proxy")
 mintmousse.newTab = proxy.newTab
 mintmousse.get = proxy.get
 mintmousse.removeComponent = proxy.removeComponent
+
+local pages = require(PATH .. "pages")
+mintmousse.buildPage = pages.buildPage
 
 mintmousse.flushLogs()
 
