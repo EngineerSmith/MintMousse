@@ -174,12 +174,14 @@ local proxyIndex = function(proxyTbl, key)
         end
       end
     end
-    loggingStack.pop()
-    return creationCache[key]
+    if creationCache[key] ~= nil then
+      loggingStack.pop()
+      return creationCache[key]
+    end
   end
   -- else
   loggingStack.pop()
-  return raw[key]
+  return rawget(raw, key)
 end
 
 local proxyMetatable = {
