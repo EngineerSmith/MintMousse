@@ -14,7 +14,9 @@ componentRegistry.register({
     root.type = "button";
     instance.element = root;
 
-    root.addEventListener('click', this.event_click.bind(this));
+    root.addEventListener('click', (event) => {
+      this.event_click(event, instance);
+    });
 
     this.update_text(payload);
     this._updateVisuals(instance);
@@ -62,9 +64,8 @@ componentRegistry.register({
     this._updateVisuals(instance);
   },
 
-  event_click: function(event) {
-    const id = event.currentTarget.id;
-    const success = Network.send({ id: id, event: "click", });
+  event_click: function(event, instance) {
+    const success = Network.send({ id: instance.id, event: "click", });
 
     if (!success) {
       console.warn("MM: Button event triggered; but failed to send.")

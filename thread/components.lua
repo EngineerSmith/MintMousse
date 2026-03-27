@@ -97,6 +97,7 @@ local processComponentKey = function(key, componentTypeObject)
 
   local prop = key:match("^event_(.+)")
   if prop then
+    prop = prop:gsub("^%l", string.upper)
     componentTypeObject.events[prop] = true
     return
   end

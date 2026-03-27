@@ -95,5 +95,5 @@ websocket.on("message", function(client, request)
     return
   end
 
-  --controller.handleIncomingEvent(client, request)
+  store.incomingEvent(client, payload)
 end)

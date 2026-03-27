@@ -194,6 +194,32 @@ return function(store, logger)
     end
   end
 
+  tree.incomingEvent = function(client, payload)
+    if type(payload) ~= "table" or 
+       type(payload.id) ~= "string" or
+       type(payload.event) ~= "string" then
+      return
+    end
+
+    local id = payload.id
+    if not idUtil.isValidID(id) then return end
+
+    local component = store.idLookUp[id]
+    if not component then return end
+
+    local compType = getTypeInfo(component.type)
+    if not compType.events then return end
+
+    local event = payload.event
+    event = event:gsub("^%l", string.upper)
+    if not compType.events[event] then return end
+
+    local callback = component["onEvent" .. event]
+    if not callback then return end
+
+    love.mintmousse.pushEvent("MintMousseJSEvent", component.id, callback)
+  end
+
   local _removeComponentChildren
   tree.removeComponent = function(id)
     local component = store.idLookUp[id]
@@ -239,6 +265,14 @@ return function(store, logger)
     end
 
     if not isParentChildUpdate and not isDirectUpdate then
+      if childType.events then
+        local event = key:match("^onEvent(.+)")
+        if event and childType.events[event] then
+          component[index] = value
+          return -- Event updates don't need to be sent over network
+        end
+      end
+
       loggerTree:warning("Unsupported update field '" .. tostring(index) .. "' on component", component.id, "(type:", component.type or "UNKNOWN", ")")
       return
     end

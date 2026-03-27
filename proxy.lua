@@ -55,9 +55,9 @@ local needsComponentUpdate = function(compType, key)
   if compType == "unknown" then return true end
   local ct = contract.componentTypes[compType]
   if type(ct.updates) == "table" and ct.updates[key] then return true end
-  if type(key) == "string" then
+  if type(key) == "string" and ct.events then
     local event = key:match("^onEvent(.+)")
-    if event and ct.events and ct.events[event] then return true end
+    if event and ct.events[event] then return true end
   end
   return false
 end
@@ -159,8 +159,7 @@ local proxyIndex = function(proxyTbl, key)
           loggingStack.push()
           component = component or { }
           component.type = typ
-          local parentID = rawget(parentProxy, "__raw").id
-          local childProxy = proxy._addComponent(component, parentID)
+          local childProxy = proxy._addComponent(component, parentProxy)
           loggingStack.pop()
           return childProxy
         end
@@ -169,8 +168,7 @@ local proxyIndex = function(proxyTbl, key)
           loggingStack.push()
           component = component or { }
           component.type = typ
-          local parentID = rawget(parentProxy, "__raw").id
-          proxy._addComponent(component, parentID)
+          proxy._addComponent(component, parentProxy)
           loggingStack.pop()
           return parentProxy
         end
@@ -461,20 +459,19 @@ proxy.moveToBack = function(tbl)
   return tbl
 end
 
-proxy._addComponent = function(component, parentID)
+proxy._addComponent = function(component, parentProxy)
   loggingStack.push()
   if type(component) == "string" then
     component = { type = component }
   end
 
   log:assert(type(component) == "table", "Component must be type string or table")
-  log:assert(type(parentID) == "string", "ParentID required")
 
   if not component.id then
     component.id = utilID.generateID()
   end
   component.id = proxy._autocorrectID(component.id)
-  component.parentID = parentID
+  component.parentID = rawget(parentProxy, "__raw").id
 
   local success, reason = utilID.isValidID(component.id)
   log:assert(success, "Invalid ID:", reason)
@@ -487,11 +484,11 @@ proxy._addComponent = function(component, parentID)
   log:assert(ct, "Unknown component type:", component.type)
   log:assert(ct.hasCreateFunction, "component.type has no create function:", component.type)
 
-  componentLogic.run(component)
+  componentLogic.run(component, parentProxy)
   threadCommand.call("addComponent", { component = component })
 
   local childProxy = proxy.createProxyTable(component)
-  proxy._registerLocalChild(parentID, childProxy)
+  proxy._registerLocalChild(component.parentID, childProxy)
 
   loggingStack.pop()
   return childProxy

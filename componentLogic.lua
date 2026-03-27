@@ -110,7 +110,7 @@ end
 
 componentLogic.runOnChildCreate = function(childComponent, parentComponent, parentComponentType)
   local typeName = parentComponent.type
-  local callback = componentType.componentLogic.onChildCreate
+  local callback = parentComponentType.componentLogic.onChildCreate
 
   protectedKeyChangeWrapper({ parentComponent, childComponent }, typeName, "onChildCreate", callback, parentComponent, childComponent)
 end
@@ -120,7 +120,7 @@ componentLogic.run = function(component, parentComponent)
   if parentComponent then
     componentLogic.loadComponentLogic(parentComponent.type)
   end
-
+  
   local componentType = contract.componentTypes[component.type]
   if componentType.componentLogic then
     if componentType.componentLogic.onCreate then
@@ -132,7 +132,7 @@ componentLogic.run = function(component, parentComponent)
   if not parentComponent then
     return
   end
-
+  
   if parentComponent.type == "unknown" then
     return
   end
