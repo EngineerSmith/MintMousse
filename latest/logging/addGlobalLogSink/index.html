@@ -1167,7 +1167,7 @@
 <p>I recommend checking out the logging sinks that the library implements to fully understand how you can implement your own.</p>
 <div class="admonition note">
 <p class="admonition-title">Thread behaviour</p>
-<p>This function can only be called on the main thread. If you can architect it, it's recommended to use the pre-thread sinks added via <a href="../addLogSink/"><code>mintmousse.addLogSink</code></a>.</p>
+<p>This function can only be called on the main thread. If you can architect it, it's recommended to use the pre-thread sinks added via <a href="../addLogSink/"><code>mintmousse.addLogSink</code></a>. So, then your log isn't having to wait to be processed on the main thread.</p>
 </div>
 <h2 id="synopsis">Synopsis</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addGlobalLogSink</span><span class="p">(</span><span class="w"> </span><span class="nv">sink</span><span class="p">,</span><span class="w"> </span><span class="nv">flushFunc</span><span class="w"> </span><span class="p">)</span>
