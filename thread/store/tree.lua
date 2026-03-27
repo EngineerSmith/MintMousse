@@ -177,8 +177,6 @@ return function(store, logger)
       for k in pairs(childType.pushes) do
         pushes[k] = component[k]
       end
-    else
-      pushes = nil
     end
 
     client:queue({

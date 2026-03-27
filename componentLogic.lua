@@ -90,7 +90,7 @@ local protectedKeyChangeWrapper = function(components, typeName, callbackName, c
 
   callback(...)
 
-  local componentChangedMsg = "Tried to change component '%s' within '" .. callbackName .. "', type: " .. componentTYPE .. ". This is a protected value at this stage of creation."
+  local componentChangedMsg = "Tried to change component '%s' within '" .. callbackName .. "', type: " .. typeName .. ". This is a protected value at this stage of creation."
   for i, component in ipairs(components) do
     local savedState = savedStates[i]
     for _, key in ipairs(protectedKeys) do

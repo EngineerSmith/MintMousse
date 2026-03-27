@@ -59,23 +59,20 @@ componentRegistry.register({
   create: function(payload) {
     const instance = helper.prepareInstance(payload.id, this.typeName, payload.parentID);
 
-    const maxLines = helper.getInt(payload.values.maxLines, 25);
-
     let initialLogs = [];
     if (Array.isArray(payload.pushes.log)) {
       initialLogs = payload.pushes.log;
     }
 
-    instance.state.maxLines = maxLines;
-
     const root = document.createElement("div");
     root.className = "log-viewer bg-dark text-light p-2 border border-secondary rounded font-monospace overflow-auto"
-    root.style.setProperty("--max-lines", maxLines);
 
     instance.element = root;
 
     if (initialLogs)
       initialLogs.forEach(log => this._addLog(instance, log));
+
+    this.update_maxLines(payload);
 
     root.scrollTop = root.scrollHeight; // TODO this doesn't work if tab is hidden
 

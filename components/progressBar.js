@@ -6,8 +6,8 @@ componentRegistry.register({
     instance.state.percentage = helper.getFloat(payload.values.percentage);
     instance.state.showLabel = helper.getBoolean(payload.values.showLabel, false);
     instance.state.ariaLabel = helper.getText(payload.values.ariaLabel);
-    instance.state.isStriped = helper.getBoolean(payload.values.isStripped, false);
-    instance.colorBG = helper.getColor(payload.values.color);
+    instance.state.isStriped = helper.getBoolean(payload.values.isStriped, false);
+    instance.state.colorBG = helper.getColor(payload.values.color);
 
     const root = document.createElement("div");
     root.className = "progress";
@@ -50,8 +50,8 @@ componentRegistry.register({
       bar.classList.add(`text-bg-${state.colorBG}`);
     }
 
-    element.classList.toggle("progress-bar-striped", state.isStriped);
-    element.classList.toggle("progress-bar-animated", state.isStriped);
+    bar.classList.toggle("progress-bar-striped", state.isStriped);
+    bar.classList.toggle("progress-bar-animated", state.isStriped);
   },
 
   update_percentage: function(instance, payload) {

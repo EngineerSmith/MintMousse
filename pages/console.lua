@@ -50,7 +50,7 @@ console.build = function(tab, config)
   end
 
   if console.tab then
-    log:warning("Can only have a single instance of this page, removing the previous. This will clear the current logs saved.")
+    log:warning("Can only have a single instance of this page, removing the previous. This will clear the current logs.")
     console.tab:remove()
   end
   console.tab = tab

@@ -80,7 +80,7 @@ componentRegistry.register({
     instance.parts.wrappers.delete(childInstance.id);
   },
 
-    _applyColumnWidth: function(element, widthValue) {
+  _applyColumnWidth: function(element, widthValue) {
     const width = helper.getIntInRange(widthValue, 1, 12, null);
 
     element.className = element.className

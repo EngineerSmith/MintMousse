@@ -47,7 +47,7 @@ componentRegistry.register({
   },
 
   update_child_percentage: function(childInstance, payload) {
-    childInstance.state.percentage = helper.getText(payload.values.percentage, "0");
+    childInstance.state.percentage = helper.getFloat(payload.values.percentage);
 
     componentRegistry["ProgressBar"]._updateVisuals(childInstance);
     this._refreshLayout(helper.getParentOfInstance(childInstance));

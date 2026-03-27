@@ -10,7 +10,11 @@ pages.buildPage = function(requirePath, config, index)
   config = type(config) == "table" and config or { }
 
   local success, page = pcall(require, requirePath)
-  if not success or type(page) ~= "table" or type(page.build) ~= "function" then
+  if not success then
+    log:error("Couldn't load page module '" .. tostring(requirePath) .. ". Reason:", page)
+    return nil
+  end
+  if type(page) ~= "table" or type(page.build) ~= "function" then
     log:error("Invalid page module '" .. tostring(requirePath) .. "'. Must return table with a .build(tab, config) function")
     return nil
   end

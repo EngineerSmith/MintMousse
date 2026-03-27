@@ -108,7 +108,7 @@ websocket13.idle = function(client)
     local totalLength = 2 -- incl. '[' and ']'
 
     for i = 1, outgoingSize do
-      local success, encoded = pcall(json.outgoing[i])
+      local success, encoded = pcall(json.encode, batch[i])
       if not success then
         loggerWS13:warning("Failed to encode outgoing message #" .. i .. " (dropped). Reason:", encoded)
         if i == 1 then
@@ -126,6 +126,7 @@ websocket13.idle = function(client)
       totalLength = totalLength + addLength
     end
     payload = "[" .. table.concat(parts, ",") .. "]"
+    numSent = #parts
   end
 
   websocket13.send(client, 0x1, payload)
@@ -156,7 +157,7 @@ websocket13.processRequest = function(client)
 
   while true do
     local headerBytes, err = client:receive(2)
-    if not headerBytes then return nil, err, err == "timeout" and 1002 or 1006 end
+    if not headerBytes then return nil, err, 1002 end
 
     local firstByte = string.byte(headerBytes, 1)
     local fin = bit.band(bit.rshift(firstByte, 7), 1)
@@ -173,11 +174,11 @@ websocket13.processRequest = function(client)
     local actualLength = length7
     if length7 == 126 then
       local ext, err = client:receive(2)
-      if not ext then return nil, err, err == "timeout" and 1002 or 1006 end
+      if not ext then return nil, err, 1002 end
       actualLength = love.data.unpack(">I2", ext)
     elseif length7 == 127 then
       local ext, err = client:receive(8)
-      if not ext then return nil, err, err == "timeout" and 1002 or 1006 end
+      if not ext then return nil, err, 1002 end
       actualLength = love.data.unpack(">I8", ext)
     end
 
@@ -186,7 +187,7 @@ websocket13.processRequest = function(client)
     end
 
     local maskingKey, err = client:receive(4)
-    if not maskingKey then return nil, err, err == "timeout" and 1002 or 1006 end
+    if not maskingKey then return nil, err, 1002 end
 
     local rawPayload, err = client:receive(actualLength)
     if not rawPayload then
