@@ -68,6 +68,13 @@ local needsChildUpdate = function(parentType, key)
   return type(ct.childUpdates) == "table" and ct.childUpdates[key]
 end
 
+local needsComponentPush = function(compType, key)
+  if compType == "unknown" then return true end
+  local ct = contract.componentTypes[compType]
+  if type(ct.pushes) == "table" and ct.pushes[key] then return true end
+  return false
+end
+
 local funcKeys = {
   parent = function(raw)
     loggingStack.push()
@@ -110,20 +117,24 @@ local proxyNewIndex = function(proxyTbl, key, value)
     return
   end
 
-  rawset(raw, key, value)
-
   local id       = raw.id
   local compType = raw.type or "unknown"
   local parentID = raw.parentID
 
   if needsComponentUpdate(compType, key) then
     threadCommand.call("updateComponent", { id = id, index = key, value = value })
+  elseif needsComponentPush(compType, key) then
+    threadCommand.call("pushComponent", { id = id, index = key, value = value })
+    loggingStack.pop()
+    return
   elseif parentID then
     local parentType = proxy.get(parentID).type
     if needsChildUpdate(parentType, key) then
       threadCommand.call("updateComponent", { id = id, index = key, value = value })
     end
   end
+
+  rawset(raw, key, value)
 
   loggingStack.pop()
 end

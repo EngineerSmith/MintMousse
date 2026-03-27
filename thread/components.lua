@@ -59,10 +59,6 @@ local components = {
 }
 
 local processComponentKey = function(key, componentTypeObject)
-  if key:sub(1, 1) == "_" then
-    return -- skip private methods
-  end
-
   -- Check for core lifecycle functions
   if key == "create" then
     componentTypeObject.hasCreateFunction = true
@@ -77,6 +73,10 @@ local processComponentKey = function(key, componentTypeObject)
     componentTypeObject.hasRemoveChildFunction = true
     return
   end
+
+  if key:sub(1, 1) == "_" then
+    return -- skip private methods
+  end
   
   -- Extract variable/event names based on prefix
   local prop = key:match("^update_child_(.+)")
@@ -87,6 +87,10 @@ local processComponentKey = function(key, componentTypeObject)
 
   local prop = key:match("^update_(.+)")
   if prop then
+    if componentTypeObject.pushes[prop] then
+      loggerComponents:warning(componentTypeObject.typeName or componentTypeObject.name, ": Detected duel update_" .. tostring(prop) .. " and push_" .. tostring(prop)..". Prioritizing push, ignoring update.")
+      return
+    end
     componentTypeObject.updates[prop] = true
     return
   end
@@ -94,6 +98,16 @@ local processComponentKey = function(key, componentTypeObject)
   local prop = key:match("^event_(.+)")
   if prop then
     componentTypeObject.events[prop] = true
+    return
+  end
+
+  local prop = key:match("^push_(.+)")
+  if prop then
+    if componentTypeObject.updates[prop] then
+      loggerComponents:warning(componentTypeObject.typeName or componentTypeObject.name, ": Detected duel update_" .. tostring(prop) .. " and push_" .. tostring(prop)..". Prioritizing push, ignoring update.")
+      componentTypeObject.updates[prop] = nil
+    end
+    componentTypeObject.pushes[prop] = true
     return
   end
 end
@@ -221,12 +235,14 @@ components.parseComponentsJavascript = function(comps, preferredJS)
         componentType.updates      = componentType.updates      or { }
         componentType.childUpdates = componentType.childUpdates or { }
         componentType.events       = componentType.events       or { }
+        componentType.pushes       = componentType.pushes       or { }
 
         extractComponentMetadata(script, componentType)
 
         if not next(componentType.updates)      then componentType.updates      = nil end
         if not next(componentType.childUpdates) then componentType.childUpdates = nil end
         if not next(componentType.events)       then componentType.events       = nil end
+        if not next(componentType.pushes)       then componentType.pushes       = nil end
       else
         loggerComponents:warning("Read JS file:", path, ", but it appears to be empty. Ignoring file!")
       end

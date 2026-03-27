@@ -43,6 +43,15 @@ signal.on("updateComponent", function(args)
   end
 end)
 
+signal.on("pushComponent", function(args)
+  local id    = arg(args, "id")
+  local index = arg(args, "index")
+  local value = arg(args, "value")
+  if id and index and value then
+    store.pushComponent(id, index, value)
+  end
+end)
+
 signal.on("setChildrenOrder", function(args)
   local id    = arg(args, "id")
   local array = arg(args, "newOrder", "table")

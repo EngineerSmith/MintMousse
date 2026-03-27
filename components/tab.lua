@@ -4,8 +4,6 @@ local loggerTab = mintmousse._loggerComponents:extend("Tab")
 
 local tab = { }
 
--- tab.onCreate = function(_) end
-
 tab.onChildCreate = function(_, childComponent)
   if type(childComponent.size) ~= "number" then
     childComponent.size = 2
@@ -13,7 +11,7 @@ tab.onChildCreate = function(_, childComponent)
   end
 
   local wasSize = childComponent.size
-  childComponent.size = math.min(5, math.max(1, childComponent.size))
+  childComponent.size = math.min(5, math.max(1, math.floor(childComponent.size)))
 
   if childComponent.size ~= wasSize then
     loggerTab:info("Tab child component[", childComponent.id, "].size required clamping. Changed from", wasSize, "to", childComponent.size)

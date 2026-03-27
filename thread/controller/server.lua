@@ -52,12 +52,12 @@ end)
 signal.on("broadcast", function(args)
   if not server:isRunning() then return end
 
-  local message = arg(args, "message")
-  if not message then return end
+  -- local message = arg(args, "message")
+  -- if not message then return end
 
   for client in pairs(server.clients) do
     if not client.closing and client.queue then
-      client:queue(message)
+      client:queue(args)
     end
   end
 end)

@@ -5,7 +5,7 @@ I recommend checking out the logging sinks that the library implements to fully 
 
 !!! note "Thread behaviour"
 
-    This function can only be called on the main thread. If you can architect it, it's recommended to use the pre-thread sinks added via [`mintmousse.addLogSink`](addLogSink.md).
+    This function can only be called on the main thread. If you can architect it, it's recommended to use the pre-thread sinks added via [`mintmousse.addLogSink`](addLogSink.md). So, then your log isn't having to wait to be processed on the main thread.
 
 ## Synopsis
 ```lua

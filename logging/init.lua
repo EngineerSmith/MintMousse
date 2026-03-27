@@ -33,7 +33,7 @@ local dispatchToSinks = function(level, logger, time, debugInfo, ...)
     sink(level, logger, time, debugInfo, ...)
   end
 
-  if love.isThread then
+  do
     local ancestry = logger and logger:getAncestry() or nil
 
     local args, argCount = { }, select("#", ...)
@@ -76,7 +76,7 @@ logging.processPendingLogs = function()
 
     dummyLogger.ancestryData = ancestry
     for _, sink in ipairs(logging.globalSinks) do
-      sink(level, ancestry and dummyLogger or nil, time, debugInfo, table.unpack(args, 1, args.n))
+      sink(level, ancestry and dummyLogger or nil, time, debugInfo, unpack(args, 1, args.n))
     end
 
     processed = processed + 1

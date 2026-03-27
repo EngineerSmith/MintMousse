@@ -93,6 +93,13 @@ return function(store, logger)
       return
     end
 
+    -- Prep
+    if childType.pushes then
+      for push in pairs(childType.pushes) do
+        component[push] = { }
+      end
+    end
+
     -- Insert
     store.idLookUp[component.id] = component
     if type(insertIndex) == "number" then
@@ -115,6 +122,15 @@ return function(store, logger)
       end
     end
 
+    local pushes = { }
+    if childType.pushes then
+      for k in pairs(childType.pushes) do
+        pushes[k] = component[k]
+      end
+    else
+      pushes = nil
+    end
+
     signal.emit("broadcast", {
       action        = "insert",
       parentID      = component.parentID,
@@ -122,6 +138,7 @@ return function(store, logger)
       childPosition = insertIndex,
       id            = component.id,
       values        = values,
+      pushes        = pushes,
     })
   end
 
@@ -155,6 +172,15 @@ return function(store, logger)
       end
     end
 
+    local pushes = { }
+    if childType.pushes then
+      for k in pairs(childType.pushes) do
+        pushes[k] = component[k]
+      end
+    else
+      pushes = nil
+    end
+
     client:queue({
       action        = "insert",
       parentID      = component.parentID,
@@ -162,6 +188,7 @@ return function(store, logger)
       childPosition = position,
       id            = component.id,
       values        = values,
+      pushes        = pushes,
     })
 
     for i, child in ipairs(component.children or { }) do
@@ -199,7 +226,7 @@ return function(store, logger)
     local component = store.idLookUp[id]
     if not component then return end
 
-    local childType = getTypeInfo(component.types)
+    local childType = getTypeInfo(component.type)
     local isDirectUpdate = childType and childType.updates and childType.updates[index]
 
     local isParentChildUpdate = false
@@ -227,6 +254,30 @@ return function(store, logger)
       id     = id,
       field  = index,
       values = { [index] = value },
+    })
+  end
+
+  tree.pushComponent = function(id, index, value)
+    -- Validate
+    local component = store.idLookUp[id]
+    if not component then return end
+
+    local childType = getTypeInfo(component.type)
+
+    if not childType.pushes[index] then
+      loggerTree:warning("Unsupported push field '" .. tostring(index) .. "' on component", component.id, "(type:", component.type or "UNKNOWN", ")")
+      return
+    end
+
+    -- Apply
+    table.insert(component[index], value)
+
+    -- Delta
+    signal.emit("broadcast", {
+      action = "push",
+      id     = id,
+      field  = index,
+      pushes = { [index] = value },
     })
   end
 

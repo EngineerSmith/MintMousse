@@ -25,7 +25,6 @@ assert(pcall(require, "string.buffer"), "MintMousse: Library is missing dependen
 require(PATH .. "setupLove")
 
 local mintmousse = require(PATH .. "conf")
-mintmousse._setupLogging()
 
 if not love.isThread then
   local channel = love.thread.getChannel(mintmousse.READONLY_THREAD_LOCATION)
@@ -45,6 +44,8 @@ else
   local id = require(PATH .. "util.id")
   mintmousse._threadID = id.getNewThreadID()
 end
+
+mintmousse._setupLogging()
 
 local util = require(PATH .. "util")
 mintmousse.cleanupTraceback = util.cleanupTraceback

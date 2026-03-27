@@ -20,7 +20,7 @@ local mintmousse = {
 
   -- Network and Server settings
   -----------------------------------------------------------------------------------------------------------------
-  SOCKET_BACKLOG = 32,                 -- Listen backlog. Max pending connections the OS will queue before refusing new ones.
+  SOCKET_BACKLOG = 32,                -- Listen backlog. Max pending connections the OS will queue before refusing new ones.
 
   MAX_HTTP_RECEIVE_SIZE = 2^16,       -- 65Kb: Max incoming HTTP body size. Rejects larger requests.
   MAX_WEBSOCKET_FRAME_SIZE = 2^19,    -- 512Kb: Max size of a single WebSocket frame.
@@ -57,7 +57,7 @@ local mintmousse = {
 
   LOG_BUFFER_SIZE = 2^20,             -- 1Mb: Stdout buffer size. Increase if output garbles; call mintmousse.flushLogs() as needed.
 
-  LOG_MAX_PENDING_LOGS_PER_FLUSH = 512-- Max number of logs global sinks can process per flush
+  LOG_MAX_PENDING_LOGS_PER_FLUSH = 512, -- Max number of logs global sinks can process per flush
 
   -- Thread settings
   -----------------------------------------------------------------------------------------------------------------

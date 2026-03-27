@@ -259,6 +259,13 @@ const componentRegistry = {
             originalFn.call(component, instance, payload);
           }
         };
+      } else if (key.startsWith("push_")) {
+        component[key] = (payload) => {
+          const instance = componentHelper.getInstance(payload.id);
+          if (componentHelper.isValidInstance(instance, typeName)) {
+            originalFn.call(component, instance, payload);
+          }
+        }
       } else if (key === "insert") {
         component[key] = (parentInstance, payload) => {
           originalFn.call(component, parentInstance, payload);
@@ -444,6 +451,7 @@ const componentHelper = Object.freeze({
   },
   getIntInRange: function(val, min, max, fb) {
     const n = this.getInt(val, fb);
+    if (n == null) return fb;
     return Math.max(min, Math.min(n, max));
   },
   getFloat: (val, fb = 0.0) => {
@@ -558,7 +566,7 @@ const ActionProcessor = {
       const instance = componentHelper.getInstance(payload.id);
       const parent = componentHelper.getInstance(instance.parentID);
       const parentComp = componentRegistry[parent.type];
-      
+
       const parentFunc = `update_child_${payload.field}`;
       if (parentComp && typeof parentComp[parentFunc] === "function") {
         parentComp[parentFunc](payload);
@@ -567,6 +575,15 @@ const ActionProcessor = {
 
       const comp = componentRegistry[instance.type];
       const func = `update_${payload.field}`;
+      if (comp && typeof comp[func] === "function") {
+        comp[func](payload);
+      }
+    },
+
+    "push": (payload) => {
+      const instance = componentHelper.getInstance(payload.id);
+      const comp = componentRegistry[instance.type];
+      const func = `push_${payload.field}`;
       if (comp && typeof comp[func] === "function") {
         comp[func](payload);
       }

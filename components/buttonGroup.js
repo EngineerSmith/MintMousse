@@ -12,6 +12,6 @@ componentRegistry.register({
     return instance;
   },
 
-  insert: (parentInstance, payload) => helper.insertNewChild(parentInstance.element, payload),
+  insert: (parentInstance, payload) => helper.insertNewChild(parentInstance, payload),
 
 });
