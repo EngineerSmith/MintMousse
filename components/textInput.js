@@ -54,6 +54,11 @@ componentRegistry.register({
 
     if (!success) {
       console.warn("MM: TextInput submit event triggered but failed to send.");
+      const root = instance.element;
+      root.classList.add("shake-error");
+      root.addEventListener("animationend", () => {
+        root.classList.remove("shake-error");
+      }, { once: true });
     } else {
       instance.element.value = "";
     }

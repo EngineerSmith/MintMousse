@@ -52,6 +52,17 @@ body {
   align-items: center;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX( 0  ); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX( 5px); }
+}
+
+.shake-error {
+  animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
+  border-color: #dc3545 !important;
+}
+
 .grid-sizer,
 .grid-item,
 .grid-item-1 { width: 24%; margin-bottom: 1%; }

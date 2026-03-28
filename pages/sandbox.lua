@@ -57,6 +57,18 @@ sandbox.build = function(tab, config)
         .back
       .back
 
+    :newCard({ size = 5, title = "Input" })
+      :addTextInput({ placeholder = "Placeholder!" }) -- onEventSubmit; .value
+      :addTextInput({ placeholder = "Disabled", isDisabled = true })
+      :addTextInput({ value = "Default value!" })
+      :addHorizontalRule({ margin = 1 })
+      :newRow()
+        :addSwitch({ text = "Toggle me!" }) -- onEventToggle; .isChecked
+        :addSwitch({ text = "Disabled", isDisabled = true })
+        :addSwitch({ text = "Label", isChecked = true }) -- default on
+        .back
+      .back
+
     :newCard({ size = 5, title = "List Demo" })
       :newList()
         :addText({ text = "It's like an accordion, but not bouncy" })

@@ -230,9 +230,13 @@ return function(store, logger)
     local allowed = (compType.eventPayload and compType.eventPayload[event]) or { }
 
     for k, v in pairs(payload) do
-      if k ~= "id" and k ~= "event" and allowed[k] and type(v) == "string" then
+      if k ~= "id" and k ~= "event" and allowed[k] then
         if not values then values = { } end
-        values[k] = util.sanitizeText(v)
+        if type(v) == "string" then
+          values[k] = util.sanitizeText(v)
+        elseif type(v) == "boolean" or type(v) == "number" then
+          values[k] = v
+        end
       end
     end
 
