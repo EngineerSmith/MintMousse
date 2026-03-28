@@ -1,6 +1,8 @@
 local PATH = (...):match("^(.-)[^%.]+$")
 
 local mintmousse = require(PATH .. "conf")
+local codec = require(PATH .. "codec")
+local proxy = require(PATH .. "proxy")
 
 local eventLogger = mintmousse._logger:extend("Event")
 
@@ -8,17 +10,17 @@ local eventManager = {
   eventCallbacks = { },
 }
 
-eventManager.addCallback = function(callbackID, callbackFunction)
+eventManager.onEvent = function(callbackID, callbackFunction)
   eventManager.eventCallbacks[callbackID] = callbackFunction
 end
 
-eventManager.removeCallback = function(callbackID)
+eventManager.removeEvent = function(callbackID)
   eventManager.eventCallbacks[callbackID] = nil
 end
 
-eventManager.jsEvent = function(componentID, callbackID)
-  if type(componentID) ~= "string" or type(callbackID) ~= "string" then
-    eventLogger:warning("MintMousseJSEvent: expected two string arguments, instead received:", type(componentID), type(callbackID))
+eventManager.jsEvent = function(callbackID, componentID, encodedSnapshot)
+  if type(callbackID) ~= "string" or type(componentID) ~= "string" or type(encodedSnapshot) ~= "string" then
+    eventLogger:warning("MintMousseJSEvent: expected three string arguments, instead received:", type(componentID), type(callbackID), type(encodedSnapshot))
     return
   end
 
@@ -27,7 +29,15 @@ eventManager.jsEvent = function(componentID, callbackID)
     return
   end
 
-  local component = mintmousse.get(componentID)
+  local component
+  if mintmousse.has(componentID) then
+    component = mintmousse.get(componentID)
+  else
+    local snapshot = codec.decode(encodedSnapshot)
+    component = proxy.createTempProxy(snapshot)
+    -- Temp components aren't added to the lookup for .has or .get
+  end
+
   callbackFunction(component)
 end
 

@@ -516,11 +516,20 @@ proxy.get = function(id, typeHint)
   return proxy.createProxyTable({ id = id, type = typeHint })
 end
 
+proxy.has = function(id)
+  return proxy.proxyComponents[id] ~= nil
+end
+
 proxy.createProxyTable = function(raw)
   setmetatable(raw, nil)
   local p = setmetatable({ __raw = raw }, proxyMetatable)
   proxy.proxyComponents[raw.id] = p
   return p
+end
+
+proxy.createTempProxy = function(raw)
+  setmetatable(raw, nil)
+  return setmetatable({ __raw = raw }, proxyMetatable)
 end
 
 proxy.newTab = function(title, id, index)

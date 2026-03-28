@@ -95,13 +95,14 @@ mintmousse.clearWhitelist = threadController.clearWhitelist
 
 if not love.isThread then -- is Main thread
   local eventManager = require(PATH .. "eventManager")
-  mintmousse.addCallback = eventManager.addCallback
-  mintmousse.removeCallback = eventManager.removeCallback
+  mintmousse.onEvent = eventManager.onEvent
+  mintmousse.removeEvent = eventManager.removeEvent
 end
 
 local proxy = require(PATH .. "proxy")
 mintmousse.newTab = proxy.newTab
 mintmousse.get = proxy.get
+mintmousse.has = proxy.has
 mintmousse.removeComponent = proxy.removeComponent
 
 local pages = require(PATH .. "pages")

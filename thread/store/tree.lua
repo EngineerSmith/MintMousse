@@ -1,4 +1,5 @@
 local idUtil = require(PATH .. "util.id")
+local codec = require(PATH .. "codec")
 
 local signal = require(PATH .. "thread.signal")
 
@@ -217,7 +218,30 @@ return function(store, logger)
     local callback = component["onEvent" .. event]
     if not callback then return end
 
-    love.mintmousse.pushEvent("MintMousseJSEvent", component.id, callback)
+    local snapshot = {
+      id = component.id,
+      type = component.type,
+      parentID = component.parentID
+    }
+    if compType.updates then
+      for k in pairs(compType.updates) do
+        snapshot[k] = component[k]
+      end
+    end
+    if component.parentID then
+      local parent = store.idLookUp[component.parentID]
+      if parent then
+        local parentType = getTypeInfo(parent.type)
+        if parent.childUpdates then
+          for k in pairs(parentType.childUpdates) do
+            snapshot[k] = component[k]
+          end
+        end
+      end
+    end
+
+    local encodedSnapshot = codec.encode(snapshot)
+    love.mintmousse.pushEvent("MintMousseJSEvent", callback, component.id, encodedSnapshot)
   end
 
   local _removeComponentChildren
