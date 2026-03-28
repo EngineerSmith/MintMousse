@@ -8,31 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/logging/logger/debug/">
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/controller/start/">
       
       
-        <link rel="prev" href="../assert/">
+        <link rel="prev" href="../setTitle/">
       
       
-        <link rel="next" href="../error/">
+        <link rel="next" href="../stop/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/favicon.svg">
+      <link rel="icon" href="../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>(Logger):debug - MintMousse - Docs</title>
+        <title>mintmousse.start - MintMousse - Docs</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#loggerdebug" class="md-skip">
+        <a href="#mintmoussestart" class="md-skip">
           Skip to content
         </a>
       
@@ -96,9 +96,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../../assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              (Logger):debug
+              mintmousse.start
             
           </span>
         </div>
@@ -228,7 +228,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../.." class="md-tabs__link">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -245,11 +245,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../controller/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -267,13 +269,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../logging/" class="md-tabs__link">
           
   
   
@@ -309,9 +309,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../../assets/logo.svg" alt="logo">
+  <img src="../../assets/logo.svg" alt="logo">
 
     </a>
     MintMousse - Docs
@@ -338,7 +338,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -362,6 +362,8 @@
       
   
   
+    
+  
   
   
     
@@ -397,22 +399,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../controller/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -430,13 +433,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             
@@ -456,7 +459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/addToWhitelist/" class="md-nav__link">
+      <a href="../addToWhitelist/" class="md-nav__link">
         
   
   
@@ -484,7 +487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/clearWhitelist/" class="md-nav__link">
+      <a href="../clearWhitelist/" class="md-nav__link">
         
   
   
@@ -512,7 +515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/notify/" class="md-nav__link">
+      <a href="../notify/" class="md-nav__link">
         
   
   
@@ -540,7 +543,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/removeFromWhitelist/" class="md-nav__link">
+      <a href="../removeFromWhitelist/" class="md-nav__link">
         
   
   
@@ -568,7 +571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/setIcon/" class="md-nav__link">
+      <a href="../setIcon/" class="md-nav__link">
         
   
   
@@ -596,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/setIconRFG/" class="md-nav__link">
+      <a href="../setIconRFG/" class="md-nav__link">
         
   
   
@@ -624,7 +627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/setIconRaw/" class="md-nav__link">
+      <a href="../setIconRaw/" class="md-nav__link">
         
   
   
@@ -652,7 +655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../controller/setTitle/" class="md-nav__link">
+      <a href="../setTitle/" class="md-nav__link">
         
   
   
@@ -660,497 +663,6 @@
     
   
     mintmousse.setTitle
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../controller/start/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.start
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../controller/stop/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.stop
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../controller/wait/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.wait
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-        
-        
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logging
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Logging
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../addGlobalLogSink/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.addGlobalLogSink
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../addLogSink/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.addLogSink
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../color/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logging Colors
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../flushLogs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.flushLogs
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../level/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logging Levels
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../logUncaughtError/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.logUncaughtError
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../newLogger/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.newLogger
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-    
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" checked>
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logger
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3_9">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Logger
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../assert/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):assert
   
 
     
@@ -1187,7 +699,7 @@
   <span class="md-ellipsis">
     
   
-    (Logger):debug
+    mintmousse.start
   
 
     
@@ -1205,7 +717,7 @@
   <span class="md-ellipsis">
     
   
-    (Logger):debug
+    mintmousse.start
   
 
     
@@ -1249,6 +761,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1301,7 +830,492 @@
   
   
     <li class="md-nav__item">
-      <a href="../error/" class="md-nav__link">
+      <a href="../stop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.stop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wait/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.wait
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../logging/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Logging
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/addGlobalLogSink/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.addGlobalLogSink
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/addLogSink/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.addLogSink
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/color/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging Colors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/flushLogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.flushLogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/level/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging Levels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/logUncaughtError/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.logUncaughtError
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/newLogger/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.newLogger
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_9" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../logging/logger/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logger
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Logger
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/logger/assert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):assert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/logger/debug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):debug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../logging/logger/error/" class="md-nav__link">
         
   
   
@@ -1329,7 +1343,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../extend/" class="md-nav__link">
+      <a href="../../logging/logger/extend/" class="md-nav__link">
         
   
   
@@ -1357,7 +1371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getAncestry/" class="md-nav__link">
+      <a href="../../logging/logger/getAncestry/" class="md-nav__link">
         
   
   
@@ -1385,7 +1399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../info/" class="md-nav__link">
+      <a href="../../logging/logger/info/" class="md-nav__link">
         
   
   
@@ -1413,7 +1427,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../inspect/" class="md-nav__link">
+      <a href="../../logging/logger/inspect/" class="md-nav__link">
         
   
   
@@ -1441,7 +1455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../warning/" class="md-nav__link">
+      <a href="../../logging/logger/warning/" class="md-nav__link">
         
   
   
@@ -1523,6 +1537,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#config-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Config Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1578,36 +1609,63 @@
   
 
 
-<h1 id="loggerdebug">(Logger):debug</h1>
-<p>Log a <a href="../../level/"><code>debug</code> level</a> message. This log level usually includes prints the line it is called on.</p>
-<p>This is usually in the format of <code>funcName@fileName#LineNumber</code>, but not always. For example, if it was called it filescope, or couldn't find a name for the function it will just be <code>fileName#LineNumber</code>.</p>
-<p>If you use the global function <code>print</code>, it will act like a debug log message. This behaviour can be disabled by checking the config. -- TODO link</p>
+<h1 id="mintmoussestart"><code>mintmousse.start</code></h1>
+<p>Used to start the web console's server so it can start serving clients.</p>
+<p>Can only be called on the main thread.</p>
 <h2 id="synopsis">Synopsis</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="w"> </span><span class="nv">message</span><span class="o">..</span><span class="p">.</span><span class="w"> </span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">start</span><span class="p">(</span><span class="w"> </span><span class="nv">config</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><code>message...</code> <em>ANY</em></dt>
-<dd>The varargs of the message passed to all the sinks. If you pass in a table, it will only print to a maximum depth of 3 tables.</dd>
+<dt><code>config</code> <em>table</em> (<strong>nil</strong>)</dt>
+<dd>A table of config values to use on startup.</dd>
+</dl>
+<h3 id="config-table">Config Table</h3>
+<dl>
+<dt><code>title</code> <em>string</em></dt>
+<dd>The title to use for the web console. Also see <a href="../setTitle/"><code>mintmousse.setTitle</code></a>.</dd>
+<dt><code>host</code> <em>string</em></dt>
+<dd>The host to bind the server to. If nil, default it is <code>::</code> which tries to bind to IPv6 and IPv4, and fallbacks to <code>*</code> which tries to bind just to IPv4. See <a href="https://lunarmodules.github.io/luasocket/tcp.html#bind"><code>tcp:bind</code></a> for documentation on host.</dd>
+<dt><code>port</code> <em>number</em></dt>
+<dd>The whole number port the server will be reachable on. If nil, default behaviour is to start at <code>8080</code> and will increment until it finds a port it can bind to.</dd>
+<dt><code>autoIncrement</code> <em>boolean</em></dt>
+<dd>If a <code>port</code> is given, if the server should try to increment the given port until it find ones. Default disabled.</dd>
+<dt><code>whitelist</code> <em>string</em> or <em>table</em></dt>
+<dd>A single rule, or an array of rules. See <a href="../addToWhitelist/"><code>mintmousse.addToWhitelist</code></a> for details.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>Nothing.</p>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">start</span><span class="p">({</span><span class="w"> </span><span class="nv">whitelist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;localhost&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">-- Quickstart</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;World&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;World&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">({</span><span class="w"> </span><span class="nv">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;value&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">-- by default, max depth is 3, see Logger.inspect for larger depths</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">start</span><span class="p">({</span><span class="w"> </span><span class="c1">-- Default</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nv">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;MintMousse&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nv">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nv">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nv">autoIncrement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nv">whitelist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Note, with no whitelist, no connections will be accepted</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">})</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">start</span><span class="p">({</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">  </span><span class="nv">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">love</span><span class="p">.</span><span class="py">window</span><span class="p">.</span><span class="nf">getTitle</span><span class="p">()</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="s2">&quot; Console&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">  </span><span class="nv">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;::&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="nv">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nv">autoIncrement</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span><span class="nv">whitelist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span><span class="w">         </span><span class="c1">-- Covers &quot;local&quot;, &quot;127.0.0.1&quot;, and &quot;::1&quot;</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="s2">&quot;192.168.4.27&quot;</span><span class="p">,</span><span class="w">      </span><span class="c1">-- Specific IPv4 address</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="s2">&quot;192.168.0.0/16&quot;</span><span class="p">,</span><span class="w">    </span><span class="c1">-- Private IPv4 Range (CIDR)</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="s2">&quot;10.0.0.0/8&quot;</span><span class="p">,</span><span class="w">        </span><span class="c1">-- Large Private IPv4 Range</span>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="s2">&quot;2001:db8::/32&quot;</span><span class="p">,</span><span class="w">     </span><span class="c1">-- IPv6 Range CIDR</span>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w">    </span><span class="s2">&quot;2001:db8::cafe&quot;</span><span class="p">,</span><span class="w">    </span><span class="c1">-- Single IPv6 Host</span>
+<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">    </span><span class="s2">&quot;::ffff:127.16.0.1&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">-- IPv4-mapped IPv6 address support</span>
+<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="p">})</span>
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="../../">Logging</a></li>
-<li><a href="../">Logger</a></li>
-<li><a href="../inspect/"><code>(Logger).inspect</code></a></li>
+<li><a href="../">Controller</a></li>
+<li><a href="../addToWhitelist/"><code>mintmousse.addToWhitelist</code></a></li>
 </ul>
 
 
@@ -1664,10 +1722,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
