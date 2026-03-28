@@ -1,3 +1,4 @@
+local util = require(PATH .. "util")
 local idUtil = require(PATH .. "util.id")
 local codec = require(PATH .. "codec")
 
@@ -202,6 +203,13 @@ return function(store, logger)
       return
     end
 
+    local now = love.timer.getTime()
+    if client.lastEvent and now - client.lastEvent < 0.1 then
+      GLOBAL_print("HIT client event timeout")
+      return
+    end
+    client.lastEvent = now
+
     local id = payload.id
     if not idUtil.isValidID(id) then return end
 
@@ -217,6 +225,16 @@ return function(store, logger)
 
     local callback = component["onEvent" .. event]
     if not callback then return end
+
+    local values
+    local allowed = (compType.eventPayload and compType.eventPayload[event]) or { }
+
+    for k, v in pairs(payload) do
+      if k ~= "id" and k ~= "event" and allowed[k] and type(v) == "string" then
+        if not values then values = { } end
+        values[k] = util.sanitizeText(v)
+      end
+    end
 
     local snapshot = {
       id = component.id,
@@ -241,7 +259,7 @@ return function(store, logger)
     end
 
     local encodedSnapshot = codec.encode(snapshot)
-    love.mintmousse.pushEvent("MintMousseJSEvent", callback, component.id, encodedSnapshot)
+    love.mintmousse.pushEvent("MintMousseJSEvent", callback, component.id, encodedSnapshot, values)
   end
 
   local _removeComponentChildren

@@ -18,7 +18,7 @@ eventManager.removeEvent = function(callbackID)
   eventManager.eventCallbacks[callbackID] = nil
 end
 
-eventManager.jsEvent = function(callbackID, componentID, encodedSnapshot)
+eventManager.jsEvent = function(callbackID, componentID, encodedSnapshot, values)
   if type(callbackID) ~= "string" or type(componentID) ~= "string" or type(encodedSnapshot) ~= "string" then
     eventLogger:warning("MintMousseJSEvent: expected three string arguments, instead received:", type(componentID), type(callbackID), type(encodedSnapshot))
     return
@@ -36,6 +36,13 @@ eventManager.jsEvent = function(callbackID, componentID, encodedSnapshot)
     local snapshot = codec.decode(encodedSnapshot)
     component = proxy.createTempProxy(snapshot)
     -- Temp components aren't added to the lookup for .has or .get
+  end
+
+  if type(values) == "table" then
+    local raw = rawget(component, "__raw")
+    for k, v in pairs(values) do
+      raw[k] = v
+    end
   end
 
   callbackFunction(component)

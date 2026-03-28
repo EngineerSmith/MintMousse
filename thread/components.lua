@@ -113,6 +113,22 @@ local processComponentKey = function(key, componentTypeObject)
   end
 end
 
+local extractEventPayload = function(script, componentTypeObject)
+  componentTypeObject.eventPayload = componentTypeObject.eventPayload or { }
+
+  for rawEvent, allowedStr in script:gmatch("%s*eventPayload_([%w_]+)%s*:%s*[\"']([^\"']+)[\"']") do
+    local eventName = rawEvent:gsub("^%l", string.upper)
+    componentTypeObject.eventPayload[eventName] = { }
+
+    for field in allowedStr:gmatch("([^,]+)") do
+      local trimmed = field:match("^s*(.-)%s*$")
+      if trimmed and trimmed ~= "" then
+        componentTypeObject.eventPayload[eventName][trimmed] = true
+      end
+    end
+  end
+end
+
 local extractComponentMetadata = function(script, componentTypeObject)
   local typeName = script:match('typeName%s*:%s*["\'`]([^"\'`]+)["\'`]')
   if typeName then
@@ -135,6 +151,8 @@ local extractComponentMetadata = function(script, componentTypeObject)
   -- for key in script:gmatch("%s*([%w_]+)%s*:%s*[%w_]+%s*=>") do
   --   processComponentKey(key, componentTypeObject)
   -- end
+
+  extractEventPayload(script, componentTypeObject)
 end
 
 components.init = function()
@@ -236,6 +254,7 @@ components.parseComponentsJavascript = function(comps, preferredJS)
         componentType.updates      = componentType.updates      or { }
         componentType.childUpdates = componentType.childUpdates or { }
         componentType.events       = componentType.events       or { }
+        componentType.eventPayload = componentType.eventPayload or { }
         componentType.pushes       = componentType.pushes       or { }
 
         extractComponentMetadata(script, componentType)
@@ -243,6 +262,7 @@ components.parseComponentsJavascript = function(comps, preferredJS)
         if not next(componentType.updates)      then componentType.updates      = nil end
         if not next(componentType.childUpdates) then componentType.childUpdates = nil end
         if not next(componentType.events)       then componentType.events       = nil end
+        if not next(componentType.eventPayload) then componentType.eventPayload = nil end
         if not next(componentType.pushes)       then componentType.pushes       = nil end
       else
         loggerComponents:warning("Read JS file:", path, ", but it appears to be empty. Ignoring file!")
