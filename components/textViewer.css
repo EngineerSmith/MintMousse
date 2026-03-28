@@ -1,0 +1,8 @@
+.text-viewer {
+  height: 100%;
+  height: calc(var(--max-lines) * 1.15em + 2rem);
+  line-height: 1.15;
+  tab-size: 2;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
