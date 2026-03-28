@@ -40,3 +40,6 @@ love.errorhandler = function(msg)
   -- etc..
 end
 ```
+
+## See Also
+- [Logging](index.md)

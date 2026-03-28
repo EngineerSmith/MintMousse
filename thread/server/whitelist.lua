@@ -153,6 +153,8 @@ local matchesIPv4Rules = function(address)
   local norm4 = normalizeIPv4(address)
   if not norm4 then return false end
   if whitelist.ipv4.singles[norm4] then return true end
+  local int = ipv4ToInt(norm4)
+  if not int then return false end
   for _, rule in ipairs(whitelist.ipv4.cidrs) do
     if math.floor(int / (2^(32 - rule.maskLength))) == rule.network then
       return true

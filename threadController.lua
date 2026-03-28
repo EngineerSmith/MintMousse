@@ -41,6 +41,8 @@ threadController.start = function(config)
     end
   end
 
+  -- Whitelist is sent separately, so remove it from config, and added 
+  --      back after so we don't break the config table
   local whitelist
   if config then
     whitelist, config.whitelist = config.whitelist, nil

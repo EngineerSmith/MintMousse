@@ -26,5 +26,6 @@ local logger = mintmousse.newLogger("Joystick", "magenta")
 local logger = mintmousse.newLogger("Physics", { fg = "white", bg = "blue" })
 ```
 
-# See Also
+## See Also
+- [Logging](index.md)
 - [`(Logger):extend`](logger/extend.md)

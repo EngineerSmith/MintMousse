@@ -19,3 +19,6 @@ mintmousse.flushLogs()
 
 mintmousse.flushLogs(true)
 ```
+
+## See Also
+- [Logging](index.md)

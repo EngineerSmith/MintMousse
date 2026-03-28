@@ -14,5 +14,5 @@ The log levels that can occur, and where they can originate from.
 |**fatal**|[`mintmousse.logUncaughtError`](logUncaughtError.md)|
 
 ## See Also
-- [Logging](../index.md)
+- [Logging](index.md)
 - [`mintmousse.addLogSink`](addLogSink.md)

@@ -18,6 +18,7 @@ end
 
 local love = love
 
+-- TODO we should move these to setupLove (maybe f2 setupEnvironment)
 assert(love ~= nil, "MintMousse: Library is missing dependency LÖVE")
 assert(jit ~= nil, "MintMousse: Library is missing dependency LuaJIT. This is usually packaged with LÖVE.")
 assert(pcall(require, "string.buffer"), "MintMousse: Library is missing dependency LuaJIT's String Buffer Library. This is packaged with LÖVE from 11.4.")

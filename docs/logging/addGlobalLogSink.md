@@ -62,5 +62,5 @@ mintmousse.addGlobalLogSink(
 ```
 
 # See Also
-- [Logging](../index.md)
-- [`mintmousse.addLogSink](addLogSink.md)
+- [Logging](index.md)
+- [`mintmousse.addLogSink`](addLogSink.md)

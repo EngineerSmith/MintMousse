@@ -53,3 +53,7 @@ local loggerInvert = loggerFatal:extend("Inverted", {
   bg = "bright_white",
 })
 ```
+# See Also
+- [Logging](index.md)
+- [`mintmousse.newLogger`](newLogger.md)
+- [`(Logger):extend`](logger/extend.md)

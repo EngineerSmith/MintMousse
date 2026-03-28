@@ -12,6 +12,8 @@
 -- There is a 2nd modification, which is optional, to clean up the traceback by removing
 -- internal or irrelevant entries from the traceback displayed on the error screen
 --
+-- Beyond that are more modifications for handling quitting the MintMousse thread, and flushing logs
+--
 local PATH = (...):match("^(.-)%.[^%.]+$") or ""
 
 local utf8 = require("utf8")
@@ -31,6 +33,7 @@ local errorhandler = function(msg)
     -- This function also captures traceback.
     mintmousse.logUncaughtError(msg, 0)
   else
+    mintmousse = nil
     error_printer(msg, 2)
   end
 ----                              ----
@@ -70,7 +73,7 @@ local errorhandler = function(msg)
 
   local trace = debug.traceback()
 ---- MintMousse OPTIONAL ----
-  if success then
+  if mintmousse then
     trace = mintmousse.cleanupTraceback(trace)
   end
 ----          ----
@@ -125,8 +128,14 @@ local errorhandler = function(msg)
     p = p .. "\n\nPress Ctrl+C or tap to copy this error"
   end
 
+  local wait
+  if mintmousse then
+    mintmousse.stop(true) -- We wait at quit, so it stops in the background than freezing the errorhandler up
+    wait = mintmousse.wait -- Wait for thread to rejoin, called later in the loop below
+  end
+
   return function()
-    if mintmousse.flushLogs then
+    if mintmousse and mintmousse.flushLogs then
       mintmousse.flushLogs() -- Continues to flush logs
     end
 
@@ -134,8 +143,10 @@ local errorhandler = function(msg)
 
     for e, a, b, c in love.event.poll() do
       if e == "quit" then
+        if wait then wait() end
         return a or 1, b
       elseif e == "keypressed" and a == "escape" then
+        if wait then wait() end
         return 1
       elseif e == "keypressed" and a == "c" and love.keyboard.isDown("lctrl", "rctrl") then
         copyToClipboard()
@@ -148,6 +159,7 @@ local errorhandler = function(msg)
         end
         local pressed = love.window.showMessageBox("Quit "..name.."?", "", buttons)
         if pressed == 1 then
+          if wait then wait() end
           return 1
         elseif pressed == 3 then
           copyToClipboard()
