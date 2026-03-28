@@ -67,6 +67,11 @@ sandbox.build = function(tab, config)
         :addSwitch({ text = "Disabled", isDisabled = true })
         :addSwitch({ text = "Label", isChecked = true }) -- default on
         .back
+      :addHorizontalRule({ margin = 1 })
+      :newRow()
+        :addDropdown({ options = {"1","2","3"} }) -- onEventChange; value
+        :addDropdown({ options = {"nope"}, isDisabled = true })
+        :addDropdown({ options = {"4","default","5"}, value = "default"}) -- default
       .back
 
     :newCard({ size = 5, title = "List Demo" })
