@@ -10,21 +10,22 @@
 </head>
 <body>
   <nav class="navbar navbar-expand-sm bg-body-tertiary sticky-top">
-    <div class="container-fluid d-flex align-items-center">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <div class="container-fluid d-flex align-items-center flex-wrap">
+      <button class="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <span class="navbar-brand mb-0 h1">{{title}}</span>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav ms-sm-3">
-          <ul class="nav nav-underline" role="tablist" id="tabNavbar"> <!-- Tab buttons added here --> </ul>
-        </div>
-      </div>
-      <div class="ms-auto d-flex align-items-center gap-2">
+      <div class="ms-auto d-flex align-items-center gap-2 order-sm-2">
         <small id ="disconnected-status-text" class="text-danger-emphasis fw-semibold">Disconnected</small>
         <div id="disconnected-status" class="rounded-circle bg-danger" style="width: 14px; height: 14px;"></div>
         <div id="connected-status" class="rounded-circle pulsing" style="width: 14px; height: 14px; display: none;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Connected"></div>
       </div>
+      <div class="collapse navbar-collapse order-3 order-sm-1" id="navbarNavAltMarkup">
+        <div class="navbar-nav ms-sm-3">
+          <ul class="nav nav-underline" role="tablist" id="tabNavbar"> <!-- Tab buttons added here --> </ul>
+        </div>
+      </div>
+      
     </div>
   </nav>
   <div id="loadingSpinner" class="centered-spinner">

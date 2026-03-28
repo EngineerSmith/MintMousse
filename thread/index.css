@@ -22,6 +22,12 @@
   font-weight: 600;
 }
 
+@media (max-width: 575px) {
+  #disconnected-status-text {
+    font-size: 0.6rem;
+  }
+}
+
 .centered-spinner {
   position: fixed;
   top: 50%;
