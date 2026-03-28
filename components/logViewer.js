@@ -65,16 +65,31 @@ componentRegistry.register({
     }
 
     const root = document.createElement("div");
-    root.className = "log-viewer bg-dark text-light p-2 border border-secondary rounded font-monospace overflow-auto"
+    root.className = "log-viewer bg-dark text-light p-2 border border-secondary rounded font-monospace overflow-auto";
 
     instance.element = root;
 
-    if (initialLogs)
+    instance.state.atBottom = true;
+    instance.state.wasVisible = false;
+
+    const updateScrollState = () => {
+      const isAtBottomNow = (root.scrollHeight - root.scrollTop - root.clientHeight) <= 7;
+      instance.state.atBottom = isAtBottomNow;
+    }
+    root.addEventListener("scroll", updateScrollState, { passive: true });
+
+    instance.state.resizeObserver = new ResizeObserver(() => {
+      const isVisibleNow = root.offsetHeight > 0 && root.offsetWidth > 0;
+      if (isVisibleNow && !instance.state.wasVisible && instance.state.atBottom)
+        root.scrollTop = root.scrollHeight;
+      instance.state.wasVisible = isVisibleNow;
+    })
+    instance.state.resizeObserver.observe(root);
+
+    if (initialLogs.length > 0)
       initialLogs.forEach(log => this._addLog(instance, log));
 
     this.update_maxLines(payload);
-
-    root.scrollTop = root.scrollHeight; // TODO this doesn't work if tab is hidden
 
     return instance;
   },
@@ -142,10 +157,18 @@ componentRegistry.register({
     const root = instance.element;
     const lineEl = this._renderLog(logData);
 
-    const wasAtBottom = (root.scrollHeight - root.scrollTop - root.clientHeight) <= 7; // px
+    const isVisibleNow = root.offsetHeight > 0 && root.offsetWidth > 0;
+    let shouldAutoScroll = false;
+    if (isVisibleNow) {
+      instance.state.atBottom = (root.scrollHeight - root.scrollTop - root.clientHeight) <= 7;
+      if (instance.state.atBottom)
+        shouldAutoScroll = true;
+    }
+
     root.append(lineEl);
-    if (wasAtBottom)
-      root.scrollTop = root.scrollHeight; // TODO this doesn't work if tab is hidden
+    if (shouldAutoScroll) {
+      root.scrollTop = root.scrollHeight;
+    }
   },
 
   push_log: function(instance, payload) {
