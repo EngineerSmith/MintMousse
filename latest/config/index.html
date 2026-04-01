@@ -1,0 +1,2711 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/config/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../controller/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Config - MintMousse - Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#config" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MintMousse - Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Config
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/EngineerSmith/MintMousse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  MintMousse
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Config
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../controller/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Controller
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../logging/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Logging
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    MintMousse - Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/EngineerSmith/MintMousse" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MintMousse
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#file-paths-and-locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Paths and Locations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Paths and Locations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussecomponent_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.COMPONENT_PATHS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussedefault_index_html" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.DEFAULT_INDEX_HTML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussedefault_index_js" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.DEFAULT_INDEX_JS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussedefault_index_css" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.DEFAULT_INDEX_CSS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rfg-icons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RFG Icons
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RFG Icons">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussezip_mount_location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        `mintmousse.ZIP_MOUNT_LOCATION
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussefavicon_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.FAVICON_PATH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-and-server-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network and Server Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network and Server Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussesocket_backlog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.SOCKET_BACKLOG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_http_receive_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_HTTP_RECEIVE_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_websocket_frame_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_WEBSOCKET_FRAME_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_websocket_message_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_WEBSOCKET_MESSAGE_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussecache_control_header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousseCACHE_CONTROL_HEADER
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_port_attempts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_PORT_ATTEMPTS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussetimeout_http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.TIMEOUT_HTTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussetimeout_websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.TIMEOUT_WEBSOCKET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousseping_websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.PING_WEBSOCKET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussecomponent_parse_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.COMPONENT_PARSE_TIMEOUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussereplace_default_error_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.REPLACE_DEFAULT_ERROR_HANDLER
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_enabled_timestamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_ENABLED_TIMESTAMP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_timestamp_format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_TIMESTAMP_FORMAT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_enable_stream_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_ENABLE_STREAM_OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_enable_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_ENABLE_ERROR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_include_trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_INCLUDE_TRACE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_warnings_cause_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_WARNINGS_CAUSE_ERRORS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_warnings_include_trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_WARNINGS_INCLUDE_TRACE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussereplace_func_print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.REPLACE_FUNC_PRINT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_clear_up_traceback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_CLEAR_UP_TRACEBACK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_buffer_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_BUFFER_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_max_pending_logs_per_flush" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mintmousse-thread-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MintMousse Thread Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MintMousse Thread Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_thread_messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_THREAD_MESSAGES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussethread_sleep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.THREAD_SLEEP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#channel-event-ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel / Event IDs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Channel / Event IDs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../controller/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controller
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Controller
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/addToWhitelist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.addToWhitelist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/clearWhitelist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.clearWhitelist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/notify/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.notify
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/removeFromWhitelist/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.removeFromWhitelist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/setIcon/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.setIcon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/setIconRFG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.setIconRFG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/setIconRaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.setIconRaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/setTitle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.setTitle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/stop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.stop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controller/wait/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.wait
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../logging/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Logging
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/addGlobalLogSink/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.addGlobalLogSink
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/addLogSink/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.addLogSink
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/cleanupTraceback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.cleanupTraceback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/color/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging Colors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/flushLogs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.flushLogs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/level/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging Levels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logUncaughtError/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.logUncaughtError
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/newLogger/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.newLogger
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../logging/logger/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logger
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_10" id="__nav_4_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Logger
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/assert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):assert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/debug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):debug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/error/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):error
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):extend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/getAncestry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):getAncestry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/info/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):info
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/inspect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger).inspect
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/logger/warning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):warning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#file-paths-and-locations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File Paths and Locations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="File Paths and Locations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussecomponent_paths" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.COMPONENT_PATHS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussedefault_index_html" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.DEFAULT_INDEX_HTML
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussedefault_index_js" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.DEFAULT_INDEX_JS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussedefault_index_css" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.DEFAULT_INDEX_CSS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rfg-icons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RFG Icons
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RFG Icons">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussezip_mount_location" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        `mintmousse.ZIP_MOUNT_LOCATION
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussefavicon_path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.FAVICON_PATH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-and-server-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Network and Server Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Network and Server Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussesocket_backlog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.SOCKET_BACKLOG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_http_receive_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_HTTP_RECEIVE_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_websocket_frame_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_WEBSOCKET_FRAME_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_websocket_message_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_WEBSOCKET_MESSAGE_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussecache_control_header" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousseCACHE_CONTROL_HEADER
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_port_attempts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_PORT_ATTEMPTS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussetimeout_http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.TIMEOUT_HTTP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussetimeout_websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.TIMEOUT_WEBSOCKET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousseping_websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.PING_WEBSOCKET
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussecomponent_parse_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.COMPONENT_PARSE_TIMEOUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussereplace_default_error_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.REPLACE_DEFAULT_ERROR_HANDLER
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logging-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logging Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logging Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_enabled_timestamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_ENABLED_TIMESTAMP
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_timestamp_format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_TIMESTAMP_FORMAT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_enable_stream_out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_ENABLE_STREAM_OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_enable_error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_ENABLE_ERROR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_include_trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_INCLUDE_TRACE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_warnings_cause_errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_WARNINGS_CAUSE_ERRORS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_warnings_include_trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_WARNINGS_INCLUDE_TRACE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussereplace_func_print" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.REPLACE_FUNC_PRINT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_clear_up_traceback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_CLEAR_UP_TRACEBACK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_buffer_size" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_BUFFER_SIZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmousselog_max_pending_logs_per_flush" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mintmousse-thread-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MintMousse Thread Settings
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MintMousse Thread Settings">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussemax_thread_messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.MAX_THREAD_MESSAGES
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussethread_sleep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.THREAD_SLEEP
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#channel-event-ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel / Event IDs
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Channel / Event IDs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="config">Config</h1>
+<p>As MintMousse is a threaded library, a lot of what can be configured, can only be done before run-time. Therefore it's recommended you edit the file <code>conf.lua</code> directly - you can always grab the default from git again if you break something badly.
+As MintMousse is a threaded library, almost all configuration must be done before the library is first required. The easiest way is to edit the values directly in the library's <code>conf.lua</code> (you can always restore the default version from the GitHub repo if needed.)</p>
+<div class="admonition warning">
+<p class="admonition-title">Validation</p>
+<p>None of the values are type-checked or validated at runtime. Incorrect values will cause crashes or unexpected behaviour.</p>
+</div>
+<hr />
+<h2 id="file-paths-and-locations">File Paths and Locations</h2>
+<h3 id="mintmoussecomponent_paths"><code>mintmousse.COMPONENT_PATHS</code></h3>
+<p><strong>Type</strong>: <em>table</em>(array of strings)
+<strong>Default</strong>: <code>{ DIRECTORY_PATH .. "components/" }</code></p>
+<p>Directories to search for components. Later entries override earlier ones on a per-file basis. Use this to add your own components or to include a git repo that provides extra components. See <a href="">Components</a> to see how to create your own. -- TODO link</p>
+<h3 id="mintmoussedefault_index_html"><code>mintmousse.DEFAULT_INDEX_HTML</code></h3>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.html"</code></p>
+<p>Path to the base HTML file severed to connecting clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
+<h3 id="mintmoussedefault_index_js"><code>mintmousse.DEFAULT_INDEX_JS</code></h3>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.js"</code></p>
+<p>Path to the base JavaScript file served to clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
+<h3 id="mintmoussedefault_index_css"><code>mintmousse.DEFAULT_INDEX_CSS</code></h3>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.css"</code>
+Path to base CSS file served to clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
+<h3 id="rfg-icons">RFG Icons</h3>
+<p>These two settings are only relevant if you use <a href="../controller/setIconRFG/">RFG</a> icons.</p>
+<h4 id="mintmoussezip_mount_location">`mintmousse.ZIP_MOUNT_LOCATION</h4>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: `".MintMousse/"</p>
+<p>Directory used by <code>love.filesystem.mount()</code> when mounting ZIP archieves that contain RFG icons.</p>
+<h4 id="mintmoussefavicon_path"><code>mintmousse.FAVICON_PATH</code></h4>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: <code>"/favicon"</code></p>
+<p>HTTP endpoint where the favicon assets are served. This must match the "favicon path" you set when generating icons on the RFG website.</p>
+<hr />
+<h2 id="network-and-server-settings">Network and Server Settings</h2>
+<h3 id="mintmoussesocket_backlog"><code>mintmousse.SOCKET_BACKLOG</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>32</code></p>
+<p>Maximum number of pending connections the OS will queue before refusing new ones.</p>
+<h3 id="mintmoussemax_http_receive_size"><code>mintmousse.MAX_HTTP_RECEIVE_SIZE</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>2^16</code> (65KB)</p>
+<p>The maximum allowed size of an incoming HTTP request body. Larger requests are rejected and the limit is included in the response headers.</p>
+<h3 id="mintmoussemax_websocket_frame_size"><code>mintmousse.MAX_WEBSOCKET_FRAME_SIZE</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>2^19</code> (512KB)</p>
+<p>Maximum size of a single WebSocket Frame (both incoming and outgoing).</p>
+<h3 id="mintmoussemax_websocket_message_size"><code>mintmousse.MAX_WEBSOCKET_MESSAGE_SIZE</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>2^21</code> (2MB)</p>
+<p>Maximum size of a complete WebSocket message (after reassembling fragmented frames).</p>
+<h3 id="mintmoussecache_control_header"><code>mintmousseCACHE_CONTROL_HEADER</code></h3>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: <code>"no-store"</code></p>
+<p>Value of the <code>Cache-Control</code> header sent for static assets. Change to something like <code>"public, max-age=3600"</code> for production.</p>
+<h3 id="mintmoussemax_port_attempts"><code>mintmousse.MAX_PORT_ATTEMPTS</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>100</code></p>
+<p>Maximum number of sequential port increments tried when <code>autoIncrement = true</code> is passed to <a href="../controller/start/"><code>mintmousse.start</code></a>.</p>
+<h3 id="mintmoussetimeout_http"><code>mintmousse.TIMEOUT_HTTP</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>30</code></p>
+<p>Idle timeout for HTTP connections. A <code>408 Request Timeout</code> is sent if exceeded.</p>
+<h3 id="mintmoussetimeout_websocket"><code>mintmousse.TIMEOUT_WEBSOCKET</code></h3>
+<p><strong>Type</strong>: <em>number</em> (seconds)<br />
+<strong>Default</strong>: <code>60</code></p>
+<p>Idle timeout for WebSocket connections (includes the internal heartbeat mechanism).</p>
+<h3 id="mintmousseping_websocket"><code>mintmousse.PING_WEBSOCKET</code></h3>
+<p><strong>Type</strong>: <em>number</em> (seconds)<br />
+<strong>Default</strong>: <code>30</code></p>
+<p>Interval between WebSocket ping frames (used for keep-alive).</p>
+<h3 id="mintmoussecomponent_parse_timeout"><code>mintmousse.COMPONENT_PARSE_TIMEOUT</code></h3>
+<p><strong>Type</strong>: <em>number</em> (seconds)
+<strong>Default</strong>: <code>3</code></p>
+<p>Maximum time to wait for component type parsing. If you see a timeout warning, increase this value or use the preload script.</p>
+<h3 id="mintmoussereplace_default_error_handler"><code>mintmousse.REPLACE_DEFAULT_ERROR_HANDLER</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>true</code></p>
+<p>If <code>true</code>, MintMousse replaces Love’s default error handler with its own (adds better logging and cleaned-up stack traces).</p>
+<hr />
+<h2 id="logging-settings">Logging Settings</h2>
+<h3 id="mintmousselog_enabled_timestamp"><code>mintmousse.LOG_ENABLED_TIMESTAMP</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>true</code></p>
+<p>Prefix every log with a timestamp.</p>
+<h3 id="mintmousselog_timestamp_format"><code>mintmousse.LOG_TIMESTAMP_FORMAT</code></h3>
+<p><strong>Type</strong>: <em>string</em>
+<strong>Default</strong>: <code>"%Y-%m-%d %H:%M:%S.%f"</code></p>
+<p>Format passed to <code>os.date</code>. MintMousse adds the custom <code>%f</code> specifier (milliseconds, 3 digits padded). Performance is best when <code>%f</code> appears at the very end of the string.</p>
+<h3 id="mintmousselog_enable_stream_out"><code>mintmousse.LOG_ENABLE_STREAM_OUT</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>true</code></p>
+<p>Enable logging to <code>io.stdout</code> / <code>io.stderr</code> (behaves like the global <code>print</code>). Automatically strips ANSI colours when the stream is redirected to a file.</p>
+<h3 id="mintmousselog_enable_error"><code>mintmousse.LOG_ENABLE_ERROR</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>true</code></p>
+<p>When <code>logger:error()</code> is called, also call the global <code>error()</code> function.</p>
+<h3 id="mintmousselog_include_trace"><code>mintmousse.LOG_INCLUDE_TRACE</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>false</code></p>
+<p>Include debug info (<code>function@file:line</code>) in all log message levels. Has a noticeable performance cost with each lookup.</p>
+<h3 id="mintmousselog_warnings_cause_errors"><code>mintmousse.LOG_WARNINGS_CAUSE_ERRORS</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>false</code></p>
+<p>If <code>true</code>, warning logs are promoted to error logs.</p>
+<h3 id="mintmousselog_warnings_include_trace"><code>mintmousse.LOG_WARNINGS_INCLUDE_TRACE</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>false</code></p>
+<p>Include trace information on warning logs (does not effect other log levels).</p>
+<h3 id="mintmoussereplace_func_print"><code>mintmousse.REPLACE_FUNC_PRINT</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>true</code></p>
+<p>Replaces the global function <code>print</code> with <code>logger:debug</code>. The original <code>print</code> is still available as <code>GLOBAL_print</code> (but it isn't considered thread-safe).</p>
+<h3 id="mintmousselog_clear_up_traceback"><code>mintmousse.LOG_CLEAR_UP_TRACEBACK</code></h3>
+<p><strong>Type</strong>: <em>boolean</em>
+<strong>Default</strong>: <code>true</code></p>
+<p>Clean internal MintMousse and Love calls from the traceback shown by <a href="../logging/logUncaughtError/"><code>MintMousse.logUncaughtError</code></a>. It doesn't effect the public <a href="../logging/cleanupTraceback/"><code>MintMousse.cleanupTraceback</code></a> function.</p>
+<h3 id="mintmousselog_buffer_size"><code>mintmousse.LOG_BUFFER_SIZE</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>2^20</code> (1MB)</p>
+<p>Size of the stdout buffer. Increase if you see garbled/interleaved output, or call <a href="../logging/flushLogs/"><code>mintmousse.flushLogs</code></a> more often.</p>
+<h3 id="mintmousselog_max_pending_logs_per_flush"><code>mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>512</code></p>
+<p>Maximum number of logs the global sinks will process in a single call to <a href="../logging/flushLogs/"><code>mintmousse.flushLogs</code></a> (only runs on the main thread).</p>
+<hr />
+<h2 id="mintmousse-thread-settings">MintMousse Thread Settings</h2>
+<p>You probably won't need to change these unless you have very specific performance requirements.</p>
+<h3 id="mintmoussemax_thread_messages"><code>mintmousse.MAX_THREAD_MESSAGES</code></h3>
+<p><strong>Type</strong>: <em>number</em>
+<strong>Default</strong>: <code>100</code></p>
+<p>Maximum commands the MintMousse thread will process in one loop iteration.</p>
+<h3 id="mintmoussethread_sleep"><code>mintmousse.THREAD_SLEEP</code></h3>
+<p><strong>Type</strong>: <em>number</em> (seconds)
+<strong>Default</strong>: <code>1e-4</code> (0.0001s)</p>
+<p>sleep time between thread loop iterations. Increase to reduce CPU usage, decrease if the thread feels sluggish.</p>
+<hr />
+<h2 id="channel-event-ids">Channel / Event IDs</h2>
+<p>Only change these if they conflict with IDs already used elsewhere in your project.</p>
+<h3 id="channels">Channels</h3>
+<table>
+<thead>
+<tr>
+<th>Channel ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>READONLY_THREAD_LOCATION</code></td>
+<td>Holds the MintMousse thread Object (read-only)</td>
+</tr>
+<tr>
+<td><code>THREAD_COMMAND_QUEUE_ID</code></td>
+<td>Queue for commands sent to the MintMousse thread</td>
+</tr>
+<tr>
+<td><code>READONLY_BUFFER_DICTIONARY_ID</code></td>
+<td>Internal string.buffer dictionary</td>
+</tr>
+<tr>
+<td><code>THREAD_ID_COUNTER</code></td>
+<td>Counter for assigning unique thread IDs</td>
+</tr>
+<tr>
+<td><code>READONLY_BASIC_TYPES_ID</code></td>
+<td>Parsed component types used by proxy tables</td>
+</tr>
+<tr>
+<td><code>LOCK_LOG_BUFFER_FLUSH</code></td>
+<td>Mutex lock for stdout buffer</td>
+</tr>
+<tr>
+<td><code>LOCK_LOG_BUFFER_ERR</code></td>
+<td>Mutex lock for stderr</td>
+</tr>
+<tr>
+<td><code>LOG_EVENT_CHANNEL</code></td>
+<td>Used to queue global sink logs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="events">Events</h3>
+<table>
+<thead>
+<tr>
+<th>Event ID</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>errBufferLockChannel</code></td>
+<td><code>love.event</code> used by the MintMousse thread to communicate back to the main thread</td>
+</tr>
+</tbody>
+</table>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

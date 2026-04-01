@@ -14,7 +14,7 @@
         <link rel="prev" href="../addGlobalLogSink/">
       
       
-        <link rel="next" href="../color/">
+        <link rel="next" href="../cleanupTraceback/">
       
       
         
@@ -246,6 +246,25 @@
   
   
   
+    <li class="md-tabs__item">
+      <a href="../../config/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Config
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
     
     
       <li class="md-tabs__item">
@@ -364,6 +383,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../config/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
     
     
       
@@ -408,7 +454,7 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -430,14 +476,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -795,6 +841,8 @@
       
         
       
+        
+      
     
     
     
@@ -811,7 +859,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -833,14 +881,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_3">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1011,6 +1059,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cleanupTraceback/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.cleanupTraceback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1203,7 +1279,7 @@
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_9" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_10" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1225,14 +1301,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="">
+              <label class="md-nav__link " for="__nav_4_10" id="__nav_4_10_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_9">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1593,9 +1669,10 @@
 <h1 id="mintmousseaddlogsink"><code>mintmousse.addLogSink</code></h1>
 <p>Used to add a custom sink to direct log messages to where ever you want, for the current thread that the function is ran on.</p>
 <p>I recommend checking out the logging sinks that the library implements to fully understand how you can implement your own.</p>
-<p>!!! warning "Thread behaviour</p>
-<div class="highlight"><pre><span></span><code>This function is used to route logs of the thread that this function is ran on. If you just want to set a logging sink once, and handle all logs from all threads see [`mintmousse.addGlobalLogSink`](addGlobalLogSink.md). This function is recommended over global sinks for performance.
-</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Thread behaviour</p>
+<p>This function is used to route logs of the thread that this function is ran on. If you just want to set a logging sink once, and handle all logs from all threads see <a href="../addGlobalLogSink/"><code>mintmousse.addGlobalLogSink</code></a>. This function is recommended over global sinks for performance.</p>
+</div>
 <h2 id="synopsis">Synopsis</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="w"> </span><span class="nv">sink</span><span class="p">,</span><span class="w"> </span><span class="nv">flushFunc</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>

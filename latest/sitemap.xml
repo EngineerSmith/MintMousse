@@ -5,6 +5,10 @@
          <lastmod>2026-04-01</lastmod>
     </url>
     <url>
+         <loc>https://mintmousse.engineersmith.net/latest/config/</loc>
+         <lastmod>2026-04-01</lastmod>
+    </url>
+    <url>
          <loc>https://mintmousse.engineersmith.net/latest/controller/</loc>
          <lastmod>2026-04-01</lastmod>
     </url>
@@ -62,6 +66,10 @@
     </url>
     <url>
          <loc>https://mintmousse.engineersmith.net/latest/logging/addLogSink/</loc>
+         <lastmod>2026-04-01</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/logging/cleanupTraceback/</loc>
          <lastmod>2026-04-01</lastmod>
     </url>
     <url>
