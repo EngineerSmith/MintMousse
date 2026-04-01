@@ -650,6 +650,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#svg-schema-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVG Schema Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -671,6 +688,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#svg-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVG Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1520,6 +1554,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#svg-schema-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVG Schema Table
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1541,6 +1592,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#svg-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SVG Schema
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1576,26 +1644,72 @@
 
 
 <h1 id="mintmousseseticon"><code>mintmousse.setIcon</code></h1>
-<p>Set the icon of the console to use to make your tab recognisable. Don't have an image? No problem, use the SVG generator to quickly create something!</p>
+<p>Set the icon of the console (the little image shown in the window/tab) to make your project recognisable.</p>
+<p>Don't have a ready-made image/logo? No problem - pass a simple table and the built in SVG generator will create a clean, emoji-based icon for you on the fly.</p>
+<div class="admonition note">
+<p class="admonition-title">Browser behaviour</p>
+<p>A known issue with the SVG Schema option is that SVG's on Chrome render a lot blurrier than that on Firefox.</p>
+<p>I've noticed in <a href="https://www.chromium.org/Home/">Chromium</a> it renders fine, not sure why Chrome wants to play up.</p>
+</div>
 <h2 id="synopsis">Synopsis</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="w"> </span><span class="nv">icon</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><code>icon</code> <em>string</em> or <em>table</em> or <a href="https://love2d.org/wiki/Data"><em>Data</em></a></dt>
-<dd>-- TODO <em>Data</em> becomes a <em>string</em>, <em>table</em> is for SVG generator; if <em>string</em> is a file path, it is read, if it is raw binary, magic numbers for PNG and jpeg are searched for.</dd>
+<dd>The icon source. The function handles four common use-cases in:
+1. SVG Schema: <em>table</em>
+  * A table describing a custom SVG icon. See definition below. This is designed to be the quick and easy, so it's options are limited.
+2. File Path: <em>string</em>
+    * Path to an image file. Supported extensions: <code>.png</code>, <code>.jpeg</code>, <code>.jpg</code>, <code>.svg</code>, <code>.ico</code>
+3. Raw Image Data: <em>string</em> or <a href="https://love2d.org/wiki/Data"><em>Data</em></a>
+    * Binary image data for a PNG or JPEG file. Automatically detected by their standard magic-number headers. If you pass a <a href="https://love2d.org/wiki/Data"><em>Data</em></a>, it is converted into a <em>string</em> first.</dd>
+</dl>
+<h3 id="svg-schema-table">SVG Schema Table</h3>
+<dl>
+<dt><code>shape</code> <em>string</em> (<strong>nil</strong>)</dt>
+<dd>Background shape: <strong>"circle"</strong>, <strong>"rectangle"</strong>, <strong>"square"</strong>, or omitted (uses a squircle - rounded square). Note <strong>"rectangle"</strong> and <strong>"square"</strong> are treated the same.</dd>
+<dt><code>insideColor</code> or <code>color</code> <em>string</em> (<strong>"#95D7AB"</strong>)</dt>
+<dd>Fill Colour of the icon. Accepts any standard web colour name (<strong>"red"</strong>, <strong>"blue"</strong>, etc.) or a hex code (<strong>"#RRGGBB"</strong> or <strong>"#RGB"</strong>).</dd>
+<dt><code>outsideColor</code> <em>string</em> (<strong>"#4A7C59"</strong>)</dt>
+<dd>Stroke (outline) colour. Same format as <code>insideColor</code>. Use <strong>"none"</strong> to disable the stroke entirely.</dd>
+<dt><code>strokeWidth</code> <em>number</em> (<strong>3</strong>)</dt>
+<dd>Thickness of the stroke. Ignored if <code>outsideColor</code> is <strong>"none"</strong>.</dd>
+<dt><code>emoji</code> <em>string</em> (<strong>"🍮"</strong>)</dt>
+<dd>Single emoji (or any single character) displayed in the centre. Note, multi-character emojis are supported, but no guarantee it will render correctly by browsers.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>Nothing.</p>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">({</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nv">emoji</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;🍮&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nv">easterEgg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;MM&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">})</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="s2">&quot;assets/console.icon.jpeg&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="nv">love</span><span class="p">.</span><span class="py">filesystem</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">&quot;assets/console/icon.png&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="s2">&quot;assets/console/icon.svg&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="s2">&quot;assets/console/icon.ico&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="nv">love</span><span class="p">.</span><span class="py">filesystem</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">&quot;assets/console/icon.png&quot;</span><span class="p">))</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">(</span><span class="nv">love</span><span class="p">.</span><span class="py">filesystem</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">&quot;assets/console/icon.jpeg&quot;</span><span class="p">))</span>
+</code></pre></div>
+<h3 id="svg-schema">SVG Schema</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">({</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">-- MintMousse&#39;s default, same as:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">({</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nv">shape</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="c1">-- squircle</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nv">insideColor</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;#95D7AB&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nv">outsideColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;#4A7C59&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nv">strokeWidth</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nv">emoji</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;🍮&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">})</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">({</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="nv">shape</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;circle&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="nv">insideColor</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;#abf&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="nv">outsideColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;#f00&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="nv">strokeWidth</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">  </span><span class="nv">emoji</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;🚀&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="p">})</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">setIcon</span><span class="p">({</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">  </span><span class="nv">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;#cca486&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">  </span><span class="nv">emoji</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;🍖&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">  </span><span class="nv">outsideColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="p">})</span>
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
