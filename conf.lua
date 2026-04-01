@@ -28,15 +28,15 @@ local mintmousse = {
 
   CACHE_CONTROL_HEADER = "no-store",  -- Cache-Control header for static assets ("no-store" for dev in library) -- "public, max-age=3600"
 
-  COMPONENT_PARSE_TIMEOUT = 3,        -- Seconds: Max wait for component type parsing. Use preload script to reduce blocking.
-
-  REPLACE_DEFAULT_ERROR_HANDLER = true, -- Replace Love's error handler with MintMousse's (adds logging & cleaned stack traces).
-
   MAX_PORT_ATTEMPTS = 100,            -- Max sequential port bind attempts before aborting.
 
   TIMEOUT_HTTP = 30,                  -- Seconds: Idle timeout for HTTP connections (sends 408).
   TIMEOUT_WEBSOCKET = 60,             -- Seconds: Max idle time for WebSocket connections (includes pongs).
   PING_WEBSOCKET = 30,                -- Seconds: Interval to send WebSocket ping frames for heartbeat.
+
+  COMPONENT_PARSE_TIMEOUT = 3,        -- Seconds: Max wait for component type parsing. Use preload script to reduce blocking.
+
+  REPLACE_DEFAULT_ERROR_HANDLER = true, -- Replace Love's error handler with MintMousse's (adds logging & cleaned stack traces).
 
   -- Logging settings
   -----------------------------------------------------------------------------------------------------------------
@@ -53,13 +53,13 @@ local mintmousse = {
   REPLACE_FUNC_PRINT = true,          -- Replace global print with logger.debug (original available as GLOBAL_print)
                              -- Warning: GLOBAL_print is not thread-safe and may cause interleaved/garbled output in multi-threaded code.
 
-  LOG_CLEAR_UP_TRACEBACK = true,      -- Clean internal MintMousse & Love calls from tracebacks in logs & error handler.
+  LOG_CLEAR_UP_TRACEBACK = true,      -- Clean internal MintMousse & Love calls from tracebacks in mintmousse.logUncaughtError.
 
   LOG_BUFFER_SIZE = 2^20,             -- 1Mb: Stdout buffer size. Increase if output garbles; call mintmousse.flushLogs() as needed.
 
   LOG_MAX_PENDING_LOGS_PER_FLUSH = 512, -- Max number of logs global sinks can process per flush
 
-  -- Thread settings
+  -- MintMousse Thread settings
   -----------------------------------------------------------------------------------------------------------------
   MAX_THREAD_MESSAGES = 100,          -- Max commands processed per MintMousse thread loop.
 

@@ -19,6 +19,7 @@ MintMousse ships a powerful, thread-safe logging system that lets you:
 |[`mintmousse.logUncaughtError`](logUncaughtError.md)|Catch errors in [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler)|
 |[`mintmousse.addLogSink`](addLogSink.md)|Register a custom destination for all log messages on the current thread|
 |[`mintmousse.addGlobalLogSink`](addGlobalLogSink.md)|Register a custom destination for all log messages across the program|
+|[`mintmousse.cleanupTraceback`](cleanupTraceback.md)|Removes unhelpful entries from the traceback|
 
 ## Enums
 |Enum|Description|

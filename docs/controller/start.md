@@ -23,7 +23,7 @@ mintmousse.start( config )
 :   The whole number port the server will be reachable on. If nil, default behaviour is to start at `8080` and will increment until it finds a port it can bind to.
 
 `autoIncrement` _boolean_
-:   If a `port` is given, if the server should try to increment the given port until it find ones. Default disabled.
+:   If a `port` is given, if the server should try to increment the given port until it find ones. Default disabled. If `port` is `nil`, this will default to **`true`**.
 
 `whitelist` _string_ or _table_
 :   A single rule, or an array of rules. See [`mintmousse.addToWhitelist`](addToWhitelist.md) for details.

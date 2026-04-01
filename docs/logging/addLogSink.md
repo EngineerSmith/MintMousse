@@ -3,7 +3,7 @@ Used to add a custom sink to direct log messages to where ever you want, for the
 
 I recommend checking out the logging sinks that the library implements to fully understand how you can implement your own.
 
-!!! warning "Thread behaviour
+!!! warning "Thread behaviour"
 
     This function is used to route logs of the thread that this function is ran on. If you just want to set a logging sink once, and handle all logs from all threads see [`mintmousse.addGlobalLogSink`](addGlobalLogSink.md). This function is recommended over global sinks for performance.
 
