@@ -1,5 +1,5 @@
 # Controller
-This is the module that lets you start and stop the library. Set basic 
+This is the module that lets you start and stop the library, and set overview values to customise the console.
 
 ## Functions
 |Function|Description|

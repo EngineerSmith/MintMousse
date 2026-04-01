@@ -27,11 +27,11 @@ return function(icon)
     viewModel.borderRadius = 6
   end
 
-  viewModel.fillColor = validateColor(icon.insideColor or icon.color, "#95d7ab")
+  viewModel.fillColor = validateColor(icon.insideColor or icon.color, "#95D7AB")
   viewModel.strokeColor = validateColor(icon.outsideColor, "#4A7C59") -- #00FF70
 
   if viewModel.strokeColor ~= "none" then
-    viewModel.strokeWidth = tonumber(icon.strokeWidth) or 3
+    viewModel.strokeWidth = math.floor(tonumber(icon.strokeWidth) or 3)
   else
     viewModel.strokeWidth = 0
   end

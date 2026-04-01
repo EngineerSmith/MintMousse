@@ -142,7 +142,7 @@ threadController.setIcon = function(icon)
         })
         return
       end
-      iconLogger:warning("Valid file provided, invalid file extension. Only .PNG, .JPEG, .JPG, or .SVG are supported for icon from file.")
+      iconLogger:warning("Valid file provided, invalid file extension. Only .PNG, .JPEG, .JPG, .ICO, or .SVG are supported for icon from file.")
       return
     elseif icon:sub(#pngMagicNumber) == pngMagicNumber then
       threadController.setIconRaw(icon, "image/png")

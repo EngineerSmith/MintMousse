@@ -6,7 +6,4 @@ require(PATH .. "thread.controller.icon")
 -- Set Defaults
 local signal = require(PATH .. "thread.signal")
 signal.emit("setTitle", { title = "MintMousse" })
-signal.emit("setSchemaIcon", { icon = {
-  emoji = "🍮",
-  easterEgg = "MM",
-}})
+signal.emit("setSchemaIcon", { icon = { }})
