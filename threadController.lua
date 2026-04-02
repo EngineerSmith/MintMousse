@@ -56,7 +56,7 @@ threadController.start = function(config)
 end
 
 threadController.stop = function(noWait)
-  threadCommand.commandQueue(function(channel)
+  threadCommand.commandQueue:performAtomic(function(channel)
     channel:clear()
     threadCommand.call("quit")
   end)

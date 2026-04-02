@@ -17,10 +17,13 @@ mintmousse.setIcon( icon )
 ## Parameters
 `icon` _string_ or _table_ or [_Data_](https://love2d.org/wiki/Data)
 :   The icon source. The function handles four common use-cases in:
+
     1. SVG Schema: _table_
       * A table describing a custom SVG icon. See definition below. This is designed to be the quick and easy, so it's options are limited.
+
     2. File Path: _string_
         * Path to an image file. Supported extensions: `.png`, `.jpeg`, `.jpg`, `.svg`, `.ico`
+
     3. Raw Image Data: _string_ or [_Data_](https://love2d.org/wiki/Data)
         * Binary image data for a PNG or JPEG file. Automatically detected by their standard magic-number headers. If you pass a [_Data_](https://love2d.org/wiki/Data), it is converted into a _string_ first.
 
