@@ -1733,13 +1733,27 @@
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><code>icon</code> <em>string</em> or <em>table</em> or <a href="https://love2d.org/wiki/Data"><em>Data</em></a></dt>
-<dd>The icon source. The function handles four common use-cases in:
-1. SVG Schema: <em>table</em>
-  * A table describing a custom SVG icon. See definition below. This is designed to be the quick and easy, so it's options are limited.
-2. File Path: <em>string</em>
-    * Path to an image file. Supported extensions: <code>.png</code>, <code>.jpeg</code>, <code>.jpg</code>, <code>.svg</code>, <code>.ico</code>
-3. Raw Image Data: <em>string</em> or <a href="https://love2d.org/wiki/Data"><em>Data</em></a>
-    * Binary image data for a PNG or JPEG file. Automatically detected by their standard magic-number headers. If you pass a <a href="https://love2d.org/wiki/Data"><em>Data</em></a>, it is converted into a <em>string</em> first.</dd>
+<dd>
+<p>The icon source. The function handles four common use-cases in:</p>
+<ol>
+<li>SVG Schema: <em>table</em></li>
+<li>
+<p>A table describing a custom SVG icon. See definition below. This is designed to be the quick and easy, so it's options are limited.</p>
+</li>
+<li>
+<p>File Path: <em>string</em></p>
+<ul>
+<li>Path to an image file. Supported extensions: <code>.png</code>, <code>.jpeg</code>, <code>.jpg</code>, <code>.svg</code>, <code>.ico</code></li>
+</ul>
+</li>
+<li>
+<p>Raw Image Data: <em>string</em> or <a href="https://love2d.org/wiki/Data"><em>Data</em></a></p>
+<ul>
+<li>Binary image data for a PNG or JPEG file. Automatically detected by their standard magic-number headers. If you pass a <a href="https://love2d.org/wiki/Data"><em>Data</em></a>, it is converted into a <em>string</em> first.</li>
+</ul>
+</li>
+</ol>
+</dd>
 </dl>
 <h3 id="svg-schema-table">SVG Schema Table</h3>
 <dl>
