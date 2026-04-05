@@ -44,7 +44,7 @@ id.getNewThreadID = function()
     id = threadCounterChannel:pop()
     threadCounterChannel:push(id + 1)
   end)
-  return id
+  return tostring(id)
 end
 
 local protectedKeywords = {
