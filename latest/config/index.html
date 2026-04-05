@@ -2576,133 +2576,133 @@ As MintMousse is a threaded library, almost all configuration must be done befor
 <hr />
 <h2 id="file-paths-and-locations">File Paths and Locations</h2>
 <h3 id="mintmoussecomponent_paths"><code>mintmousse.COMPONENT_PATHS</code></h3>
-<p><strong>Type</strong>: <em>table</em>(array of strings)
-<strong>Default</strong>: <code>{ DIRECTORY_PATH .. "components/" }</code></p>
+<p><strong>Type</strong>: <em>table</em>(array of strings)</p>
+<p><strong>Default</strong>: <code>{ DIRECTORY_PATH .. "components/" }</code></p>
 <p>Directories to search for components. Later entries override earlier ones on a per-file basis. Use this to add your own components or to include a git repo that provides extra components. See <a href="">Components</a> to see how to create your own. -- TODO link</p>
 <h3 id="mintmoussedefault_index_html"><code>mintmousse.DEFAULT_INDEX_HTML</code></h3>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.html"</code></p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.html"</code></p>
 <p>Path to the base HTML file severed to connecting clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
 <h3 id="mintmoussedefault_index_js"><code>mintmousse.DEFAULT_INDEX_JS</code></h3>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.js"</code></p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.js"</code></p>
 <p>Path to the base JavaScript file served to clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
 <h3 id="mintmoussedefault_index_css"><code>mintmousse.DEFAULT_INDEX_CSS</code></h3>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.css"</code>
-Path to base CSS file served to clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: <code>DIRECTORY_PATH .. "thread/index.css"</code></p>
+<p>Path to base CSS file served to clients. This is a <a href="https://github.com/Olivine-Labs/lustache">Mustache</a> template.</p>
 <h3 id="rfg-icons">RFG Icons</h3>
 <p>These two settings are only relevant if you use <a href="../controller/setIconRFG/">RFG</a> icons.</p>
 <h4 id="mintmoussezip_mount_location">`mintmousse.ZIP_MOUNT_LOCATION</h4>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: `".MintMousse/"</p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: `".MintMousse/"</p>
 <p>Directory used by <code>love.filesystem.mount()</code> when mounting ZIP archieves that contain RFG icons.</p>
 <h4 id="mintmoussefavicon_path"><code>mintmousse.FAVICON_PATH</code></h4>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: <code>"/favicon"</code></p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: <code>"/favicon"</code></p>
 <p>HTTP endpoint where the favicon assets are served. This must match the "favicon path" you set when generating icons on the RFG website.</p>
 <hr />
 <h2 id="network-and-server-settings">Network and Server Settings</h2>
 <h3 id="mintmoussesocket_backlog"><code>mintmousse.SOCKET_BACKLOG</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>32</code></p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>32</code></p>
 <p>Maximum number of pending connections the OS will queue before refusing new ones.</p>
 <h3 id="mintmoussemax_http_receive_size"><code>mintmousse.MAX_HTTP_RECEIVE_SIZE</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>2^16</code> (65KB)</p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>2^16</code> (65KB)</p>
 <p>The maximum allowed size of an incoming HTTP request body. Larger requests are rejected and the limit is included in the response headers.</p>
 <h3 id="mintmoussemax_websocket_frame_size"><code>mintmousse.MAX_WEBSOCKET_FRAME_SIZE</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>2^19</code> (512KB)</p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>2^19</code> (512KB)</p>
 <p>Maximum size of a single WebSocket Frame (both incoming and outgoing).</p>
 <h3 id="mintmoussemax_websocket_message_size"><code>mintmousse.MAX_WEBSOCKET_MESSAGE_SIZE</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>2^21</code> (2MB)</p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>2^21</code> (2MB)</p>
 <p>Maximum size of a complete WebSocket message (after reassembling fragmented frames).</p>
 <h3 id="mintmoussecache_control_header"><code>mintmousseCACHE_CONTROL_HEADER</code></h3>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: <code>"no-store"</code></p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: <code>"no-store"</code></p>
 <p>Value of the <code>Cache-Control</code> header sent for static assets. Change to something like <code>"public, max-age=3600"</code> for production.</p>
 <h3 id="mintmoussemax_port_attempts"><code>mintmousse.MAX_PORT_ATTEMPTS</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>100</code></p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>100</code></p>
 <p>Maximum number of sequential port increments tried when <code>autoIncrement = true</code> is passed to <a href="../controller/start/"><code>mintmousse.start</code></a>.</p>
 <h3 id="mintmoussetimeout_http"><code>mintmousse.TIMEOUT_HTTP</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>30</code></p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>30</code></p>
 <p>Idle timeout for HTTP connections. A <code>408 Request Timeout</code> is sent if exceeded.</p>
 <h3 id="mintmoussetimeout_websocket"><code>mintmousse.TIMEOUT_WEBSOCKET</code></h3>
-<p><strong>Type</strong>: <em>number</em> (seconds)<br />
-<strong>Default</strong>: <code>60</code></p>
+<p><strong>Type</strong>: <em>number</em> (seconds)</p>
+<p><strong>Default</strong>: <code>60</code></p>
 <p>Idle timeout for WebSocket connections (includes the internal heartbeat mechanism).</p>
 <h3 id="mintmousseping_websocket"><code>mintmousse.PING_WEBSOCKET</code></h3>
-<p><strong>Type</strong>: <em>number</em> (seconds)<br />
-<strong>Default</strong>: <code>30</code></p>
+<p><strong>Type</strong>: <em>number</em> (seconds)</p>
+<p><strong>Default</strong>: <code>30</code></p>
 <p>Interval between WebSocket ping frames (used for keep-alive).</p>
 <h3 id="mintmoussecomponent_parse_timeout"><code>mintmousse.COMPONENT_PARSE_TIMEOUT</code></h3>
-<p><strong>Type</strong>: <em>number</em> (seconds)
-<strong>Default</strong>: <code>3</code></p>
+<p><strong>Type</strong>: <em>number</em> (seconds)</p>
+<p><strong>Default</strong>: <code>3</code></p>
 <p>Maximum time to wait for component type parsing. If you see a timeout warning, increase this value or use the preload script.</p>
 <h3 id="mintmoussereplace_default_error_handler"><code>mintmousse.REPLACE_DEFAULT_ERROR_HANDLER</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>true</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>true</code></p>
 <p>If <code>true</code>, MintMousse replaces Love’s default error handler with its own (adds better logging and cleaned-up stack traces).</p>
 <hr />
 <h2 id="logging-settings">Logging Settings</h2>
 <h3 id="mintmousselog_enabled_timestamp"><code>mintmousse.LOG_ENABLED_TIMESTAMP</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>true</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>true</code></p>
 <p>Prefix every log with a timestamp.</p>
 <h3 id="mintmousselog_timestamp_format"><code>mintmousse.LOG_TIMESTAMP_FORMAT</code></h3>
-<p><strong>Type</strong>: <em>string</em>
-<strong>Default</strong>: <code>"%Y-%m-%d %H:%M:%S.%f"</code></p>
+<p><strong>Type</strong>: <em>string</em></p>
+<p><strong>Default</strong>: <code>"%Y-%m-%d %H:%M:%S.%f"</code></p>
 <p>Format passed to <code>os.date</code>. MintMousse adds the custom <code>%f</code> specifier (milliseconds, 3 digits padded). Performance is best when <code>%f</code> appears at the very end of the string.</p>
 <h3 id="mintmousselog_enable_stream_out"><code>mintmousse.LOG_ENABLE_STREAM_OUT</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>true</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>true</code></p>
 <p>Enable logging to <code>io.stdout</code> / <code>io.stderr</code> (behaves like the global <code>print</code>). Automatically strips ANSI colours when the stream is redirected to a file.</p>
 <h3 id="mintmousselog_enable_error"><code>mintmousse.LOG_ENABLE_ERROR</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>true</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>true</code></p>
 <p>When <code>logger:error()</code> is called, also call the global <code>error()</code> function.</p>
 <h3 id="mintmousselog_include_trace"><code>mintmousse.LOG_INCLUDE_TRACE</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>false</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>false</code></p>
 <p>Include debug info (<code>function@file:line</code>) in all log message levels. Has a noticeable performance cost with each lookup.</p>
 <h3 id="mintmousselog_warnings_cause_errors"><code>mintmousse.LOG_WARNINGS_CAUSE_ERRORS</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>false</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>false</code></p>
 <p>If <code>true</code>, warning logs are promoted to error logs.</p>
 <h3 id="mintmousselog_warnings_include_trace"><code>mintmousse.LOG_WARNINGS_INCLUDE_TRACE</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>false</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>false</code></p>
 <p>Include trace information on warning logs (does not effect other log levels).</p>
 <h3 id="mintmoussereplace_func_print"><code>mintmousse.REPLACE_FUNC_PRINT</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>true</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>true</code></p>
 <p>Replaces the global function <code>print</code> with <code>logger:debug</code>. The original <code>print</code> is still available as <code>GLOBAL_print</code> (but it isn't considered thread-safe).</p>
 <h3 id="mintmousselog_clear_up_traceback"><code>mintmousse.LOG_CLEAR_UP_TRACEBACK</code></h3>
-<p><strong>Type</strong>: <em>boolean</em>
-<strong>Default</strong>: <code>true</code></p>
+<p><strong>Type</strong>: <em>boolean</em></p>
+<p><strong>Default</strong>: <code>true</code></p>
 <p>Clean internal MintMousse and Love calls from the traceback shown by <a href="../logging/logUncaughtError/"><code>MintMousse.logUncaughtError</code></a>. It doesn't effect the public <a href="../logging/cleanupTraceback/"><code>MintMousse.cleanupTraceback</code></a> function.</p>
 <h3 id="mintmousselog_buffer_size"><code>mintmousse.LOG_BUFFER_SIZE</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>2^20</code> (1MB)</p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>2^20</code> (1MB)</p>
 <p>Size of the stdout buffer. Increase if you see garbled/interleaved output, or call <a href="../logging/flushLogs/"><code>mintmousse.flushLogs</code></a> more often.</p>
 <h3 id="mintmousselog_max_pending_logs_per_flush"><code>mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>512</code></p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>512</code></p>
 <p>Maximum number of logs the global sinks will process in a single call to <a href="../logging/flushLogs/"><code>mintmousse.flushLogs</code></a> (only runs on the main thread).</p>
 <hr />
 <h2 id="mintmousse-thread-settings">MintMousse Thread Settings</h2>
 <p>You probably won't need to change these unless you have very specific performance requirements.</p>
 <h3 id="mintmoussemax_thread_messages"><code>mintmousse.MAX_THREAD_MESSAGES</code></h3>
-<p><strong>Type</strong>: <em>number</em>
-<strong>Default</strong>: <code>100</code></p>
+<p><strong>Type</strong>: <em>number</em></p>
+<p><strong>Default</strong>: <code>100</code></p>
 <p>Maximum commands the MintMousse thread will process in one loop iteration.</p>
 <h3 id="mintmoussethread_sleep"><code>mintmousse.THREAD_SLEEP</code></h3>
-<p><strong>Type</strong>: <em>number</em> (seconds)
-<strong>Default</strong>: <code>1e-4</code> (0.0001s)</p>
+<p><strong>Type</strong>: <em>number</em> (seconds)</p>
+<p><strong>Default</strong>: <code>1e-4</code> (0.0001s)</p>
 <p>sleep time between thread loop iterations. Increase to reduce CPU usage, decrease if the thread feels sluggish.</p>
 <hr />
 <h2 id="channel-event-ids">Channel / Event IDs</h2>
