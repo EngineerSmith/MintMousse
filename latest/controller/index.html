@@ -441,6 +441,8 @@
       
         
       
+        
+      
     
     
     
@@ -541,6 +543,34 @@
     
   
     mintmousse.clearWhitelist
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getThreadID/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.getThreadID
   
 
     
@@ -1485,6 +1515,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variables
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1506,7 +1547,7 @@
 
 
 <h1 id="controller">Controller</h1>
-<p>This is the module that lets you start and stop the library, and set overview values to customise the console.</p>
+<p>Using these functions you can start, and stop the library.</p>
 <h2 id="functions">Functions</h2>
 <table>
 <thead>
@@ -1559,6 +1600,37 @@
 <tr>
 <td><a href="clearWhitelist/"><code>mintmousse.clearWhitelist</code></a></td>
 <td>Clear all rules from the whitelist</td>
+</tr>
+<tr>
+<td><a href="batchStart.md"><code>mintmousse.batchStart</code></a></td>
+<td>Start batching changes</td>
+</tr>
+<tr>
+<td><a href="batchEnd.md"><code>mintmousse.batchEnd</code></a></td>
+<td>End batching changes, and send to thread</td>
+</tr>
+<tr>
+<td><a href="buildPage.md"><code>mintmousse.buildPage</code></a></td>
+<td>Add a preconfigured tab</td>
+</tr>
+<tr>
+<td><a href="getThreadID/"><code>mintmousse.getThreadID</code></a></td>
+<td>Get the current thread's ID</td>
+</tr>
+</tbody>
+</table>
+<h2 id="variables">Variables</h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>love.isThread</code></td>
+<td>Boolean if code is running in a thread</td>
 </tr>
 </tbody>
 </table>
