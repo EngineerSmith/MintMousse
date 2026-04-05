@@ -56,7 +56,7 @@ console.build = function(tab, config)
   console.tab = tab
 
   local card = console.tab:newCard({ size = 5 })
-  console.logViewer = card:newCardBody():newLogViewer({ maxLines = 28 })
+  console.logViewer = card:newCardBody():newLogViewer({ maxLines = config.maxLines or 28 })
 
 end
 

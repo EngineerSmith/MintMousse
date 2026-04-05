@@ -1,5 +1,5 @@
 # Controller
-This is the module that lets you start and stop the library, and set overview values to customise the console.
+Using these functions you can start, and stop the library.
 
 ## Functions
 |Function|Description|
@@ -15,3 +15,12 @@ This is the module that lets you start and stop the library, and set overview va
 |[`mintmousse.addToWhitelist`](addToWhitelist.md)|Add a rule to the whitelist|
 |[`mintmousse.removeFromWhitelist`](removeFromWhitelist)|Remove a rule from the whitelist|
 |[`mintmousse.clearWhitelist`](clearWhitelist.md)|Clear all rules from the whitelist|
+|[`mintmousse.batchStart`](batchStart.md)|Start batching changes|
+|[`mintmousse.batchEnd`](batchEnd.md)|End batching changes, and send to thread|
+|[`mintmousse.buildPage`](buildPage.md)|Add a preconfigured tab|
+|[`mintmousse.getThreadID`](getThreadID.md)|Get the current thread's ID|
+
+## Variables
+|Variable|Description|
+|---|---|
+|`love.isThread`|Boolean if code is running in a thread|
