@@ -45,6 +45,10 @@ else
   local id = require(PATH .. "util.id")
   mintmousse._threadID = id.getNewThreadID()
 end
+-- TODO a setter; some way to reinit loggers; TODO check if supports changing threadID
+mintmousse.getThreadID = function()
+  return mintmousse._threadID
+end
 
 mintmousse._setupLogging()
 
