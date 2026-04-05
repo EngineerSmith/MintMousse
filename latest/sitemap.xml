@@ -17,6 +17,18 @@
          <lastmod>2026-04-05</lastmod>
     </url>
     <url>
+         <loc>https://mintmousse.engineersmith.net/latest/controller/batchEnd/</loc>
+         <lastmod>2026-04-05</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/controller/batchStart/</loc>
+         <lastmod>2026-04-05</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/controller/buildPage/</loc>
+         <lastmod>2026-04-05</lastmod>
+    </url>
+    <url>
          <loc>https://mintmousse.engineersmith.net/latest/controller/clearWhitelist/</loc>
          <lastmod>2026-04-05</lastmod>
     </url>
