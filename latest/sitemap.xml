@@ -33,7 +33,43 @@
          <lastmod>2026-04-06</lastmod>
     </url>
     <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/add/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/children/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/moveAfter/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/moveBefore/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/moveToBack/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/moveToFront/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/new/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
          <loc>https://mintmousse.engineersmith.net/latest/components/component/parent/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/remove/</loc>
+         <lastmod>2026-04-06</lastmod>
+    </url>
+    <url>
+         <loc>https://mintmousse.engineersmith.net/latest/components/component/setChildrenOrder/</loc>
          <lastmod>2026-04-06</lastmod>
     </url>
     <url>
