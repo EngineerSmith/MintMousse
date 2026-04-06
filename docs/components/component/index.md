@@ -29,5 +29,7 @@ The object you use to update the components on the web console. It is also known
 |[`(Component).back`](back.md)|Syntax sugar: alias for [`(Component).parent`](parent.md)|
 |`(Component).isDead`|Has this component marked removed.|
 
+<!-- NOTE FOR back.md IT REDIRECTS TO parent.md - SEE mkdocs.yml PLUGINS: redirects -->
+
 ## See Also
 - [Components](../index.md)
