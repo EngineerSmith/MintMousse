@@ -1,4 +1,5 @@
 local PATH = (...):match("^(.-)[^%.]+$")
+local DIRECTORY_PATH = PATH:gsub("%.", "/")
 
 local mintmousse = require(PATH .. "conf")
 local threadCommand = require(PATH .. "threadCommand")
@@ -12,6 +13,12 @@ local threadController = {
 
 threadController.start = function(config)
   local thread = threadController.threadChannel:peek()
+  if not thread then
+    threadController.threadChannel:performAtomic(function()
+      thread = love.thread.newThread(DIRECTORY_PATH .. "thread/init.lua")
+      threadController.threadChannel:push(thread)
+    end)
+  end
   if not thread:isRunning() then
     thread:start(PATH)
   end

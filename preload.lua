@@ -3,17 +3,11 @@ local PATH_RAW = ...
 local PATH = PATH_RAW:match("^(.-)[^%.]+$")
 local DIRECTORY_PATH = PATH:gsub("%.", "/")
 
-local attemptError = function(errorMessage)
-  error(errorMessage, 3)
-  assert(false, errorMessage) -- if error was overridden, try to use assert
-  return errorMessage -- if all else fails, try to return the error
-end
-
 if PATH_RAW:find("[[/\\]") then
   local errorMessage = "MintMousse: You called require('%s'). "..
                        "Invalid path format, please use dot-notion (e.g. libs.mintmousse) instead of file paths. " ..
                        "Use `.` (periods) in place of `/` (forward slash) or `\\` (back slash). "
-  return attemptError(errorMessage:format(PATH_RAW))
+  return error(errorMessage:format(PATH_RAW))
 end
 
 local love = love
@@ -27,7 +21,7 @@ require(PATH .. "setupLove")
 
 local mintmousse = require(PATH .. "conf")
 
-if not love.isThread then
+if not love.isThread and not MINTMOUSSE_DO_NOT_START then
   local channel = love.thread.getChannel(mintmousse.READONLY_THREAD_LOCATION)
   local thread = love.thread.newThread(DIRECTORY_PATH .. "thread/init.lua")
   thread:start(PATH)
@@ -51,6 +45,9 @@ mintmousse.getThreadID = function()
 end
 
 mintmousse._setupLogging()
+if MINTMOUSSE_DO_NOT_START then
+  logger:info("MintMousse Thread was not started because of MINTMOUSSE_DO_NOT_START flag was true")
+end
 
 local util = require(PATH .. "util")
 mintmousse.cleanupTraceback = util.cleanupTraceback
@@ -115,8 +112,10 @@ mintmousse.buildPage = pages.buildPage
 
 mintmousse.flushLogs()
 
-local contract = require(PATH .. "contract")
-contract.waitForComponents()
+if not MINTMOUSSE_DO_NOT_START then
+  local contract = require(PATH .. "contract")
+  contract.waitForComponents()
+end
 
 mintmousse.flushLogs()
 
