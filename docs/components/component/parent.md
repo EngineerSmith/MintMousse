@@ -6,7 +6,7 @@ A field of [Component](index.md) that lets you grab the parent component table, 
 
 ## Alias
 `(Component).back`
-:   This alias is to make chaining functions more readable.
+:   This alias is to make chaining functions more readable. But you can still use `.parent` if it's your preference.
 
 ## Example
 ```lua
@@ -15,10 +15,13 @@ tab:newCard({ size = 5, title = "Info" })
     :addText({ text = "Hello World" })
     :addText({ text = "I like Mousse!" })
     .back
-  :newCardBody() -- Call on the `Card` component because of the `.back` call above
+  :newCardBody() -- Call on the `Card` component
     :addCardTitle({ text = "Card Title" })
     :addCardText({ text = "Card Text" })
     :addCardFooter({ text = "Card footer" })
+    .parent
+  :newContainer()
+    :addText({ text = "I really like Mint flavoured Mousse!" })
 ```
 
 ## See Also
