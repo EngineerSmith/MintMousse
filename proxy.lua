@@ -556,4 +556,24 @@ proxy.getProtectedKeys = function()
   return keys
 end
 
+proxy.remove = function(id)
+  loggingStack.push()
+
+  local success, reason = utilID.isValidID(id)
+  if not success then
+    log:warning("Invalid ID to remove:", reason)
+    loggingStack.pop()
+    return
+  end
+
+  local p = proxy.proxyComponents[id]
+  if p then
+    proxy._unregisterLocalChild(p.parentID, id)
+    removeProxyFromLocal(p)
+  end
+
+  threadCommand.call("removeComponent", { id = id })
+  loggingStack.pop()
+end
+
 return proxy

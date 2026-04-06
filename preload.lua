@@ -45,7 +45,7 @@ else
   local id = require(PATH .. "util.id")
   mintmousse._threadID = id.getNewThreadID()
 end
--- TODO a setter; some way to reinit loggers; TODO check if supports changing threadID
+-- TODO a setter; some way to re-init loggers/listeners; TODO check if supports changing threadID
 mintmousse.getThreadID = function()
   return mintmousse._threadID
 end
@@ -108,7 +108,7 @@ local proxy = require(PATH .. "proxy")
 mintmousse.newTab = proxy.newTab
 mintmousse.get = proxy.get
 mintmousse.has = proxy.has
-mintmousse.removeComponent = proxy.removeComponent
+mintmousse.remove = proxy.remove
 
 local pages = require(PATH .. "pages")
 mintmousse.buildPage = pages.buildPage

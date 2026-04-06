@@ -1,6 +1,8 @@
 # `mintmousse.batchStart`
 Used to batch huge amount of changes into a single thread message. Useful for when first constructing an entire tab.
 
+See [`mintmousse.batchEnd`] to end a batch.
+
 ## Synopsis
 ```lua
 mintmousse.batchStart()
