@@ -8,7 +8,7 @@ parentComponent = parentComponent:add<Type>(component)
 
 ## Parameters
 `Type` _string_
-:   This is the component type
+:   This is the component type that you want to create.
 
 `component` [_Component_](index.md)
 :   The initial values for the component, such as `id`.
