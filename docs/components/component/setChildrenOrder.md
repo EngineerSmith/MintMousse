@@ -26,7 +26,10 @@ local list = tab:newList({ isNumbered = true })
 list:setChildrenOrder({
   "3", "1", "2", "4"
 }) -- If IDs are missing, they are moved to the end in their relative order before the sort
--- Sorted into -> Does this make sense sweetie ?
+
+for _, c in list:children() do
+  print(c.text) --> Does this make sense sweetie ?
+end
 ```
 
 ## See Also
