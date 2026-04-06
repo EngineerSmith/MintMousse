@@ -6,6 +6,8 @@ MintMousse ships a powerful, thread-safe logging system that lets you:
 - Route logs anywhere (file, REST, custom sink, etc.)
 - Safely handle crashes via [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler) so nothing is missed.
 
+![Console Output Example](../assets/images/logging/console_example.PNG)
+
 ## Types
 |Type|Description|
 |---|---|
