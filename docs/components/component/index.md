@@ -5,12 +5,12 @@ The object you use to update the components on the web console. It is also known
 |Constructors|Description
 |---|---|
 |[`mintmousse.newTab`](../newTab.md)|Create a new Tab|
-|[`(Component):new`](new.md)|Create a new component|
+|[`(Component):new<Type>`](new.md)|Create a new component|
 
 ## Functions
 |Function|Description|
 |---|---|
-|[`(Component):add`](add.md)|Create a new component|
+|[`(Component):add<Type>`](add.md)|Create a new component|
 |[`(Component):remove`](remove.md)|Removes itself, and it's children if any|
 |[`(Component):setChildrenOrder`](setChildrenOrder.md)|Set the order of all the children at once|
 |[`(Component):moveBefore`](moveBefore.md)|Move the current component before the given component|

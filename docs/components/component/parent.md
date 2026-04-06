@@ -25,4 +25,5 @@ tab:newCard({ size = 5, title = "Info" })
 ```
 
 ## See Also
+- [Components](../index.md)
 - [Component](index.md)
