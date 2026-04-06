@@ -211,9 +211,7 @@ Clean internal MintMousse and Love calls from the traceback shown by [`MintMouss
 Size of the stdout buffer. Increase if you see garbled/interleaved output, or call [`mintmousse.flushLogs`](logging/flushLogs.md) more often.
 
 ### `mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH`
-:   **Type**: _number_
-
-    **Default**: `512`
+**Type**: _number_<br>**Default**: `512`
 
 Maximum number of logs the global sinks will process in a single call to [`mintmousse.flushLogs`](logging/flushLogs.md) (only runs on the main thread).
 
@@ -223,16 +221,12 @@ Maximum number of logs the global sinks will process in a single call to [`mintm
 You probably won't need to change these unless you have very specific performance requirements.
 
 ### `mintmousse.MAX_THREAD_MESSAGES`
-:   **Type**: _number_
-
-    **Default**: `100`
+**Type**: _number_<br>**Default**: `100`
 
 Maximum commands the MintMousse thread will process in one loop iteration.
 
 ### `mintmousse.THREAD_SLEEP`
-:   **Type**: _number_ (seconds)
-
-    **Default**: `1e-4` (0.0001s)
+**Type**: _number_ (seconds)<br>**Default**: `1e-4` (0.0001s)
 
 sleep time between thread loop iterations. Increase to reduce CPU usage, decrease if the thread feels sluggish.
 
