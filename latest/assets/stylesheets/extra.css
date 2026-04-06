@@ -67,3 +67,13 @@ h3 + pre, h3 + p {
   color: var(--md-default-fg-color--lighter);
   font-size: 0.85em;
 }
+
+.md-typeset__table th {
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+}
+
+.md-typeset__table td {
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+}
