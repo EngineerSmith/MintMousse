@@ -77,3 +77,15 @@ body .md-typeset .md-typeset__table table:not([class]) td {
   padding-top: 0.1em;
   padding-bottom: 0.1em;
 }
+
+body .md-typeset h1 {
+  margin-bottom: 0.8em;
+}
+
+body .md-typeset h2 {
+  margin-top: 0.6em;
+}
+
+body .md-main .md-main__inner {
+  margin-top: 0.8rem;
+}
