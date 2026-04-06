@@ -3125,31 +3125,16 @@ As MintMousse is a threaded library, almost all configuration must be done befor
 </dl>
 <p>Size of the stdout buffer. Increase if you see garbled/interleaved output, or call <a href="../logging/flushLogs/"><code>mintmousse.flushLogs</code></a> more often.</p>
 <h3 id="mintmousselog_max_pending_logs_per_flush"><code>mintmousse.LOG_MAX_PENDING_LOGS_PER_FLUSH</code></h3>
-<dl>
-<dd>
-<p><strong>Type</strong>: <em>number</em></p>
-<p><strong>Default</strong>: <code>512</code></p>
-</dd>
-</dl>
+<p><strong>Type</strong>: <em>number</em><br><strong>Default</strong>: <code>512</code></p>
 <p>Maximum number of logs the global sinks will process in a single call to <a href="../logging/flushLogs/"><code>mintmousse.flushLogs</code></a> (only runs on the main thread).</p>
 <hr />
 <h2 id="mintmousse-thread-settings">MintMousse Thread Settings</h2>
 <p>You probably won't need to change these unless you have very specific performance requirements.</p>
 <h3 id="mintmoussemax_thread_messages"><code>mintmousse.MAX_THREAD_MESSAGES</code></h3>
-<dl>
-<dd>
-<p><strong>Type</strong>: <em>number</em></p>
-<p><strong>Default</strong>: <code>100</code></p>
-</dd>
-</dl>
+<p><strong>Type</strong>: <em>number</em><br><strong>Default</strong>: <code>100</code></p>
 <p>Maximum commands the MintMousse thread will process in one loop iteration.</p>
 <h3 id="mintmoussethread_sleep"><code>mintmousse.THREAD_SLEEP</code></h3>
-<dl>
-<dd>
-<p><strong>Type</strong>: <em>number</em> (seconds)</p>
-<p><strong>Default</strong>: <code>1e-4</code> (0.0001s)</p>
-</dd>
-</dl>
+<p><strong>Type</strong>: <em>number</em> (seconds)<br><strong>Default</strong>: <code>1e-4</code> (0.0001s)</p>
 <p>sleep time between thread loop iterations. Increase to reduce CPU usage, decrease if the thread feels sluggish.</p>
 <hr />
 <h2 id="channel-event-ids">Channel / Event IDs</h2>
