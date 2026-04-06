@@ -1,8 +1,6 @@
 # `(Component):new<Type>`
 Used to create a new Component, and return that new component.
 
--- TODO explain `<Type>`
-
 ## Synopsis
 ```lua
 newComponent = parentComponent:new<Type>(component)
@@ -10,7 +8,7 @@ newComponent = parentComponent:new<Type>(component)
 
 ## Parameters
 `Type` _string_
-:   This is the component type
+:   This is the component type that you want to create.
 
 `component` [_Component_](index.md)
 :   The initial values for the component, such as `id`.

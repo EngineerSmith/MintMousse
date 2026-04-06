@@ -1,14 +1,15 @@
 # `(Component):add<Type>`
 Used to create a new component, but returns the parent component so it can be chained. 
 
--- TODO explain `<Type>`
-
 ## Synopsis
 ```lua
 parentComponent = parentComponent:add<Type>(component)
 ```
 
 ## Parameters
+`Type` _string_
+:   This is the component type
+
 `component` [_Component_](index.md)
 :   The initial values for the component, such as `id`.
 
