@@ -26,7 +26,7 @@ The object you use to update the components on the web console. It is also known
 |`(Component).type`|The type of the component, or **"unknown"** if it isn't known|
 |`(Component).parentID`|The parent ID of the component, if the local thread knows it|
 |[`(Component).parent`](parent.md)|Get the parent component of this component|
-|[`(Component).back`](parent.md)|Syntax sugar: alias for [`(Component).parent`](parent.md)|
+|[`(Component).back`](back.md)|Syntax sugar: alias for [`(Component).parent`](parent.md)|
 |`(Component).isDead`|Has this component marked removed.|
 
 ## See Also

@@ -44,6 +44,9 @@ plugins:
   - search
   - mike:
       version_selector: true
+  - redirects:
+      redirect_maps:
+        'components/component/back.md': 'components/component/parent.md'
 
 extra:
   version:

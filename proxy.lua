@@ -78,12 +78,14 @@ end
 local funcKeys = {
   parent = function(raw)
     loggingStack.push()
+    if not raw.parentID then return nil end
     local v = proxy.get(raw.parentID)
     loggingStack.pop()
     return v
   end,
   back = function(raw) -- Alias for parent
     loggingStack.push()
+    if not raw.parentID then return nil end
     local v = proxy.get(raw.parentID)
     loggingStack.pop()
     return v
@@ -203,6 +205,9 @@ proxy._registerLocalChild = function(parentID, childProxy)
 end
 
 proxy._unregisterLocalChild = function(parentID, childID)
+  if not parentID then
+    return
+  end
   local list = proxy.localChildren[parentID]
   if not list then return end
   for i = #list, 1, -1 do
