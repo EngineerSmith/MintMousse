@@ -17,7 +17,7 @@ The object you use to update the components on the web console. It is also known
 |[`(Component):moveAfter`](moveAfter.md)|Move the current component after the given component|
 |[`(Component):moveToFront`](moveToFront.md)|Move the component to the 1st index|
 |[`(Component):moveToBack`](moveToBack.md)|Move the component to the last index|
-|[`(Component):children](children.md)|Used to iterate over all the locally known children|
+|[`(Component):children`](children.md)|Used to iterate over all the locally known children|
 
 ## Fields
 |Field|Description|
