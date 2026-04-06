@@ -46,7 +46,7 @@ end
 
 mintmousse._setupLogging()
 if MINTMOUSSE_DO_NOT_START then
-  logger:info("MintMousse Thread was not started because of MINTMOUSSE_DO_NOT_START flag was true")
+  mintmousse._logger:info("MintMousse Thread was not started because of MINTMOUSSE_DO_NOT_START flag was true")
 end
 
 local util = require(PATH .. "util")
@@ -54,7 +54,7 @@ mintmousse.cleanupTraceback = util.cleanupTraceback
 
 local codec = require(PATH .. "codec") -- init buffers
 if codec.decode(codec.encode("mintmousse")) ~= "mintmousse" then
-  logger:error("Codec didn't initialise correctly.")
+  mintmousse._logger:error("Codec didn't initialise correctly.")
 end
 
 local logging = require(PATH .. "logging")
