@@ -37,7 +37,7 @@ def define_env(env):
         rows.sort(key=lambda x: x["typeName"].lower())
 
         html = """<div class="md-typeset__table">
-<table><thead><tr class="generatedTable>
+<table><thead><tr class="generatedTable">
     <th style="width: 90px;">Type</th>
     <th style="width: 85px; text-align: center;">Updates</th>
     <th style="width: 85px; text-align: center;">Pushes</th>
@@ -47,7 +47,7 @@ def define_env(env):
 </tr></thead><tbody>"""
 
         for r in rows:
-            html +=  '<tr class="generatedTable>\n'
+            html +=  '<tr class="generatedTable">\n'
             html += f'    <td><a href="{r["link"]}">{r["typeName"]}</a></td>\n'
             html += f'    <td style="text-align: center;">{r["typeUpdates"]}</td>\n'
             html += f'    <td style="text-align: center;">{r["typePushes"]}</td>\n'
