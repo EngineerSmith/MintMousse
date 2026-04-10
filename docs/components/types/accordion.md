@@ -9,8 +9,7 @@ type:
 A vertical collapsing list. Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/components/accordion/).
 
 ## Updates
-### Children
-`title` _string_ (**"Untitled"**)
+children.`title` _string_ (**"Untitled"**)
 :   The title to show for the collapsible item
 
 ## Example
