@@ -93,9 +93,11 @@ body .md-main .md-main__inner {
 .generatedTable th {
   padding-right: 0.3em !important;
   padding-left: 0.3em !important;
+  min-width: 0 !important;
 }
 
 .generatedTable td {
   padding-right: 0.3em !important;
   padding-left: 0.3em !important;
+  min-width: 0 !important;
 }
