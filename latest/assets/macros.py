@@ -36,15 +36,25 @@ def define_env(env):
 
         rows.sort(key=lambda x: x["typeName"].lower())
 
-        table  = "| Type | Updates | Pushes | Events | Children | Description |\n"
-        table += "|------|---------|--------|--------|----------|-------------|\n"
+        html = """<div class="md-typeset__table">
+<table><thead><tr>
+    <th style="width: 180px;">Type</th>
+    <th style="width: 88px; text-align: center;">Updates</th>
+    <th style="width: 88px; text-align: center;">Pushes</th>
+    <th style="width: 88px; text-align: center;">Events</th>
+    <th style="width: 110px; text-align: center;">Children</th>
+    <th>Description</th>
+</tr></thead><tbody>"""
+
         for r in rows:
-            table += (
-                f"| [{r['typeName']}]({r['link']}) "
-                f"| {r['typeUpdates']} "
-                f"| {r['typePushes']} "
-                f"| {r['typeEvents']} "
-                f"| {r['typeChildren']} "
-                f"| {r['typeDescription']} |\n"
-            )
-        return table
+            html +=  '<tr>\n'
+            html += f'    <td><a href="{r["link"]}">{r["typeName"]}</a></td>\n'
+            html += f'    <td style="text-align: center;">{r["typeUpdates"]}</td>\n'
+            html += f'    <td style="text-align: center;">{r["typePushes"]}</td>\n'
+            html += f'    <td style="text-align: center;">{r["typeEvents"]}</td>\n'
+            html += f'    <td style="text-align: center;">{r["typeChildren"]}</td>\n'
+            html += f'    <td>{r["typeDescription"]}</td>\n'
+            html +=  '</tr>\n'
+
+        html += "</tbody></table></div>"
+        return html
