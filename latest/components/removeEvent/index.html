@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/components/newTab/">
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/components/removeEvent/">
       
       
-        <link rel="prev" href="../has/">
+        <link rel="prev" href="../remove/">
       
       
-        <link rel="next" href="../onEvent/">
+        <link rel="next" href="../component/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>mintmousse.newTab - MintMousse - Docs</title>
+        <title>mintmousse.removeEvent - MintMousse - Docs</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mintmoussenewtab" class="md-skip">
+        <a href="#mintmousseremoveevent" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              mintmousse.newTab
+              mintmousse.removeEvent
             
           </span>
         </div>
@@ -574,6 +574,90 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../newTab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.newTab
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../onEvent/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.onEvent
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../remove/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.remove
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -593,7 +677,7 @@
   <span class="md-ellipsis">
     
   
-    mintmousse.newTab
+    mintmousse.removeEvent
   
 
     
@@ -611,7 +695,7 @@
   <span class="md-ellipsis">
     
   
-    mintmousse.newTab
+    mintmousse.removeEvent
   
 
     
@@ -695,90 +779,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../onEvent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.onEvent
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../remove/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.remove
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../removeEvent/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.removeEvent
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -2543,34 +2543,28 @@
   
 
 
-<h1 id="mintmoussenewtab"><code>mintmousse.newTab</code></h1>
+<h1 id="mintmousseremoveevent"><code>mintmousse.removeEvent</code></h1>
+<p>Used ot removed any functions assigned to a given callback ID.</p>
+<div class="admonition warning">
+<p class="admonition-title">Thread behaviour</p>
+<p>This function can only be called on the main thread. As no callback details are kept on individual threads.</p>
+</div>
 <h2 id="synopsis">Synopsis</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">tab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newTab</span><span class="p">(</span><span class="w"> </span><span class="nv">title</span><span class="p">,</span><span class="w"> </span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">index</span><span class="w"> </span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">removeEvent</span><span class="p">(</span><span class="w"> </span><span class="nv">callbackID</span><span class="w"> </span><span class="p">)</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><code>title</code> <em>string</em> (<strong>"UNKNOWN"</strong>)</dt>
-<dd>The name of the tab you want to create</dd>
-<dt><code>id</code> <em>string</em> (<strong>nil</strong>)</dt>
-<dd>The ID to use for the new tab. If one isn't given, one is generated.</dd>
-<dt><code>index</code> <em>number</em> (<strong>-1</strong>)</dt>
-<dd>The index you want to insert the new tab into the navbar. By default, it is placed at the end of the navbar.</dd>
+<dt><code>callbackID</code> <em>string</em></dt>
+<dd>The ID to clear any assigned function from.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><code>tab</code> <a href="../component/"><em>Component</em></a></dt>
-<dd>The newly created tab.</dd>
-</dl>
+<p>Nothing.</p>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">tab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newTab</span><span class="p">(</span><span class="s2">&quot;Dashboard&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;dbTab&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kd">local</span><span class="w"> </span><span class="nv">console</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newTab</span><span class="p">(</span><span class="s2">&quot;Console&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">unknown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newTab</span><span class="p">(</span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">removeEvent</span><span class="p">(</span><span class="s2">&quot;myButtonEvent&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="../">Components</a></li>
+<li><a href="../onEvent/"><code>mintmousse.onEvent</code></a></li>
 </ul>
 
 
