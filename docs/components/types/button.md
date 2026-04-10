@@ -3,11 +3,10 @@ type:
     name: Button
     updates: 6
     events: 1
-    children: false
     description: A button which triggers an event.
 ---
 # Button
-A button component! Used to call a callback on the love client.
+A button component! Used to call a callback on the love client. Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/components/buttons/#variants).
 
 ## Updates
 `color` _BSColor_ (**"primary"**)
@@ -51,4 +50,5 @@ A button component! Used to call a callback on the love client.
 ```
 
 ## See Also
+- [Bootstrap docs](https://getbootstrap.com/docs/5.3/components/buttons/)
 - [Button Group](buttonGroup.md)

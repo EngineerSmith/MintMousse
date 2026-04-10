@@ -43,7 +43,7 @@ def define_env(env):
     <th style="width: 85px; text-align: center;">Pushes</th>
     <th style="width: 85px; text-align: center;">Events</th>
     <th style="width: 85px; text-align: center;">Children</th>
-    <th>Description</th>
+    <th style="width: 100%;">Description</th>
 </tr></thead><tbody>"""
 
         for r in rows:
