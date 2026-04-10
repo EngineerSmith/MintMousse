@@ -89,3 +89,11 @@ body .md-typeset h2 {
 body .md-main .md-main__inner {
   margin-top: 0.8rem;
 }
+
+.generatedTable th {
+  padding-right: 0.3em; padding-left: 0.3em;
+}
+
+.generatedTable td {
+  padding-right: 0.3em; padding-left: 0.3em;
+}
