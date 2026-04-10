@@ -48,7 +48,8 @@ plugins:
       redirect_maps:
         'components/component/back.md': 'components/component/parent.md' # This doesn't work, but I'll look at it later
   - macros:
-      module_name: macros
+      module_name: docs/assets/macros
+      on_error_fail: true
 
 extra:
   version:

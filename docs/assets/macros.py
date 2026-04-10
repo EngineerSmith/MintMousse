@@ -13,7 +13,7 @@ def define_env(env):
         for md_file in sorted(types_dir.glob("*.md")):
             if md_file.name == "index.md":
                 continue
-            content = md_file.read_text(encoding="utf8")
+            content = md_file.read_text(encoding="utf-8")
             if content.startswith("---"):
                 _, frontmatter, _ = content.split("---", 2)
                 try:
@@ -30,7 +30,7 @@ def define_env(env):
               "typeUpdates": type_data.get("updates", 0),
               "typePushes": type_data.get("pushes", 0),
               "typeEvents": type_data.get("events", 0),
-              "typeChildren": "✅" if type_data.get("children", false) else "❌",
+              "typeChildren": "✅" if type_data.get("children", False) else "❌",
               "typeDescription": type_data.get("description", ""),
               "link": f"{md_file.stem}.md"
             })
@@ -49,4 +49,3 @@ def define_env(env):
                 f"| {r['typeDescription']} |\n"
             )
         return table
-
