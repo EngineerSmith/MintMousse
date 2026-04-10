@@ -90,10 +90,10 @@ body .md-main .md-main__inner {
   margin-top: 0.8rem;
 }
 
-body .md-typeset .md-typeset__table .generatedTable th {
+body .md-typeset .md-typeset__table table:not([class])  .generatedTable th {
   padding-right: 0.3em; padding-left: 0.3em;
 }
 
-body .md-typeset .md-typeset__table .generatedTable td {
+body .md-typeset .md-typeset__table table:not([class])  .generatedTable td {
   padding-right: 0.3em; padding-left: 0.3em;
 }
