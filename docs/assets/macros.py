@@ -57,4 +57,4 @@ def define_env(env):
             html +=  '</tr>\n'
 
         html += "</tbody></table></div>"
-        return table
+        return html
