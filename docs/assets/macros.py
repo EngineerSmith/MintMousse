@@ -1,6 +1,5 @@
 import yaml
 from pathlib import Path
-from mkdocs_macros import MacrosPlugin
 
 def define_env(env):
     @env.macro
