@@ -3,7 +3,7 @@ from pathlib import Path
 
 def define_env(env):
     @env.macro
-    def component_table():
+    def components_table():
         """Auto-generates the sortable overview table in components/types/*.md"""
 
         types_dir = Path("docs/components/types")
