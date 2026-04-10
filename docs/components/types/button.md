@@ -4,10 +4,10 @@ type:
     updates: 6
     events: 1
     children: false
-    description: A button which calls back to the love client.
+    description: A button which triggers an event.
 ---
 # Button
-TODO
+A button component! Used to call a callback on the love client.
 
 ## Updates
 `color` _BSColor_ (**"primary"**)
@@ -30,7 +30,7 @@ TODO
 
 ## Events
 `onEventClick` _callbackID_
-:   The callback ID to trigger. See [`mintmousse.onEvent`](../onEvent.md)
+:   The callback ID to trigger. See [`mintmousse.onEvent`](../onEvent.md).
 
 ## Examples
 ```lua
