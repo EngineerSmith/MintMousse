@@ -17,6 +17,7 @@ do
       local milliseconds = math.floor((time - seconds) * 1000)
       return os.date(dateFmt, seconds) .. ("%03d"):format(milliseconds)
     end
+
   else -- Fallback
     time.formatTimestamp = function(time)
       local seconds = math.floor(time)

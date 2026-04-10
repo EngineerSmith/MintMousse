@@ -4,23 +4,28 @@ local mintmousse = require(PATH .. "conf")
 local codec = require(PATH .. "codec")
 local proxy = require(PATH .. "proxy")
 
-local eventLogger = mintmousse._logger:extend("Event")
+local log = mintmousse._logger:extend("Event")
 
 local eventManager = {
   eventCallbacks = { },
 }
 
 eventManager.onEvent = function(callbackID, callbackFunction)
+  if callbackFunction == nil then return end
+
+  log:assert(type(callbackID) == "string", "onEvent: callbackID expected to be type string! Received:", type(callbackID))
+  log:assert(type(callbackFunction) == "function", "onEvent: callbackFunction expected to be type function! Received:", type(callbackFunction))
   eventManager.eventCallbacks[callbackID] = callbackFunction
 end
 
 eventManager.removeEvent = function(callbackID)
+  log:assert(type(callbackID) == "string", "removeEvent: callbackID expected to be type string! Received:", type(callbackID))
   eventManager.eventCallbacks[callbackID] = nil
 end
 
 eventManager.jsEvent = function(callbackID, componentID, encodedSnapshot, values)
   if type(callbackID) ~= "string" or type(componentID) ~= "string" or type(encodedSnapshot) ~= "string" then
-    eventLogger:warning("MintMousseJSEvent: expected three string arguments, instead received:", type(componentID), type(callbackID), type(encodedSnapshot))
+    log:warning("MintMousseJSEvent: expected three string arguments, instead received:", type(componentID), type(callbackID), type(encodedSnapshot))
     return
   end
 

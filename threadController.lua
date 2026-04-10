@@ -75,7 +75,9 @@ end
 threadController.wait = function()
   threadController.threadChannel:performAtomic(function(channel)
     local thread = channel:peek()
-    thread:wait()
+    if thread and thread:isRunning() then
+      thread:wait()
+    end
   end)
 end
 

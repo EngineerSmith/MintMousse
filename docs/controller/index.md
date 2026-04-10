@@ -24,3 +24,5 @@ Using these functions you can start, and stop the library.
 |Variable|Description|
 |---|---|
 |`love.isThread`|Boolean if code is running in a thread|
+|`MINTMOUSSE_DO_NOT_START`|Global boolean if thread shouldn't start automatically when `Preload` is required|
+|`THREAD_ID`|Global string for the ID to use for the current thread|

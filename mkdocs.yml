@@ -46,7 +46,9 @@ plugins:
       version_selector: true
   - redirects:
       redirect_maps:
-        'components/component/back.md': 'components/component/parent.md'
+        'components/component/back.md': 'components/component/parent.md' # This doesn't work, but I'll look at it later
+  - macros:
+      module_name: macros
 
 extra:
   version:

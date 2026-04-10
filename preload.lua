@@ -31,7 +31,9 @@ if not love.isThread and not MINTMOUSSE_DO_NOT_START then
   end)
 end
 
-if isMintMousseThread then
+if type(THREAD_ID) == "string" then
+  mintmousse._threadID = THREAD_ID
+elseif isMintMousseThread then
   mintmousse._threadID = "MintMousse"
 elseif not love.isThread then
   mintmousse._threadID = "main"
@@ -46,7 +48,7 @@ end
 
 mintmousse._setupLogging()
 if MINTMOUSSE_DO_NOT_START then
-  mintmousse._logger:info("MintMousse Thread was not started because of MINTMOUSSE_DO_NOT_START flag was true")
+  mintmousse._logger:info("Thread was not started because MINTMOUSSE_DO_NOT_START flag was true")
 end
 
 local util = require(PATH .. "util")

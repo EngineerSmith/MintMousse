@@ -46,9 +46,6 @@ componentRegistry.register({
 
   update_text: function(instance, payload) {
     let text = helper.getText(payload.values.text, "");
-    if (text.includes("\n"))
-      text = text.replace(/\n/g, "<br/>");
-
     instance.element.innerHTML = text;
   },
 
