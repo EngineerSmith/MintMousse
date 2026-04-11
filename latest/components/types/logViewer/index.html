@@ -8,31 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/logging/color/">
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/components/types/logViewer/">
       
       
-        <link rel="prev" href="../cleanupTraceback/">
+        <link rel="prev" href="../list/">
       
       
-        <link rel="next" href="../flushLogs/">
+        <link rel="next" href="../../../controller/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/favicon.svg">
+      <link rel="icon" href="../../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Logging Colors - MintMousse - Docs</title>
+        <title>Log Viewer - MintMousse - Docs</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#color" class="md-skip">
+        <a href="#log-viewer" class="md-skip">
           Skip to content
         </a>
       
@@ -96,9 +96,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Logging Colors
+              Log Viewer
             
           </span>
         </div>
@@ -228,7 +228,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../config/" class="md-tabs__link">
+      <a href="../../../config/" class="md-tabs__link">
         
   
   
@@ -264,11 +264,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../components/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -290,7 +292,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../controller/" class="md-tabs__link">
+        <a href="../../../controller/" class="md-tabs__link">
           
   
   
@@ -308,13 +310,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../logging/" class="md-tabs__link">
           
   
   
@@ -350,9 +350,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../../../assets/logo.svg" alt="logo">
 
     </a>
     MintMousse - Docs
@@ -379,7 +379,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -406,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/" class="md-nav__link">
+      <a href="../../../config/" class="md-nav__link">
         
   
   
@@ -430,6 +430,8 @@
       
   
   
+    
+  
   
   
     
@@ -459,22 +461,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -492,13 +495,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -518,7 +521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/get/" class="md-nav__link">
+      <a href="../../get/" class="md-nav__link">
         
   
   
@@ -546,7 +549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/has/" class="md-nav__link">
+      <a href="../../has/" class="md-nav__link">
         
   
   
@@ -574,7 +577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/newTab/" class="md-nav__link">
+      <a href="../../newTab/" class="md-nav__link">
         
   
   
@@ -602,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/onEvent/" class="md-nav__link">
+      <a href="../../onEvent/" class="md-nav__link">
         
   
   
@@ -630,7 +633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/remove/" class="md-nav__link">
+      <a href="../../remove/" class="md-nav__link">
         
   
   
@@ -658,7 +661,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/removeEvent/" class="md-nav__link">
+      <a href="../../removeEvent/" class="md-nav__link">
         
   
   
@@ -718,10 +721,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -731,7 +737,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/component/" class="md-nav__link ">
+            <a href="../../component/" class="md-nav__link ">
               
   
   
@@ -749,7 +755,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_8" id="__nav_3_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -775,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/add/" class="md-nav__link">
+      <a href="../../component/add/" class="md-nav__link">
         
   
   
@@ -803,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/children/" class="md-nav__link">
+      <a href="../../component/children/" class="md-nav__link">
         
   
   
@@ -831,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveAfter/" class="md-nav__link">
+      <a href="../../component/moveAfter/" class="md-nav__link">
         
   
   
@@ -859,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveBefore/" class="md-nav__link">
+      <a href="../../component/moveBefore/" class="md-nav__link">
         
   
   
@@ -887,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveToBack/" class="md-nav__link">
+      <a href="../../component/moveToBack/" class="md-nav__link">
         
   
   
@@ -915,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveToFront/" class="md-nav__link">
+      <a href="../../component/moveToFront/" class="md-nav__link">
         
   
   
@@ -943,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/new/" class="md-nav__link">
+      <a href="../../component/new/" class="md-nav__link">
         
   
   
@@ -971,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/parent/" class="md-nav__link">
+      <a href="../../component/parent/" class="md-nav__link">
         
   
   
@@ -999,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/remove/" class="md-nav__link">
+      <a href="../../component/remove/" class="md-nav__link">
         
   
   
@@ -1027,7 +1033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/setChildrenOrder/" class="md-nav__link">
+      <a href="../../component/setChildrenOrder/" class="md-nav__link">
         
   
   
@@ -1060,6 +1066,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1103,20 +1111,21 @@
       
       
         
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
+          
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_9" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/types/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1134,13 +1143,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1160,7 +1169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/accordion/" class="md-nav__link">
+      <a href="../accordion/" class="md-nav__link">
         
   
   
@@ -1188,7 +1197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/alert/" class="md-nav__link">
+      <a href="../alert/" class="md-nav__link">
         
   
   
@@ -1216,7 +1225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/button/" class="md-nav__link">
+      <a href="../button/" class="md-nav__link">
         
   
   
@@ -1244,7 +1253,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/buttonGroup/" class="md-nav__link">
+      <a href="../buttonGroup/" class="md-nav__link">
         
   
   
@@ -1272,7 +1281,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/card/" class="md-nav__link">
+      <a href="../card/" class="md-nav__link">
         
   
   
@@ -1300,7 +1309,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardBody/" class="md-nav__link">
+      <a href="../cardBody/" class="md-nav__link">
         
   
   
@@ -1328,7 +1337,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardFooter/" class="md-nav__link">
+      <a href="../cardFooter/" class="md-nav__link">
         
   
   
@@ -1356,7 +1365,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardHeader/" class="md-nav__link">
+      <a href="../cardHeader/" class="md-nav__link">
         
   
   
@@ -1384,7 +1393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardSubtitle/" class="md-nav__link">
+      <a href="../cardSubtitle/" class="md-nav__link">
         
   
   
@@ -1412,7 +1421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardText/" class="md-nav__link">
+      <a href="../cardText/" class="md-nav__link">
         
   
   
@@ -1440,7 +1449,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardTitle/" class="md-nav__link">
+      <a href="../cardTitle/" class="md-nav__link">
         
   
   
@@ -1468,7 +1477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/horizontalRule/" class="md-nav__link">
+      <a href="../horizontalRule/" class="md-nav__link">
         
   
   
@@ -1496,7 +1505,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/list/" class="md-nav__link">
+      <a href="../list/" class="md-nav__link">
         
   
   
@@ -1521,10 +1530,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../components/types/logViewer/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Log Viewer
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1540,6 +1576,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pushes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pushes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1622,7 +1711,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../controller/" class="md-nav__link ">
+            <a href="../../../controller/" class="md-nav__link ">
               
   
   
@@ -1666,7 +1755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/addToWhitelist/" class="md-nav__link">
+      <a href="../../../controller/addToWhitelist/" class="md-nav__link">
         
   
   
@@ -1694,7 +1783,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/batchEnd/" class="md-nav__link">
+      <a href="../../../controller/batchEnd/" class="md-nav__link">
         
   
   
@@ -1722,7 +1811,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/batchStart/" class="md-nav__link">
+      <a href="../../../controller/batchStart/" class="md-nav__link">
         
   
   
@@ -1750,7 +1839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/buildPage/" class="md-nav__link">
+      <a href="../../../controller/buildPage/" class="md-nav__link">
         
   
   
@@ -1778,7 +1867,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/clearWhitelist/" class="md-nav__link">
+      <a href="../../../controller/clearWhitelist/" class="md-nav__link">
         
   
   
@@ -1806,7 +1895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/getThreadID/" class="md-nav__link">
+      <a href="../../../controller/getThreadID/" class="md-nav__link">
         
   
   
@@ -1834,7 +1923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/notify/" class="md-nav__link">
+      <a href="../../../controller/notify/" class="md-nav__link">
         
   
   
@@ -1862,7 +1951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/removeFromWhitelist/" class="md-nav__link">
+      <a href="../../../controller/removeFromWhitelist/" class="md-nav__link">
         
   
   
@@ -1890,7 +1979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIcon/" class="md-nav__link">
+      <a href="../../../controller/setIcon/" class="md-nav__link">
         
   
   
@@ -1918,7 +2007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIconRFG/" class="md-nav__link">
+      <a href="../../../controller/setIconRFG/" class="md-nav__link">
         
   
   
@@ -1946,7 +2035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIconRaw/" class="md-nav__link">
+      <a href="../../../controller/setIconRaw/" class="md-nav__link">
         
   
   
@@ -1974,7 +2063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setTitle/" class="md-nav__link">
+      <a href="../../../controller/setTitle/" class="md-nav__link">
         
   
   
@@ -2002,7 +2091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/start/" class="md-nav__link">
+      <a href="../../../controller/start/" class="md-nav__link">
         
   
   
@@ -2030,7 +2119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/stop/" class="md-nav__link">
+      <a href="../../../controller/stop/" class="md-nav__link">
         
   
   
@@ -2058,7 +2147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/wait/" class="md-nav__link">
+      <a href="../../../controller/wait/" class="md-nav__link">
         
   
   
@@ -2090,8 +2179,6 @@
       
   
   
-    
-  
   
   
     
@@ -2123,23 +2210,22 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../logging/" class="md-nav__link ">
               
   
   
@@ -2157,13 +2243,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2183,7 +2269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../addGlobalLogSink/" class="md-nav__link">
+      <a href="../../../logging/addGlobalLogSink/" class="md-nav__link">
         
   
   
@@ -2211,7 +2297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../addLogSink/" class="md-nav__link">
+      <a href="../../../logging/addLogSink/" class="md-nav__link">
         
   
   
@@ -2239,7 +2325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cleanupTraceback/" class="md-nav__link">
+      <a href="../../../logging/cleanupTraceback/" class="md-nav__link">
         
   
   
@@ -2264,37 +2350,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logging Colors
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../logging/color/" class="md-nav__link">
         
   
   
@@ -2310,48 +2369,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#constants" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Constants
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2364,7 +2381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../flushLogs/" class="md-nav__link">
+      <a href="../../../logging/flushLogs/" class="md-nav__link">
         
   
   
@@ -2392,7 +2409,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../level/" class="md-nav__link">
+      <a href="../../../logging/level/" class="md-nav__link">
         
   
   
@@ -2420,7 +2437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logUncaughtError/" class="md-nav__link">
+      <a href="../../../logging/logUncaughtError/" class="md-nav__link">
         
   
   
@@ -2448,7 +2465,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../newLogger/" class="md-nav__link">
+      <a href="../../../logging/newLogger/" class="md-nav__link">
         
   
   
@@ -2504,13 +2521,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2520,7 +2534,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../logger/" class="md-nav__link ">
+            <a href="../../../logging/logger/" class="md-nav__link ">
               
   
   
@@ -2538,7 +2552,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5_10" id="__nav_5_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5_10" id="__nav_5_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -2564,7 +2578,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/assert/" class="md-nav__link">
+      <a href="../../../logging/logger/assert/" class="md-nav__link">
         
   
   
@@ -2592,7 +2606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/debug/" class="md-nav__link">
+      <a href="../../../logging/logger/debug/" class="md-nav__link">
         
   
   
@@ -2620,7 +2634,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/error/" class="md-nav__link">
+      <a href="../../../logging/logger/error/" class="md-nav__link">
         
   
   
@@ -2648,7 +2662,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/extend/" class="md-nav__link">
+      <a href="../../../logging/logger/extend/" class="md-nav__link">
         
   
   
@@ -2676,7 +2690,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/getAncestry/" class="md-nav__link">
+      <a href="../../../logging/logger/getAncestry/" class="md-nav__link">
         
   
   
@@ -2704,7 +2718,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/info/" class="md-nav__link">
+      <a href="../../../logging/logger/info/" class="md-nav__link">
         
   
   
@@ -2732,7 +2746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/inspect/" class="md-nav__link">
+      <a href="../../../logging/logger/inspect/" class="md-nav__link">
         
   
   
@@ -2760,7 +2774,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/warning/" class="md-nav__link">
+      <a href="../../../logging/logger/warning/" class="md-nav__link">
         
   
   
@@ -2823,10 +2837,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#constants" class="md-nav__link">
+  <a href="#updates" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Constants
+        Updates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pushes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pushes
       
     </span>
   </a>
@@ -2864,60 +2889,23 @@
   
 
 
-<h1 id="color">Color</h1>
-<p>The <code>color</code> field within the logging module expects either a <code>string</code>, or a <code>table</code> with two fields <code>fg</code> (foreground, e.g. text) and <code>bg</code> (background, e.g. a 'highlight'). If just a <code>string</code> is passed, it is used like the <code>fg</code> argument, and <code>bg</code> will default to the console's background.</p>
-<p>ANSI color support in Windows Console only became reliable with Windows 10 build 10586 (late 2015) and later; older versions (or very old Windows 7/8) usually show plain white/gray output.</p>
-<h2 id="constants">Constants</h2>
-<p>The following are string fields that are allowed. Their exact HEX color depends on the rendering console, but here are <em>approximate</em> PuTTY colors:</p>
-<ul class="color-list">
-  <li><span class="color-swatch" style="background:#000000;"></span><b>black</b></li>
-  <li><span class="color-swatch" style="background:#bb0000;"></span><b>red</b></li>
-  <li><span class="color-swatch" style="background:#00bb00;"></span><b>green</b></li>
-  <li><span class="color-swatch" style="background:#bbbb00;"></span><b>yellow</b></li>
-  <li><span class="color-swatch" style="background:#0000bb;"></span><b>blue</b></li>
-  <li><span class="color-swatch" style="background:#bb00bb;"></span><b>magenta</b></li>
-  <li><span class="color-swatch" style="background:#00bbbb;"></span><b>cyan</b></li>
-  <li><span class="color-swatch" style="background:#bbbbbb;"></span><b>white</b></li>
-
-  <li><span class="color-swatch" style="background:#555555;"></span><b>bright_black</b></li>
-  <li><span class="color-swatch" style="background:#ff5555;"></span><b>bright_red</b></li>
-  <li><span class="color-swatch" style="background:#55ff55;"></span><b>bright_green</b></li>
-  <li><span class="color-swatch" style="background:#ffff55;"></span><b>bright_yellow</b></li>
-  <li><span class="color-swatch" style="background:#5555ff;"></span><b>bright_blue</b></li>
-  <li><span class="color-swatch" style="background:#ff55ff;"></span><b>bright_magenta</b></li>
-  <li><span class="color-swatch" style="background:#55ffff;"></span><b>bright_cyan</b></li>
-  <li><span class="color-swatch" style="background:#ffffff;"></span><b>bright_white</b></li>
-<br/>
-  <li><span class="color-swatch" style="background:#00000000;"></span><b>reset</b></li>
-</ul>
-
-<div class="admonition note">
-<p class="admonition-title"><code>reset</code></p>
-<p><code>reset</code> is a special 'color', which reverts to what the default is of your console, for example usually <code>white</code> text for foreground, or <code>black</code> background.</p>
-</div>
-<div class="admonition tip">
-<p class="admonition-title">Quick tip: <code>white</code> vs <code>bright_white</code></p>
-<p>In many terminals, <code>white</code> renders as silvery gray (<code>~#bbbbbb</code>), while <code>bright_white</code> is pure white (<code>#ffffff</code>).</p>
-<p>For regular log text, you should use <code>white</code> as it's more comfortable on the eyes - especially on OLED/AMOLED screens or when reading for long periods. Reserve <code>bright_white</code> for emphasis, errors, or when you need maximum contrast (e.g. white text on a red background).</p>
-</div>
+<h1 id="log-viewer">Log Viewer</h1>
+<p>Used by the console page.</p>
+<h2 id="updates">Updates</h2>
+<dl>
+<dt><code>maxLines</code> <em>number</em> (<strong>25</strong>)</dt>
+<dd>The number of lines it should aim to display when viewed in a browser (used to limit height).</dd>
+</dl>
+<h2 id="pushes">Pushes</h2>
+<dl>
+<dt><code>log</code> <em>LogTable</em></dt>
+<dd>Used to send a log message for the viewer to add to itself.</dd>
+</dl>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kd">local</span><span class="w"> </span><span class="nv">loggerBar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">logger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">loggerFatal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">&quot;FATAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">fg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bright_white&quot;</span><span class="p">,</span><span class="w"> </span><span class="nv">bg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;red&quot;</span><span class="w"> </span><span class="p">})</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kd">local</span><span class="w"> </span><span class="nv">loggerInvert</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">loggerFatal</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;Inverted&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nv">fg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;black&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nv">bg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bright_white&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nv">maxLines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
 </code></pre></div>
-<h1 id="see-also">See Also</h1>
-<ul>
-<li><a href="../">Logging</a></li>
-<li><a href="../newLogger/"><code>mintmousse.newLogger</code></a></li>
-<li><a href="../logger/extend/"><code>(Logger):extend</code></a></li>
-</ul>
 
 
 
@@ -2976,10 +2964,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
