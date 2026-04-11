@@ -38,7 +38,7 @@ def define_env(env):
 
         def get_count_style(value):
             if value == 0:
-                return ' style="text-align: center; color #888;"'
+                return ' style="text-align: center; color: #888;"'
             return ' style="text-align: center;"'
 
         html = """<div class="md-typeset__table">
