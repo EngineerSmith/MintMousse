@@ -8,31 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/logging/addLogSink/">
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/components/types/row/">
       
       
-        <link rel="prev" href="../addGlobalLogSink/">
+        <link rel="prev" href="../progressBar/">
       
       
-        <link rel="next" href="../cleanupTraceback/">
+        <link rel="next" href="../../../controller/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/favicon.svg">
+      <link rel="icon" href="../../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>mintmousse.addLogSink - MintMousse - Docs</title>
+        <title>Row - MintMousse - Docs</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mintmousseaddlogsink" class="md-skip">
+        <a href="#row" class="md-skip">
           Skip to content
         </a>
       
@@ -96,9 +96,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              mintmousse.addLogSink
+              Row
             
           </span>
         </div>
@@ -228,7 +228,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../config/" class="md-tabs__link">
+      <a href="../../../config/" class="md-tabs__link">
         
   
   
@@ -264,11 +264,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../components/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -290,7 +292,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../controller/" class="md-tabs__link">
+        <a href="../../../controller/" class="md-tabs__link">
           
   
   
@@ -308,13 +310,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../logging/" class="md-tabs__link">
           
   
   
@@ -350,9 +350,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../../../assets/logo.svg" alt="logo">
 
     </a>
     MintMousse - Docs
@@ -379,7 +379,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -406,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/" class="md-nav__link">
+      <a href="../../../config/" class="md-nav__link">
         
   
   
@@ -430,6 +430,8 @@
       
   
   
+    
+  
   
   
     
@@ -459,22 +461,23 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -492,13 +495,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -518,7 +521,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/get/" class="md-nav__link">
+      <a href="../../get/" class="md-nav__link">
         
   
   
@@ -546,7 +549,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/has/" class="md-nav__link">
+      <a href="../../has/" class="md-nav__link">
         
   
   
@@ -574,7 +577,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/newTab/" class="md-nav__link">
+      <a href="../../newTab/" class="md-nav__link">
         
   
   
@@ -602,7 +605,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/onEvent/" class="md-nav__link">
+      <a href="../../onEvent/" class="md-nav__link">
         
   
   
@@ -630,7 +633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/remove/" class="md-nav__link">
+      <a href="../../remove/" class="md-nav__link">
         
   
   
@@ -658,7 +661,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/removeEvent/" class="md-nav__link">
+      <a href="../../removeEvent/" class="md-nav__link">
         
   
   
@@ -718,10 +721,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -731,7 +737,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/component/" class="md-nav__link ">
+            <a href="../../component/" class="md-nav__link ">
               
   
   
@@ -749,7 +755,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_8" id="__nav_3_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -775,7 +781,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/add/" class="md-nav__link">
+      <a href="../../component/add/" class="md-nav__link">
         
   
   
@@ -803,7 +809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/children/" class="md-nav__link">
+      <a href="../../component/children/" class="md-nav__link">
         
   
   
@@ -831,7 +837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveAfter/" class="md-nav__link">
+      <a href="../../component/moveAfter/" class="md-nav__link">
         
   
   
@@ -859,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveBefore/" class="md-nav__link">
+      <a href="../../component/moveBefore/" class="md-nav__link">
         
   
   
@@ -887,7 +893,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveToBack/" class="md-nav__link">
+      <a href="../../component/moveToBack/" class="md-nav__link">
         
   
   
@@ -915,7 +921,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveToFront/" class="md-nav__link">
+      <a href="../../component/moveToFront/" class="md-nav__link">
         
   
   
@@ -943,7 +949,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/new/" class="md-nav__link">
+      <a href="../../component/new/" class="md-nav__link">
         
   
   
@@ -971,7 +977,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/parent/" class="md-nav__link">
+      <a href="../../component/parent/" class="md-nav__link">
         
   
   
@@ -999,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/remove/" class="md-nav__link">
+      <a href="../../component/remove/" class="md-nav__link">
         
   
   
@@ -1027,7 +1033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/setChildrenOrder/" class="md-nav__link">
+      <a href="../../component/setChildrenOrder/" class="md-nav__link">
         
   
   
@@ -1060,6 +1066,8 @@
                 
   
   
+    
+  
   
   
     
@@ -1107,20 +1115,21 @@
       
       
         
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
+          
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_9" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_9" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/types/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1138,13 +1147,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_3_9" id="__nav_3_9_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_9_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1164,7 +1173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/accordion/" class="md-nav__link">
+      <a href="../accordion/" class="md-nav__link">
         
   
   
@@ -1192,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/alert/" class="md-nav__link">
+      <a href="../alert/" class="md-nav__link">
         
   
   
@@ -1220,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/button/" class="md-nav__link">
+      <a href="../button/" class="md-nav__link">
         
   
   
@@ -1248,7 +1257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/buttonGroup/" class="md-nav__link">
+      <a href="../buttonGroup/" class="md-nav__link">
         
   
   
@@ -1276,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/card/" class="md-nav__link">
+      <a href="../card/" class="md-nav__link">
         
   
   
@@ -1304,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardBody/" class="md-nav__link">
+      <a href="../cardBody/" class="md-nav__link">
         
   
   
@@ -1332,7 +1341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardFooter/" class="md-nav__link">
+      <a href="../cardFooter/" class="md-nav__link">
         
   
   
@@ -1360,7 +1369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardHeader/" class="md-nav__link">
+      <a href="../cardHeader/" class="md-nav__link">
         
   
   
@@ -1388,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardSubtitle/" class="md-nav__link">
+      <a href="../cardSubtitle/" class="md-nav__link">
         
   
   
@@ -1416,7 +1425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardText/" class="md-nav__link">
+      <a href="../cardText/" class="md-nav__link">
         
   
   
@@ -1444,7 +1453,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardTitle/" class="md-nav__link">
+      <a href="../cardTitle/" class="md-nav__link">
         
   
   
@@ -1472,7 +1481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/horizontalRule/" class="md-nav__link">
+      <a href="../horizontalRule/" class="md-nav__link">
         
   
   
@@ -1500,7 +1509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/list/" class="md-nav__link">
+      <a href="../list/" class="md-nav__link">
         
   
   
@@ -1528,7 +1537,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/logViewer/" class="md-nav__link">
+      <a href="../logViewer/" class="md-nav__link">
         
   
   
@@ -1556,7 +1565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/progressBar/" class="md-nav__link">
+      <a href="../progressBar/" class="md-nav__link">
         
   
   
@@ -1581,10 +1590,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../components/types/row/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Row
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1600,6 +1636,48 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1682,7 +1760,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../controller/" class="md-nav__link ">
+            <a href="../../../controller/" class="md-nav__link ">
               
   
   
@@ -1726,7 +1804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/addToWhitelist/" class="md-nav__link">
+      <a href="../../../controller/addToWhitelist/" class="md-nav__link">
         
   
   
@@ -1754,7 +1832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/batchEnd/" class="md-nav__link">
+      <a href="../../../controller/batchEnd/" class="md-nav__link">
         
   
   
@@ -1782,7 +1860,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/batchStart/" class="md-nav__link">
+      <a href="../../../controller/batchStart/" class="md-nav__link">
         
   
   
@@ -1810,7 +1888,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/buildPage/" class="md-nav__link">
+      <a href="../../../controller/buildPage/" class="md-nav__link">
         
   
   
@@ -1838,7 +1916,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/clearWhitelist/" class="md-nav__link">
+      <a href="../../../controller/clearWhitelist/" class="md-nav__link">
         
   
   
@@ -1866,7 +1944,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/getThreadID/" class="md-nav__link">
+      <a href="../../../controller/getThreadID/" class="md-nav__link">
         
   
   
@@ -1894,7 +1972,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/notify/" class="md-nav__link">
+      <a href="../../../controller/notify/" class="md-nav__link">
         
   
   
@@ -1922,7 +2000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/removeFromWhitelist/" class="md-nav__link">
+      <a href="../../../controller/removeFromWhitelist/" class="md-nav__link">
         
   
   
@@ -1950,7 +2028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIcon/" class="md-nav__link">
+      <a href="../../../controller/setIcon/" class="md-nav__link">
         
   
   
@@ -1978,7 +2056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIconRFG/" class="md-nav__link">
+      <a href="../../../controller/setIconRFG/" class="md-nav__link">
         
   
   
@@ -2006,7 +2084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIconRaw/" class="md-nav__link">
+      <a href="../../../controller/setIconRaw/" class="md-nav__link">
         
   
   
@@ -2034,7 +2112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setTitle/" class="md-nav__link">
+      <a href="../../../controller/setTitle/" class="md-nav__link">
         
   
   
@@ -2062,7 +2140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/start/" class="md-nav__link">
+      <a href="../../../controller/start/" class="md-nav__link">
         
   
   
@@ -2090,7 +2168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/stop/" class="md-nav__link">
+      <a href="../../../controller/stop/" class="md-nav__link">
         
   
   
@@ -2118,7 +2196,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/wait/" class="md-nav__link">
+      <a href="../../../controller/wait/" class="md-nav__link">
         
   
   
@@ -2150,8 +2228,6 @@
       
   
   
-    
-  
   
   
     
@@ -2183,23 +2259,22 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../../logging/" class="md-nav__link ">
               
   
   
@@ -2217,13 +2292,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2243,7 +2318,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../addGlobalLogSink/" class="md-nav__link">
+      <a href="../../../logging/addGlobalLogSink/" class="md-nav__link">
         
   
   
@@ -2268,37 +2343,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    mintmousse.addLogSink
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../logging/addLogSink/" class="md-nav__link">
         
   
   
@@ -2314,87 +2362,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#synopsis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Synopsis
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sink-function-signature" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sink Function Signature
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Returns
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -2407,7 +2374,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cleanupTraceback/" class="md-nav__link">
+      <a href="../../../logging/cleanupTraceback/" class="md-nav__link">
         
   
   
@@ -2435,7 +2402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../color/" class="md-nav__link">
+      <a href="../../../logging/color/" class="md-nav__link">
         
   
   
@@ -2463,7 +2430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../flushLogs/" class="md-nav__link">
+      <a href="../../../logging/flushLogs/" class="md-nav__link">
         
   
   
@@ -2491,7 +2458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../level/" class="md-nav__link">
+      <a href="../../../logging/level/" class="md-nav__link">
         
   
   
@@ -2519,7 +2486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logUncaughtError/" class="md-nav__link">
+      <a href="../../../logging/logUncaughtError/" class="md-nav__link">
         
   
   
@@ -2547,7 +2514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../newLogger/" class="md-nav__link">
+      <a href="../../../logging/newLogger/" class="md-nav__link">
         
   
   
@@ -2603,13 +2570,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2619,7 +2583,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../logger/" class="md-nav__link ">
+            <a href="../../../logging/logger/" class="md-nav__link ">
               
   
   
@@ -2637,7 +2601,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_5_10" id="__nav_5_10_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5_10" id="__nav_5_10_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -2663,7 +2627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/assert/" class="md-nav__link">
+      <a href="../../../logging/logger/assert/" class="md-nav__link">
         
   
   
@@ -2691,7 +2655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/debug/" class="md-nav__link">
+      <a href="../../../logging/logger/debug/" class="md-nav__link">
         
   
   
@@ -2719,7 +2683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/error/" class="md-nav__link">
+      <a href="../../../logging/logger/error/" class="md-nav__link">
         
   
   
@@ -2747,7 +2711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/extend/" class="md-nav__link">
+      <a href="../../../logging/logger/extend/" class="md-nav__link">
         
   
   
@@ -2775,7 +2739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/getAncestry/" class="md-nav__link">
+      <a href="../../../logging/logger/getAncestry/" class="md-nav__link">
         
   
   
@@ -2803,7 +2767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/info/" class="md-nav__link">
+      <a href="../../../logging/logger/info/" class="md-nav__link">
         
   
   
@@ -2831,7 +2795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/inspect/" class="md-nav__link">
+      <a href="../../../logging/logger/inspect/" class="md-nav__link">
         
   
   
@@ -2859,7 +2823,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logger/warning/" class="md-nav__link">
+      <a href="../../../logging/logger/warning/" class="md-nav__link">
         
   
   
@@ -2922,49 +2886,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#synopsis" class="md-nav__link">
+  <a href="#updates" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Synopsis
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Parameters
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Parameters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#sink-function-signature" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sink Function Signature
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#returns" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Returns
+        Updates
       
     </span>
   </a>
@@ -3002,71 +2927,42 @@
   
 
 
-<h1 id="mintmousseaddlogsink"><code>mintmousse.addLogSink</code></h1>
-<p>Used to add a custom sink to direct log messages to where ever you want, for the current thread that the function is ran on.</p>
-<p>I recommend checking out the logging sinks that the library implements to fully understand how you can implement your own.</p>
-<div class="admonition warning">
-<p class="admonition-title">Thread behaviour</p>
-<p>This function is used to route logs of the thread that this function is ran on. If you just want to set a logging sink once, and handle all logs from all threads see <a href="../addGlobalLogSink/"><code>mintmousse.addGlobalLogSink</code></a>. This function is recommended over global sinks for performance.</p>
-</div>
-<h2 id="synopsis">Synopsis</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="w"> </span><span class="nv">sink</span><span class="p">,</span><span class="w"> </span><span class="nv">flushFunc</span><span class="w"> </span><span class="p">)</span>
-</code></pre></div>
-<h2 id="parameters">Parameters</h2>
+<h1 id="row">Row</h1>
+<p>A container to have components on the same horizontal row.</p>
+<h2 id="updates">Updates</h2>
 <dl>
-<dt><code>sink</code> <em>function</em></dt>
-<dd>A function, with the signature <code>(level, logger, time, debugInfo, message...)</code>. See below for details</dd>
-<dt><code>flushFunc</code> <em>function</em></dt>
-<dd>A function, with the signature <code>(forced)</code>. See <a href="../flushLogs/"><code>mintmousse.flushLogs</code></a> for details</dd>
+<dt>children.<code>columnWidth</code> <em>number</em> or <em>nil</em> (<strong>nil</strong>)</dt>
+<dd>A whole number between <code>1</code> and <code>12</code>, the sum of the row should add up to <code>12</code>. If you use <code>nil</code>, they will attempt to equalise the width between children. You can freely mix values.</dd>
 </dl>
-<h3 id="sink-function-signature">Sink Function Signature</h3>
-<dl>
-<dt><code>level</code> <em><a href="../level/">level</a></em></dt>
-<dd>A string indicating the level of the log, <code>"info"</code>, <code>"warning"</code>, <code>"error"</code>, <code>"fatal"</code>, <code>"debug"</code>.</dd>
-<dt><code>logger</code> <em><a href="logger.md">logger</a></em></dt>
-<dd>
-<p>The logger that created the log.</p>
-<p>You shouldn't try to use any other function of the logger when it is in a sink other than <a href="../logger/getAncestry/"><code>(Logger):getAncestry</code></a> and <a href="../logger/inspect/"><code>(Logger).inspect</code></a>.</p>
-</dd>
-<dt><code>time</code> <em>number</em></dt>
-<dd>UNIX time in seconds, with microseconds. By default, this value is obtained by <code>socket.gettime</code> to get an accurate system time.</dd>
-<dt><code>debugInfo</code> <em>string</em> or <em>nil</em></dt>
-<dd>Depending on the level, and the config -- TODO link, a simple traceback string is passed along the lines of <code>funcName@fileName#lineNumber</code>, this format isn't guaranteed, for example code in the file scope will be <code>fileName#lineNumber</code> as they aren't contained within a named function.</dd>
-<dt><code>message...</code> <em>ANY</em></dt>
-<dd>The varargs of the message passed from the log function.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<p>Nothing.</p>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="kr">function</span><span class="p">(</span><span class="nv">level</span><span class="p">,</span><span class="w"> </span><span class="nv">logger</span><span class="p">,</span><span class="w"> </span><span class="nv">time</span><span class="p">,</span><span class="w"> </span><span class="nv">debugInfo</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span><span class="w"> </span><span class="c1">-- Sink function</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="kr">if</span><span class="w"> </span><span class="p">(</span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;info&quot;</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="nv">info</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;warning&quot;</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="ow">and</span><span class="w"> </span><span class="nb">math.floor</span><span class="p">(</span><span class="nv">time</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="nv">debugInfo</span><span class="w"> </span><span class="kr">then</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">      </span><span class="kd">local</span><span class="w"> </span><span class="nv">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">select</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="nb">io.stdout</span><span class="p">:</span><span class="nf">write</span><span class="p">(</span><span class="nv">num</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="kr">end</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="kr">end</span><span class="p">,</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="kr">function</span><span class="p">(</span><span class="nv">forced</span><span class="p">)</span><span class="w"> </span><span class="c1">-- Flush function</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="nb">io.stdout</span><span class="p">:</span><span class="nf">flush</span><span class="p">()</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="kr">end</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="nv">logger</span><span class="p">:</span><span class="nf">info</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;World&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="c1">-- 6\n</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="nv">logger</span><span class="p">:</span><span class="nf">warning</span><span class="p">(</span><span class="s2">&quot;Foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Bar&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- 2\n</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">flushLogs</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">-- Within a child component</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nv">columnWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1">-- For example:</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kd">local</span><span class="w"> </span><span class="nv">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">card</span><span class="p">:</span><span class="nf">newRow</span><span class="p">()</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">row</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="p">:</span><span class="nf">newContainer</span><span class="p">({</span><span class="w"> </span><span class="nv">columnWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="p">:</span><span class="nf">addText</span><span class="p">({</span><span class="w"> </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1st&quot;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p">.</span><span class="nv">back</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="p">:</span><span class="nf">newContainer</span><span class="p">({</span><span class="w"> </span><span class="nv">columnWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p">:</span><span class="nf">addText</span><span class="p">({</span><span class="w"> </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;2nd&quot;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="p">.</span><span class="nv">back</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="p">:</span><span class="nf">newContainer</span><span class="p">({</span><span class="w"> </span><span class="nv">columnWidth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="p">:</span><span class="nf">addText</span><span class="p">({</span><span class="w"> </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3rd&quot;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="p">.</span><span class="nv">back</span>
 </code></pre></div>
-<h1 id="see-also">See Also</h1>
-<ul>
-<li><a href="../">Logging</a></li>
-<li><a href="../addGlobalLogSink/"><code>mintmousse.addGlobalLogSink</code></a></li>
-</ul>
 
 
 
 
 
 
+
+  
+  
 
 
 
@@ -3116,10 +3012,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   </body>
