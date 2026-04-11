@@ -4,7 +4,7 @@ type:
     updates: 1
     description: Used to display text within a card.
 ---
-# Card Tex
+# Card Title
 A title that can be added to [Cards](card.md) or [Card Bodies](cardBody.md). Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/components/card/#titles-text-and-links)
 
 ## Updates
