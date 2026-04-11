@@ -459,6 +459,11 @@ const componentHelper = Object.freeze({
     const num = parseFloat(val);
     return isNaN(num) ? fb : num;
   },
+  getFloatInRange: function(val, min, max, fb) {
+    const f = this.getFloatInRange(val, fb);
+    if (f == null) return fb;
+    return Math.max(min, Math.min(f, max));
+  },
   getText: (function() {
     const options = {
       ALLOWED_TAGS: ['b', 'i', 'strong', 'em', 'code', 'span', 'br', 'div'],

@@ -55,7 +55,7 @@ componentRegistry.register({
   },
 
   update_percentage: function(instance, payload) {
-    instance.state.percentage = helper.getFloat(payload.values.percentage);
+    instance.state.percentage = helper.getFloatInRange(payload.values.percentage, 0.0, 1.0, 0.0);
     this._updateVisuals(instance);
   },
 
