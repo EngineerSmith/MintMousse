@@ -5,7 +5,7 @@ type:
     description: A row container for buttons.
 ---
 # Button Group
-A row of buttons graphically stacked next to each other.  Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/components/button-group/).
+A row of [buttons](button.md) graphically stacked next to each other. Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/components/button-group/).
 
 ## Example
 ```lua
