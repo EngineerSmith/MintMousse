@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/components/types/alert/">
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/components/types/list/">
       
       
-        <link rel="prev" href="../accordion/">
+        <link rel="prev" href="../horizontalRule/">
       
       
-        <link rel="next" href="../button/">
+        <link rel="next" href="../../../controller/">
       
       
         
@@ -25,7 +25,7 @@
     
     
       
-        <title>Alert - MintMousse - Docs</title>
+        <title>List - MintMousse - Docs</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#alert" class="md-skip">
+        <a href="#list" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Alert
+              List
             
           </span>
         </div>
@@ -1192,37 +1192,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Alert
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../alert/" class="md-nav__link">
         
   
   
@@ -1238,59 +1211,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#updates" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Updates
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1580,10 +1500,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../list/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1599,6 +1546,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#updates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updates
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2859,32 +2859,23 @@
   
 
 
-<h1 id="alert">Alert</h1>
-<p>A brightly colored message that can be dismissed within browsers. Useful for getting eye catching information across. Can check out <a href="https://getbootstrap.com/docs/5.3/components/alerts/">Bootstrap's docs for an example</a>.</p>
+<h1 id="list">List</h1>
+<p>A container which separates it's children. Can check out <a href="https://getbootstrap.com/docs/5.3/components/list-group/#basic-example">Bootstrap's docs for an example</a>.</p>
 <h2 id="updates">Updates</h2>
 <dl>
-<dt><code>text</code> <em>string</em> (<strong>"UNKNOWN"</strong>)</dt>
-<dd>The text for the alert to display.</dd>
-<dt><code>color</code> <em>BSColor</em> (<strong>"warning"</strong>)</dt>
-<dd>The outline, and background color of the message.</dd>
-<dt><code>isDismissible</code> <em>boolean</em> (<strong>true</strong>)</dt>
-<dd>If the message can be dismissed locally in a browser. This doesn't remove the alert from the page, it just hides it for the user. It will reappear on refresh.</dd>
+<dt><code>isNumbered</code> <em>boolean</em> (<strong>false</strong>)</dt>
+<dd>If the list should number each child, an <a href="https://getbootstrap.com/docs/5.3/components/list-group/#numbered">example can be seen here</a>.</dd>
 </dl>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Hello world!&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nv">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">{</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Oh no! Something went terribly wrong!&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nv">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;danger&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nv">isDismissible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nv">isNumbered</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="https://getbootstrap.com/docs/5.3/components/alerts/">Bootstrap docs</a></li>
+<li><a href="https://getbootstrap.com/docs/5.3/components/list-group/">Bootstrap docs</a></li>
 </ul>
 
 
