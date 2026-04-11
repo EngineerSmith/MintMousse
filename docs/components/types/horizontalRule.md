@@ -2,7 +2,7 @@
 type:
     name: HorizontalRule
     updates: 2
-    description: Add a line to split up content
+    description: Add a line to split up content.
 ---
 # Horizontal Rule
 Add a horizontal line to split up elements. Like how you would use `---` within markdown. Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/content/reboot/#horizontal-rules).
