@@ -7,7 +7,7 @@ type:
 # Card Body
 A container for inside a [Card](card.md). Realistically, all this achieves is adding padding to it's children. Can check out [Bootstrap's docs for an example](https://getbootstrap.com/docs/5.3/components/card/#body)
 
-## Example
+## Examples
 ```lua
 local cardBody = card:newCardBody()
 
