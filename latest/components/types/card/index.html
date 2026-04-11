@@ -14,7 +14,7 @@
         <link rel="prev" href="../buttonGroup/">
       
       
-        <link rel="next" href="../../../controller/">
+        <link rel="next" href="../cardBody/">
       
       
         
@@ -1087,6 +1087,18 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -1359,6 +1371,174 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardBody/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Card Body
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardFooter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Card Footer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardHeader/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Card Header
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardSubtitle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Card Subtitle
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardText/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Card Text
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cardTitle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Card Tex
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -2626,14 +2806,37 @@
 <dt><code>color</code> <em>BSColor</em> (<strong>nil</strong>)</dt>
 <dd>Set the color of the background of the card.</dd>
 <dt><code>borderColor</code> <em>BSColor</em> (<strong>nil</strong>)</dt>
-<dd>Set the color of the border</dd>
+<dd>Set the color of the border.</dd>
+<dt><code>isContentCenter</code> <em>boolean</em> (<strong>false</strong>)</dt>
+<dd>If the card should center all of it's children.</dd>
+<dt><code>title</code> <em>string</em> (<strong>nil</strong>)</dt>
+<dd>A basic <a href="../cardTitle/">Card Title</a> you can set. Will be hidden if nil.</dd>
+<dt><code>text</code> <em>string</em> (<strong>nil</strong>)</dt>
+<dd>A basic <a href="../cardText/">Card text</a> you can set. Will be hidden if nil.</dd>
 </dl>
 <h2 id="example">Example</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nv">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;My brand new card&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;And a short message,</span><span class="se">\n</span><span class="s2">to all my fans!&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">{</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nv">title</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Card Title&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Card Text&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nv">isContentCenter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="nv">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;primary&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nv">borderColor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;secondary&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="https://getbootstrap.com/docs/5.3/components/card/">Bootstrap docs</a></li>
+<li><a href="../cardBody/">Card Body</a></li>
+<li><a href="../cardFooter/">Card Footer</a></li>
+<li><a href="../cardHeader/">Card Header</a></li>
+<li><a href="../cardSubtitle/">Card Subtitle</a></li>
+<li><a href="../cardText/">Card Text</a></li>
+<li><a href="../cardTitle/">Card Title</a></li>
 </ul>
 
 
