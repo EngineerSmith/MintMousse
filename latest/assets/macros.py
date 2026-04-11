@@ -31,7 +31,7 @@ def define_env(env):
               "typeEvents": type_data.get("events", 0),
               "typeChildren": "✅" if type_data.get("children", False) else "❌",
               "typeDescription": type_data.get("description", ""),
-              "link": f"{md_file.stem}.md"
+              "link": f"{md_file.stem}"
             })
 
         rows.sort(key=lambda x: x["typeName"].lower())
