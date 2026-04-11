@@ -36,6 +36,11 @@ def define_env(env):
 
         rows.sort(key=lambda x: x["typeName"].lower())
 
+        def get_count_style(value):
+            if value == 0:
+                return ' style="text-align: center; color #888;"'
+            return ' style="text-align: center;"'
+
         html = """<div class="md-typeset__table">
 <table><thead><tr class="generatedTable">
     <th style="width: 90px;">Type</th>
@@ -49,9 +54,9 @@ def define_env(env):
         for r in rows:
             html +=  '<tr class="generatedTable">\n'
             html += f'    <td><a href="{r["link"]}">{r["typeName"]}</a></td>\n'
-            html += f'    <td style="text-align: center;">{r["typeUpdates"]}</td>\n'
-            html += f'    <td style="text-align: center;">{r["typePushes"]}</td>\n'
-            html += f'    <td style="text-align: center;">{r["typeEvents"]}</td>\n'
+            html += f'    <td{get_count_style(r["typeUpdates"])}>{r["typeUpdates"]}</td>\n'
+            html += f'    <td{get_count_style(r["typePushes"])}>{r["typePushes"]}</td>\n'
+            html += f'    <td{get_count_style(r["typeEvents"])}>{r["typeEvents"]}</td>\n'
             html += f'    <td style="text-align: center;">{r["typeChildren"]}</td>\n'
             html += f'    <td>{r["typeDescription"]}</td>\n'
             html +=  '</tr>\n'
