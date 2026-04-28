@@ -18,6 +18,7 @@ assert(jit ~= nil, "MintMousse: Library is missing dependency LuaJIT. This is us
 assert(pcall(require, "string.buffer"), "MintMousse: Library is missing dependency LuaJIT's String Buffer Library. This is packaged with LÖVE from 11.4.")
 
 require(PATH .. "setupLove")
+love.__mintmousse = PATH
 
 local mintmousse = require(PATH .. "conf")
 

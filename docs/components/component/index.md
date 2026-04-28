@@ -15,7 +15,7 @@ The object you use to update the components on the web console. It is also known
 |[`(Component):setChildrenOrder`](setChildrenOrder.md)|Set the order of all the children at once|
 |[`(Component):moveBefore`](moveBefore.md)|Move the current component before the given component|
 |[`(Component):moveAfter`](moveAfter.md)|Move the current component after the given component|
-|[`(Component):moveToFront`](moveToFront.md)|Move the component to the 1st index|
+|[`(Component):moveToFront`](moveToFront.md)|Move the component to the first index|
 |[`(Component):moveToBack`](moveToBack.md)|Move the component to the last index|
 |[`(Component):children`](children.md)|Used to iterate over all the locally known children|
 
