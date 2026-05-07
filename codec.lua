@@ -97,16 +97,20 @@ end
 
 local codec = { }
 
-local bufferEnc
 codec.encode = function(message)
-  if not bufferEnc then bufferEnc = createBuffer() end
-  return bufferEnc:reset():encode(message):get()
+  local bufferEnc = createBuffer()
+  codec.encode = function(message)
+    return bufferEnc:reset():encode(message):get()
+  end
+  return codec.encode(message)
 end
 
-local bufferDec
 codec.decode = function(encodedMessage)
-  if not bufferDec then bufferDec = createBuffer() end
-  return bufferDec:set(encodedMessage):decode()
+  local bufferDec = createBuffer() end
+  codec.decode = function(encodedMessage)
+    return bufferDec:set(encodedMessage):decode()
+  end
+  return codec.decode(encodedMessage)
 end
 
 return codec

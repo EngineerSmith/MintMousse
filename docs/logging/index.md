@@ -1,12 +1,18 @@
 # Logging
-MintMousse ships a powerful, thread-safe logging system that lets you:
+MintMousse ships a powerful, thread-safe logging system thats:
 
 - Create named, color-aware loggers with easy hierarchy (`module:submodule:minor`)
 - Print to console with automatic ANSI stripping for files
 - Route logs anywhere (file, REST, custom sink, etc.)
-- Safely handle crashes via [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler) so nothing is missed.
+- Safely handle crashes via [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler) so nothing is missed
+- Cleans up traceback to improve readability
 
 ![Console Output Example](console_example.PNG)
+
+!!! note "Piping output to file"
+    When you pipe logs to file, e.g. `game.exe &> logs.txt`, MintMousse will detect this and strip all ANSI colors.
+
+    This is the recommended way to store logs to file than adding a sink within your game itself, unless necessary, to prevent performance impact. If you want to implement this, I would suggest to use [`mintmousse.addLogSink`](addLogSink.md) over using [`mintmousse.addGlobalLogSink`](addGlobalLogSink.md), to pipe the logs to your dedicated file writing thread.
 
 ## Types
 |Type|Description|
@@ -40,7 +46,7 @@ subLogger:warning("You're getting the hang of it now", 5, { ["foo"] = "bar" })
 local minorLogger = subLogger:extend("minor")
 minorLogger:debug("I print the line I'm on - useful during development!")
 
-print("Quick out") -- works like `logger:debug`, but super quick and dirty
+print("Quick out") -- overrides print, works like `logger:debug`
 
 
 -- 2. Catch all error that don't route the expected way
