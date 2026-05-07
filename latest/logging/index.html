@@ -2878,14 +2878,20 @@
 
 
 <h1 id="logging">Logging</h1>
-<p>MintMousse ships a powerful, thread-safe logging system that lets you:</p>
+<p>MintMousse ships a powerful, thread-safe logging system thats:</p>
 <ul>
 <li>Create named, color-aware loggers with easy hierarchy (<code>module:submodule:minor</code>)</li>
 <li>Print to console with automatic ANSI stripping for files</li>
 <li>Route logs anywhere (file, REST, custom sink, etc.)</li>
-<li>Safely handle crashes via <a href="https://love2d.org/wiki/love.errorhandler"><code>love.errorhandler</code></a> so nothing is missed.</li>
+<li>Safely handle crashes via <a href="https://love2d.org/wiki/love.errorhandler"><code>love.errorhandler</code></a> so nothing is missed</li>
+<li>Cleans up traceback to improve readability</li>
 </ul>
 <p><img alt="Console Output Example" src="console_example.PNG" /></p>
+<div class="admonition note">
+<p class="admonition-title">Piping output to file</p>
+<p>When you pipe logs to file, e.g. <code>game.exe &amp;&gt; logs.txt</code>, MintMousse will detect this and strip all ANSI colors.</p>
+<p>This is the recommended way to store logs to file than adding a sink within your game itself, unless necessary, to prevent performance impact. If you want to implement this, I would suggest to use <a href="addLogSink/"><code>mintmousse.addLogSink</code></a> over using <a href="addGlobalLogSink/"><code>mintmousse.addGlobalLogSink</code></a>, to pipe the logs to your dedicated file writing thread.</p>
+</div>
 <h2 id="types">Types</h2>
 <table>
 <thead>
@@ -2962,7 +2968,7 @@
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kd">local</span><span class="w"> </span><span class="nv">minorLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">subLogger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;minor&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">minorLogger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">&quot;I print the line I&#39;m on - useful during development!&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Quick out&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- works like `logger:debug`, but super quick and dirty</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Quick out&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- overrides print, works like `logger:debug`</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1">-- 2. Catch all error that don&#39;t route the expected way</span>
