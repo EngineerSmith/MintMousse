@@ -62,8 +62,13 @@ inspectDeep = function(tbl, maxDepth, indentLevel, seen, path)
 
     local valStr
     if type(v) == "table" then
-      local subPath = buildSubPath(path, k)
-      valStr = inspectDeep(v, maxDepth - 1, indentLevel + 1, seen, subPath)
+      local mt = getmetatable(v)
+      if mt and mt.__tostring then
+        valStr = tostring(v)
+      else
+        local subPath = buildSubPath(path, k)
+        valStr = inspectDeep(v, maxDepth - 1, indentLevel + 1, seen, subPath)
+      end
     else
       valStr = safeRepresent(v)
     end
@@ -81,6 +86,11 @@ end
 
 inspector.inspect = function(value, level)
   if type(value) ~= "table" then
+    return tostring(value)
+  end
+
+  local mt = getmetatable(value)
+  if mt and mt.__tostring then
     return tostring(value)
   end
 

@@ -1,5 +1,5 @@
 # (Logger).inspect
-Used to look into a given table, it will prevent circular dependency, and use a max depth to prevent "too much".
+Used to look into a given table, it will prevent circular dependency, and use a max depth to prevent "too much". If any given `table` value has a metatable with a `__tostring` metafunction, that will be called.
 
 !!! warning "Warning"
 
