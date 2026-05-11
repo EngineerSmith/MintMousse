@@ -2991,7 +2991,7 @@
 
 
 <h1 id="loggerinspect">(Logger).inspect</h1>
-<p>Used to look into a given table, it will prevent circular dependency, and use a max depth to prevent "too much".</p>
+<p>Used to look into a given table, it will prevent circular dependency, and use a max depth to prevent "too much". If any given <code>table</code> value has a metatable with a <code>__tostring</code> metafunction, that will be called.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>No two returns may be equal, due to internally using the global <code>pairs</code> function which is known to not always return the same order.</p>
