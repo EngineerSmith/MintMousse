@@ -54,6 +54,15 @@ logger.getAncestry = function(self)
   return self.ancestryData
 end
 
+-- Used to shift the line a log trace points to. Must have a matching Pop call (Not enforced, but will cause issues)
+logger._stackPush = function()
+  stack.push()
+end
+
+logger._stackPop = function()
+  stack.pop()
+end
+
 logger.info = function(self, ...)
   local time = getTime()
   stack.push()
