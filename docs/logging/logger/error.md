@@ -1,5 +1,5 @@
 # (Logger):error
-Log an [`error` level](../level.md) message. The default behaviour, unless the config is changed --TODO link, this will act like the typical global `error` function, and cause the program to halt and run the [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler).
+Log an [`error` level](../level.md) message. The default behaviour, unless the [config is changed](../../config.md#mintmousselog_enable_error), this will act like the typical global `error` function, and cause the program to halt and run the [`love.errorhandler`](https://love2d.org/wiki/love.errorhandler).
 
 ## Synopsis
 ```lua
