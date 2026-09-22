@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2489,6 +2489,8 @@
       
         
       
+        
+      
     
     
     
@@ -2751,6 +2753,34 @@
   
   
     <li class="md-nav__item">
+      <a href="logger/stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger)._stack Push/Pop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="logger/warning/" class="md-nav__link">
         
   
@@ -2959,19 +2989,19 @@
 </table>
 <h2 id="quick-start">Quick Start</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">-- 1. Create &amp; extend loggers (the most common use)</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">local</span><span class="w"> </span><span class="nv">moduleLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">&quot;module&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;cyan&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nv">moduleLogger</span><span class="p">:</span><span class="nf">info</span><span class="p">(</span><span class="s2">&quot;Module initialized&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">local</span><span class="w"> </span><span class="nv">moduleLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">"module"</span><span class="p">,</span><span class="w"> </span><span class="s2">"cyan"</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nv">moduleLogger</span><span class="p">:</span><span class="nf">info</span><span class="p">(</span><span class="s2">"Module initialized"</span><span class="p">)</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">subLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">moduleLogger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;submodule&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bright_blue&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nv">subLogger</span><span class="p">:</span><span class="nf">warning</span><span class="p">(</span><span class="s2">&quot;You&#39;re getting the hang of it now&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">subLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">moduleLogger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">"submodule"</span><span class="p">,</span><span class="w"> </span><span class="s2">"bright_blue"</span><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nv">subLogger</span><span class="p">:</span><span class="nf">warning</span><span class="p">(</span><span class="s2">"You're getting the hang of it now"</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">[</span><span class="s2">"foo"</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"bar"</span><span class="w"> </span><span class="p">})</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kd">local</span><span class="w"> </span><span class="nv">minorLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">subLogger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">&quot;minor&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">minorLogger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">&quot;I print the line I&#39;m on - useful during development!&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kd">local</span><span class="w"> </span><span class="nv">minorLogger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">subLogger</span><span class="p">:</span><span class="nf">extend</span><span class="p">(</span><span class="s2">"minor"</span><span class="p">)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nv">minorLogger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">"I print the line I'm on - useful during development!"</span><span class="p">)</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Quick out&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1">-- overrides print, works like `logger:debug`</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"Quick out"</span><span class="p">)</span><span class="w"> </span><span class="c1">-- overrides print, works like `logger:debug`</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1">-- 2. Catch all error that don&#39;t route the expected way</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1">-- 2. Catch all error that don't route the expected way</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="nv">love</span><span class="p">.</span><span class="py">errorhandler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="nv">msg</span><span class="p">)</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="nv">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">tostring</span><span class="p">(</span><span class="nv">msg</span><span class="p">)</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">  </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">logUncaughtError</span><span class="p">(</span><span class="nv">msg</span><span class="p">)</span><span class="w"> </span><span class="c1">-- automatically logs and flushes</span>
@@ -2981,7 +3011,7 @@
 <a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
 <a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="c1">-- 3. Advanced: send logs to a server</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">addLogSink</span><span class="p">(</span><span class="kr">function</span><span class="p">(</span><span class="nv">level</span><span class="p">,</span><span class="w"> </span><span class="nv">logger</span><span class="p">,</span><span class="w"> </span><span class="nv">time</span><span class="p">,</span><span class="w"> </span><span class="nv">debugInfo</span><span class="p">,</span><span class="w"> </span><span class="p">...)</span>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">  </span><span class="kr">if</span><span class="w"> </span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;error&quot;</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;fatal&quot;</span><span class="w"> </span><span class="kr">then</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">  </span><span class="kr">if</span><span class="w"> </span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"error"</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="nv">level</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">"fatal"</span><span class="w"> </span><span class="kr">then</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">    </span><span class="c1">-- send to your analytic endpoint</span>
 <a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">  </span><span class="kr">end</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="kr">end</span><span class="p">)</span>
@@ -3045,7 +3075,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

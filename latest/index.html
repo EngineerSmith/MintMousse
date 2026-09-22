@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
@@ -27,7 +27,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
@@ -2553,6 +2553,8 @@
       
         
       
+        
+      
     
     
     
@@ -2812,6 +2814,34 @@
   
   
     <li class="md-nav__item">
+      <a href="logging/logger/stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger)._stack Push/Pop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="logging/logger/warning/" class="md-nav__link">
         
   
@@ -2933,14 +2963,14 @@
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/EngineerSmith/MintMousse<span class="w"> </span>libs/MintMousse
 </code></pre></div>
 Next, add the preload script to <code>conf.lua</code>:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;libs.MintMousse.preload&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">require</span><span class="p">(</span><span class="s2">"libs.MintMousse.preload"</span><span class="p">)</span>
 </code></pre></div>
 Then, add the "Hello World" example to <code>main.lua</code>:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">mintmousse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="s2">&quot;libs.MintMousse&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">start</span><span class="p">({</span><span class="w"> </span><span class="nv">whitelist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;localhost&quot;</span><span class="w"> </span><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">mintmousse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">require</span><span class="p">(</span><span class="s2">"libs.MintMousse"</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">start</span><span class="p">({</span><span class="w"> </span><span class="nv">whitelist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"localhost"</span><span class="w"> </span><span class="p">})</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kd">local</span><span class="w"> </span><span class="nv">dashboard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newTab</span><span class="p">(</span><span class="s2">&quot;Dashboard&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nv">dashboard</span><span class="p">:</span><span class="nf">newCard</span><span class="p">({</span><span class="w"> </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;Hello World!&quot;</span><span class="w"> </span><span class="p">})</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kd">local</span><span class="w"> </span><span class="nv">dashboard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newTab</span><span class="p">(</span><span class="s2">"Dashboard"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nv">dashboard</span><span class="p">:</span><span class="nf">newCard</span><span class="p">({</span><span class="w"> </span><span class="nv">text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"Hello World!"</span><span class="w"> </span><span class="p">})</span>
 </code></pre></div>
 Finally, run your project and view the console in your browser at <a href="http://localhost:8080">http://localhost:8080</a> (or the port shown in your console)</p>
 
@@ -3001,7 +3031,7 @@ Finally, run your project and view the console in your browser at <a href="http:
       <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

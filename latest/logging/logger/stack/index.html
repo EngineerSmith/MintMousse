@@ -8,31 +8,31 @@
       
       
       
-        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/logging/newLogger/">
+        <link rel="canonical" href="https://mintmousse.engineersmith.net/latest/logging/logger/stack/">
       
       
-        <link rel="prev" href="../logUncaughtError/">
+        <link rel="prev" href="../inspect/">
       
       
-        <link rel="next" href="../logger/">
+        <link rel="next" href="../warning/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/favicon.svg">
+      <link rel="icon" href="../../../assets/favicon.svg">
       <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-material-9.7.7">
     
     
       
-        <title>mintmousse.newLogger - MintMousse - Docs</title>
+        <title>(Logger)._stack Push/Pop - MintMousse - Docs</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -51,9 +51,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#mintmoussenewlogger" class="md-skip">
+        <a href="#logger_stack-pushpop" class="md-skip">
           Skip to content
         </a>
       
@@ -96,9 +96,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../../.." title="MintMousse - Docs" class="md-header__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../../../assets/logo.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              mintmousse.newLogger
+              (Logger)._stack Push/Pop
             
           </span>
         </div>
@@ -228,7 +228,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
   
@@ -247,7 +247,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../config/" class="md-tabs__link">
+      <a href="../../../config/" class="md-tabs__link">
         
   
   
@@ -268,7 +268,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../components/" class="md-tabs__link">
+        <a href="../../../components/" class="md-tabs__link">
           
   
   
@@ -290,7 +290,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../controller/" class="md-tabs__link">
+        <a href="../../../controller/" class="md-tabs__link">
           
   
   
@@ -314,7 +314,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../" class="md-tabs__link">
+        <a href="../../" class="md-tabs__link">
           
   
   
@@ -350,9 +350,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
+    <a href="../../.." title="MintMousse - Docs" class="md-nav__button md-logo" aria-label="MintMousse - Docs" data-md-component="logo">
       
-  <img src="../../assets/logo.svg" alt="logo">
+  <img src="../../../assets/logo.svg" alt="logo">
 
     </a>
     MintMousse - Docs
@@ -379,7 +379,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   
@@ -406,7 +406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../config/" class="md-nav__link">
+      <a href="../../../config/" class="md-nav__link">
         
   
   
@@ -474,7 +474,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/" class="md-nav__link ">
+            <a href="../../../components/" class="md-nav__link ">
               
   
   
@@ -518,7 +518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/get/" class="md-nav__link">
+      <a href="../../../components/get/" class="md-nav__link">
         
   
   
@@ -546,7 +546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/has/" class="md-nav__link">
+      <a href="../../../components/has/" class="md-nav__link">
         
   
   
@@ -574,7 +574,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/newTab/" class="md-nav__link">
+      <a href="../../../components/newTab/" class="md-nav__link">
         
   
   
@@ -602,7 +602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/onEvent/" class="md-nav__link">
+      <a href="../../../components/onEvent/" class="md-nav__link">
         
   
   
@@ -630,7 +630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/remove/" class="md-nav__link">
+      <a href="../../../components/remove/" class="md-nav__link">
         
   
   
@@ -658,7 +658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/removeEvent/" class="md-nav__link">
+      <a href="../../../components/removeEvent/" class="md-nav__link">
         
   
   
@@ -731,7 +731,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/component/" class="md-nav__link ">
+            <a href="../../../components/component/" class="md-nav__link ">
               
   
   
@@ -775,7 +775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/add/" class="md-nav__link">
+      <a href="../../../components/component/add/" class="md-nav__link">
         
   
   
@@ -803,7 +803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/children/" class="md-nav__link">
+      <a href="../../../components/component/children/" class="md-nav__link">
         
   
   
@@ -831,7 +831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveAfter/" class="md-nav__link">
+      <a href="../../../components/component/moveAfter/" class="md-nav__link">
         
   
   
@@ -859,7 +859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveBefore/" class="md-nav__link">
+      <a href="../../../components/component/moveBefore/" class="md-nav__link">
         
   
   
@@ -887,7 +887,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveToBack/" class="md-nav__link">
+      <a href="../../../components/component/moveToBack/" class="md-nav__link">
         
   
   
@@ -915,7 +915,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/moveToFront/" class="md-nav__link">
+      <a href="../../../components/component/moveToFront/" class="md-nav__link">
         
   
   
@@ -943,7 +943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/new/" class="md-nav__link">
+      <a href="../../../components/component/new/" class="md-nav__link">
         
   
   
@@ -971,7 +971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/parent/" class="md-nav__link">
+      <a href="../../../components/component/parent/" class="md-nav__link">
         
   
   
@@ -999,7 +999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/remove/" class="md-nav__link">
+      <a href="../../../components/component/remove/" class="md-nav__link">
         
   
   
@@ -1027,7 +1027,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/component/setChildrenOrder/" class="md-nav__link">
+      <a href="../../../components/component/setChildrenOrder/" class="md-nav__link">
         
   
   
@@ -1120,7 +1120,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../components/types/" class="md-nav__link ">
+            <a href="../../../components/types/" class="md-nav__link ">
               
   
   
@@ -1164,7 +1164,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/accordion/" class="md-nav__link">
+      <a href="../../../components/types/accordion/" class="md-nav__link">
         
   
   
@@ -1192,7 +1192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/alert/" class="md-nav__link">
+      <a href="../../../components/types/alert/" class="md-nav__link">
         
   
   
@@ -1220,7 +1220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/button/" class="md-nav__link">
+      <a href="../../../components/types/button/" class="md-nav__link">
         
   
   
@@ -1248,7 +1248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/buttonGroup/" class="md-nav__link">
+      <a href="../../../components/types/buttonGroup/" class="md-nav__link">
         
   
   
@@ -1276,7 +1276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/card/" class="md-nav__link">
+      <a href="../../../components/types/card/" class="md-nav__link">
         
   
   
@@ -1304,7 +1304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardBody/" class="md-nav__link">
+      <a href="../../../components/types/cardBody/" class="md-nav__link">
         
   
   
@@ -1332,7 +1332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardFooter/" class="md-nav__link">
+      <a href="../../../components/types/cardFooter/" class="md-nav__link">
         
   
   
@@ -1360,7 +1360,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardHeader/" class="md-nav__link">
+      <a href="../../../components/types/cardHeader/" class="md-nav__link">
         
   
   
@@ -1388,7 +1388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardSubtitle/" class="md-nav__link">
+      <a href="../../../components/types/cardSubtitle/" class="md-nav__link">
         
   
   
@@ -1416,7 +1416,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardText/" class="md-nav__link">
+      <a href="../../../components/types/cardText/" class="md-nav__link">
         
   
   
@@ -1444,7 +1444,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/cardTitle/" class="md-nav__link">
+      <a href="../../../components/types/cardTitle/" class="md-nav__link">
         
   
   
@@ -1472,7 +1472,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/horizontalRule/" class="md-nav__link">
+      <a href="../../../components/types/horizontalRule/" class="md-nav__link">
         
   
   
@@ -1500,7 +1500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/list/" class="md-nav__link">
+      <a href="../../../components/types/list/" class="md-nav__link">
         
   
   
@@ -1528,7 +1528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/logViewer/" class="md-nav__link">
+      <a href="../../../components/types/logViewer/" class="md-nav__link">
         
   
   
@@ -1556,7 +1556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/progressBar/" class="md-nav__link">
+      <a href="../../../components/types/progressBar/" class="md-nav__link">
         
   
   
@@ -1584,7 +1584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../components/types/row/" class="md-nav__link">
+      <a href="../../../components/types/row/" class="md-nav__link">
         
   
   
@@ -1682,7 +1682,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../controller/" class="md-nav__link ">
+            <a href="../../../controller/" class="md-nav__link ">
               
   
   
@@ -1726,7 +1726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/addToWhitelist/" class="md-nav__link">
+      <a href="../../../controller/addToWhitelist/" class="md-nav__link">
         
   
   
@@ -1754,7 +1754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/batchEnd/" class="md-nav__link">
+      <a href="../../../controller/batchEnd/" class="md-nav__link">
         
   
   
@@ -1782,7 +1782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/batchStart/" class="md-nav__link">
+      <a href="../../../controller/batchStart/" class="md-nav__link">
         
   
   
@@ -1810,7 +1810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/buildPage/" class="md-nav__link">
+      <a href="../../../controller/buildPage/" class="md-nav__link">
         
   
   
@@ -1838,7 +1838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/clearWhitelist/" class="md-nav__link">
+      <a href="../../../controller/clearWhitelist/" class="md-nav__link">
         
   
   
@@ -1866,7 +1866,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/getThreadID/" class="md-nav__link">
+      <a href="../../../controller/getThreadID/" class="md-nav__link">
         
   
   
@@ -1894,7 +1894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/notify/" class="md-nav__link">
+      <a href="../../../controller/notify/" class="md-nav__link">
         
   
   
@@ -1922,7 +1922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/removeFromWhitelist/" class="md-nav__link">
+      <a href="../../../controller/removeFromWhitelist/" class="md-nav__link">
         
   
   
@@ -1950,7 +1950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIcon/" class="md-nav__link">
+      <a href="../../../controller/setIcon/" class="md-nav__link">
         
   
   
@@ -1978,7 +1978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIconRFG/" class="md-nav__link">
+      <a href="../../../controller/setIconRFG/" class="md-nav__link">
         
   
   
@@ -2006,7 +2006,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setIconRaw/" class="md-nav__link">
+      <a href="../../../controller/setIconRaw/" class="md-nav__link">
         
   
   
@@ -2034,7 +2034,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/setTitle/" class="md-nav__link">
+      <a href="../../../controller/setTitle/" class="md-nav__link">
         
   
   
@@ -2062,7 +2062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/start/" class="md-nav__link">
+      <a href="../../../controller/start/" class="md-nav__link">
         
   
   
@@ -2090,7 +2090,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/stop/" class="md-nav__link">
+      <a href="../../../controller/stop/" class="md-nav__link">
         
   
   
@@ -2118,7 +2118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../controller/wait/" class="md-nav__link">
+      <a href="../../../controller/wait/" class="md-nav__link">
         
   
   
@@ -2199,7 +2199,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../" class="md-nav__link ">
               
   
   
@@ -2243,7 +2243,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../addGlobalLogSink/" class="md-nav__link">
+      <a href="../../addGlobalLogSink/" class="md-nav__link">
         
   
   
@@ -2271,7 +2271,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../addLogSink/" class="md-nav__link">
+      <a href="../../addLogSink/" class="md-nav__link">
         
   
   
@@ -2299,7 +2299,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cleanupTraceback/" class="md-nav__link">
+      <a href="../../cleanupTraceback/" class="md-nav__link">
         
   
   
@@ -2327,7 +2327,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../color/" class="md-nav__link">
+      <a href="../../color/" class="md-nav__link">
         
   
   
@@ -2355,7 +2355,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../flushLogs/" class="md-nav__link">
+      <a href="../../flushLogs/" class="md-nav__link">
         
   
   
@@ -2383,7 +2383,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../level/" class="md-nav__link">
+      <a href="../../level/" class="md-nav__link">
         
   
   
@@ -2411,7 +2411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logUncaughtError/" class="md-nav__link">
+      <a href="../../logUncaughtError/" class="md-nav__link">
         
   
   
@@ -2419,6 +2419,320 @@
     
   
     mintmousse.logUncaughtError
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../newLogger/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    mintmousse.newLogger
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_10" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logger
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_10" id="__nav_5_10_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Logger
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../assert/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):assert
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../debug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):debug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../error/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):error
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):extend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getAncestry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):getAncestry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../info/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger):info
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inspect/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Logger).inspect
   
 
     
@@ -2455,7 +2769,7 @@
   <span class="md-ellipsis">
     
   
-    mintmousse.newLogger
+    (Logger)._stack Push/Pop
   
 
     
@@ -2473,7 +2787,7 @@
   <span class="md-ellipsis">
     
   
-    mintmousse.newLogger
+    (Logger)._stack Push/Pop
   
 
     
@@ -2568,322 +2882,8 @@
   
   
   
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_10" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../logger/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logger
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_5_10" id="__nav_5_10_label" tabindex="">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_10_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_10">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Logger
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../logger/assert/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):assert
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/debug/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):debug
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/error/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):error
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/extend/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):extend
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/getAncestry/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):getAncestry
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/info/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger):info
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/inspect/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger).inspect
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/stack/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    (Logger)._stack Push/Pop
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../logger/warning/" class="md-nav__link">
+      <a href="../warning/" class="md-nav__link">
         
   
   
@@ -3020,34 +3020,36 @@
   
 
 
-<h1 id="mintmoussenewlogger"><code>mintmousse.newLogger</code></h1>
-<p>Creates a new <em><a href="../logger/">logger</a></em> object.</p>
+<h1 id="logger_stack-pushpop">(Logger)._stack Push/Pop</h1>
+<p>A function to alter the traceback position. Shouldn't be needed unless you're working with metafunctions. There are other situations you could use it, but if you're writing good code, you shouldn't need it. Useful if you're writing code for others to point to the correct issue.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Make sure any push call has a matching pop. There are no internal checks for performance reasons. No matching push and pops will result in undefined behaviour.</p>
+</div>
 <h2 id="synopsis">Synopsis</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="w"> </span><span class="nv">name</span><span class="p">,</span><span class="w"> </span><span class="nv">color</span><span class="w"> </span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">Logger</span><span class="p">.</span><span class="nf">_stackPush</span><span class="p">()</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nv">Logger</span><span class="p">.</span><span class="nf">_stackPop</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="parameters">Parameters</h2>
-<dl>
-<dt><code>name</code> <em>string</em></dt>
-<dd>Identifier shown in the logs</dd>
-<dt><code>color</code> <em><a href="../color/">color</a></em> (<strong>"white"</strong>)</dt>
-<dd>Color used to highlight the name in consoles that support color highlighting</dd>
-</dl>
+<p>Nothing.</p>
 <h2 id="returns">Returns</h2>
-<dl>
-<dt><code>logger</code> <em><a href="../logger/">logger</a></em></dt>
-<dd>A new object of a logger</dd>
-</dl>
+<p>Nothing.</p>
 <h2 id="examples">Examples</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">local</span><span class="w"> </span><span class="nv">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">"Level"</span><span class="p">)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kd">local</span><span class="w"> </span><span class="nv">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">"Joystick"</span><span class="p">,</span><span class="w"> </span><span class="s2">"magenta"</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="kd">local</span><span class="w"> </span><span class="nv">logger</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">mintmousse</span><span class="p">.</span><span class="nf">newLogger</span><span class="p">(</span><span class="s2">"Physics"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nv">fg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"white"</span><span class="p">,</span><span class="w"> </span><span class="nv">bg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"blue"</span><span class="w"> </span><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">setmetatable</span><span class="p">({</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nv">newIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kr">function</span><span class="p">(</span><span class="nv">_</span><span class="p">,</span><span class="w"> </span><span class="nv">_</span><span class="p">,</span><span class="w"> </span><span class="nv">_</span><span class="p">)</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="nv">Logger</span><span class="p">.</span><span class="nf">_stackPush</span><span class="p">()</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nv">Logger</span><span class="p">:</span><span class="nf">debug</span><span class="p">(</span><span class="s2">"I trace to the caller line!"</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nv">Logger</span><span class="p">:</span><span class="nf">error</span><span class="p">(</span><span class="s2">"Rather than this unhelpful meta function"</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="nv">Logger</span><span class="p">.</span><span class="nf">_stackPop</span><span class="p">()</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="kr">end</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">})</span>
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>
-<li><a href="../">Logging</a></li>
-<li><a href="../logger/extend/"><code>(Logger):extend</code></a></li>
+<li><a href="../../">Logging</a></li>
+<li><a href="../">Logger</a></li>
+<li><a href="../debug/"><code>(Logger):debug</code></a></li>
 </ul>
 
 
@@ -3104,10 +3106,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["content.code.copy", "navigation.expand", "navigation.top", "navigation.tabs", "navigation.sections", "navigation.indexes", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
