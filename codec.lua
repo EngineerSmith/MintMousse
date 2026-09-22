@@ -106,7 +106,7 @@ codec.encode = function(message)
 end
 
 codec.decode = function(encodedMessage)
-  local bufferDec = createBuffer() end
+  local bufferDec = createBuffer()
   codec.decode = function(encodedMessage)
     return bufferDec:set(encodedMessage):decode()
   end
