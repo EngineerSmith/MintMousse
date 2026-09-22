@@ -17,6 +17,8 @@ The object to be able to log messages out.
 |[`(Logger):assert`](assert.md)|Test a condition, if false, log an `error` level message|
 |[`(Logger):getAncestry`](getAncestry.md)|Used to get hierarchy of logger objects|
 |[`(Logger).inspect`](inspect.md)|Used to look into a table|
+|[`(Logger)._stackPush`](stack.md)|Shift line trace|
+|[`(Logger)._stackPop`](stack.md)|Shift line trace|
 
 ## See Also
 - [Logging](../index.md)
