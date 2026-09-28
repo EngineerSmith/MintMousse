@@ -7,7 +7,7 @@ Messages caught using this function will appear as the [log level](level.md) `fa
 
     MintMousse by default sets it's own error handler which already implements it. If you override `love.errorhandler` yourself later with your own implementation, you will need to add this function yourself. Otherwise, the logs may appear incomplete at time of crash, or be out of order.
 
-    To disable MintMousse setting it's own error handler, see the config. -- TODO link
+    To disable MintMousse setting it's own error handler, [see the config](../config.md#mintmoussereplace_default_error_handler).
 
 ## Synopsis
 ```lua

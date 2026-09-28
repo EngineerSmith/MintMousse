@@ -96,11 +96,6 @@ Interval between WebSocket ping frames (used for keep-alive).
 
 Maximum time to wait for component type parsing. If you see a timeout warning, increase this value or use the preload script.
 
-### `mintmousse.REPLACE_DEFAULT_ERROR_HANDLER`
-**Type**: _boolean_<br>**Default**: `true`
-
-If `true`, MintMousse replaces Love’s default error handler with its own (adds better logging and cleaned-up stack traces).
-
 ---
 
 ## Logging Settings
@@ -144,6 +139,11 @@ Include trace information on warning logs (does not effect other log levels).
 **Type**: _boolean_<br>**Default**: `true`
 
 Replaces the global function `print` with `logger:debug`. The original `print` is still available as `GLOBAL_print` (but it isn't considered thread-safe).
+
+### `mintmousse.REPLACE_DEFAULT_ERROR_HANDLER`
+**Type**: _boolean_<br>**Default**: `true`
+
+If `true`, MintMousse replaces Love’s default error handler with its own (adds better logging and cleaned-up stack traces).
 
 ### `mintmousse.LOG_CLEAR_UP_TRACEBACK`
 **Type**: _boolean_<br>**Default**: `true`

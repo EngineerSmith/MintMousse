@@ -3,7 +3,7 @@ Log a [`debug` level](../level.md) message. This log level usually includes prin
 
 This is usually in the format of `funcName@fileName#LineNumber`, but not always. For example, if it was called it filescope, or couldn't find a name for the function it will just be `fileName#LineNumber`.
 
-If you use the global function `print`, it will act like a debug log message. This behaviour can be disabled by checking the config. -- TODO link
+If you use the global function `print`, it will act like a debug log message. This behaviour can be disabled by checking the [config](../../config.md#mintmoussereplace_func_print).
 
 ## Synopsis
 ```lua

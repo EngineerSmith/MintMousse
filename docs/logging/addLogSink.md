@@ -32,7 +32,7 @@ mintmousse.addLogSink( sink, flushFunc )
 :   UNIX time in seconds, with microseconds. By default, this value is obtained by `socket.gettime` to get an accurate system time.
 
 `debugInfo` _string_ or _nil_
-:   Depending on the level, and the config -- TODO link, a simple traceback string is passed along the lines of `funcName@fileName#lineNumber`, this format isn't guaranteed, for example code in the file scope will be `fileName#lineNumber` as they aren't contained within a named function.
+:   Depending on the level, and the [config](../config.md#mintmousselog_include_trace), a simple traceback string is passed along the lines of `funcName@fileName#lineNumber`, this format isn't guaranteed, for example code in the file scope will be `fileName#lineNumber` as they aren't contained within a named function.
 
 `message...` _ANY_
 :   The varargs of the message passed from the log function.

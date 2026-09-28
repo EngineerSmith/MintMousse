@@ -17,7 +17,7 @@ tab = mintmousse.buildPage( requirePath, config, index )
 :   The position in the navbar you want the new tab to appear at. Default behaviour is to add it to the end of the navbar.
 
 ## Returns
-`tab` [_Tab_](#TODO)
+`tab` [_Tab_](../components/component/index.md)
 :   The newly create and populated tab.
 
 ## Examples
