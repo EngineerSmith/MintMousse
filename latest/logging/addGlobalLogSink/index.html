@@ -3061,7 +3061,7 @@
 <dt><code>time</code> <em>number</em></dt>
 <dd>UNIX time in seconds, with microseconds. By default, this value is obtained by <code>socket.gettime</code> to get an accurate system time.</dd>
 <dt><code>debugInfo</code> <em>string</em> or <em>nil</em></dt>
-<dd>Depending on the level, and the config -- TODO link, a simple traceback string is passed along the lines of <code>funcName@fileName#lineNumber</code>, this format isn't guaranteed, for example code in the file scope will be <code>fileName#lineNumber</code> as they aren't contained within a named function.</dd>
+<dd>Depending on the level, and the <a href="../../config/#mintmousselog_include_trace">config</a>, a simple traceback string is passed along the lines of <code>funcName@fileName#lineNumber</code>, this format isn't guaranteed, for example code in the file scope will be <code>fileName#lineNumber</code> as they aren't contained within a named function.</dd>
 <dt><code>message...</code> <em>ANY</em></dt>
 <dd>The varargs of the message passed from the log function.</dd>
 </dl>

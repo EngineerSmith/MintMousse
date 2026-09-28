@@ -687,17 +687,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#mintmoussereplace_default_error_handler" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mintmousse.REPLACE_DEFAULT_ERROR_HANDLER
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -797,6 +786,17 @@
     <span class="md-ellipsis">
       
         mintmousse.REPLACE_FUNC_PRINT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussereplace_default_error_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.REPLACE_DEFAULT_ERROR_HANDLER
       
     </span>
   </a>
@@ -3560,17 +3560,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#mintmoussereplace_default_error_handler" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        mintmousse.REPLACE_DEFAULT_ERROR_HANDLER
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3670,6 +3659,17 @@
     <span class="md-ellipsis">
       
         mintmousse.REPLACE_FUNC_PRINT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mintmoussereplace_default_error_handler" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mintmousse.REPLACE_DEFAULT_ERROR_HANDLER
       
     </span>
   </a>
@@ -3873,9 +3873,6 @@ As MintMousse is a threaded library, almost all configuration must be done befor
 <h3 id="mintmoussecomponent_parse_timeout"><code>mintmousse.COMPONENT_PARSE_TIMEOUT</code></h3>
 <p><strong>Type</strong>: <em>number</em> (seconds)<br><strong>Default</strong>: <code>3</code></p>
 <p>Maximum time to wait for component type parsing. If you see a timeout warning, increase this value or use the preload script.</p>
-<h3 id="mintmoussereplace_default_error_handler"><code>mintmousse.REPLACE_DEFAULT_ERROR_HANDLER</code></h3>
-<p><strong>Type</strong>: <em>boolean</em><br><strong>Default</strong>: <code>true</code></p>
-<p>If <code>true</code>, MintMousse replaces Love’s default error handler with its own (adds better logging and cleaned-up stack traces).</p>
 <hr />
 <h2 id="logging-settings">Logging Settings</h2>
 <h3 id="mintmousselog_enabled_timestamp"><code>mintmousse.LOG_ENABLED_TIMESTAMP</code></h3>
@@ -3902,6 +3899,9 @@ As MintMousse is a threaded library, almost all configuration must be done befor
 <h3 id="mintmoussereplace_func_print"><code>mintmousse.REPLACE_FUNC_PRINT</code></h3>
 <p><strong>Type</strong>: <em>boolean</em><br><strong>Default</strong>: <code>true</code></p>
 <p>Replaces the global function <code>print</code> with <code>logger:debug</code>. The original <code>print</code> is still available as <code>GLOBAL_print</code> (but it isn't considered thread-safe).</p>
+<h3 id="mintmoussereplace_default_error_handler"><code>mintmousse.REPLACE_DEFAULT_ERROR_HANDLER</code></h3>
+<p><strong>Type</strong>: <em>boolean</em><br><strong>Default</strong>: <code>true</code></p>
+<p>If <code>true</code>, MintMousse replaces Love’s default error handler with its own (adds better logging and cleaned-up stack traces).</p>
 <h3 id="mintmousselog_clear_up_traceback"><code>mintmousse.LOG_CLEAR_UP_TRACEBACK</code></h3>
 <p><strong>Type</strong>: <em>boolean</em><br><strong>Default</strong>: <code>true</code></p>
 <p>Clean internal MintMousse and Love calls from the traceback shown by <a href="../logging/logUncaughtError/"><code>MintMousse.logUncaughtError</code></a>. It doesn't effect the public <a href="../logging/cleanupTraceback/"><code>MintMousse.cleanupTraceback</code></a> function.</p>
