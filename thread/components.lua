@@ -214,7 +214,7 @@ components.parseComponentTypes = function(directory, preferredJS, preferredCSS)
     if lfs.getInfo(directory .. item, "file") then -- Must be file, not symlink to a file
       local name, extension = item:match("^(.+)%.(.+)$")
       if type(name) == "string" and type(extension) == "string" then
-        local name = name:gsub("^(.)", function(c) return c:upper() end, 1) -- component names must be Pascal case
+        local name = name:sub(1,1):upper() .. name:sub(2) -- component names must be Pascal case
         local extension = extension:lower()
         if not lookup[name] then
           table.insert(componentTypes, {
