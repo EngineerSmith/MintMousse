@@ -1,7 +1,7 @@
 # Components
 
 
-[Documentation for individual component types and fields](type/index.md)
+[Documentation for individual component types and fields](types/index.md)
 
 ## Types
 |Type|Description|
