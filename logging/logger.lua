@@ -17,7 +17,7 @@ end
 
 logger.extend = function(parent, name, colorDef)
   if type(parent) == "string" then
-    colorDef, prefix, parent = name, parent, nil
+    colorDef, name, parent = name, parent, nil
   end
 
   local self = setmetatable({
