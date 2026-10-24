@@ -66,3 +66,13 @@ end)
 ```
 
 The [`(Logger):extend`](logger/extend.md) method automatically builds the `[module:submodule:minor]` prefix to quickly organise your logs.
+
+!!! note "Only want to use MintMousse for logging?"
+    If you set the global variable `MINTMOUSSE_DO_NOT_START` before you require the preload file in conf.lua, it will prevent MintMousse thread starting, and you can just use the logger.
+
+    ```lua
+    MINTMOUSSE_DO_NOT_START = true
+    local mintmousse = require("libs.MintMousse.preload")
+
+    local logger = mintmousse.newLogger()
+    ```

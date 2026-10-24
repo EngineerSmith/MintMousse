@@ -7,7 +7,7 @@ mintmousse.newLogger( name, color )
 ```
 
 ## Parameters
-`name` _string_
+`name` _string_ or _nil_
 :   Identifier shown in the logs
 
 `color` _[color](color.md)_ (**"white"**)
@@ -24,6 +24,8 @@ local logger = mintmousse.newLogger("Level")
 local logger = mintmousse.newLogger("Joystick", "magenta")
 
 local logger = mintmousse.newLogger("Physics", { fg = "white", bg = "blue" })
+
+local logger = mintmousse.newLogger() -- logger with no identity
 ```
 
 ## See Also
