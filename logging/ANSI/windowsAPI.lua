@@ -35,9 +35,11 @@ LONG RtlGetVersion(OSVERSIONINFOEXW *lpVersionInformation);
 // -------------------------------------------
 
 // --- Console Structures and Functions ---
-static const int STD_OUTPUT_HANDLE = -11;
-static const int INVALID_HANDLE_VALUE = -1;
-static const int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0X0004;
+enum {
+  STD_OUTPUT_HANDLE = -11,
+  INVALID_HANDLE_VALUE = -1,
+  ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0X0004
+};
 
 HANDLE GetStdHandle(int nStdHandle);
 BOOL GetConsoleMode(HANDLE hConsoleHandle, DWORD* lpMode);
